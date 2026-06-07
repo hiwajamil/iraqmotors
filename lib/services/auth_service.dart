@@ -6,6 +6,7 @@ import 'package:firebase_auth_platform_interface/firebase_auth_platform_interfac
 import 'package:flutter/foundation.dart';
 
 import '../core/phone_auth_email.dart';
+import '../core/super_admin_config.dart';
 import '../models/account_type.dart';
 import '../models/phone_verification_result.dart';
 import '../models/user_profile.dart';
@@ -56,15 +57,21 @@ class AuthService {
 
   /// Starts Firebase phone verification and completes when [codeSent],
   /// [verificationCompleted], or [verificationFailed] fires.
+  /// Aggressive sanitize → validate → E.164 (`+9647501149414`) for Firebase.
+  String _e164ForFirebase(String phoneNumber) {
+    final cleaned = cleanPhoneInput(phoneNumber);
+    _validatePhone(cleaned);
+    return formatIraqPhoneE164(cleaned);
+  }
+
   Future<PhoneVerificationResult> verifyPhoneNumber(
     String phoneNumber, {
     void Function(String verificationId)? onCodeAutoRetrievalTimeout,
   }) async {
     final cleaned = cleanPhoneInput(phoneNumber);
-    _validatePhone(cleaned);
-    final e164 = formatIraqPhoneE164(cleaned);
+    final e164 = _e164ForFirebase(phoneNumber);
     debugPrint(
-      '[Auth] verifyPhoneNumber: raw=$phoneNumber cleaned=$cleaned e164=$e164 web=$kIsWeb',
+      '[Auth] verifyPhoneNumber: raw="$phoneNumber" cleaned="$cleaned" e164="$e164" web=$kIsWeb',
     );
 
     try {
@@ -119,9 +126,19 @@ class AuthService {
         throw recaptchaError!;
       }
 
+      final verifier = _recaptchaVerifier;
+      if (verifier == null) {
+        throw FirebaseAuthException(
+          code: 'recaptcha-not-initialized',
+          message:
+              'reCAPTCHA verifier was not initialized. Reload the page and try again.',
+        );
+      }
+      debugPrint('[Auth] signInWithPhoneNumber e164="$e164" with reCAPTCHA');
+
       final confirmation = await _auth.signInWithPhoneNumber(
         e164,
-        _recaptchaVerifier,
+        verifier,
       );
       debugPrint(
         '[Auth] signInWithPhoneNumber succeeded: verificationId=${confirmation.verificationId}',
@@ -131,7 +148,7 @@ class AuthService {
       );
     } on FirebaseAuthException catch (e) {
       debugPrint(
-        '[Auth] Web phone verification failed: code=${e.code} message=${e.message}',
+        '[Auth] Web phone verification failed: code=${e.code} message=${e.message?.toString()}',
       );
       rethrow;
     } finally {
@@ -308,6 +325,45 @@ class AuthService {
       email: email.trim(),
       password: password,
     );
+  }
+
+  /// Super-admin may use real Gmail or the phone-linked `@iqmotors.app` email.
+  Future<void> signInAsSuperAdmin({
+    required String email,
+    required String phone,
+    required String password,
+  }) async {
+    FirebaseAuthException? emailFailure;
+
+    if (isSuperAdminEmail(email)) {
+      try {
+        await signInWithEmail(email: email, password: password);
+        return;
+      } on FirebaseAuthException catch (e) {
+        if (!_isCredentialError(e)) rethrow;
+        emailFailure = e;
+      }
+    }
+
+    final cleanedPhone = cleanPhoneInput(phone);
+    if (cleanedPhone.isNotEmpty) {
+      if (!isSuperAdminPhone(phone)) {
+        if (emailFailure != null) throw emailFailure;
+        throw AuthException(AuthErrorCode.invalidPhone);
+      }
+      await signIn(phone: phone, password: password);
+      return;
+    }
+
+    if (emailFailure != null) throw emailFailure;
+    await signInWithEmail(email: email, password: password);
+  }
+
+  bool _isCredentialError(FirebaseAuthException e) {
+    return switch (e.code) {
+      'invalid-credential' || 'wrong-password' || 'user-not-found' => true,
+      _ => false,
+    };
   }
 
   Future<void> signOut() => _auth.signOut();

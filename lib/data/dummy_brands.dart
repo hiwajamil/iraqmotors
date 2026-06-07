@@ -867,3 +867,24 @@ const List<CarBrand> dummyBrands = [
     logoUrl: '$_logoCdn/lynk-co.png',
   ),
 ];
+
+/// Popular brands on the home horizontal strip; full catalog via زیاتر.
+const List<String> _homeStripBrandIds = [
+  'toyota',
+  'mercedes_benz',
+  'bmw',
+  'hyundai',
+  'kia',
+  'nissan',
+  'land_rover',
+  'lexus',
+  'chevrolet',
+  'ford',
+  'honda',
+  'audi',
+];
+
+final List<CarBrand> homeStripBrands = [
+  for (final id in _homeStripBrandIds)
+    dummyBrands.firstWhere((b) => b.id == id),
+];

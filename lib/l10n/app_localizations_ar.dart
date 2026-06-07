@@ -30,7 +30,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get heroTitle => 'القوة ببساطة.';
 
   @override
-  String get heroSubtitle => 'تجربة جديدة لاكتشاف السيارات الفاخرة في كردستان.';
+  String get heroSubtitle => 'تجربة جديدة لاكتشاف السيارات الفاخرة.';
 
   @override
   String get viewAll => 'الكل';
@@ -73,6 +73,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get emailSuperAdmin => 'البريد الإلكتروني (للمشرف العام)';
+
+  @override
+  String get emailPlaceholder => 'أدخل بريدك الإلكتروني';
 
   @override
   String get invalidEmail => 'البريد الإلكتروني غير صالح';
@@ -234,10 +237,68 @@ class AppLocalizationsAr extends AppLocalizations {
   String get cityKirkuk => 'كركوك';
 
   @override
+  String get cityMosul => 'الموصل';
+
+  @override
+  String get cityBasra => 'البصرة';
+
+  @override
+  String get cityMaysan => 'ميسان';
+
+  @override
+  String get cityNajaf => 'النجف';
+
+  @override
+  String get cityKarbala => 'كربلاء';
+
+  @override
+  String get cityAnbar => 'الأنبار';
+
+  @override
+  String get citySalahuddin => 'صلاح الدين';
+
+  @override
+  String get cityBabylon => 'بابل';
+
+  @override
+  String get cityDiyala => 'ديالى';
+
+  @override
+  String get cityWasit => 'واسط';
+
+  @override
+  String get cityMuthanna => 'المثنى';
+
+  @override
+  String get cityQadisiyyah => 'القادسية';
+
+  @override
+  String get cityHalabja => 'حلبجة';
+
+  @override
+  String get cityDhiQar => 'ذي قار';
+
+  @override
   String get locationDefaultRegion => 'أربيل، السليمانية و3 مدن أخرى';
 
   @override
   String get locationAllCities => 'جميع المدن';
+
+  @override
+  String get locationSearch => 'بحث';
+
+  @override
+  String get locationApply => 'تطبيق';
+
+  @override
+  String locationTwoCities(String city1, String city2) {
+    return '$city1، $city2';
+  }
+
+  @override
+  String locationCitiesAndMore(String city1, String city2, String count) {
+    return '$city1، $city2 و$count مدن أخرى';
+  }
 
   @override
   String get selectCity => 'اختر المدينة';
@@ -330,6 +391,140 @@ class AppLocalizationsAr extends AppLocalizations {
   String showCarsCount(String count) {
     return 'عرض $count سيارة';
   }
+
+  @override
+  String get filterTitle => 'تصفية';
+
+  @override
+  String get filterReset => 'إعادة تعيين';
+
+  @override
+  String get filterBrands => 'العلامات التجارية';
+
+  @override
+  String get filterTrim => 'الفئة';
+
+  @override
+  String get filterFromYear => 'من سنة';
+
+  @override
+  String get filterToYear => 'إلى سنة';
+
+  @override
+  String get filterMinPrice => 'أقل سعر';
+
+  @override
+  String get filterMaxPrice => 'أعلى سعر';
+
+  @override
+  String get filterMinMileage => 'أقل مسافة';
+
+  @override
+  String get filterMaxMileage => 'أعلى مسافة';
+
+  @override
+  String get filterPlateCity => 'مدينة اللوحة';
+
+  @override
+  String get filterPlateType => 'نوع اللوحة';
+
+  @override
+  String get filterConditionSection => 'الحالة';
+
+  @override
+  String get filterAll => 'الكل';
+
+  @override
+  String get filterEngineSize => 'حجم المحرك';
+
+  @override
+  String get filterCylinders => 'الأسطوانات';
+
+  @override
+  String get filterImportCountry => 'بلد الاستيراد';
+
+  @override
+  String get filterColor => 'اللون';
+
+  @override
+  String get filterFuelType => 'نوع الوقود';
+
+  @override
+  String get filterElectric => 'كهربائي';
+
+  @override
+  String get filterTransmission => 'ناقل الحركة';
+
+  @override
+  String get filterManual => 'يدوي';
+
+  @override
+  String get filterSeatMaterial => 'مادة المقاعد';
+
+  @override
+  String get filterSearchModel => 'البحث عن موديل';
+
+  @override
+  String filterShowResults(String count) {
+    return 'عرض $count سيارة';
+  }
+
+  @override
+  String get trimBase => 'ستاندارد';
+
+  @override
+  String get trimSport => 'رياضي';
+
+  @override
+  String get trimLuxury => 'فاخر';
+
+  @override
+  String get plateTypePrivate => 'خاص';
+
+  @override
+  String get plateTypeTemporary => 'مؤقت';
+
+  @override
+  String get plateTypeCommercial => 'تجاري';
+
+  @override
+  String get cylinders4 => '4 أسطوانات';
+
+  @override
+  String get cylinders6 => '6 أسطوانات';
+
+  @override
+  String get cylinders8 => '8 أسطوانات';
+
+  @override
+  String get importUae => 'الإمارات';
+
+  @override
+  String get importUsa => 'أمريكا';
+
+  @override
+  String get importEurope => 'أوروبا';
+
+  @override
+  String get importGcc => 'GCC';
+
+  @override
+  String get importLocal => 'محلي';
+
+  @override
+  String get seatFabric => 'قماش';
+
+  @override
+  String get seatLeather => 'جلد';
+
+  @override
+  String get seatSemiLeather => 'نصف جلد';
+
+  @override
+  String get seatAlcantaraLeather => 'ألكانتara/جلد';
+
+  @override
+  String get seatAlcantara => 'ألكانتara';
 
   @override
   String get brandTitle => 'ماركة السيارة';

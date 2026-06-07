@@ -31,7 +31,7 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get heroSubtitle =>
-      'ئەزموونێکی نوێ بۆ دۆزینەوەی ئۆتۆمبێلە ئاست بەرزەکان لە کوردستان.';
+      'ئەزموونێکی نوێ بۆ دۆزینەوەی ئۆتۆمبێلە ئاست بەرزەکان.';
 
   @override
   String get viewAll => 'هەموو';
@@ -75,6 +75,9 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get emailSuperAdmin => 'ئیمەیڵ (بۆ بەڕێوەبەری سەرەکی)';
+
+  @override
+  String get emailPlaceholder => 'ئیمەیڵەکەت بنووسە';
 
   @override
   String get invalidEmail => 'ئیمەیڵ دروست نییە';
@@ -240,10 +243,68 @@ class AppLocalizationsKu extends AppLocalizations {
   String get cityKirkuk => 'کەرکوک';
 
   @override
+  String get cityMosul => 'موسڵ';
+
+  @override
+  String get cityBasra => 'بەسڕا';
+
+  @override
+  String get cityMaysan => 'میسان';
+
+  @override
+  String get cityNajaf => 'نەجەف';
+
+  @override
+  String get cityKarbala => 'کەربەلا';
+
+  @override
+  String get cityAnbar => 'ئەنبار';
+
+  @override
+  String get citySalahuddin => 'سەلاحەدین';
+
+  @override
+  String get cityBabylon => 'بابل';
+
+  @override
+  String get cityDiyala => 'دیالە';
+
+  @override
+  String get cityWasit => 'واست';
+
+  @override
+  String get cityMuthanna => 'موسەنا';
+
+  @override
+  String get cityQadisiyyah => 'قادسیە';
+
+  @override
+  String get cityHalabja => 'هەڵەبجە';
+
+  @override
+  String get cityDhiQar => 'زیقار';
+
+  @override
   String get locationDefaultRegion => 'هەولێر، سلێمانی و ٣ شاری تر';
 
   @override
   String get locationAllCities => 'هەموو شارەکان';
+
+  @override
+  String get locationSearch => 'گەڕان';
+
+  @override
+  String get locationApply => 'جێبەجێکردن';
+
+  @override
+  String locationTwoCities(String city1, String city2) {
+    return '$city1، $city2';
+  }
+
+  @override
+  String locationCitiesAndMore(String city1, String city2, String count) {
+    return '$city1، $city2 و $count شاری تر';
+  }
 
   @override
   String get selectCity => 'شار هەڵبژێرە';
@@ -336,6 +397,140 @@ class AppLocalizationsKu extends AppLocalizations {
   String showCarsCount(String count) {
     return 'پیشاندانی $count ئۆتۆمبێل';
   }
+
+  @override
+  String get filterTitle => 'جیاکاری';
+
+  @override
+  String get filterReset => 'ڕێکخستنەوە';
+
+  @override
+  String get filterBrands => 'براندەکان';
+
+  @override
+  String get filterTrim => 'خاسڵەت';
+
+  @override
+  String get filterFromYear => 'لە ساڵی';
+
+  @override
+  String get filterToYear => 'بۆ ساڵی';
+
+  @override
+  String get filterMinPrice => 'کەمترین نرخ';
+
+  @override
+  String get filterMaxPrice => 'زۆرترین نرخ';
+
+  @override
+  String get filterMinMileage => 'کەمترین کیلۆمەتر';
+
+  @override
+  String get filterMaxMileage => 'زۆرترین کیلۆمەتر';
+
+  @override
+  String get filterPlateCity => 'شاری تابلۆ';
+
+  @override
+  String get filterPlateType => 'جۆری تابلۆ';
+
+  @override
+  String get filterConditionSection => 'ڕەوش';
+
+  @override
+  String get filterAll => 'هەموو';
+
+  @override
+  String get filterEngineSize => 'قەبارەی بزوێنەر';
+
+  @override
+  String get filterCylinders => 'پستۆن';
+
+  @override
+  String get filterImportCountry => 'وڵاتی هاوردە';
+
+  @override
+  String get filterColor => 'ڕەنگ';
+
+  @override
+  String get filterFuelType => 'سوتەمەنی';
+
+  @override
+  String get filterElectric => 'کارەبای';
+
+  @override
+  String get filterTransmission => 'گێڕ';
+
+  @override
+  String get filterManual => 'دەستی';
+
+  @override
+  String get filterSeatMaterial => 'ماددەی کورسییەکان';
+
+  @override
+  String get filterSearchModel => 'گەڕان بەدوای مۆدێل';
+
+  @override
+  String filterShowResults(String count) {
+    return 'دیارخستنی $count ئۆتۆمبێلەکان';
+  }
+
+  @override
+  String get trimBase => 'ستاندارد';
+
+  @override
+  String get trimSport => 'وەرزشی';
+
+  @override
+  String get trimLuxury => 'لوکس';
+
+  @override
+  String get plateTypePrivate => 'تایبەت';
+
+  @override
+  String get plateTypeTemporary => 'کاتی';
+
+  @override
+  String get plateTypeCommercial => 'بازرگانی';
+
+  @override
+  String get cylinders4 => '٤ پستۆن';
+
+  @override
+  String get cylinders6 => '٦ پستۆن';
+
+  @override
+  String get cylinders8 => '٨ پستۆن';
+
+  @override
+  String get importUae => 'ئیمارات';
+
+  @override
+  String get importUsa => 'ئەمریکا';
+
+  @override
+  String get importEurope => 'ئەوروپا';
+
+  @override
+  String get importGcc => 'GCC';
+
+  @override
+  String get importLocal => 'ناوخۆیی';
+
+  @override
+  String get seatFabric => 'قوماش';
+
+  @override
+  String get seatLeather => 'جلد';
+
+  @override
+  String get seatSemiLeather => 'نیو جلد';
+
+  @override
+  String get seatAlcantaraLeather => 'شامۆ/جلد';
+
+  @override
+  String get seatAlcantara => 'شامۆ';
 
   @override
   String get brandTitle => 'مارکەی ئۆتۆمبێل';

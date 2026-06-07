@@ -159,8 +159,12 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
 
     setState(() => _isLoading = true);
     try {
-      if (isSuperAdminEmail(email)) {
-        await auth.signInWithEmail(email: email, password: password);
+      if (isSuperAdminUser(email: email, phone: _loginPhoneController.text)) {
+        await auth.signInAsSuperAdmin(
+          email: email,
+          phone: _loginPhoneController.text.trim(),
+          password: password,
+        );
       } else {
         await auth.signIn(
           phone: _loginPhoneController.text.trim(),
@@ -172,7 +176,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
     } on AuthException catch (e) {
       _showMessage(l10n.messageForAuthError(e.code));
     } on FirebaseAuthException catch (e) {
-      _showErrorSnackBar(AuthController.formatFirebaseAuthError(e));
+      _showErrorSnackBar(l10n.messageForFirebaseAuthException(e));
     } catch (e) {
       _showErrorSnackBar(e.toString());
     } finally {
@@ -237,6 +241,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
       MaterialPageRoute<void>(
         builder: (_) => dashboardForAuthenticatedUser(
           email: email,
+          phone: profile?.phone ?? _loginPhoneController.text.trim(),
           accountType: profile?.accountType,
         ),
       ),
@@ -709,7 +714,7 @@ class _LoginForm extends StatelessWidget {
           _PremiumFormField(
             label: l10n.emailSuperAdmin,
             controller: emailController,
-            placeholder: kSuperAdminEmail,
+            placeholder: l10n.emailPlaceholder,
             keyboardType: TextInputType.emailAddress,
             textDirection: TextDirection.ltr,
             validator: (v) {
@@ -727,8 +732,14 @@ class _LoginForm extends StatelessWidget {
             placeholder: l10n.phonePlaceholder,
             keyboardType: TextInputType.phone,
             textDirection: TextDirection.ltr,
+            showIraqCountryCode: true,
             validator: (v) {
-              if (isSuperAdminEmail(emailController.text)) return null;
+              if (isSuperAdminUser(
+                email: emailController.text,
+                phone: v,
+              )) {
+                return null;
+              }
               return (v == null || v.trim().isEmpty)
                   ? l10n.phoneRequired
                   : null;
@@ -799,6 +810,7 @@ class _IndividualForm extends StatelessWidget {
             placeholder: l10n.phonePlaceholder,
             keyboardType: TextInputType.phone,
             textDirection: TextDirection.ltr,
+            showIraqCountryCode: true,
             includeBottomPadding: false,
             validator: (v) =>
                 (v == null || v.trim().isEmpty) ? l10n.phoneRequired : null,
@@ -890,6 +902,7 @@ class _ShowroomForm extends StatelessWidget {
             placeholder: l10n.workPhonePlaceholder,
             keyboardType: TextInputType.phone,
             textDirection: TextDirection.ltr,
+            showIraqCountryCode: true,
             includeBottomPadding: false,
             validator: (v) =>
                 (v == null || v.trim().isEmpty) ? l10n.phoneRequired : null,
@@ -936,6 +949,7 @@ class _PremiumFormField extends StatefulWidget {
     this.textDirection,
     this.obscureText = false,
     this.includeBottomPadding = true,
+    this.showIraqCountryCode = false,
     this.validator,
   });
 
@@ -946,6 +960,7 @@ class _PremiumFormField extends StatefulWidget {
   final TextDirection? textDirection;
   final bool obscureText;
   final bool includeBottomPadding;
+  final bool showIraqCountryCode;
   final String? Function(String?)? validator;
 
   @override
@@ -1034,8 +1049,21 @@ class _PremiumFormFieldState extends State<_PremiumFormField> {
                   color: _AuthScreenState._textSecondary.withValues(alpha: 0.8),
                 ),
                 border: InputBorder.none,
-                contentPadding: const EdgeInsetsDirectional.symmetric(
-                  horizontal: 16,
+                prefix: widget.showIraqCountryCode
+                    ? Padding(
+                        padding: const EdgeInsetsDirectional.only(end: 6),
+                        child: Text(
+                          iraqPhoneCountryCodeDisplay,
+                          style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500,
+                            color: _AuthScreenState._textPrimary,
+                          ),
+                        ),
+                      )
+                    : null,
+                contentPadding: EdgeInsetsDirectional.symmetric(
+                  horizontal: widget.showIraqCountryCode ? 8 : 16,
                   vertical: 14,
                 ),
               ),

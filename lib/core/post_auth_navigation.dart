@@ -9,9 +9,10 @@ import 'super_admin_config.dart';
 /// Resolves the post-sign-in dashboard from the authenticated email and profile.
 Widget dashboardForAuthenticatedUser({
   required String? email,
+  String? phone,
   AccountType? accountType,
 }) {
-  if (isSuperAdminEmail(email)) {
+  if (isSuperAdminUser(email: email, phone: phone)) {
     return const SuperAdminDashboardScreen();
   }
   if (accountType == AccountType.showroom) {

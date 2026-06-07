@@ -1,5 +1,15 @@
-/// Strips whitespace before digit normalization (e.g. `0770 123 4567`).
-String cleanPhoneInput(String input) => input.replaceAll(RegExp(r'\s+'), '');
+/// Iraq country calling code shown before the local number in auth forms.
+const String iraqPhoneCountryCodeDisplay = '+964';
+
+/// Strips spaces and dashes before digit normalization.
+///
+/// Example: `+964 750-114-9414` → `+9647501149414`.
+String cleanPhoneInput(String input) {
+  return input
+      .trim()
+      .replaceAll(' ', '')
+      .replaceAll('-', '');
+}
 
 /// Maps Iraqi/Kurdish mobile numbers to Firebase Auth email identifiers.
 ///

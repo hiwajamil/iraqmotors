@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../data/car_models_by_brand.dart';
 import '../../data/dummy_brands.dart';
 import '../../models/advanced_filter_state.dart';
 import '../../models/car_brand.dart';
@@ -14,7 +15,9 @@ import '../../widgets/brand_search_sheet.dart';
 import '../../widgets/home_filter_section.dart';
 import '../../widgets/language_switcher.dart';
 import '../../widgets/premium_car_card.dart';
+import '../add_car/add_car_flow_screen.dart';
 import '../auth/auth_screen.dart';
+import '../filters/advanced_filter_screen.dart';
 import '../listings/car_details_screen.dart';
 
 /// Explore / home — glass nav, centered hero, filters, listing grid.
@@ -66,6 +69,36 @@ class _HomeScreenState extends State<HomeScreen>
     super.dispose();
   }
 
+  /// Drops the model filter when the brand changes or the model is invalid.
+  AdvancedFilterState _filtersAfterBrandChange(CarBrand? brand) {
+    final modelKey = _advancedFilters.modelKey;
+    if (modelKey == null) return _advancedFilters;
+    if (brand == null) {
+      return _advancedFilters.copyWith(clearModel: true);
+    }
+    if (!CarModelsByBrand.isValidModelSelection(brand, modelKey)) {
+      return _advancedFilters.copyWith(clearModel: true);
+    }
+    return _advancedFilters;
+  }
+
+  Future<void> _openAdvancedFilter(BuildContext context) async {
+    final result = await AdvancedFilterScreen.show(
+      context,
+      initialFilters: _advancedFilters,
+      initialBrand: _selectedBrand,
+      resultCount: _cars.length,
+    );
+    if (result == null || !mounted) return;
+    setState(() {
+      _selectedBrand = result.brand;
+      _advancedFilters = result.filters;
+      if (result.brand != null) {
+        _advancedFilterExpanded = true;
+      }
+    });
+  }
+
   double _horizontalPadding(double width) => width * 0.08;
 
   int _gridCrossAxisCount(double width, double padding) {
@@ -105,15 +138,14 @@ class _HomeScreenState extends State<HomeScreen>
                         selectedBrand: _selectedBrand,
                         filterValues: _advancedFilters,
                         showAdvancedFilter: _showAdvancedFilter,
-                        onAdvancedSearchToggle: () {
-                          setState(() {
-                            _advancedFilterExpanded = !_advancedFilterExpanded;
-                          });
-                        },
+                        onAdvancedSearchToggle: () => _openAdvancedFilter(context),
                         onBrandSelected: (brand) {
                           setState(() {
                             _selectedBrand = brand;
-                            if (brand != null) _advancedFilterExpanded = true;
+                            if (brand != null) {
+                              _advancedFilterExpanded = true;
+                            }
+                            _advancedFilters = _filtersAfterBrandChange(brand);
                           });
                         },
                         onFilterChanged: (values) {
@@ -132,6 +164,7 @@ class _HomeScreenState extends State<HomeScreen>
                             setState(() {
                               _selectedBrand = brand;
                               _advancedFilterExpanded = true;
+                              _advancedFilters = _filtersAfterBrandChange(brand);
                             });
                           }
                         },
@@ -265,7 +298,17 @@ class _GlassNavBar extends StatelessWidget {
                     ] else
                       const Spacer(),
                     const LanguageSwitcherButton(),
-                    const SizedBox(width: 15),
+                    const SizedBox(width: 12),
+                    _SellButton(
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute<void>(
+                            builder: (_) => const AddCarFlowScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    const SizedBox(width: 12),
                     Consumer(
                       builder: (context, ref, _) {
                         final user = ref.watch(authStateProvider).value;
@@ -351,6 +394,64 @@ class _NavLinkState extends State<_NavLink> {
               fontSize: 14,
               fontWeight: FontWeight.w500,
               color: _HomeScreenState._textPrimary,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _SellButton extends StatefulWidget {
+  const _SellButton({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  State<_SellButton> createState() => _SellButtonState();
+}
+
+class _SellButtonState extends State<_SellButton> {
+  bool _hovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: AnimatedScale(
+          scale: _hovered ? 1.04 : 1,
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeOut,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            padding: const EdgeInsetsDirectional.symmetric(
+              horizontal: 20,
+              vertical: 9,
+            ),
+            decoration: BoxDecoration(
+              color: _hovered
+                  ? const Color(0xFF000000)
+                  : const Color(0xFF1D1D1F),
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: _hovered ? 0.18 : 0.12),
+                  blurRadius: _hovered ? 16 : 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: const Text(
+              'فرۆشتن',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                letterSpacing: -0.2,
+                color: Colors.white,
+              ),
             ),
           ),
         ),
@@ -448,6 +549,7 @@ class _HeroSection extends StatelessWidget {
         0,
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
             l10n.heroTitle,
@@ -551,7 +653,7 @@ class _BrandHorizontalStrip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final itemCount = dummyBrands.length + 1;
+    final brands = homeStripBrands;
 
     return SizedBox(
       height: _stripHeight,
@@ -564,24 +666,28 @@ class _BrandHorizontalStrip extends StatelessWidget {
         ),
         clipBehavior: Clip.none,
         padding: const EdgeInsetsDirectional.symmetric(horizontal: 4),
-        itemCount: itemCount,
+        itemCount: brands.length + 1,
         itemBuilder: (context, index) {
-          final isLast = index == dummyBrands.length;
+          if (index == brands.length) {
+            return Padding(
+              padding: EdgeInsetsDirectional.only(
+                start: index == 0 ? 0 : _itemSpacing,
+              ),
+              child: _BrandMoreChip(onTap: onViewAllTap),
+            );
+          }
+
+          final brand = brands[index];
+          final isSelected = selectedBrandId == brand.id;
           return Padding(
             padding: EdgeInsetsDirectional.only(
               start: index == 0 ? 0 : _itemSpacing,
             ),
-            child: isLast
-                ? _BrandMoreChip(onTap: onViewAllTap)
-                : _BrandItem(
-                    brand: dummyBrands[index],
-                    isSelected: selectedBrandId == dummyBrands[index].id,
-                    onTap: () {
-                      final brand = dummyBrands[index];
-                      final isSelected = selectedBrandId == brand.id;
-                      onBrandSelected(isSelected ? null : brand);
-                    },
-                  ),
+            child: _BrandItem(
+              brand: brand,
+              isSelected: isSelected,
+              onTap: () => onBrandSelected(isSelected ? null : brand),
+            ),
           );
         },
       ),
@@ -810,8 +916,8 @@ class _BrandMoreChipState extends State<_BrandMoreChip> {
                 child: const Center(
                   child: Icon(
                     Icons.grid_view_rounded,
-                    size: 32,
-                    color: _BrandHorizontalStrip._brandTextPrimary,
+                    size: 40,
+                    color: Color(0xFF1D1D1F),
                   ),
                 ),
               ),

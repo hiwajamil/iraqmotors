@@ -36,7 +36,7 @@ class HomeFilterSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           AdvancedFilterHeader(
-            locationKey: filterValues.locationKey,
+            selectedLocationKeys: filterValues.selectedLocationKeys,
             onLocationTap: () => _pickLocation(context),
             onAdvancedSearchTap: onAdvancedSearchToggle,
           ),
@@ -66,6 +66,7 @@ class HomeFilterSection extends StatelessWidget {
                       padding: const EdgeInsets.only(top: 20),
                       child: AdvancedFilterWidget(
                         showHeader: false,
+                        selectedBrand: selectedBrand,
                         values: filterValues,
                         onChanged: onFilterChanged,
                         onClear: onClearFilters,
@@ -83,9 +84,14 @@ class HomeFilterSection extends StatelessWidget {
   }
 
   Future<void> _pickLocation(BuildContext context) async {
-    final picked = await showLocationPickerSheet(context);
+    final picked = await showLocationPickerSheet(
+      context,
+      initialSelection: filterValues.selectedLocationKeys,
+    );
     if (picked != null) {
-      onFilterChanged(filterValues.copyWith(locationKey: picked));
+      onFilterChanged(
+        filterValues.copyWith(selectedLocationKeys: picked),
+      );
     }
   }
 }

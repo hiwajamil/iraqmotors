@@ -23,7 +23,7 @@ class AuthController {
   }) async {
     if (isSendingCode) return null;
 
-    final phone = cleanPhoneInput(rawPhone.trim());
+    final phone = cleanPhoneInput(rawPhone);
     if (phone.isEmpty) {
       onError?.call('enter_phone_first');
       return null;
@@ -34,7 +34,9 @@ class AuthController {
     }
 
     final e164 = formatIraqPhoneE164(phone);
-    debugPrint('[AuthController] sendVerificationCode local=$phone e164=$e164');
+    debugPrint(
+      '[AuthController] sendVerificationCode raw="$rawPhone" cleaned="$phone" e164="$e164"',
+    );
 
     isSendingCode = true;
     onSendingChanged(true);
@@ -65,9 +67,9 @@ class AuthController {
     }
   }
 
-  /// Exact Firebase message for debugging (reCAPTCHA, quota, formatting, etc.).
+  /// Firebase message for SnackBars (reCAPTCHA, quota, invalid format, etc.).
   static String formatFirebaseAuthError(FirebaseAuthException e) {
-    final message = e.message?.trim();
+    final message = e.message?.toString().trim();
     if (message != null && message.isNotEmpty) {
       return message;
     }

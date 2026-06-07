@@ -145,7 +145,7 @@ abstract class AppLocalizations {
   /// No description provided for @heroSubtitle.
   ///
   /// In ku, this message translates to:
-  /// **'ئەزموونێکی نوێ بۆ دۆزینەوەی ئۆتۆمبێلە ئاست بەرزەکان لە کوردستان.'**
+  /// **'ئەزموونێکی نوێ بۆ دۆزینەوەی ئۆتۆمبێلە ئاست بەرزەکان.'**
   String get heroSubtitle;
 
   /// No description provided for @viewAll.
@@ -231,6 +231,12 @@ abstract class AppLocalizations {
   /// In ku, this message translates to:
   /// **'ئیمەیڵ (بۆ بەڕێوەبەری سەرەکی)'**
   String get emailSuperAdmin;
+
+  /// No description provided for @emailPlaceholder.
+  ///
+  /// In ku, this message translates to:
+  /// **'ئیمەیڵەکەت بنووسە'**
+  String get emailPlaceholder;
 
   /// No description provided for @invalidEmail.
   ///
@@ -538,6 +544,90 @@ abstract class AppLocalizations {
   /// **'کەرکوک'**
   String get cityKirkuk;
 
+  /// No description provided for @cityMosul.
+  ///
+  /// In ku, this message translates to:
+  /// **'موسڵ'**
+  String get cityMosul;
+
+  /// No description provided for @cityBasra.
+  ///
+  /// In ku, this message translates to:
+  /// **'بەسڕا'**
+  String get cityBasra;
+
+  /// No description provided for @cityMaysan.
+  ///
+  /// In ku, this message translates to:
+  /// **'میسان'**
+  String get cityMaysan;
+
+  /// No description provided for @cityNajaf.
+  ///
+  /// In ku, this message translates to:
+  /// **'نەجەف'**
+  String get cityNajaf;
+
+  /// No description provided for @cityKarbala.
+  ///
+  /// In ku, this message translates to:
+  /// **'کەربەلا'**
+  String get cityKarbala;
+
+  /// No description provided for @cityAnbar.
+  ///
+  /// In ku, this message translates to:
+  /// **'ئەنبار'**
+  String get cityAnbar;
+
+  /// No description provided for @citySalahuddin.
+  ///
+  /// In ku, this message translates to:
+  /// **'سەلاحەدین'**
+  String get citySalahuddin;
+
+  /// No description provided for @cityBabylon.
+  ///
+  /// In ku, this message translates to:
+  /// **'بابل'**
+  String get cityBabylon;
+
+  /// No description provided for @cityDiyala.
+  ///
+  /// In ku, this message translates to:
+  /// **'دیالە'**
+  String get cityDiyala;
+
+  /// No description provided for @cityWasit.
+  ///
+  /// In ku, this message translates to:
+  /// **'واست'**
+  String get cityWasit;
+
+  /// No description provided for @cityMuthanna.
+  ///
+  /// In ku, this message translates to:
+  /// **'موسەنا'**
+  String get cityMuthanna;
+
+  /// No description provided for @cityQadisiyyah.
+  ///
+  /// In ku, this message translates to:
+  /// **'قادسیە'**
+  String get cityQadisiyyah;
+
+  /// No description provided for @cityHalabja.
+  ///
+  /// In ku, this message translates to:
+  /// **'هەڵەبجە'**
+  String get cityHalabja;
+
+  /// No description provided for @cityDhiQar.
+  ///
+  /// In ku, this message translates to:
+  /// **'زیقار'**
+  String get cityDhiQar;
+
   /// No description provided for @locationDefaultRegion.
   ///
   /// In ku, this message translates to:
@@ -549,6 +639,30 @@ abstract class AppLocalizations {
   /// In ku, this message translates to:
   /// **'هەموو شارەکان'**
   String get locationAllCities;
+
+  /// No description provided for @locationSearch.
+  ///
+  /// In ku, this message translates to:
+  /// **'گەڕان'**
+  String get locationSearch;
+
+  /// No description provided for @locationApply.
+  ///
+  /// In ku, this message translates to:
+  /// **'جێبەجێکردن'**
+  String get locationApply;
+
+  /// No description provided for @locationTwoCities.
+  ///
+  /// In ku, this message translates to:
+  /// **'{city1}، {city2}'**
+  String locationTwoCities(String city1, String city2);
+
+  /// No description provided for @locationCitiesAndMore.
+  ///
+  /// In ku, this message translates to:
+  /// **'{city1}، {city2} و {count} شاری تر'**
+  String locationCitiesAndMore(String city1, String city2, String count);
 
   /// No description provided for @selectCity.
   ///
@@ -729,6 +843,270 @@ abstract class AppLocalizations {
   /// In ku, this message translates to:
   /// **'پیشاندانی {count} ئۆتۆمبێل'**
   String showCarsCount(String count);
+
+  /// No description provided for @filterTitle.
+  ///
+  /// In ku, this message translates to:
+  /// **'جیاکاری'**
+  String get filterTitle;
+
+  /// No description provided for @filterReset.
+  ///
+  /// In ku, this message translates to:
+  /// **'ڕێکخستنەوە'**
+  String get filterReset;
+
+  /// No description provided for @filterBrands.
+  ///
+  /// In ku, this message translates to:
+  /// **'براندەکان'**
+  String get filterBrands;
+
+  /// No description provided for @filterTrim.
+  ///
+  /// In ku, this message translates to:
+  /// **'خاسڵەت'**
+  String get filterTrim;
+
+  /// No description provided for @filterFromYear.
+  ///
+  /// In ku, this message translates to:
+  /// **'لە ساڵی'**
+  String get filterFromYear;
+
+  /// No description provided for @filterToYear.
+  ///
+  /// In ku, this message translates to:
+  /// **'بۆ ساڵی'**
+  String get filterToYear;
+
+  /// No description provided for @filterMinPrice.
+  ///
+  /// In ku, this message translates to:
+  /// **'کەمترین نرخ'**
+  String get filterMinPrice;
+
+  /// No description provided for @filterMaxPrice.
+  ///
+  /// In ku, this message translates to:
+  /// **'زۆرترین نرخ'**
+  String get filterMaxPrice;
+
+  /// No description provided for @filterMinMileage.
+  ///
+  /// In ku, this message translates to:
+  /// **'کەمترین کیلۆمەتر'**
+  String get filterMinMileage;
+
+  /// No description provided for @filterMaxMileage.
+  ///
+  /// In ku, this message translates to:
+  /// **'زۆرترین کیلۆمەتر'**
+  String get filterMaxMileage;
+
+  /// No description provided for @filterPlateCity.
+  ///
+  /// In ku, this message translates to:
+  /// **'شاری تابلۆ'**
+  String get filterPlateCity;
+
+  /// No description provided for @filterPlateType.
+  ///
+  /// In ku, this message translates to:
+  /// **'جۆری تابلۆ'**
+  String get filterPlateType;
+
+  /// No description provided for @filterConditionSection.
+  ///
+  /// In ku, this message translates to:
+  /// **'ڕەوش'**
+  String get filterConditionSection;
+
+  /// No description provided for @filterAll.
+  ///
+  /// In ku, this message translates to:
+  /// **'هەموو'**
+  String get filterAll;
+
+  /// No description provided for @filterEngineSize.
+  ///
+  /// In ku, this message translates to:
+  /// **'قەبارەی بزوێنەر'**
+  String get filterEngineSize;
+
+  /// No description provided for @filterCylinders.
+  ///
+  /// In ku, this message translates to:
+  /// **'پستۆن'**
+  String get filterCylinders;
+
+  /// No description provided for @filterImportCountry.
+  ///
+  /// In ku, this message translates to:
+  /// **'وڵاتی هاوردە'**
+  String get filterImportCountry;
+
+  /// No description provided for @filterColor.
+  ///
+  /// In ku, this message translates to:
+  /// **'ڕەنگ'**
+  String get filterColor;
+
+  /// No description provided for @filterFuelType.
+  ///
+  /// In ku, this message translates to:
+  /// **'سوتەمەنی'**
+  String get filterFuelType;
+
+  /// No description provided for @filterElectric.
+  ///
+  /// In ku, this message translates to:
+  /// **'کارەبای'**
+  String get filterElectric;
+
+  /// No description provided for @filterTransmission.
+  ///
+  /// In ku, this message translates to:
+  /// **'گێڕ'**
+  String get filterTransmission;
+
+  /// No description provided for @filterManual.
+  ///
+  /// In ku, this message translates to:
+  /// **'دەستی'**
+  String get filterManual;
+
+  /// No description provided for @filterSeatMaterial.
+  ///
+  /// In ku, this message translates to:
+  /// **'ماددەی کورسییەکان'**
+  String get filterSeatMaterial;
+
+  /// No description provided for @filterSearchModel.
+  ///
+  /// In ku, this message translates to:
+  /// **'گەڕان بەدوای مۆدێل'**
+  String get filterSearchModel;
+
+  /// No description provided for @filterShowResults.
+  ///
+  /// In ku, this message translates to:
+  /// **'دیارخستنی {count} ئۆتۆمبێلەکان'**
+  String filterShowResults(String count);
+
+  /// No description provided for @trimBase.
+  ///
+  /// In ku, this message translates to:
+  /// **'ستاندارد'**
+  String get trimBase;
+
+  /// No description provided for @trimSport.
+  ///
+  /// In ku, this message translates to:
+  /// **'وەرزشی'**
+  String get trimSport;
+
+  /// No description provided for @trimLuxury.
+  ///
+  /// In ku, this message translates to:
+  /// **'لوکس'**
+  String get trimLuxury;
+
+  /// No description provided for @plateTypePrivate.
+  ///
+  /// In ku, this message translates to:
+  /// **'تایبەت'**
+  String get plateTypePrivate;
+
+  /// No description provided for @plateTypeTemporary.
+  ///
+  /// In ku, this message translates to:
+  /// **'کاتی'**
+  String get plateTypeTemporary;
+
+  /// No description provided for @plateTypeCommercial.
+  ///
+  /// In ku, this message translates to:
+  /// **'بازرگانی'**
+  String get plateTypeCommercial;
+
+  /// No description provided for @cylinders4.
+  ///
+  /// In ku, this message translates to:
+  /// **'٤ پستۆن'**
+  String get cylinders4;
+
+  /// No description provided for @cylinders6.
+  ///
+  /// In ku, this message translates to:
+  /// **'٦ پستۆن'**
+  String get cylinders6;
+
+  /// No description provided for @cylinders8.
+  ///
+  /// In ku, this message translates to:
+  /// **'٨ پستۆن'**
+  String get cylinders8;
+
+  /// No description provided for @importUae.
+  ///
+  /// In ku, this message translates to:
+  /// **'ئیمارات'**
+  String get importUae;
+
+  /// No description provided for @importUsa.
+  ///
+  /// In ku, this message translates to:
+  /// **'ئەمریکا'**
+  String get importUsa;
+
+  /// No description provided for @importEurope.
+  ///
+  /// In ku, this message translates to:
+  /// **'ئەوروپا'**
+  String get importEurope;
+
+  /// No description provided for @importGcc.
+  ///
+  /// In ku, this message translates to:
+  /// **'GCC'**
+  String get importGcc;
+
+  /// No description provided for @importLocal.
+  ///
+  /// In ku, this message translates to:
+  /// **'ناوخۆیی'**
+  String get importLocal;
+
+  /// No description provided for @seatFabric.
+  ///
+  /// In ku, this message translates to:
+  /// **'قوماش'**
+  String get seatFabric;
+
+  /// No description provided for @seatLeather.
+  ///
+  /// In ku, this message translates to:
+  /// **'جلد'**
+  String get seatLeather;
+
+  /// No description provided for @seatSemiLeather.
+  ///
+  /// In ku, this message translates to:
+  /// **'نیو جلد'**
+  String get seatSemiLeather;
+
+  /// No description provided for @seatAlcantaraLeather.
+  ///
+  /// In ku, this message translates to:
+  /// **'شامۆ/جلد'**
+  String get seatAlcantaraLeather;
+
+  /// No description provided for @seatAlcantara.
+  ///
+  /// In ku, this message translates to:
+  /// **'شامۆ'**
+  String get seatAlcantara;
 
   /// No description provided for @brandTitle.
   ///

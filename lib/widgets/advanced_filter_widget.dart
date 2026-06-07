@@ -2,27 +2,29 @@ import 'package:flutter/material.dart';
 
 import '../core/filter_l10n.dart';
 import '../core/l10n_extensions.dart';
+import '../data/car_models_by_brand.dart';
 import '../l10n/app_localizations.dart';
 import '../models/advanced_filter_state.dart';
+import '../models/car_brand.dart';
 import 'location_picker_sheet.dart';
 
 /// Location + advanced search title row above the brands strip.
 class AdvancedFilterHeader extends StatelessWidget {
   const AdvancedFilterHeader({
     super.key,
-    required this.locationKey,
+    required this.selectedLocationKeys,
     required this.onLocationTap,
     this.onAdvancedSearchTap,
   });
 
-  final String locationKey;
+  final Set<String> selectedLocationKeys;
   final VoidCallback onLocationTap;
   final VoidCallback? onAdvancedSearchTap;
 
   @override
   Widget build(BuildContext context) {
     return _FilterHeader(
-      locationKey: locationKey,
+      selectedLocationKeys: selectedLocationKeys,
       onLocationTap: onLocationTap,
       onAdvancedSearchTap: onAdvancedSearchTap,
     );
@@ -33,6 +35,7 @@ class AdvancedFilterHeader extends StatelessWidget {
 class AdvancedFilterWidget extends StatelessWidget {
   const AdvancedFilterWidget({
     super.key,
+    this.selectedBrand,
     required this.values,
     required this.onChanged,
     required this.onClear,
@@ -43,6 +46,7 @@ class AdvancedFilterWidget extends StatelessWidget {
     this.showHeader = true,
   });
 
+  final CarBrand? selectedBrand;
   final AdvancedFilterState values;
   final ValueChanged<AdvancedFilterState> onChanged;
   final VoidCallback onClear;
@@ -56,14 +60,6 @@ class AdvancedFilterWidget extends StatelessWidget {
   static const Color _fill = Color(0xFFE8E8ED);
   static const Color _textPrimary = Color(0xFF1D1D1F);
   static const Color _textSecondary = Color(0xFF86868B);
-
-  static const List<String> _modelKeys = [
-    FilterOptionKeys.allModels,
-    FilterOptionKeys.camry,
-    FilterOptionKeys.landCruiser,
-    FilterOptionKeys.patrol,
-    FilterOptionKeys.escalade,
-  ];
 
   static const List<String> _years = [
     FilterOptionKeys.allYears,
@@ -115,8 +111,14 @@ class AdvancedFilterWidget extends StatelessWidget {
     }).join();
   }
 
-  String _modelLabel(AppLocalizations l10n, String key) =>
-      FilterL10n.modelLabel(l10n, key);
+  String _modelLabel(AppLocalizations l10n, String key, String languageCode) {
+    if (key == CarModelsByBrand.allModelsSentinel) {
+      return l10n.filterAllModels;
+    }
+    if (selectedBrand == null) return key;
+    return CarModelsByBrand.labelForModel(selectedBrand!, key, languageCode) ??
+        key;
+  }
 
   String _yearLabel(AppLocalizations l10n, String key) =>
       key == FilterOptionKeys.allYears ? l10n.filterAllYears : key;
@@ -124,8 +126,20 @@ class AdvancedFilterWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final languageCode = Localizations.localeOf(context).languageCode;
     final width = MediaQuery.sizeOf(context).width;
     final columns = width >= 640 ? 3 : 2;
+    final modelOptionKeys =
+        CarModelsByBrand.modelOptionKeysForBrand(selectedBrand);
+    final modelPickerEnabled = selectedBrand != null &&
+        CarModelsByBrand.hasModelsForBrand(selectedBrand!);
+    final selectedModelKey = selectedBrand != null && values.modelKey != null
+        ? CarModelsByBrand.canonicalModelKey(
+              selectedBrand!,
+              values.modelKey,
+            ) ??
+            values.modelKey
+        : values.modelKey;
 
     return Container(
       width: double.infinity,
@@ -147,7 +161,7 @@ class AdvancedFilterWidget extends StatelessWidget {
         children: [
           if (showHeader) ...[
             _FilterHeader(
-              locationKey: values.locationKey,
+              selectedLocationKeys: values.selectedLocationKeys,
               onLocationTap: onLocationTap ?? () => _pickLocation(context),
               onAdvancedSearchTap: onAdvancedSearchTap,
             ),
@@ -164,16 +178,29 @@ class AdvancedFilterWidget extends StatelessWidget {
                   _FilterDropdown(
                     width: itemWidth,
                     label: l10n.filterModel,
-                    valueKey: values.modelKey,
+                    valueKey: selectedModelKey,
                     placeholder: l10n.filterModel,
-                    optionKeys: _modelKeys,
-                    resolveLabel: (key) => _modelLabel(l10n, key),
-                    onSelected: (key) => onChanged(
-                      values.copyWith(
-                        modelKey: key == _modelKeys.first ? null : key,
-                        clearModel: key == _modelKeys.first,
-                      ),
-                    ),
+                    enabled: modelPickerEnabled,
+                    optionKeys: modelOptionKeys,
+                    resolveLabel: (key) =>
+                        _modelLabel(l10n, key, languageCode),
+                    onSelected: (key) {
+                      final storedKey = key == CarModelsByBrand.allModelsSentinel
+                          ? null
+                          : (selectedBrand != null
+                              ? CarModelsByBrand.canonicalModelKey(
+                                    selectedBrand!,
+                                    key,
+                                  ) ??
+                                  key
+                              : key);
+                      onChanged(
+                        values.copyWith(
+                          modelKey: storedKey,
+                          clearModel: key == CarModelsByBrand.allModelsSentinel,
+                        ),
+                      );
+                    },
                   ),
                   _FilterDropdown(
                     width: itemWidth,
@@ -253,21 +280,24 @@ class AdvancedFilterWidget extends StatelessWidget {
   }
 
   Future<void> _pickLocation(BuildContext context) async {
-    final picked = await showLocationPickerSheet(context);
+    final picked = await showLocationPickerSheet(
+      context,
+      initialSelection: values.selectedLocationKeys,
+    );
     if (picked != null) {
-      onChanged(values.copyWith(locationKey: picked));
+      onChanged(values.copyWith(selectedLocationKeys: picked));
     }
   }
 }
 
 class _FilterHeader extends StatelessWidget {
   const _FilterHeader({
-    required this.locationKey,
+    required this.selectedLocationKeys,
     required this.onLocationTap,
     this.onAdvancedSearchTap,
   });
 
-  final String locationKey;
+  final Set<String> selectedLocationKeys;
   final VoidCallback onLocationTap;
   final VoidCallback? onAdvancedSearchTap;
 
@@ -296,7 +326,10 @@ class _FilterHeader extends StatelessWidget {
         ),
         const Spacer(),
         _LocationChip(
-          label: FilterL10n.locationLabel(l10n, locationKey),
+          label: FilterL10n.selectedLocationsSummary(
+            l10n,
+            selectedLocationKeys,
+          ),
           onTap: onLocationTap,
         ),
       ],
@@ -383,6 +416,7 @@ class _FilterDropdown extends StatefulWidget {
     required this.optionKeys,
     required this.resolveLabel,
     required this.onSelected,
+    this.enabled = true,
   });
 
   final double width;
@@ -392,6 +426,7 @@ class _FilterDropdown extends StatefulWidget {
   final List<String> optionKeys;
   final String Function(String key) resolveLabel;
   final ValueChanged<String> onSelected;
+  final bool enabled;
 
   @override
   State<_FilterDropdown> createState() => _FilterDropdownState();
@@ -401,6 +436,7 @@ class _FilterDropdownState extends State<_FilterDropdown> {
   bool _pressed = false;
 
   Future<void> _openPicker() async {
+    if (!widget.enabled) return;
     final picked = await showModalBottomSheet<String>(
       context: context,
       backgroundColor: Colors.white,
@@ -449,13 +485,20 @@ class _FilterDropdownState extends State<_FilterDropdown> {
         : widget.placeholder;
     final hasValue = widget.valueKey != null;
 
+    final textColor = widget.enabled
+        ? (hasValue
+            ? AdvancedFilterWidget._textPrimary
+            : AdvancedFilterWidget._textSecondary)
+        : AdvancedFilterWidget._textSecondary.withValues(alpha: 0.55);
+
     return SizedBox(
       width: widget.width,
       child: GestureDetector(
-        onTapDown: (_) => setState(() => _pressed = true),
-        onTapUp: (_) => setState(() => _pressed = false),
-        onTapCancel: () => setState(() => _pressed = false),
-        onTap: _openPicker,
+        onTapDown: widget.enabled ? (_) => setState(() => _pressed = true) : null,
+        onTapUp: widget.enabled ? (_) => setState(() => _pressed = false) : null,
+        onTapCancel:
+            widget.enabled ? () => setState(() => _pressed = false) : null,
+        onTap: widget.enabled ? _openPicker : null,
         child: AnimatedScale(
           scale: _pressed ? 0.98 : 1,
           duration: const Duration(milliseconds: 100),
@@ -489,16 +532,14 @@ class _FilterDropdownState extends State<_FilterDropdown> {
                           fontSize: 14,
                           fontWeight:
                               hasValue ? FontWeight.w600 : FontWeight.w500,
-                          color: hasValue
-                              ? AdvancedFilterWidget._textPrimary
-                              : AdvancedFilterWidget._textSecondary,
+                          color: textColor,
                         ),
                       ),
                     ),
-                    const Icon(
+                    Icon(
                       Icons.keyboard_arrow_down_rounded,
                       size: 22,
-                      color: AdvancedFilterWidget._textSecondary,
+                      color: textColor,
                     ),
                   ],
                 ),

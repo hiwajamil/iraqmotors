@@ -30,7 +30,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get heroTitle => 'Power, simplified.';
 
   @override
-  String get heroSubtitle => 'A new way to discover premium cars in Kurdistan.';
+  String get heroSubtitle => 'A new experience for discovering premium cars.';
 
   @override
   String get viewAll => 'All';
@@ -74,6 +74,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get emailSuperAdmin => 'Email (for Super Admin)';
+
+  @override
+  String get emailPlaceholder => 'Enter your email';
 
   @override
   String get invalidEmail => 'Invalid email address';
@@ -237,10 +240,68 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cityKirkuk => 'Kirkuk';
 
   @override
+  String get cityMosul => 'Mosul';
+
+  @override
+  String get cityBasra => 'Basra';
+
+  @override
+  String get cityMaysan => 'Maysan';
+
+  @override
+  String get cityNajaf => 'Najaf';
+
+  @override
+  String get cityKarbala => 'Karbala';
+
+  @override
+  String get cityAnbar => 'Anbar';
+
+  @override
+  String get citySalahuddin => 'Salah al-Din';
+
+  @override
+  String get cityBabylon => 'Babylon';
+
+  @override
+  String get cityDiyala => 'Diyala';
+
+  @override
+  String get cityWasit => 'Wasit';
+
+  @override
+  String get cityMuthanna => 'Muthanna';
+
+  @override
+  String get cityQadisiyyah => 'Qadisiyyah';
+
+  @override
+  String get cityHalabja => 'Halabja';
+
+  @override
+  String get cityDhiQar => 'Dhi Qar';
+
+  @override
   String get locationDefaultRegion => 'Erbil, Sulaymaniyah & 3 more cities';
 
   @override
   String get locationAllCities => 'All Cities';
+
+  @override
+  String get locationSearch => 'Search';
+
+  @override
+  String get locationApply => 'Apply';
+
+  @override
+  String locationTwoCities(String city1, String city2) {
+    return '$city1, $city2';
+  }
+
+  @override
+  String locationCitiesAndMore(String city1, String city2, String count) {
+    return '$city1, $city2 and $count other cities';
+  }
 
   @override
   String get selectCity => 'Select City';
@@ -333,6 +394,140 @@ class AppLocalizationsEn extends AppLocalizations {
   String showCarsCount(String count) {
     return 'Show $count cars';
   }
+
+  @override
+  String get filterTitle => 'Filter';
+
+  @override
+  String get filterReset => 'Reset';
+
+  @override
+  String get filterBrands => 'Brands';
+
+  @override
+  String get filterTrim => 'Trim';
+
+  @override
+  String get filterFromYear => 'From Year';
+
+  @override
+  String get filterToYear => 'To Year';
+
+  @override
+  String get filterMinPrice => 'Min Price';
+
+  @override
+  String get filterMaxPrice => 'Max Price';
+
+  @override
+  String get filterMinMileage => 'Min Mileage';
+
+  @override
+  String get filterMaxMileage => 'Max Mileage';
+
+  @override
+  String get filterPlateCity => 'Plate City';
+
+  @override
+  String get filterPlateType => 'Plate Type';
+
+  @override
+  String get filterConditionSection => 'Condition';
+
+  @override
+  String get filterAll => 'All';
+
+  @override
+  String get filterEngineSize => 'Engine Size';
+
+  @override
+  String get filterCylinders => 'Cylinders';
+
+  @override
+  String get filterImportCountry => 'Import Country';
+
+  @override
+  String get filterColor => 'Color';
+
+  @override
+  String get filterFuelType => 'Fuel Type';
+
+  @override
+  String get filterElectric => 'Electric';
+
+  @override
+  String get filterTransmission => 'Transmission';
+
+  @override
+  String get filterManual => 'Manual';
+
+  @override
+  String get filterSeatMaterial => 'Seat Material';
+
+  @override
+  String get filterSearchModel => 'Search for model';
+
+  @override
+  String filterShowResults(String count) {
+    return 'Show $count cars';
+  }
+
+  @override
+  String get trimBase => 'Standard';
+
+  @override
+  String get trimSport => 'Sport';
+
+  @override
+  String get trimLuxury => 'Luxury';
+
+  @override
+  String get plateTypePrivate => 'Private';
+
+  @override
+  String get plateTypeTemporary => 'Temporary';
+
+  @override
+  String get plateTypeCommercial => 'Commercial';
+
+  @override
+  String get cylinders4 => '4 Cylinders';
+
+  @override
+  String get cylinders6 => '6 Cylinders';
+
+  @override
+  String get cylinders8 => '8 Cylinders';
+
+  @override
+  String get importUae => 'UAE';
+
+  @override
+  String get importUsa => 'USA';
+
+  @override
+  String get importEurope => 'Europe';
+
+  @override
+  String get importGcc => 'GCC';
+
+  @override
+  String get importLocal => 'Local';
+
+  @override
+  String get seatFabric => 'Fabric';
+
+  @override
+  String get seatLeather => 'Leather';
+
+  @override
+  String get seatSemiLeather => 'Semi-Leather';
+
+  @override
+  String get seatAlcantaraLeather => 'Alcantara/Leather';
+
+  @override
+  String get seatAlcantara => 'Alcantara';
 
   @override
   String get brandTitle => 'Car Brand';
