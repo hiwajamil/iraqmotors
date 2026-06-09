@@ -1,0 +1,42 @@
+import '../../models/localized_car_model.dart';
+
+const List<LocalizedCarModel> mgModels = [
+  LocalizedCarModel(id: 'mg_5', ku: '5', en: '5', ar: '5'),
+  LocalizedCarModel(id: 'rx9', ku: 'RX9', en: 'RX9', ar: 'RX9'),
+  LocalizedCarModel(id: 'gt', ku: 'GT', en: 'GT', ar: 'GT'),
+  LocalizedCarModel(id: 'mg_3', ku: '3', en: '3', ar: '3'),
+  LocalizedCarModel(id: 'zs', ku: 'ZS', en: 'ZS', ar: 'ZS'),
+  LocalizedCarModel(id: 'one', ku: 'وهیل', en: 'One', ar: 'ون'),
+  LocalizedCarModel(id: 'mg_7', ku: '7', en: '7', ar: '7'),
+  LocalizedCarModel(id: 'rx5', ku: 'RX5', en: 'RX5', ar: 'RX5'),
+  LocalizedCarModel(id: 'mg_6', ku: '6', en: '6', ar: '6'),
+  LocalizedCarModel(id: 'hs', ku: 'HS', en: 'HS', ar: 'HS'),
+  LocalizedCarModel(id: 'rx8', ku: 'RX8', en: 'RX8', ar: 'RX8'),
+  LocalizedCarModel(id: 'van', ku: 'وەن', en: 'Van', ar: 'فان'),
+  LocalizedCarModel(id: 't60', ku: 'T60', en: 'T60', ar: 'T60'),
+  LocalizedCarModel(id: 'mg_350', ku: '350', en: '350', ar: '350'),
+  LocalizedCarModel(id: 'mg_360', ku: '360', en: '360', ar: '360'),
+  LocalizedCarModel(
+    id: 'mg_5_plus',
+    ku: '5 پڵەس',
+    en: '5 Plus',
+    ar: '5 بلس',
+  ),
+  LocalizedCarModel(id: 'mg_550', ku: '550', en: '550', ar: '550'),
+  LocalizedCarModel(id: 'mg_750', ku: '750', en: '750', ar: '750'),
+  LocalizedCarModel(id: 'gs', ku: 'GS', en: 'GS', ar: 'GS'),
+  LocalizedCarModel(
+    id: 'mg_4_ev',
+    ku: 'ئێم جی ٤ ئەیڤی',
+    en: 'MG 4 EV',
+    ar: 'MG 4 EV',
+  ),
+  LocalizedCarModel(id: 'rakan', ku: 'ڕاکان', en: 'Rakan', ar: 'راكان'),
+  LocalizedCarModel(
+    id: 'magister',
+    ku: 'ماجیستۆر',
+    en: 'Magister',
+    ar: 'ماجستور',
+  ),
+  LocalizedCarModel(id: 'midget', ku: 'میدجێت', en: 'Midget', ar: 'ميدجيت'),
+];

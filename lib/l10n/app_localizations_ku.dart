@@ -209,8 +209,19 @@ class AppLocalizationsKu extends AppLocalizations {
   String get authWrongCredentials => 'ژمارەی مۆبایل یان وشەی نهێنی هەڵەیە.';
 
   @override
+  String get authAccountNotFoundPrompt =>
+      'ئەم هەژمارە نەدۆزرایەوە، ئایا دەتەوێت هەژمارێکی نوێ دروست بکەیت؟';
+
+  @override
+  String get authCreateNewAccount => 'دروستکردنی هەژمار';
+
+  @override
   String get authTooManyRequests =>
       'هەوڵی زۆر. کەمێک چاوەڕێ بکە و دووبارە هەوڵ بدەرەوە.';
+
+  @override
+  String get authDeviceBlocked =>
+      'ئەم ئامێرە کاتییان قەدەغە کراوە لە هەوڵی زۆری ناردنی کۆد. چەند کاتژمێرێک چاوەڕێ بکە، وێبگەڕێکی تر تاقی بکەرەوە، یان ژمارەی تاقیکردنەوە 7722141988 بە کۆدی 112233 بەکاربهێنە.';
 
   @override
   String get authNetworkError =>
@@ -226,6 +237,18 @@ class AppLocalizationsKu extends AppLocalizations {
   @override
   String get authCaptchaFailed =>
       'سەلماندنی ئاسایش سەرکەوتوو نەبوو. پەڕەکە نوێ بکەرەوە و دووبارە هەوڵ بدەرەوە.';
+
+  @override
+  String get authInvalidAppCredential =>
+      'سەلماندنی مۆبایل لەم دۆمەینەدا بەردەست نییە. iqmotors.net یان iqmotors-d588d.web.app بەکاربهێنە، یان دۆمەینەکە لە Firebase Console → Authentication → Settings → Authorized domains زیاد بکە.';
+
+  @override
+  String get authBillingRequired =>
+      'ناردنی کۆدی SMS پێویستی بە پلانی Blaze هەیە لە Firebase. پەیوەندی بە بەڕێوەبەری ئەپەکە بکە.';
+
+  @override
+  String get authPhoneAuthDisabled =>
+      'چوونەژوورەوە بە مۆبایل لە Firebase ناچالاکە. دابینکەری Phone لە کۆنسۆڵی Firebase چالاک بکە.';
 
   @override
   String get cityErbil => 'هەولێر';
@@ -310,25 +333,43 @@ class AppLocalizationsKu extends AppLocalizations {
   String get selectCity => 'شار هەڵبژێرە';
 
   @override
-  String get advancedSearch => 'گەڕانی پێشکەوتوو';
+  String get advancedSearch => 'گەڕانی تایبەت';
 
   @override
   String get filterModel => 'مۆدێل';
 
   @override
+  String get filterModelPlaceholder => 'بۆ نموونە: BMW X7';
+
+  @override
   String get filterYear => 'ساڵ';
+
+  @override
+  String get filterYearPlaceholder => 'بۆ نموونە: ٢٠٢٤';
 
   @override
   String get filterMileage => 'ماوەی ڕۆیشتن';
 
   @override
+  String get filterMileagePlaceholder => 'بۆ نموونە: تا ٥٠،٠٠٠ km';
+
+  @override
   String get filterPrice => 'نرخ';
+
+  @override
+  String get filterPricePlaceholder => 'بۆ نموونە: تا \$٥٠،٠٠٠';
 
   @override
   String get filterCondition => 'بارودۆخ';
 
   @override
+  String get filterConditionPlaceholder => 'بۆ نموونە: بەکارهاتوو';
+
+  @override
   String get filterEngineType => 'جۆری بزوێنەر';
+
+  @override
+  String get filterEngineTypePlaceholder => 'بۆ نموونە: بەنزین';
 
   @override
   String get filterAllModels => 'هەموو مۆدێلەکان';
@@ -548,6 +589,27 @@ class AppLocalizationsKu extends AppLocalizations {
   String get specMileage => 'ڕۆیشتوو';
 
   @override
+  String get sellerPriceLabel => 'نرخی فرۆشیار:';
+
+  @override
+  String get latestBidLabel => 'دوایین نرخ:';
+
+  @override
+  String get placeYourBid => 'نرخی خۆت دابنێ';
+
+  @override
+  String get enterBidAmount => 'نرخی پێشنیارکراوت داخڵ بکە';
+
+  @override
+  String get submitBid => 'ناردن';
+
+  @override
+  String get bidTooLowError => 'تکایە نرخێکی بەرزتر لە دوایین نرخ داخڵ بکە';
+
+  @override
+  String get bidSuccessMessage => 'نرخەکەت بە سەرکەوتوویی دانرا!';
+
+  @override
   String get specTransmission => 'گێڕ';
 
   @override
@@ -727,4 +789,561 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get dummyPublisherHiwa => 'هیوا جەمیل';
+
+  @override
+  String get userDashboardTitle => 'داشبۆردی بەکارهێنەر';
+
+  @override
+  String get navHomeScreen => 'پەڕەی سەرەکی';
+
+  @override
+  String get navMyFavorites => 'دڵخوازەکانم';
+
+  @override
+  String get navMyAds => 'ڕیکلامەکانم';
+
+  @override
+  String get navMessages => 'نامەکان';
+
+  @override
+  String get userAccountPersonal => 'هەژماری کەسی';
+
+  @override
+  String get favoritesSectionTitle => 'دڵخوازەکانم (سەیڤکراو)';
+
+  @override
+  String get favoritesEmpty => 'هیچ ئۆتۆمبێلێکی سەیڤکراو نییە';
+
+  @override
+  String get myAdsEmpty => 'هیچ ڕیکلامێکت نییە';
+
+  @override
+  String get viewAllListings => 'بینینی هەمووی';
+
+  @override
+  String get deleteAdTitle => 'سڕینەوەی ڕیکلام';
+
+  @override
+  String get deleteAdConfirm =>
+      'ئایا دڵنیایت لە سڕینەوەی ئەم ڕیکلامە؟ ئەم کارە هەڵناوەشێتەوە.';
+
+  @override
+  String get cancelAction => 'پاشگەزبوونەوە';
+
+  @override
+  String get deleteAction => 'سڕینەوە';
+
+  @override
+  String get adDeletedSuccess => 'ڕیکلامەکە بە سەرکەوتوویی سڕایەوە';
+
+  @override
+  String get sell => 'فرۆشتن';
+
+  @override
+  String get sellCarButton => 'فرۆشتنی ئۆتۆمبێل';
+
+  @override
+  String get editAction => 'دەستکاری';
+
+  @override
+  String get adStatusActive => 'چالاک';
+
+  @override
+  String get carFallbackTitle => 'ئۆتۆمبێل';
+
+  @override
+  String get messagesEmpty => 'هیچ نامەیەک نییە';
+
+  @override
+  String get settingsComingSoon => 'ڕێکخستنەکان بەزووی زیاد دەکرێت';
+
+  @override
+  String get adminApprovalsByCitySubtitle =>
+      'پێداچوونەوەی ڕیکلامەکان بەپێی پارێزگا';
+
+  @override
+  String get adminUsersByCitySubtitle => 'بەکارهێنەران بەپێی پارێزگا';
+
+  @override
+  String get adminShowroomsByCitySubtitle => 'پێشانگاکان بەپێی پارێزگا';
+
+  @override
+  String get adminStatApproved => 'پەسەندکراو';
+
+  @override
+  String get adminStatPendingReview => 'چاوەڕوانکراو';
+
+  @override
+  String get adminStatExpired => 'بەسەرچوو';
+
+  @override
+  String get adminRetry => 'دووبارە';
+
+  @override
+  String get adminNoUsersInCity => 'هیچ بەکارهێنەرێک لەم شارەدا نییە.';
+
+  @override
+  String get adminNoShowroomsInCity => 'هیچ پێشانگایەک لەم شارەدا نییە.';
+
+  @override
+  String get adminNoPendingListings => 'هیچ ڕیکلامێکی چاوەڕوان نییە.';
+
+  @override
+  String get adminSectionComingSoon => 'ئەم بەشە بەمزوانە بەردەست دەبێت.';
+
+  @override
+  String get adminAdCountLabel => 'ژمارەی ڕیکلامەکان';
+
+  @override
+  String get adminActiveAdCountLabel => 'ڕیکلامی چالاک';
+
+  @override
+  String get adminTotalAdCountLabel => 'کۆی ڕیکلامەکان';
+
+  @override
+  String get adminUserCountLabel => 'بەکارهێنەر';
+
+  @override
+  String get adminShowroomCountLabel => 'پێشانگا';
+
+  @override
+  String get adminRejectAdTitle => 'ڕەتکردنەوەی ڕیکلام';
+
+  @override
+  String get adminRejectAdConfirm => 'ئایا دڵنیایت لە ڕەتکردنەوەی ئەم ڕیکلامە؟';
+
+  @override
+  String get adminAdApprovedSuccess => 'ڕیکلامەکە بە سەرکەوتوویی پەسەندکرا';
+
+  @override
+  String get adminAdRejectedSuccess => 'ڕیکلامەکە ڕەتکرایەوە';
+
+  @override
+  String get adminDescriptionLabel => 'وەسف';
+
+  @override
+  String get adminReportsSubtitle => 'ئامارەکانی پلاتفۆرم و پێشاندانی داهات';
+
+  @override
+  String get adminDailyActiveUsers => 'بەکارهێنەری چالاکی ڕۆژانە';
+
+  @override
+  String get adminDailyNewAds => 'ڕیکلامی نوێ';
+
+  @override
+  String get adminLast30Days => '٣٠ ڕۆژی ڕابردوو';
+
+  @override
+  String get adminTotalRevenue => 'کۆی داهات';
+
+  @override
+  String get adminRevenueFromBoost => 'لە پاکێجی بووست';
+
+  @override
+  String get adminRevenueCard => 'کارتی بانکی';
+
+  @override
+  String get adminRevenueEWallet => 'جزدانی ئەلیکترۆنی';
+
+  @override
+  String get adminCityPerformance => 'ئەدای شارەکان';
+
+  @override
+  String get adminCityColumn => 'شار';
+
+  @override
+  String get adminTotalAdsColumn => 'کۆی ڕیکلام';
+
+  @override
+  String get adminApprovedAdsColumn => 'پەسەندکراو';
+
+  @override
+  String get adminSettingsSubtitle => 'ڕێکخستنی پلاتفۆرم و دەسەڵاتەکان';
+
+  @override
+  String get adminSettingsGeneral => 'ڕێکخستنی گشتی';
+
+  @override
+  String get adminSettingsPackages => 'نرخی پاکێجەکان';
+
+  @override
+  String get adminSettingsCities => 'شار و ناوچەکان';
+
+  @override
+  String get adminSettingsSecurity => 'ئاسایش و ئەدمین';
+
+  @override
+  String get adminSettingsBoostPrice => 'نرخی پاکێجی بووست (د.ع)';
+
+  @override
+  String get adminSettingsSuperBoostPrice => 'نرخی سوپەر بووست (د.ع)';
+
+  @override
+  String get adminSettingsSaveChanges => 'پاشەکەوتکردن';
+
+  @override
+  String get adminSettingsSavedSuccess =>
+      'ڕێکخستنەکان بە سەرکەوتوویی پاشەکەوت کران';
+
+  @override
+  String get adminSettingsActiveCities => 'شارە چالاکەکان';
+
+  @override
+  String get adminSettingsAddCity => 'زیادکردنی شار';
+
+  @override
+  String get adminSettingsNewCityHint => 'ناوی شار';
+
+  @override
+  String get adminSettingsAdmins => 'ئەدمینەکانی پلاتفۆرم';
+
+  @override
+  String get adminSettingsAddAdmin => 'زیادکردنی ئەدمین';
+
+  @override
+  String get adminSettingsAdminEmail => 'ئیمەیڵ';
+
+  @override
+  String get adminSettingsAdminPhone => 'ژمارەی مۆبایل';
+
+  @override
+  String get adminSettingsAdminName => 'ناو';
+
+  @override
+  String get adminSettingsSystemCredentials => 'زانیاری سیستەم';
+
+  @override
+  String get adminSettingsR2Endpoint => 'بەستەری R2';
+
+  @override
+  String get adminSettingsR2AccessKey => 'کلیلی دەستگەیشتنی R2';
+
+  @override
+  String get adminSettingsR2SecretKey => 'کلیلی نهێنی R2';
+
+  @override
+  String get adminSettingsR2Bucket => 'ناوی bucket ی R2';
+
+  @override
+  String get adminSettingsGeneralInfo => 'زانیاری پلاتفۆرم';
+
+  @override
+  String get adminSettingsAppName => 'IQ Motors';
+
+  @override
+  String get adminSettingsAppVersion => 'وەشان 1.0.0';
+
+  @override
+  String get adminSettingsRemove => 'سڕینەوە';
+
+  @override
+  String get adminSettingsAddCityTitle => 'شارێکی نوێ';
+
+  @override
+  String get adminSettingsAddAdminTitle => 'ئەدمینی نوێ';
+
+  @override
+  String get adminSettingsCredentialsNote =>
+      'تەنها بۆ بەڕێوەبەری سەرەکی. لە Firestore system_config هەڵدەگیرێت.';
+
+  @override
+  String get navActivity => 'چالاکییەکان';
+
+  @override
+  String get adminActivitySubtitle => 'مێژووی کردارەکانی ئەدمین';
+
+  @override
+  String get adminActivitySearchHint => 'گەڕان بە ناو یان جۆری کردار';
+
+  @override
+  String get adminActivityEmpty => 'هێشتا هیچ چالاکییەک تۆمار نەکراوە.';
+
+  @override
+  String get adminActivityNoResults => 'هیچ ئەنجامێک نەدۆزرایەوە.';
+
+  @override
+  String get adminActivityPerformedBy => 'لەلایەن';
+
+  @override
+  String get adminActivityJustNow => 'ئێستا';
+
+  @override
+  String adminActivityMinutesAgo(int count) {
+    return '$count خولەک پێش ئێستا';
+  }
+
+  @override
+  String adminActivityHoursAgo(int count) {
+    return '$count کاتژمێر پێش ئێستا';
+  }
+
+  @override
+  String adminActivityDaysAgo(int count) {
+    return '$count ڕۆژ پێش ئێستا';
+  }
+
+  @override
+  String get adminActivityActionApproved => 'پەسەندکردنی ڕیکلام';
+
+  @override
+  String get adminActivityActionRejected => 'ڕەتکردنەوەی ڕیکلام';
+
+  @override
+  String get adminActivityActionDeleted => 'سڕینەوەی ڕیکلام';
+
+  @override
+  String get adminActivityActionUpdatedPrice => 'نوێکردنەوەی نرخی پاکێج';
+
+  @override
+  String get adminActivityActionUpdatedConfig => 'نوێکردنەوەی ڕێکخستن';
+
+  @override
+  String get adminActivityActionAddedCity => 'زیادکردنی شار';
+
+  @override
+  String get adminActivityActionRemovedCity => 'سڕینەوەی شار';
+
+  @override
+  String get adminActivityActionAddedAdmin => 'زیادکردنی ئەدمین';
+
+  @override
+  String get adminActivityActionUpdatedCredentials =>
+      'نوێکردنەوەی زانیاری سیستەم';
+
+  @override
+  String get adminMessagesTitle => 'نامەکان و سکاڵاکان';
+
+  @override
+  String get adminMessagesSubtitle => 'پەیوەندی بەکارهێنەران و پشتگیری';
+
+  @override
+  String get adminMessagesFilterAll => 'هەموو';
+
+  @override
+  String get adminMessagesFilterOpen => 'کراوە';
+
+  @override
+  String get adminMessagesFilterResolved => 'چارەسەرکراو';
+
+  @override
+  String get adminMessagesStatusOpen => 'کراوە';
+
+  @override
+  String get adminMessagesStatusResolved => 'چارەسەرکراو';
+
+  @override
+  String get adminMessagesSend => 'ارسال';
+
+  @override
+  String get adminMessagesSelectTicket => 'سکاڵایەک هەڵبژێرە بۆ بینینی گفتوگۆ';
+
+  @override
+  String get adminMessagesResolve => 'نیشانکردن وەک چارەسەرکراو';
+
+  @override
+  String get adminMessagesReopen => 'دووبارە کردنەوە';
+
+  @override
+  String get adminMessagesReplyHint => 'وەڵام بنووسە…';
+
+  @override
+  String get adminMessagesBackToList => 'گەڕانەوە بۆ لیست';
+
+  @override
+  String get navFlaggedAds => 'ڕاپۆرتە پێشێلکارییەکان';
+
+  @override
+  String get adminFlaggedSubtitle => 'ڕیکلامە ڕاپۆرتکراوەکان پێداچوونەوە بکە';
+
+  @override
+  String get adminFlaggedReasonLabel => 'هۆکار';
+
+  @override
+  String get adminFlaggedReportedByLabel => 'ڕاپۆرتکراو لەلایەن';
+
+  @override
+  String get adminFlaggedViewAd => 'بینینی ڕیکلام';
+
+  @override
+  String get adminFlaggedDeleteAd => 'سڕینەوەی ڕیکلام';
+
+  @override
+  String get adminFlaggedIgnore => 'پشتگوێخستن';
+
+  @override
+  String get adminFlaggedEmpty => 'هیچ ڕاپۆرتێکی چاوەڕوان نییە.';
+
+  @override
+  String get adminFlaggedDeleteConfirm =>
+      'ئایا دڵنیایت لە سڕینەوەی ئەم ڕیکلامە؟';
+
+  @override
+  String get adminFlaggedDeleteSuccess =>
+      'ڕیکلامەکە سڕایەوە و ڕاپۆرتەکە چارەسەرکرا.';
+
+  @override
+  String get adminFlaggedIgnoredSuccess => 'ڕاپۆرتەکە پشتگوێخرا.';
+
+  @override
+  String get adminFlaggedAdMissing => 'ڕیکلامەکە بەردەست نییە';
+
+  @override
+  String get flaggedReasonSold => 'سەیارەکە فرۆشراوە';
+
+  @override
+  String get flaggedReasonWrongPrice => 'نرخی هەڵەیە';
+
+  @override
+  String get flaggedReasonMisleading => 'زانیاری هەڵە';
+
+  @override
+  String get flaggedReasonSpam => 'سپام';
+
+  @override
+  String get next => 'دواتر';
+
+  @override
+  String addCarStepProgress(int current, int total) {
+    return 'هەنگاوی $current لە $total';
+  }
+
+  @override
+  String get addCarPublish => 'بڵاوکردنەوە';
+
+  @override
+  String get addCarSave => 'پاشەکەوتکردن';
+
+  @override
+  String get addCarPublishing => 'خەریکی بڵاوکردنەوە...';
+
+  @override
+  String get addCarSaving => 'خەریکی پاشەکەوتکردن...';
+
+  @override
+  String get addCarPhotoProcessing => 'پشکنینی وێنە...';
+
+  @override
+  String get addCarMinPhotosRequired => 'تکایە لانیکەم ٤ وێنە هەڵبژێرە.';
+
+  @override
+  String get addCarUploadFailed => 'بارکردنی وێنەکان سەرکەوتوو نەبوو.';
+
+  @override
+  String get addCarSaveSuccess => 'گۆڕانکارییەکان بە سەرکەوتوویی پاشەکەوتکران';
+
+  @override
+  String get addCarPublishSuccess => 'ڕاگەیاندنەکەت بە سەرکەوتوویی بڵاوکرایەوە';
+
+  @override
+  String get addCarSaveFailed =>
+      'پاشەکەوتکردن سەرکەوتوو نەبوو. دووبارە هەوڵ بدەرەوە.';
+
+  @override
+  String get addCarPublishFailed =>
+      'بڵاوکردنەوە سەرکەوتوو نەبوو. دووبارە هەوڵ بدەرەوە.';
+
+  @override
+  String get addCarPhotoCheckFailed =>
+      'پشکنینی وێنە سەرکەوتوو نەبوو. دووبارە هەوڵ بدەرەوە.';
+
+  @override
+  String get addCarStepLocationTitle => 'شوێن';
+
+  @override
+  String get addCarStepPhotosTitle => 'وێنەکان';
+
+  @override
+  String get addCarStepInfoTitle => 'زانیاری';
+
+  @override
+  String get addCarStepPlateTitle => 'تابلۆ';
+
+  @override
+  String get addCarStepDetailsTitle => 'وردەکاری';
+
+  @override
+  String get addCarStepTechnicalTitle => 'تەکنیکی';
+
+  @override
+  String get addCarStepInteriorTitle => 'ناوەوە';
+
+  @override
+  String get addCarStepConditionTitle => 'دۆخ';
+
+  @override
+  String get addCarStepPriceTitle => 'نرخ';
+
+  @override
+  String get addCarStepReviewTitle => 'پێداچوونەوە';
+
+  @override
+  String get addCarStepListingTitle => 'بڵاوکردنەوە';
+
+  @override
+  String get addCarStepPaymentTitle => 'پارەدان';
+
+  @override
+  String get addCarLocationHeading => 'ئۆتۆمبێلەکەت لە چ شوێنێکە؟';
+
+  @override
+  String get addCarLocationSubtitle => 'پارێزگا / ناوچە دیاری بکە';
+
+  @override
+  String get addCarProvinceLabel => 'پارێزگا';
+
+  @override
+  String get addCarProvincePlaceholder => 'پارێزگا هەڵبژێرە';
+
+  @override
+  String get addCarAreaLabel => 'ناوچە / شار';
+
+  @override
+  String get addCarAreaPlaceholder => 'ناوچە هەڵبژێرە';
+
+  @override
+  String get addCarPhotosHeading => 'وێنەکان بگرە';
+
+  @override
+  String get addCarPhotosSubtitle =>
+      'بە لایەنی کەمەوە ٤ وێنەی ئۆتۆمبێلەکەت بگرە';
+
+  @override
+  String get addCarPhotoPrimary => 'سەرەکی';
+
+  @override
+  String get addCarBasicInfoHeading => 'زانیاری سەرەتایی ئۆتۆمبێل';
+
+  @override
+  String get addCarBasicInfoSubtitle =>
+      'ئەو زانیارییانە هەڵبژێرە کە لەگەڵ ئۆتۆمبێلەکەت دەگونجێت';
+
+  @override
+  String get addCarBrandLabel => 'براند';
+
+  @override
+  String get addCarBrandPlaceholder => 'براند هەڵبژێرە';
+
+  @override
+  String get addCarModelLabel => 'مۆدێل';
+
+  @override
+  String get addCarModelPlaceholder => 'مۆدێل هەڵبژێرە';
+
+  @override
+  String get addCarColorLabel => 'ڕەنگ';
+
+  @override
+  String get addCarColorPlaceholder => 'ڕەنگ هەڵبژێرە';
+
+  @override
+  String get addCarYearLabel => 'ساڵی مۆدێل';
+
+  @override
+  String get addCarYearPlaceholder => 'ساڵ هەڵبژێرە';
+
+  @override
+  String get addCarTrimLabel => 'خاسڵەت';
+
+  @override
+  String get addCarTrimPlaceholder => 'خاسڵەت هەڵبژێرە';
 }

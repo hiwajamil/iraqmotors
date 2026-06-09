@@ -42,38 +42,46 @@ abstract final class LocalizedDummyData {
   static List<Map<String, dynamic>> homeListings() {
     return [
       {
+        'id': 'demo-cadillac-escalade',
         'imageUrl':
             'https://images.unsplash.com/photo-1562911791-c7a97b729ec5?q=80&w=800&auto=format&fit=crop',
         'make': 'Cadillac',
         'model': 'Escalade-V 2024',
         'price': r'$165,000',
+        'latestBid': r'$162,500',
         'engine': '6.2L Supercharged',
         'mileage': '0 km',
       },
       {
+        'id': 'demo-mercedes-s500',
         'imageUrl':
             'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?q=80&w=800&auto=format&fit=crop',
         'make': 'Mercedes-Benz',
         'model': 'S-Class S500',
         'price': r'$158,000',
+        'latestBid': r'$155,000',
         'engine': '3.0L Inline-6 Turbo',
         'mileage': '2,500 km',
       },
       {
+        'id': 'demo-lexus-lx600',
         'imageUrl':
             'https://images.unsplash.com/photo-1614200187524-dc4b892acf16?q=80&w=800&auto=format&fit=crop',
         'make': 'Lexus',
         'model': 'LX 600 VIP',
         'price': r'$152,000',
+        'latestBid': r'$149,500',
         'engine': '3.5L Twin-Turbo',
         'mileage': '0 km',
       },
       {
+        'id': 'demo-hennessey-raptor',
         'imageUrl':
             'https://images.unsplash.com/photo-1532581140115-3e355d1ed1de?q=80&w=800&auto=format&fit=crop',
         'make': 'Hennessey Performance',
         'model': 'VelociRaptor 600',
         'price': r'$145,000',
+        'latestBid': r'$142,000',
         'engine': '3.5L V6 Tuned',
         'mileage': '1,200 km',
       },

@@ -217,6 +217,86 @@ class AddCarDraft {
   List<String> get localPhotoPaths =>
       normalizedPhotos().whereType<String>().toList();
 
+  static bool isRemoteImageUrl(String path) =>
+      path.startsWith('http://') || path.startsWith('https://');
+
+  /// Remote URLs already stored for this listing (edit mode).
+  List<String> get existingImageUrls =>
+      localPhotoPaths.where(isRemoteImageUrl).toList();
+
+  /// Newly picked local files that still need uploading (edit mode).
+  List<String> get newLocalPhotoPaths =>
+      localPhotoPaths.where((p) => !isRemoteImageUrl(p)).toList();
+
+  List<String> get existingDamageImageUrls =>
+      damagePhotos.where(isRemoteImageUrl).toList();
+
+  List<String> get newLocalDamagePhotoPaths =>
+      damagePhotos.where((p) => !isRemoteImageUrl(p)).toList();
+
+  /// Reconstructs an existing Firestore car document into wizard state.
+  factory AddCarDraft.fromFirestoreMap(Map<String, dynamic> data) {
+    final imageUrls = (data['imageUrls'] as List<dynamic>?)
+            ?.map((e) => e.toString())
+            .toList() ??
+        const <String>[];
+    final damageUrls = (data['damageImageUrls'] as List<dynamic>?)
+            ?.map((e) => e.toString())
+            .toList() ??
+        const <String>[];
+
+    final rawFeatures = data['features'];
+    final Set<String> selectedFeatures;
+    if (rawFeatures is List) {
+      selectedFeatures = rawFeatures.map((e) => e.toString()).toSet();
+    } else {
+      selectedFeatures = {};
+    }
+
+    return AddCarDraft(
+      province: _stringField(data['province']),
+      city: _stringField(data['city']),
+      photos: imageUrls.cast<String?>(),
+      brandId: _stringField(data['brandId']),
+      modelKey: _stringField(data['modelKey']),
+      colorKey: _stringField(data['colorKey']),
+      year: _stringField(data['year']),
+      trim: _stringField(data['trim']),
+      plateTypeKey: _stringField(data['plateTypeKey']),
+      plateCityKey: _stringField(data['plateCityKey']),
+      mileageValue: _numericField(data['mileageValue']),
+      mileageUnit:
+          _stringField(data['mileageUnit']) ?? AddCarOptionKeys.mileageUnitKm,
+      fuelKey: _stringField(data['fuelKey']) ?? AddCarFormOptions.defaultFuelKey,
+      importCountryKey: _stringField(data['importCountryKey']),
+      transmissionKey: _stringField(data['transmissionKey']),
+      cylindersKey: _stringField(data['cylindersKey']),
+      engineSizeKey: _stringField(data['engineSizeKey']),
+      seatMaterialKey: _stringField(data['seatMaterialKey']),
+      seatCountKey: _stringField(data['seatCountKey']),
+      conditionKey: _stringField(data['conditionKey']),
+      selectedFeatures: selectedFeatures,
+      damagePhotos: damageUrls,
+      description: _stringField(data['description']),
+      priceValue: _numericField(data['priceValue']),
+      currencyKey:
+          _stringField(data['currencyKey']) ?? AddCarFormOptions.defaultCurrencyKey,
+      packageKey: _stringField(data['packageKey']),
+      paymentMethodKey: _stringField(data['paymentMethodKey']),
+    );
+  }
+
+  static String? _stringField(dynamic value) {
+    if (value == null) return null;
+    final text = value.toString().trim();
+    return text.isEmpty ? null : text;
+  }
+
+  static String? _numericField(dynamic value) {
+    if (value == null) return null;
+    return value.toString();
+  }
+
   /// Firestore-ready map of textual listing fields (images added separately).
   Map<String, dynamic> toFirestoreMap({String? sellerId}) {
     return {

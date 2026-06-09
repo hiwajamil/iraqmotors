@@ -484,11 +484,29 @@ abstract class AppLocalizations {
   /// **'ژمارەی مۆبایل یان وشەی نهێنی هەڵەیە.'**
   String get authWrongCredentials;
 
+  /// No description provided for @authAccountNotFoundPrompt.
+  ///
+  /// In ku, this message translates to:
+  /// **'ئەم هەژمارە نەدۆزرایەوە، ئایا دەتەوێت هەژمارێکی نوێ دروست بکەیت؟'**
+  String get authAccountNotFoundPrompt;
+
+  /// No description provided for @authCreateNewAccount.
+  ///
+  /// In ku, this message translates to:
+  /// **'دروستکردنی هەژمار'**
+  String get authCreateNewAccount;
+
   /// No description provided for @authTooManyRequests.
   ///
   /// In ku, this message translates to:
   /// **'هەوڵی زۆر. کەمێک چاوەڕێ بکە و دووبارە هەوڵ بدەرەوە.'**
   String get authTooManyRequests;
+
+  /// No description provided for @authDeviceBlocked.
+  ///
+  /// In ku, this message translates to:
+  /// **'ئەم ئامێرە کاتییان قەدەغە کراوە لە هەوڵی زۆری ناردنی کۆد. چەند کاتژمێرێک چاوەڕێ بکە، وێبگەڕێکی تر تاقی بکەرەوە، یان ژمارەی تاقیکردنەوە 7722141988 بە کۆدی 112233 بەکاربهێنە.'**
+  String get authDeviceBlocked;
 
   /// No description provided for @authNetworkError.
   ///
@@ -513,6 +531,24 @@ abstract class AppLocalizations {
   /// In ku, this message translates to:
   /// **'سەلماندنی ئاسایش سەرکەوتوو نەبوو. پەڕەکە نوێ بکەرەوە و دووبارە هەوڵ بدەرەوە.'**
   String get authCaptchaFailed;
+
+  /// No description provided for @authInvalidAppCredential.
+  ///
+  /// In ku, this message translates to:
+  /// **'سەلماندنی مۆبایل لەم دۆمەینەدا بەردەست نییە. iqmotors.net یان iqmotors-d588d.web.app بەکاربهێنە، یان دۆمەینەکە لە Firebase Console → Authentication → Settings → Authorized domains زیاد بکە.'**
+  String get authInvalidAppCredential;
+
+  /// No description provided for @authBillingRequired.
+  ///
+  /// In ku, this message translates to:
+  /// **'ناردنی کۆدی SMS پێویستی بە پلانی Blaze هەیە لە Firebase. پەیوەندی بە بەڕێوەبەری ئەپەکە بکە.'**
+  String get authBillingRequired;
+
+  /// No description provided for @authPhoneAuthDisabled.
+  ///
+  /// In ku, this message translates to:
+  /// **'چوونەژوورەوە بە مۆبایل لە Firebase ناچالاکە. دابینکەری Phone لە کۆنسۆڵی Firebase چالاک بکە.'**
+  String get authPhoneAuthDisabled;
 
   /// No description provided for @cityErbil.
   ///
@@ -673,7 +709,7 @@ abstract class AppLocalizations {
   /// No description provided for @advancedSearch.
   ///
   /// In ku, this message translates to:
-  /// **'گەڕانی پێشکەوتوو'**
+  /// **'گەڕانی تایبەت'**
   String get advancedSearch;
 
   /// No description provided for @filterModel.
@@ -682,11 +718,23 @@ abstract class AppLocalizations {
   /// **'مۆدێل'**
   String get filterModel;
 
+  /// No description provided for @filterModelPlaceholder.
+  ///
+  /// In ku, this message translates to:
+  /// **'بۆ نموونە: BMW X7'**
+  String get filterModelPlaceholder;
+
   /// No description provided for @filterYear.
   ///
   /// In ku, this message translates to:
   /// **'ساڵ'**
   String get filterYear;
+
+  /// No description provided for @filterYearPlaceholder.
+  ///
+  /// In ku, this message translates to:
+  /// **'بۆ نموونە: ٢٠٢٤'**
+  String get filterYearPlaceholder;
 
   /// No description provided for @filterMileage.
   ///
@@ -694,11 +742,23 @@ abstract class AppLocalizations {
   /// **'ماوەی ڕۆیشتن'**
   String get filterMileage;
 
+  /// No description provided for @filterMileagePlaceholder.
+  ///
+  /// In ku, this message translates to:
+  /// **'بۆ نموونە: تا ٥٠،٠٠٠ km'**
+  String get filterMileagePlaceholder;
+
   /// No description provided for @filterPrice.
   ///
   /// In ku, this message translates to:
   /// **'نرخ'**
   String get filterPrice;
+
+  /// No description provided for @filterPricePlaceholder.
+  ///
+  /// In ku, this message translates to:
+  /// **'بۆ نموونە: تا \$٥٠،٠٠٠'**
+  String get filterPricePlaceholder;
 
   /// No description provided for @filterCondition.
   ///
@@ -706,11 +766,23 @@ abstract class AppLocalizations {
   /// **'بارودۆخ'**
   String get filterCondition;
 
+  /// No description provided for @filterConditionPlaceholder.
+  ///
+  /// In ku, this message translates to:
+  /// **'بۆ نموونە: بەکارهاتوو'**
+  String get filterConditionPlaceholder;
+
   /// No description provided for @filterEngineType.
   ///
   /// In ku, this message translates to:
   /// **'جۆری بزوێنەر'**
   String get filterEngineType;
+
+  /// No description provided for @filterEngineTypePlaceholder.
+  ///
+  /// In ku, this message translates to:
+  /// **'بۆ نموونە: بەنزین'**
+  String get filterEngineTypePlaceholder;
 
   /// No description provided for @filterAllModels.
   ///
@@ -1138,6 +1210,48 @@ abstract class AppLocalizations {
   /// **'ڕۆیشتوو'**
   String get specMileage;
 
+  /// No description provided for @sellerPriceLabel.
+  ///
+  /// In ku, this message translates to:
+  /// **'نرخی فرۆشیار:'**
+  String get sellerPriceLabel;
+
+  /// No description provided for @latestBidLabel.
+  ///
+  /// In ku, this message translates to:
+  /// **'دوایین نرخ:'**
+  String get latestBidLabel;
+
+  /// No description provided for @placeYourBid.
+  ///
+  /// In ku, this message translates to:
+  /// **'نرخی خۆت دابنێ'**
+  String get placeYourBid;
+
+  /// No description provided for @enterBidAmount.
+  ///
+  /// In ku, this message translates to:
+  /// **'نرخی پێشنیارکراوت داخڵ بکە'**
+  String get enterBidAmount;
+
+  /// No description provided for @submitBid.
+  ///
+  /// In ku, this message translates to:
+  /// **'ناردن'**
+  String get submitBid;
+
+  /// No description provided for @bidTooLowError.
+  ///
+  /// In ku, this message translates to:
+  /// **'تکایە نرخێکی بەرزتر لە دوایین نرخ داخڵ بکە'**
+  String get bidTooLowError;
+
+  /// No description provided for @bidSuccessMessage.
+  ///
+  /// In ku, this message translates to:
+  /// **'نرخەکەت بە سەرکەوتوویی دانرا!'**
+  String get bidSuccessMessage;
+
   /// No description provided for @specTransmission.
   ///
   /// In ku, this message translates to:
@@ -1485,6 +1599,1080 @@ abstract class AppLocalizations {
   /// In ku, this message translates to:
   /// **'هیوا جەمیل'**
   String get dummyPublisherHiwa;
+
+  /// No description provided for @userDashboardTitle.
+  ///
+  /// In ku, this message translates to:
+  /// **'داشبۆردی بەکارهێنەر'**
+  String get userDashboardTitle;
+
+  /// No description provided for @navHomeScreen.
+  ///
+  /// In ku, this message translates to:
+  /// **'پەڕەی سەرەکی'**
+  String get navHomeScreen;
+
+  /// No description provided for @navMyFavorites.
+  ///
+  /// In ku, this message translates to:
+  /// **'دڵخوازەکانم'**
+  String get navMyFavorites;
+
+  /// No description provided for @navMyAds.
+  ///
+  /// In ku, this message translates to:
+  /// **'ڕیکلامەکانم'**
+  String get navMyAds;
+
+  /// No description provided for @navMessages.
+  ///
+  /// In ku, this message translates to:
+  /// **'نامەکان'**
+  String get navMessages;
+
+  /// No description provided for @userAccountPersonal.
+  ///
+  /// In ku, this message translates to:
+  /// **'هەژماری کەسی'**
+  String get userAccountPersonal;
+
+  /// No description provided for @favoritesSectionTitle.
+  ///
+  /// In ku, this message translates to:
+  /// **'دڵخوازەکانم (سەیڤکراو)'**
+  String get favoritesSectionTitle;
+
+  /// No description provided for @favoritesEmpty.
+  ///
+  /// In ku, this message translates to:
+  /// **'هیچ ئۆتۆمبێلێکی سەیڤکراو نییە'**
+  String get favoritesEmpty;
+
+  /// No description provided for @myAdsEmpty.
+  ///
+  /// In ku, this message translates to:
+  /// **'هیچ ڕیکلامێکت نییە'**
+  String get myAdsEmpty;
+
+  /// No description provided for @viewAllListings.
+  ///
+  /// In ku, this message translates to:
+  /// **'بینینی هەمووی'**
+  String get viewAllListings;
+
+  /// No description provided for @deleteAdTitle.
+  ///
+  /// In ku, this message translates to:
+  /// **'سڕینەوەی ڕیکلام'**
+  String get deleteAdTitle;
+
+  /// No description provided for @deleteAdConfirm.
+  ///
+  /// In ku, this message translates to:
+  /// **'ئایا دڵنیایت لە سڕینەوەی ئەم ڕیکلامە؟ ئەم کارە هەڵناوەشێتەوە.'**
+  String get deleteAdConfirm;
+
+  /// No description provided for @cancelAction.
+  ///
+  /// In ku, this message translates to:
+  /// **'پاشگەزبوونەوە'**
+  String get cancelAction;
+
+  /// No description provided for @deleteAction.
+  ///
+  /// In ku, this message translates to:
+  /// **'سڕینەوە'**
+  String get deleteAction;
+
+  /// No description provided for @adDeletedSuccess.
+  ///
+  /// In ku, this message translates to:
+  /// **'ڕیکلامەکە بە سەرکەوتوویی سڕایەوە'**
+  String get adDeletedSuccess;
+
+  /// No description provided for @sell.
+  ///
+  /// In ku, this message translates to:
+  /// **'فرۆشتن'**
+  String get sell;
+
+  /// No description provided for @sellCarButton.
+  ///
+  /// In ku, this message translates to:
+  /// **'فرۆشتنی ئۆتۆمبێل'**
+  String get sellCarButton;
+
+  /// No description provided for @editAction.
+  ///
+  /// In ku, this message translates to:
+  /// **'دەستکاری'**
+  String get editAction;
+
+  /// No description provided for @adStatusActive.
+  ///
+  /// In ku, this message translates to:
+  /// **'چالاک'**
+  String get adStatusActive;
+
+  /// No description provided for @carFallbackTitle.
+  ///
+  /// In ku, this message translates to:
+  /// **'ئۆتۆمبێل'**
+  String get carFallbackTitle;
+
+  /// No description provided for @messagesEmpty.
+  ///
+  /// In ku, this message translates to:
+  /// **'هیچ نامەیەک نییە'**
+  String get messagesEmpty;
+
+  /// No description provided for @settingsComingSoon.
+  ///
+  /// In ku, this message translates to:
+  /// **'ڕێکخستنەکان بەزووی زیاد دەکرێت'**
+  String get settingsComingSoon;
+
+  /// No description provided for @adminApprovalsByCitySubtitle.
+  ///
+  /// In ku, this message translates to:
+  /// **'پێداچوونەوەی ڕیکلامەکان بەپێی پارێزگا'**
+  String get adminApprovalsByCitySubtitle;
+
+  /// No description provided for @adminUsersByCitySubtitle.
+  ///
+  /// In ku, this message translates to:
+  /// **'بەکارهێنەران بەپێی پارێزگا'**
+  String get adminUsersByCitySubtitle;
+
+  /// No description provided for @adminShowroomsByCitySubtitle.
+  ///
+  /// In ku, this message translates to:
+  /// **'پێشانگاکان بەپێی پارێزگا'**
+  String get adminShowroomsByCitySubtitle;
+
+  /// No description provided for @adminStatApproved.
+  ///
+  /// In ku, this message translates to:
+  /// **'پەسەندکراو'**
+  String get adminStatApproved;
+
+  /// No description provided for @adminStatPendingReview.
+  ///
+  /// In ku, this message translates to:
+  /// **'چاوەڕوانکراو'**
+  String get adminStatPendingReview;
+
+  /// No description provided for @adminStatExpired.
+  ///
+  /// In ku, this message translates to:
+  /// **'بەسەرچوو'**
+  String get adminStatExpired;
+
+  /// No description provided for @adminRetry.
+  ///
+  /// In ku, this message translates to:
+  /// **'دووبارە'**
+  String get adminRetry;
+
+  /// No description provided for @adminNoUsersInCity.
+  ///
+  /// In ku, this message translates to:
+  /// **'هیچ بەکارهێنەرێک لەم شارەدا نییە.'**
+  String get adminNoUsersInCity;
+
+  /// No description provided for @adminNoShowroomsInCity.
+  ///
+  /// In ku, this message translates to:
+  /// **'هیچ پێشانگایەک لەم شارەدا نییە.'**
+  String get adminNoShowroomsInCity;
+
+  /// No description provided for @adminNoPendingListings.
+  ///
+  /// In ku, this message translates to:
+  /// **'هیچ ڕیکلامێکی چاوەڕوان نییە.'**
+  String get adminNoPendingListings;
+
+  /// No description provided for @adminSectionComingSoon.
+  ///
+  /// In ku, this message translates to:
+  /// **'ئەم بەشە بەمزوانە بەردەست دەبێت.'**
+  String get adminSectionComingSoon;
+
+  /// No description provided for @adminAdCountLabel.
+  ///
+  /// In ku, this message translates to:
+  /// **'ژمارەی ڕیکلامەکان'**
+  String get adminAdCountLabel;
+
+  /// No description provided for @adminActiveAdCountLabel.
+  ///
+  /// In ku, this message translates to:
+  /// **'ڕیکلامی چالاک'**
+  String get adminActiveAdCountLabel;
+
+  /// No description provided for @adminTotalAdCountLabel.
+  ///
+  /// In ku, this message translates to:
+  /// **'کۆی ڕیکلامەکان'**
+  String get adminTotalAdCountLabel;
+
+  /// No description provided for @adminUserCountLabel.
+  ///
+  /// In ku, this message translates to:
+  /// **'بەکارهێنەر'**
+  String get adminUserCountLabel;
+
+  /// No description provided for @adminShowroomCountLabel.
+  ///
+  /// In ku, this message translates to:
+  /// **'پێشانگا'**
+  String get adminShowroomCountLabel;
+
+  /// No description provided for @adminRejectAdTitle.
+  ///
+  /// In ku, this message translates to:
+  /// **'ڕەتکردنەوەی ڕیکلام'**
+  String get adminRejectAdTitle;
+
+  /// No description provided for @adminRejectAdConfirm.
+  ///
+  /// In ku, this message translates to:
+  /// **'ئایا دڵنیایت لە ڕەتکردنەوەی ئەم ڕیکلامە؟'**
+  String get adminRejectAdConfirm;
+
+  /// No description provided for @adminAdApprovedSuccess.
+  ///
+  /// In ku, this message translates to:
+  /// **'ڕیکلامەکە بە سەرکەوتوویی پەسەندکرا'**
+  String get adminAdApprovedSuccess;
+
+  /// No description provided for @adminAdRejectedSuccess.
+  ///
+  /// In ku, this message translates to:
+  /// **'ڕیکلامەکە ڕەتکرایەوە'**
+  String get adminAdRejectedSuccess;
+
+  /// No description provided for @adminDescriptionLabel.
+  ///
+  /// In ku, this message translates to:
+  /// **'وەسف'**
+  String get adminDescriptionLabel;
+
+  /// No description provided for @adminReportsSubtitle.
+  ///
+  /// In ku, this message translates to:
+  /// **'ئامارەکانی پلاتفۆرم و پێشاندانی داهات'**
+  String get adminReportsSubtitle;
+
+  /// No description provided for @adminDailyActiveUsers.
+  ///
+  /// In ku, this message translates to:
+  /// **'بەکارهێنەری چالاکی ڕۆژانە'**
+  String get adminDailyActiveUsers;
+
+  /// No description provided for @adminDailyNewAds.
+  ///
+  /// In ku, this message translates to:
+  /// **'ڕیکلامی نوێ'**
+  String get adminDailyNewAds;
+
+  /// No description provided for @adminLast30Days.
+  ///
+  /// In ku, this message translates to:
+  /// **'٣٠ ڕۆژی ڕابردوو'**
+  String get adminLast30Days;
+
+  /// No description provided for @adminTotalRevenue.
+  ///
+  /// In ku, this message translates to:
+  /// **'کۆی داهات'**
+  String get adminTotalRevenue;
+
+  /// No description provided for @adminRevenueFromBoost.
+  ///
+  /// In ku, this message translates to:
+  /// **'لە پاکێجی بووست'**
+  String get adminRevenueFromBoost;
+
+  /// No description provided for @adminRevenueCard.
+  ///
+  /// In ku, this message translates to:
+  /// **'کارتی بانکی'**
+  String get adminRevenueCard;
+
+  /// No description provided for @adminRevenueEWallet.
+  ///
+  /// In ku, this message translates to:
+  /// **'جزدانی ئەلیکترۆنی'**
+  String get adminRevenueEWallet;
+
+  /// No description provided for @adminCityPerformance.
+  ///
+  /// In ku, this message translates to:
+  /// **'ئەدای شارەکان'**
+  String get adminCityPerformance;
+
+  /// No description provided for @adminCityColumn.
+  ///
+  /// In ku, this message translates to:
+  /// **'شار'**
+  String get adminCityColumn;
+
+  /// No description provided for @adminTotalAdsColumn.
+  ///
+  /// In ku, this message translates to:
+  /// **'کۆی ڕیکلام'**
+  String get adminTotalAdsColumn;
+
+  /// No description provided for @adminApprovedAdsColumn.
+  ///
+  /// In ku, this message translates to:
+  /// **'پەسەندکراو'**
+  String get adminApprovedAdsColumn;
+
+  /// No description provided for @adminSettingsSubtitle.
+  ///
+  /// In ku, this message translates to:
+  /// **'ڕێکخستنی پلاتفۆرم و دەسەڵاتەکان'**
+  String get adminSettingsSubtitle;
+
+  /// No description provided for @adminSettingsGeneral.
+  ///
+  /// In ku, this message translates to:
+  /// **'ڕێکخستنی گشتی'**
+  String get adminSettingsGeneral;
+
+  /// No description provided for @adminSettingsPackages.
+  ///
+  /// In ku, this message translates to:
+  /// **'نرخی پاکێجەکان'**
+  String get adminSettingsPackages;
+
+  /// No description provided for @adminSettingsCities.
+  ///
+  /// In ku, this message translates to:
+  /// **'شار و ناوچەکان'**
+  String get adminSettingsCities;
+
+  /// No description provided for @adminSettingsSecurity.
+  ///
+  /// In ku, this message translates to:
+  /// **'ئاسایش و ئەدمین'**
+  String get adminSettingsSecurity;
+
+  /// No description provided for @adminSettingsBoostPrice.
+  ///
+  /// In ku, this message translates to:
+  /// **'نرخی پاکێجی بووست (د.ع)'**
+  String get adminSettingsBoostPrice;
+
+  /// No description provided for @adminSettingsSuperBoostPrice.
+  ///
+  /// In ku, this message translates to:
+  /// **'نرخی سوپەر بووست (د.ع)'**
+  String get adminSettingsSuperBoostPrice;
+
+  /// No description provided for @adminSettingsSaveChanges.
+  ///
+  /// In ku, this message translates to:
+  /// **'پاشەکەوتکردن'**
+  String get adminSettingsSaveChanges;
+
+  /// No description provided for @adminSettingsSavedSuccess.
+  ///
+  /// In ku, this message translates to:
+  /// **'ڕێکخستنەکان بە سەرکەوتوویی پاشەکەوت کران'**
+  String get adminSettingsSavedSuccess;
+
+  /// No description provided for @adminSettingsActiveCities.
+  ///
+  /// In ku, this message translates to:
+  /// **'شارە چالاکەکان'**
+  String get adminSettingsActiveCities;
+
+  /// No description provided for @adminSettingsAddCity.
+  ///
+  /// In ku, this message translates to:
+  /// **'زیادکردنی شار'**
+  String get adminSettingsAddCity;
+
+  /// No description provided for @adminSettingsNewCityHint.
+  ///
+  /// In ku, this message translates to:
+  /// **'ناوی شار'**
+  String get adminSettingsNewCityHint;
+
+  /// No description provided for @adminSettingsAdmins.
+  ///
+  /// In ku, this message translates to:
+  /// **'ئەدمینەکانی پلاتفۆرم'**
+  String get adminSettingsAdmins;
+
+  /// No description provided for @adminSettingsAddAdmin.
+  ///
+  /// In ku, this message translates to:
+  /// **'زیادکردنی ئەدمین'**
+  String get adminSettingsAddAdmin;
+
+  /// No description provided for @adminSettingsAdminEmail.
+  ///
+  /// In ku, this message translates to:
+  /// **'ئیمەیڵ'**
+  String get adminSettingsAdminEmail;
+
+  /// No description provided for @adminSettingsAdminPhone.
+  ///
+  /// In ku, this message translates to:
+  /// **'ژمارەی مۆبایل'**
+  String get adminSettingsAdminPhone;
+
+  /// No description provided for @adminSettingsAdminName.
+  ///
+  /// In ku, this message translates to:
+  /// **'ناو'**
+  String get adminSettingsAdminName;
+
+  /// No description provided for @adminSettingsSystemCredentials.
+  ///
+  /// In ku, this message translates to:
+  /// **'زانیاری سیستەم'**
+  String get adminSettingsSystemCredentials;
+
+  /// No description provided for @adminSettingsR2Endpoint.
+  ///
+  /// In ku, this message translates to:
+  /// **'بەستەری R2'**
+  String get adminSettingsR2Endpoint;
+
+  /// No description provided for @adminSettingsR2AccessKey.
+  ///
+  /// In ku, this message translates to:
+  /// **'کلیلی دەستگەیشتنی R2'**
+  String get adminSettingsR2AccessKey;
+
+  /// No description provided for @adminSettingsR2SecretKey.
+  ///
+  /// In ku, this message translates to:
+  /// **'کلیلی نهێنی R2'**
+  String get adminSettingsR2SecretKey;
+
+  /// No description provided for @adminSettingsR2Bucket.
+  ///
+  /// In ku, this message translates to:
+  /// **'ناوی bucket ی R2'**
+  String get adminSettingsR2Bucket;
+
+  /// No description provided for @adminSettingsGeneralInfo.
+  ///
+  /// In ku, this message translates to:
+  /// **'زانیاری پلاتفۆرم'**
+  String get adminSettingsGeneralInfo;
+
+  /// No description provided for @adminSettingsAppName.
+  ///
+  /// In ku, this message translates to:
+  /// **'IQ Motors'**
+  String get adminSettingsAppName;
+
+  /// No description provided for @adminSettingsAppVersion.
+  ///
+  /// In ku, this message translates to:
+  /// **'وەشان 1.0.0'**
+  String get adminSettingsAppVersion;
+
+  /// No description provided for @adminSettingsRemove.
+  ///
+  /// In ku, this message translates to:
+  /// **'سڕینەوە'**
+  String get adminSettingsRemove;
+
+  /// No description provided for @adminSettingsAddCityTitle.
+  ///
+  /// In ku, this message translates to:
+  /// **'شارێکی نوێ'**
+  String get adminSettingsAddCityTitle;
+
+  /// No description provided for @adminSettingsAddAdminTitle.
+  ///
+  /// In ku, this message translates to:
+  /// **'ئەدمینی نوێ'**
+  String get adminSettingsAddAdminTitle;
+
+  /// No description provided for @adminSettingsCredentialsNote.
+  ///
+  /// In ku, this message translates to:
+  /// **'تەنها بۆ بەڕێوەبەری سەرەکی. لە Firestore system_config هەڵدەگیرێت.'**
+  String get adminSettingsCredentialsNote;
+
+  /// No description provided for @navActivity.
+  ///
+  /// In ku, this message translates to:
+  /// **'چالاکییەکان'**
+  String get navActivity;
+
+  /// No description provided for @adminActivitySubtitle.
+  ///
+  /// In ku, this message translates to:
+  /// **'مێژووی کردارەکانی ئەدمین'**
+  String get adminActivitySubtitle;
+
+  /// No description provided for @adminActivitySearchHint.
+  ///
+  /// In ku, this message translates to:
+  /// **'گەڕان بە ناو یان جۆری کردار'**
+  String get adminActivitySearchHint;
+
+  /// No description provided for @adminActivityEmpty.
+  ///
+  /// In ku, this message translates to:
+  /// **'هێشتا هیچ چالاکییەک تۆمار نەکراوە.'**
+  String get adminActivityEmpty;
+
+  /// No description provided for @adminActivityNoResults.
+  ///
+  /// In ku, this message translates to:
+  /// **'هیچ ئەنجامێک نەدۆزرایەوە.'**
+  String get adminActivityNoResults;
+
+  /// No description provided for @adminActivityPerformedBy.
+  ///
+  /// In ku, this message translates to:
+  /// **'لەلایەن'**
+  String get adminActivityPerformedBy;
+
+  /// No description provided for @adminActivityJustNow.
+  ///
+  /// In ku, this message translates to:
+  /// **'ئێستا'**
+  String get adminActivityJustNow;
+
+  /// No description provided for @adminActivityMinutesAgo.
+  ///
+  /// In ku, this message translates to:
+  /// **'{count} خولەک پێش ئێستا'**
+  String adminActivityMinutesAgo(int count);
+
+  /// No description provided for @adminActivityHoursAgo.
+  ///
+  /// In ku, this message translates to:
+  /// **'{count} کاتژمێر پێش ئێستا'**
+  String adminActivityHoursAgo(int count);
+
+  /// No description provided for @adminActivityDaysAgo.
+  ///
+  /// In ku, this message translates to:
+  /// **'{count} ڕۆژ پێش ئێستا'**
+  String adminActivityDaysAgo(int count);
+
+  /// No description provided for @adminActivityActionApproved.
+  ///
+  /// In ku, this message translates to:
+  /// **'پەسەندکردنی ڕیکلام'**
+  String get adminActivityActionApproved;
+
+  /// No description provided for @adminActivityActionRejected.
+  ///
+  /// In ku, this message translates to:
+  /// **'ڕەتکردنەوەی ڕیکلام'**
+  String get adminActivityActionRejected;
+
+  /// No description provided for @adminActivityActionDeleted.
+  ///
+  /// In ku, this message translates to:
+  /// **'سڕینەوەی ڕیکلام'**
+  String get adminActivityActionDeleted;
+
+  /// No description provided for @adminActivityActionUpdatedPrice.
+  ///
+  /// In ku, this message translates to:
+  /// **'نوێکردنەوەی نرخی پاکێج'**
+  String get adminActivityActionUpdatedPrice;
+
+  /// No description provided for @adminActivityActionUpdatedConfig.
+  ///
+  /// In ku, this message translates to:
+  /// **'نوێکردنەوەی ڕێکخستن'**
+  String get adminActivityActionUpdatedConfig;
+
+  /// No description provided for @adminActivityActionAddedCity.
+  ///
+  /// In ku, this message translates to:
+  /// **'زیادکردنی شار'**
+  String get adminActivityActionAddedCity;
+
+  /// No description provided for @adminActivityActionRemovedCity.
+  ///
+  /// In ku, this message translates to:
+  /// **'سڕینەوەی شار'**
+  String get adminActivityActionRemovedCity;
+
+  /// No description provided for @adminActivityActionAddedAdmin.
+  ///
+  /// In ku, this message translates to:
+  /// **'زیادکردنی ئەدمین'**
+  String get adminActivityActionAddedAdmin;
+
+  /// No description provided for @adminActivityActionUpdatedCredentials.
+  ///
+  /// In ku, this message translates to:
+  /// **'نوێکردنەوەی زانیاری سیستەم'**
+  String get adminActivityActionUpdatedCredentials;
+
+  /// No description provided for @adminMessagesTitle.
+  ///
+  /// In ku, this message translates to:
+  /// **'نامەکان و سکاڵاکان'**
+  String get adminMessagesTitle;
+
+  /// No description provided for @adminMessagesSubtitle.
+  ///
+  /// In ku, this message translates to:
+  /// **'پەیوەندی بەکارهێنەران و پشتگیری'**
+  String get adminMessagesSubtitle;
+
+  /// No description provided for @adminMessagesFilterAll.
+  ///
+  /// In ku, this message translates to:
+  /// **'هەموو'**
+  String get adminMessagesFilterAll;
+
+  /// No description provided for @adminMessagesFilterOpen.
+  ///
+  /// In ku, this message translates to:
+  /// **'کراوە'**
+  String get adminMessagesFilterOpen;
+
+  /// No description provided for @adminMessagesFilterResolved.
+  ///
+  /// In ku, this message translates to:
+  /// **'چارەسەرکراو'**
+  String get adminMessagesFilterResolved;
+
+  /// No description provided for @adminMessagesStatusOpen.
+  ///
+  /// In ku, this message translates to:
+  /// **'کراوە'**
+  String get adminMessagesStatusOpen;
+
+  /// No description provided for @adminMessagesStatusResolved.
+  ///
+  /// In ku, this message translates to:
+  /// **'چارەسەرکراو'**
+  String get adminMessagesStatusResolved;
+
+  /// No description provided for @adminMessagesSend.
+  ///
+  /// In ku, this message translates to:
+  /// **'ارسال'**
+  String get adminMessagesSend;
+
+  /// No description provided for @adminMessagesSelectTicket.
+  ///
+  /// In ku, this message translates to:
+  /// **'سکاڵایەک هەڵبژێرە بۆ بینینی گفتوگۆ'**
+  String get adminMessagesSelectTicket;
+
+  /// No description provided for @adminMessagesResolve.
+  ///
+  /// In ku, this message translates to:
+  /// **'نیشانکردن وەک چارەسەرکراو'**
+  String get adminMessagesResolve;
+
+  /// No description provided for @adminMessagesReopen.
+  ///
+  /// In ku, this message translates to:
+  /// **'دووبارە کردنەوە'**
+  String get adminMessagesReopen;
+
+  /// No description provided for @adminMessagesReplyHint.
+  ///
+  /// In ku, this message translates to:
+  /// **'وەڵام بنووسە…'**
+  String get adminMessagesReplyHint;
+
+  /// No description provided for @adminMessagesBackToList.
+  ///
+  /// In ku, this message translates to:
+  /// **'گەڕانەوە بۆ لیست'**
+  String get adminMessagesBackToList;
+
+  /// No description provided for @navFlaggedAds.
+  ///
+  /// In ku, this message translates to:
+  /// **'ڕاپۆرتە پێشێلکارییەکان'**
+  String get navFlaggedAds;
+
+  /// No description provided for @adminFlaggedSubtitle.
+  ///
+  /// In ku, this message translates to:
+  /// **'ڕیکلامە ڕاپۆرتکراوەکان پێداچوونەوە بکە'**
+  String get adminFlaggedSubtitle;
+
+  /// No description provided for @adminFlaggedReasonLabel.
+  ///
+  /// In ku, this message translates to:
+  /// **'هۆکار'**
+  String get adminFlaggedReasonLabel;
+
+  /// No description provided for @adminFlaggedReportedByLabel.
+  ///
+  /// In ku, this message translates to:
+  /// **'ڕاپۆرتکراو لەلایەن'**
+  String get adminFlaggedReportedByLabel;
+
+  /// No description provided for @adminFlaggedViewAd.
+  ///
+  /// In ku, this message translates to:
+  /// **'بینینی ڕیکلام'**
+  String get adminFlaggedViewAd;
+
+  /// No description provided for @adminFlaggedDeleteAd.
+  ///
+  /// In ku, this message translates to:
+  /// **'سڕینەوەی ڕیکلام'**
+  String get adminFlaggedDeleteAd;
+
+  /// No description provided for @adminFlaggedIgnore.
+  ///
+  /// In ku, this message translates to:
+  /// **'پشتگوێخستن'**
+  String get adminFlaggedIgnore;
+
+  /// No description provided for @adminFlaggedEmpty.
+  ///
+  /// In ku, this message translates to:
+  /// **'هیچ ڕاپۆرتێکی چاوەڕوان نییە.'**
+  String get adminFlaggedEmpty;
+
+  /// No description provided for @adminFlaggedDeleteConfirm.
+  ///
+  /// In ku, this message translates to:
+  /// **'ئایا دڵنیایت لە سڕینەوەی ئەم ڕیکلامە؟'**
+  String get adminFlaggedDeleteConfirm;
+
+  /// No description provided for @adminFlaggedDeleteSuccess.
+  ///
+  /// In ku, this message translates to:
+  /// **'ڕیکلامەکە سڕایەوە و ڕاپۆرتەکە چارەسەرکرا.'**
+  String get adminFlaggedDeleteSuccess;
+
+  /// No description provided for @adminFlaggedIgnoredSuccess.
+  ///
+  /// In ku, this message translates to:
+  /// **'ڕاپۆرتەکە پشتگوێخرا.'**
+  String get adminFlaggedIgnoredSuccess;
+
+  /// No description provided for @adminFlaggedAdMissing.
+  ///
+  /// In ku, this message translates to:
+  /// **'ڕیکلامەکە بەردەست نییە'**
+  String get adminFlaggedAdMissing;
+
+  /// No description provided for @flaggedReasonSold.
+  ///
+  /// In ku, this message translates to:
+  /// **'سەیارەکە فرۆشراوە'**
+  String get flaggedReasonSold;
+
+  /// No description provided for @flaggedReasonWrongPrice.
+  ///
+  /// In ku, this message translates to:
+  /// **'نرخی هەڵەیە'**
+  String get flaggedReasonWrongPrice;
+
+  /// No description provided for @flaggedReasonMisleading.
+  ///
+  /// In ku, this message translates to:
+  /// **'زانیاری هەڵە'**
+  String get flaggedReasonMisleading;
+
+  /// No description provided for @flaggedReasonSpam.
+  ///
+  /// In ku, this message translates to:
+  /// **'سپام'**
+  String get flaggedReasonSpam;
+
+  /// No description provided for @next.
+  ///
+  /// In ku, this message translates to:
+  /// **'دواتر'**
+  String get next;
+
+  /// No description provided for @addCarStepProgress.
+  ///
+  /// In ku, this message translates to:
+  /// **'هەنگاوی {current} لە {total}'**
+  String addCarStepProgress(int current, int total);
+
+  /// No description provided for @addCarPublish.
+  ///
+  /// In ku, this message translates to:
+  /// **'بڵاوکردنەوە'**
+  String get addCarPublish;
+
+  /// No description provided for @addCarSave.
+  ///
+  /// In ku, this message translates to:
+  /// **'پاشەکەوتکردن'**
+  String get addCarSave;
+
+  /// No description provided for @addCarPublishing.
+  ///
+  /// In ku, this message translates to:
+  /// **'خەریکی بڵاوکردنەوە...'**
+  String get addCarPublishing;
+
+  /// No description provided for @addCarSaving.
+  ///
+  /// In ku, this message translates to:
+  /// **'خەریکی پاشەکەوتکردن...'**
+  String get addCarSaving;
+
+  /// No description provided for @addCarPhotoProcessing.
+  ///
+  /// In ku, this message translates to:
+  /// **'پشکنینی وێنە...'**
+  String get addCarPhotoProcessing;
+
+  /// No description provided for @addCarMinPhotosRequired.
+  ///
+  /// In ku, this message translates to:
+  /// **'تکایە لانیکەم ٤ وێنە هەڵبژێرە.'**
+  String get addCarMinPhotosRequired;
+
+  /// No description provided for @addCarUploadFailed.
+  ///
+  /// In ku, this message translates to:
+  /// **'بارکردنی وێنەکان سەرکەوتوو نەبوو.'**
+  String get addCarUploadFailed;
+
+  /// No description provided for @addCarSaveSuccess.
+  ///
+  /// In ku, this message translates to:
+  /// **'گۆڕانکارییەکان بە سەرکەوتوویی پاشەکەوتکران'**
+  String get addCarSaveSuccess;
+
+  /// No description provided for @addCarPublishSuccess.
+  ///
+  /// In ku, this message translates to:
+  /// **'ڕاگەیاندنەکەت بە سەرکەوتوویی بڵاوکرایەوە'**
+  String get addCarPublishSuccess;
+
+  /// No description provided for @addCarSaveFailed.
+  ///
+  /// In ku, this message translates to:
+  /// **'پاشەکەوتکردن سەرکەوتوو نەبوو. دووبارە هەوڵ بدەرەوە.'**
+  String get addCarSaveFailed;
+
+  /// No description provided for @addCarPublishFailed.
+  ///
+  /// In ku, this message translates to:
+  /// **'بڵاوکردنەوە سەرکەوتوو نەبوو. دووبارە هەوڵ بدەرەوە.'**
+  String get addCarPublishFailed;
+
+  /// No description provided for @addCarPhotoCheckFailed.
+  ///
+  /// In ku, this message translates to:
+  /// **'پشکنینی وێنە سەرکەوتوو نەبوو. دووبارە هەوڵ بدەرەوە.'**
+  String get addCarPhotoCheckFailed;
+
+  /// No description provided for @addCarStepLocationTitle.
+  ///
+  /// In ku, this message translates to:
+  /// **'شوێن'**
+  String get addCarStepLocationTitle;
+
+  /// No description provided for @addCarStepPhotosTitle.
+  ///
+  /// In ku, this message translates to:
+  /// **'وێنەکان'**
+  String get addCarStepPhotosTitle;
+
+  /// No description provided for @addCarStepInfoTitle.
+  ///
+  /// In ku, this message translates to:
+  /// **'زانیاری'**
+  String get addCarStepInfoTitle;
+
+  /// No description provided for @addCarStepPlateTitle.
+  ///
+  /// In ku, this message translates to:
+  /// **'تابلۆ'**
+  String get addCarStepPlateTitle;
+
+  /// No description provided for @addCarStepDetailsTitle.
+  ///
+  /// In ku, this message translates to:
+  /// **'وردەکاری'**
+  String get addCarStepDetailsTitle;
+
+  /// No description provided for @addCarStepTechnicalTitle.
+  ///
+  /// In ku, this message translates to:
+  /// **'تەکنیکی'**
+  String get addCarStepTechnicalTitle;
+
+  /// No description provided for @addCarStepInteriorTitle.
+  ///
+  /// In ku, this message translates to:
+  /// **'ناوەوە'**
+  String get addCarStepInteriorTitle;
+
+  /// No description provided for @addCarStepConditionTitle.
+  ///
+  /// In ku, this message translates to:
+  /// **'دۆخ'**
+  String get addCarStepConditionTitle;
+
+  /// No description provided for @addCarStepPriceTitle.
+  ///
+  /// In ku, this message translates to:
+  /// **'نرخ'**
+  String get addCarStepPriceTitle;
+
+  /// No description provided for @addCarStepReviewTitle.
+  ///
+  /// In ku, this message translates to:
+  /// **'پێداچوونەوە'**
+  String get addCarStepReviewTitle;
+
+  /// No description provided for @addCarStepListingTitle.
+  ///
+  /// In ku, this message translates to:
+  /// **'بڵاوکردنەوە'**
+  String get addCarStepListingTitle;
+
+  /// No description provided for @addCarStepPaymentTitle.
+  ///
+  /// In ku, this message translates to:
+  /// **'پارەدان'**
+  String get addCarStepPaymentTitle;
+
+  /// No description provided for @addCarLocationHeading.
+  ///
+  /// In ku, this message translates to:
+  /// **'ئۆتۆمبێلەکەت لە چ شوێنێکە؟'**
+  String get addCarLocationHeading;
+
+  /// No description provided for @addCarLocationSubtitle.
+  ///
+  /// In ku, this message translates to:
+  /// **'پارێزگا / ناوچە دیاری بکە'**
+  String get addCarLocationSubtitle;
+
+  /// No description provided for @addCarProvinceLabel.
+  ///
+  /// In ku, this message translates to:
+  /// **'پارێزگا'**
+  String get addCarProvinceLabel;
+
+  /// No description provided for @addCarProvincePlaceholder.
+  ///
+  /// In ku, this message translates to:
+  /// **'پارێزگا هەڵبژێرە'**
+  String get addCarProvincePlaceholder;
+
+  /// No description provided for @addCarAreaLabel.
+  ///
+  /// In ku, this message translates to:
+  /// **'ناوچە / شار'**
+  String get addCarAreaLabel;
+
+  /// No description provided for @addCarAreaPlaceholder.
+  ///
+  /// In ku, this message translates to:
+  /// **'ناوچە هەڵبژێرە'**
+  String get addCarAreaPlaceholder;
+
+  /// No description provided for @addCarPhotosHeading.
+  ///
+  /// In ku, this message translates to:
+  /// **'وێنەکان بگرە'**
+  String get addCarPhotosHeading;
+
+  /// No description provided for @addCarPhotosSubtitle.
+  ///
+  /// In ku, this message translates to:
+  /// **'بە لایەنی کەمەوە ٤ وێنەی ئۆتۆمبێلەکەت بگرە'**
+  String get addCarPhotosSubtitle;
+
+  /// No description provided for @addCarPhotoPrimary.
+  ///
+  /// In ku, this message translates to:
+  /// **'سەرەکی'**
+  String get addCarPhotoPrimary;
+
+  /// No description provided for @addCarBasicInfoHeading.
+  ///
+  /// In ku, this message translates to:
+  /// **'زانیاری سەرەتایی ئۆتۆمبێل'**
+  String get addCarBasicInfoHeading;
+
+  /// No description provided for @addCarBasicInfoSubtitle.
+  ///
+  /// In ku, this message translates to:
+  /// **'ئەو زانیارییانە هەڵبژێرە کە لەگەڵ ئۆتۆمبێلەکەت دەگونجێت'**
+  String get addCarBasicInfoSubtitle;
+
+  /// No description provided for @addCarBrandLabel.
+  ///
+  /// In ku, this message translates to:
+  /// **'براند'**
+  String get addCarBrandLabel;
+
+  /// No description provided for @addCarBrandPlaceholder.
+  ///
+  /// In ku, this message translates to:
+  /// **'براند هەڵبژێرە'**
+  String get addCarBrandPlaceholder;
+
+  /// No description provided for @addCarModelLabel.
+  ///
+  /// In ku, this message translates to:
+  /// **'مۆدێل'**
+  String get addCarModelLabel;
+
+  /// No description provided for @addCarModelPlaceholder.
+  ///
+  /// In ku, this message translates to:
+  /// **'مۆدێل هەڵبژێرە'**
+  String get addCarModelPlaceholder;
+
+  /// No description provided for @addCarColorLabel.
+  ///
+  /// In ku, this message translates to:
+  /// **'ڕەنگ'**
+  String get addCarColorLabel;
+
+  /// No description provided for @addCarColorPlaceholder.
+  ///
+  /// In ku, this message translates to:
+  /// **'ڕەنگ هەڵبژێرە'**
+  String get addCarColorPlaceholder;
+
+  /// No description provided for @addCarYearLabel.
+  ///
+  /// In ku, this message translates to:
+  /// **'ساڵی مۆدێل'**
+  String get addCarYearLabel;
+
+  /// No description provided for @addCarYearPlaceholder.
+  ///
+  /// In ku, this message translates to:
+  /// **'ساڵ هەڵبژێرە'**
+  String get addCarYearPlaceholder;
+
+  /// No description provided for @addCarTrimLabel.
+  ///
+  /// In ku, this message translates to:
+  /// **'خاسڵەت'**
+  String get addCarTrimLabel;
+
+  /// No description provided for @addCarTrimPlaceholder.
+  ///
+  /// In ku, this message translates to:
+  /// **'خاسڵەت هەڵبژێرە'**
+  String get addCarTrimPlaceholder;
 }
 
 class _AppLocalizationsDelegate

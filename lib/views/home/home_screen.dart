@@ -9,8 +9,11 @@ import '../../data/dummy_brands.dart';
 import '../../models/advanced_filter_state.dart';
 import '../../models/car_brand.dart';
 import '../../core/l10n_extensions.dart';
+import '../../core/post_auth_navigation.dart';
 import '../../data/localized_dummy_data.dart';
 import '../../providers/auth_providers.dart';
+import '../../providers/favorites_provider.dart';
+import '../../services/car_database_service.dart';
 import '../../widgets/brand_search_sheet.dart';
 import '../../widgets/home_filter_section.dart';
 import '../../widgets/language_switcher.dart';
@@ -21,14 +24,14 @@ import '../filters/advanced_filter_screen.dart';
 import '../listings/car_details_screen.dart';
 
 /// Explore / home — glass nav, centered hero, filters, listing grid.
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen>
+class _HomeScreenState extends ConsumerState<HomeScreen>
     with SingleTickerProviderStateMixin {
   static const Color _background = Color(0xFFF5F5F7);
   static const Color _textPrimary = Color(0xFF1D1D1F);
@@ -107,10 +110,45 @@ class _HomeScreenState extends State<HomeScreen>
     return count.clamp(1, 4);
   }
 
+  Future<void> _onWishlistTap(Map<String, dynamic> car) async {
+    final l10n = context.l10n;
+
+    try {
+      final isNowFavorited =
+          await ref.read(favoritesProvider.notifier).toggle(car);
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            isNowFavorited ? l10n.saveToWishlist : l10n.removeFromWishlist,
+          ),
+          behavior: SnackBarBehavior.floating,
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    } on FavoritesAuthRequired {
+      if (!mounted) return;
+      Navigator.of(context).push(
+        MaterialPageRoute<void>(builder: (_) => const AuthScreen()),
+      );
+    } on CarDatabaseException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.message),
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: const Color(0xFFFF3B30),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final navLinks = [l10n.navAllModels, l10n.navTuning, l10n.navShowrooms];
+    final favoriteIds = ref.watch(favoritesProvider);
 
     return Scaffold(
       backgroundColor: _background,
@@ -184,25 +222,29 @@ class _HomeScreenState extends State<HomeScreen>
                       crossAxisCount: crossAxisCount,
                       mainAxisSpacing: 30,
                       crossAxisSpacing: 30,
-                      mainAxisExtent: 480,
+                      mainAxisExtent: 530,
                     ),
                     delegate: SliverChildBuilderDelegate(
                       (context, index) {
+                        final car = _cars[index];
+                        final carId = car['id']?.toString();
+
                         return PremiumCarCard(
-                          car: _cars[index],
+                          car: car,
                           animationDelay: Duration(
                             milliseconds: 100 * (index + 1),
                           ),
+                          isWishlisted: carId != null && favoriteIds.contains(carId),
                           onTap: () {
                             Navigator.of(context).push(
                               MaterialPageRoute<void>(
                                 builder: (_) => CarDetailsScreen(
-                                  car: _cars[index],
+                                  car: car,
                                 ),
                               ),
                             );
                           },
-                          onWishlistTap: () {},
+                          onWishlistTap: () => _onWishlistTap(car),
                         );
                       },
                       childCount: _cars.length,
@@ -320,36 +362,25 @@ class _GlassNavBar extends StatelessWidget {
 
                         return _AccountButton(
                           label: label,
-                          onTap: () async {
+                          onTap: () {
                             if (isSignedIn) {
-                              final action = await showMenu<String>(
-                                context: context,
-                                position: const RelativeRect.fromLTRB(
-                                  1000,
-                                  80,
-                                  0,
-                                  0,
-                                ),
-                                items: [
-                                  PopupMenuItem(
-                                    value: 'sign_out',
-                                    child: Text(l10n.signOut),
-                                  ),
-                                ],
-                              );
-                              if (action == 'sign_out') {
-                                await ref
-                                    .read(authServiceProvider)
-                                    .signOut();
-                              }
-                            } else {
-                              if (!context.mounted) return;
                               Navigator.of(context).push(
                                 MaterialPageRoute<void>(
-                                  builder: (_) => const AuthScreen(),
+                                  builder: (_) =>
+                                      dashboardForAuthenticatedUser(
+                                    email: user.email,
+                                    phone: profile?.phone,
+                                    accountType: profile?.accountType,
+                                  ),
                                 ),
                               );
+                              return;
                             }
+                            Navigator.of(context).push(
+                              MaterialPageRoute<void>(
+                                builder: (_) => const AuthScreen(),
+                              ),
+                            );
                           },
                         );
                       },
@@ -416,6 +447,8 @@ class _SellButtonState extends State<_SellButton> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
     return MouseRegion(
       onEnter: (_) => setState(() => _hovered = true),
       onExit: (_) => setState(() => _hovered = false),
@@ -444,9 +477,9 @@ class _SellButtonState extends State<_SellButton> {
                 ),
               ],
             ),
-            child: const Text(
-              'فرۆشتن',
-              style: TextStyle(
+            child: Text(
+              l10n.sell,
+              style: const TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
                 letterSpacing: -0.2,

@@ -4,6 +4,9 @@ import 'package:flutter/services.dart';
 import '../../../core/l10n_extensions.dart';
 import '../../../data/add_car_form_options.dart';
 import '../../../widgets/add_car_chip_selector.dart';
+import '../add_car_theme.dart';
+import '../widgets/add_car_form_card.dart';
+import '../widgets/add_car_step_header.dart';
 
 /// Step 9 — listing description and selling price.
 class AddCarStepPriceDescription extends StatefulWidget {
@@ -30,9 +33,6 @@ class AddCarStepPriceDescription extends StatefulWidget {
 }
 
 class _AddCarStepPriceDescriptionState extends State<AddCarStepPriceDescription> {
-  static const Color _textPrimary = Color(0xFF1D1D1F);
-  static const Color _textSecondary = Color(0xFF86868B);
-
   late final TextEditingController _descriptionController;
   late final TextEditingController _priceController;
 
@@ -75,72 +75,43 @@ class _AddCarStepPriceDescriptionState extends State<AddCarStepPriceDescription>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            switch (locale) {
+          AddCarStepHeader(
+            title: switch (locale) {
               'en' => 'About',
               'ar' => 'حول',
               _ => 'دەربارە',
             },
-            style: const TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.w700,
-              letterSpacing: -0.6,
-              height: 1.15,
-              color: _textPrimary,
-            ),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            switch (locale) {
+            subtitle: switch (locale) {
               'en' => 'Write your own note',
               'ar' => 'اكتب ملاحظتك',
               _ => 'تێبینی خۆت بنووسە',
             },
-            style: const TextStyle(
-              fontSize: 17,
-              fontWeight: FontWeight.w400,
-              height: 1.4,
-              color: _textSecondary,
-            ),
           ),
           const SizedBox(height: 20),
-          TextField(
-            controller: _descriptionController,
-            minLines: 4,
-            maxLines: 8,
-            onChanged: widget.onDescriptionChanged,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-              color: _textPrimary,
-              height: 1.45,
-            ),
-            decoration: InputDecoration(
-              hintText: switch (locale) {
-                'en' => 'Add a note if you like',
-                'ar' => 'أضف ملاحظة إن أردت',
-                _ => 'تێبینی زیاد بکە گەر دەتەوێت',
-              },
-              hintStyle: TextStyle(
+          AddCarFormCard(
+            padding: EdgeInsets.zero,
+            child: TextField(
+              controller: _descriptionController,
+              minLines: 4,
+              maxLines: 8,
+              onChanged: widget.onDescriptionChanged,
+              style: const TextStyle(
                 fontSize: 16,
-                color: _textSecondary.withValues(alpha: 0.85),
+                fontWeight: FontWeight.w500,
+                color: AddCarTheme.textPrimary,
+                height: 1.45,
               ),
-              filled: true,
-              fillColor: Colors.white,
-              contentPadding: const EdgeInsetsDirectional.all(16),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(14),
-                borderSide: const BorderSide(color: Color(0xFFE5E5EA)),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(14),
-                borderSide: const BorderSide(color: Color(0xFFE5E5EA)),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(14),
-                borderSide: const BorderSide(
-                  color: _textPrimary,
-                  width: 1.5,
+              decoration: AddCarTheme.textFieldDecoration(
+                hintText: switch (locale) {
+                  'en' => 'Add a note if you like',
+                  'ar' => 'أضف ملاحظة إن أردت',
+                  _ => 'تێبینی زیاد بکە گەر دەتەوێت',
+                },
+              ).copyWith(
+                border: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                focusedBorder: const OutlineInputBorder(
+                  borderSide: BorderSide(color: AddCarTheme.focusBlue, width: 1.5),
                 ),
               ),
             ),
@@ -152,12 +123,7 @@ class _AddCarStepPriceDescriptionState extends State<AddCarStepPriceDescription>
               'ar' => 'سعر البيع',
               _ => 'نرخی فرۆشتن',
             },
-            style: const TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.w700,
-              letterSpacing: -0.4,
-              color: _textPrimary,
-            ),
+            style: AddCarTheme.sectionTitle,
           ),
           const SizedBox(height: 16),
           Row(
@@ -177,12 +143,7 @@ class _AddCarStepPriceDescriptionState extends State<AddCarStepPriceDescription>
             ],
           ),
           const SizedBox(height: 16),
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: const Color(0xFFE5E5EA)),
-            ),
+          AddCarFormCard(
             padding: const EdgeInsetsDirectional.symmetric(
               horizontal: 20,
               vertical: 8,
@@ -199,22 +160,21 @@ class _AddCarStepPriceDescriptionState extends State<AddCarStepPriceDescription>
                 fontSize: 32,
                 fontWeight: FontWeight.w700,
                 letterSpacing: -1,
-                color: _textPrimary,
+                color: AddCarTheme.textPrimary,
               ),
-              decoration: InputDecoration(
-                border: InputBorder.none,
-                prefixText: '$symbol ',
-                prefixStyle: const TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: -1,
-                  color: _textPrimary,
-                ),
+              decoration: AddCarTheme.textFieldDecoration(
                 hintText: '140,000',
+                prefixText: '$symbol ',
+              ).copyWith(
+                border: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                focusedBorder: const OutlineInputBorder(
+                  borderSide: BorderSide(color: AddCarTheme.focusBlue, width: 1.5),
+                ),
                 hintStyle: TextStyle(
                   fontSize: 32,
                   fontWeight: FontWeight.w600,
-                  color: _textPrimary.withValues(alpha: 0.2),
+                  color: AddCarTheme.textPrimary.withValues(alpha: 0.2),
                 ),
               ),
               onChanged: widget.onPriceChanged,
@@ -246,10 +206,8 @@ class _PriceRangeIndicator extends StatelessWidget {
       children: [
         Text(
           label,
-          style: const TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.w500,
-            color: Color(0xFF86868B),
+          style: AddCarTheme.sectionLabel.copyWith(
+            color: AddCarTheme.textSecondary,
           ),
         ),
         const SizedBox(height: 10),
@@ -276,10 +234,10 @@ class _PriceRangeIndicator extends StatelessWidget {
                 'ar' => 'منخفض',
                 _ => 'نزم',
               },
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.w500,
-                color: Color(0xFF86868B),
+                color: AddCarTheme.textSecondary,
               ),
             ),
             Container(
@@ -288,7 +246,7 @@ class _PriceRangeIndicator extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Colors.white,
                 shape: BoxShape.circle,
-                border: Border.all(color: const Color(0xFF1D1D1F), width: 2),
+                border: Border.all(color: AddCarTheme.textPrimary, width: 2),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withValues(alpha: 0.12),
@@ -304,10 +262,10 @@ class _PriceRangeIndicator extends StatelessWidget {
                 'ar' => 'مرتفع',
                 _ => 'بەرز',
               },
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.w500,
-                color: Color(0xFF86868B),
+                color: AddCarTheme.textSecondary,
               ),
             ),
           ],

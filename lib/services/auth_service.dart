@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_auth_platform_interface/firebase_auth_platform_interface.dart';
 import 'package:flutter/foundation.dart';
 
 import '../core/phone_auth_email.dart';
@@ -15,6 +14,7 @@ enum AuthErrorCode {
   invalidPhone,
   registrationFailed,
   sendCodeFirst,
+  userNotFound,
 }
 
 class AuthException implements Exception {
@@ -36,8 +36,6 @@ class AuthService {
   final FirebaseAuth _auth;
   final FirebaseFirestore _firestore;
 
-  RecaptchaVerifier? _recaptchaVerifier;
-
   Stream<User?> get authStateChanges => _auth.authStateChanges();
 
   User? get currentUser => _auth.currentUser;
@@ -55,6 +53,19 @@ class AuthService {
     return UserProfile.fromFirestore(doc);
   }
 
+  /// Looks up a registered user by normalized Iraqi mobile number.
+  Future<UserProfile?> findUserByPhone(String phone) async {
+    _validatePhone(phone);
+    final normalizedPhone = normalizeIraqPhone(phone);
+    final snapshot = await _firestore
+        .collection('users')
+        .where('phone', isEqualTo: normalizedPhone)
+        .limit(1)
+        .get();
+    if (snapshot.docs.isEmpty) return null;
+    return UserProfile.fromFirestore(snapshot.docs.first);
+  }
+
   /// Starts Firebase phone verification and completes when [codeSent],
   /// [verificationCompleted], or [verificationFailed] fires.
   /// Aggressive sanitize → validate → E.164 (`+9647501149414`) for Firebase.
@@ -62,6 +73,154 @@ class AuthService {
     final cleaned = cleanPhoneInput(phoneNumber);
     _validatePhone(cleaned);
     return formatIraqPhoneE164(cleaned);
+  }
+
+  /// Sends an OTP via Firebase Phone Auth. On mobile, [onCodeSent] / [onError]
+  /// fire from Firebase callbacks; on web, reCAPTCHA + [signInWithPhoneNumber] runs first.
+  Future<void> sendOtp({
+    required String phoneNumber,
+    required void Function(String verificationId) onCodeSent,
+    required void Function(FirebaseAuthException error) onError,
+    void Function(PhoneAuthCredential credential)? onAutoVerified,
+    void Function(String verificationId)? onCodeAutoRetrievalTimeout,
+  }) async {
+    final e164 = _e164ForFirebase(phoneNumber);
+    debugPrint('[Auth] sendOtp: e164="$e164" web=$kIsWeb');
+
+    try {
+      if (kIsWeb) {
+        final host = Uri.base.host;
+        if (host == 'localhost' ||
+            host == '127.0.0.1' ||
+            host == '0.0.0.0') {
+          onError(
+            FirebaseAuthException(
+              code: 'invalid-app-credential',
+              message:
+                  'Phone verification does not work on localhost. '
+                  'Use https://iqmotors-d588d.web.app or run with '
+                  '--web-hostname=127.0.0.1',
+            ),
+          );
+          return;
+        }
+
+        final result = await _verifyPhoneOnWeb(e164);
+        final verificationId = result.verificationId;
+        if (verificationId == null || verificationId.isEmpty) {
+          onError(
+            FirebaseAuthException(
+              code: 'missing-verification-id',
+              message: 'Phone verification did not return a verification ID.',
+            ),
+          );
+          return;
+        }
+        onCodeSent(verificationId);
+        return;
+      }
+
+      await _auth.verifyPhoneNumber(
+        phoneNumber: e164,
+        timeout: const Duration(seconds: 120),
+        verificationCompleted: (PhoneAuthCredential credential) {
+          debugPrint('[Auth] sendOtp verificationCompleted (auto-verify)');
+          onAutoVerified?.call(credential);
+        },
+        verificationFailed: onError,
+        codeSent: (String verificationId, int? resendToken) {
+          debugPrint('[Auth] sendOtp codeSent: verificationId=$verificationId');
+          onCodeSent(verificationId);
+        },
+        codeAutoRetrievalTimeout: (String verificationId) {
+          debugPrint(
+            '[Auth] sendOtp codeAutoRetrievalTimeout: verificationId=$verificationId',
+          );
+          onCodeAutoRetrievalTimeout?.call(verificationId);
+        },
+      );
+    } on FirebaseAuthException catch (e) {
+      onError(e);
+    } on AuthException catch (e) {
+      final code = switch (e.code) {
+        AuthErrorCode.invalidPhone => 'invalid-phone-number',
+        AuthErrorCode.sendCodeFirst => 'invalid-verification-id',
+        AuthErrorCode.registrationFailed => 'internal-error',
+        AuthErrorCode.userNotFound => 'user-not-found',
+      };
+      onError(
+        FirebaseAuthException(
+          code: code,
+          message: e.toString(),
+        ),
+      );
+    } catch (e, stack) {
+      debugPrint('[Auth] sendOtp unexpected error: $e\n$stack');
+      onError(
+        FirebaseAuthException(
+          code: 'internal-error',
+          message: e.toString(),
+        ),
+      );
+    }
+  }
+
+  /// Verifies the SMS code, signs the user in, links email/password when provided,
+  /// and persists [userData] to the `users` collection.
+  Future<void> verifyOtpAndRegister({
+    required String verificationId,
+    required String smsCode,
+    required Map<String, dynamic> userData,
+    PhoneAuthCredential? autoVerifiedCredential,
+  }) async {
+    final phone = userData['phoneNumber'] as String? ?? '';
+    _validatePhone(phone);
+    final normalizedPhone = normalizeIraqPhone(phone);
+    final password = userData['password'] as String?;
+
+    final user = await _signInWithPhoneOtp(
+      verificationId: verificationId,
+      smsCode: smsCode,
+      autoVerifiedCredential: autoVerifiedCredential,
+    );
+
+    try {
+      if (password != null && password.isNotEmpty) {
+        await _linkEmailPasswordIfNeeded(user, phone, password);
+      }
+
+      final accountType = _accountTypeFromUserData(userData);
+      final fullName = (userData['fullName'] as String? ?? '').trim();
+      if (fullName.isNotEmpty) {
+        await user.updateDisplayName(fullName);
+      }
+
+      final profile = UserProfile(
+        uid: user.uid,
+        accountType: accountType,
+        phone: normalizedPhone,
+        displayName: accountType == AccountType.showroom
+            ? (userData['showroomName'] as String? ?? fullName).trim()
+            : fullName,
+        showroomName: (userData['showroomName'] as String?)?.trim(),
+        ownerName: (userData['ownerName'] as String?)?.trim(),
+        city: userData['city'] as String?,
+        createdAt: DateTime.now(),
+      );
+      await _saveProfile(profile);
+    } catch (e) {
+      await _auth.signOut();
+      rethrow;
+    }
+  }
+
+  AccountType _accountTypeFromUserData(Map<String, dynamic> userData) {
+    final raw = (userData['userType'] as String? ?? 'Normal').trim();
+    return switch (raw.toLowerCase()) {
+      'showroom' => AccountType.showroom,
+      'normal' || 'individual' => AccountType.individual,
+      _ => AccountType.individual,
+    };
   }
 
   Future<PhoneVerificationResult> verifyPhoneNumber(
@@ -93,53 +252,18 @@ class AuthService {
     }
   }
 
-  /// Invisible reCAPTCHA modal on web (no DOM container — Firebase default).
+  /// Web phone OTP — Firebase manages reCAPTCHA inside [signInWithPhoneNumber].
+  ///
+  /// Do not call [RecaptchaVerifier.render] beforehand; pre-rendering can expire
+  /// the token before SMS is sent and triggers `captcha-check-failed`.
   Future<PhoneVerificationResult> _verifyPhoneOnWeb(String e164) async {
-    _disposeRecaptchaVerifier();
-    FirebaseAuthException? recaptchaError;
-
     try {
-      _recaptchaVerifier = RecaptchaVerifier(
-        auth: FirebaseAuthPlatform.instanceFor(
-          app: _auth.app,
-          pluginConstants: _auth.pluginConstants,
-        ),
-        onSuccess: () => debugPrint('[Auth] reCAPTCHA solved'),
-        onError: (FirebaseAuthException e) {
-          debugPrint(
-            '[Auth] reCAPTCHA onError: code=${e.code} message=${e.message}',
-          );
-          recaptchaError = e;
-        },
-        onExpired: () {
-          debugPrint('[Auth] reCAPTCHA expired');
-          recaptchaError = FirebaseAuthException(
-            code: 'recaptcha-expired',
-            message: 'reCAPTCHA expired. Please tap Send Code again.',
-          );
-        },
+      await _auth.setLanguageCode('ar');
+      debugPrint(
+        '[Auth] signInWithPhoneNumber e164="$e164" host=${Uri.base.host}',
       );
-      debugPrint('[Auth] Rendering invisible reCAPTCHA verifier…');
-      await _recaptchaVerifier!.render();
 
-      if (recaptchaError != null) {
-        throw recaptchaError!;
-      }
-
-      final verifier = _recaptchaVerifier;
-      if (verifier == null) {
-        throw FirebaseAuthException(
-          code: 'recaptcha-not-initialized',
-          message:
-              'reCAPTCHA verifier was not initialized. Reload the page and try again.',
-        );
-      }
-      debugPrint('[Auth] signInWithPhoneNumber e164="$e164" with reCAPTCHA');
-
-      final confirmation = await _auth.signInWithPhoneNumber(
-        e164,
-        verifier,
-      );
+      final confirmation = await _auth.signInWithPhoneNumber(e164);
       debugPrint(
         '[Auth] signInWithPhoneNumber succeeded: verificationId=${confirmation.verificationId}',
       );
@@ -151,8 +275,6 @@ class AuthService {
         '[Auth] Web phone verification failed: code=${e.code} message=${e.message?.toString()}',
       );
       rethrow;
-    } finally {
-      // Keep verifier alive until OTP is confirmed; cleared on next send.
     }
   }
 
@@ -228,11 +350,6 @@ class AuthService {
     );
   }
 
-  void _disposeRecaptchaVerifier() {
-    _recaptchaVerifier?.clear();
-    _recaptchaVerifier = null;
-  }
-
   Future<void> registerIndividual({
     required String fullName,
     required String phone,
@@ -241,30 +358,18 @@ class AuthService {
     required String smsCode,
     PhoneAuthCredential? autoVerifiedCredential,
   }) async {
-    _validatePhone(phone);
-    final normalizedPhone = normalizeIraqPhone(phone);
-
-    final user = await _signInWithPhoneOtp(
+    await verifyOtpAndRegister(
       verificationId: verificationId,
       smsCode: smsCode,
       autoVerifiedCredential: autoVerifiedCredential,
+      userData: {
+        'fullName': fullName,
+        'phoneNumber': phone,
+        'userType': 'Normal',
+        'password': password,
+        'createdAt': FieldValue.serverTimestamp(),
+      },
     );
-
-    try {
-      await _linkEmailPasswordIfNeeded(user, phone, password);
-      await user.updateDisplayName(fullName.trim());
-
-      final profile = UserProfile(
-        uid: user.uid,
-        accountType: AccountType.individual,
-        phone: normalizedPhone,
-        displayName: fullName.trim(),
-      );
-      await _saveProfile(profile);
-    } catch (e) {
-      await _auth.signOut();
-      rethrow;
-    }
   }
 
   Future<void> registerShowroom({
@@ -277,35 +382,21 @@ class AuthService {
     required String smsCode,
     PhoneAuthCredential? autoVerifiedCredential,
   }) async {
-    _validatePhone(phone);
-    final normalizedPhone = normalizeIraqPhone(phone);
-
-    final user = await _signInWithPhoneOtp(
+    await verifyOtpAndRegister(
       verificationId: verificationId,
       smsCode: smsCode,
       autoVerifiedCredential: autoVerifiedCredential,
+      userData: {
+        'fullName': ownerName,
+        'phoneNumber': phone,
+        'userType': 'Showroom',
+        'password': password,
+        'showroomName': showroomName,
+        'ownerName': ownerName,
+        'city': city,
+        'createdAt': FieldValue.serverTimestamp(),
+      },
     );
-
-    try {
-      await _linkEmailPasswordIfNeeded(user, phone, password);
-
-      final displayName = showroomName.trim();
-      await user.updateDisplayName(displayName);
-
-      final profile = UserProfile(
-        uid: user.uid,
-        accountType: AccountType.showroom,
-        phone: normalizedPhone,
-        displayName: displayName,
-        showroomName: showroomName.trim(),
-        ownerName: ownerName.trim(),
-        city: city,
-      );
-      await _saveProfile(profile);
-    } catch (e) {
-      await _auth.signOut();
-      rethrow;
-    }
   }
 
   Future<void> signIn({
@@ -314,7 +405,14 @@ class AuthService {
   }) async {
     _validatePhone(phone);
     final email = phoneToAuthEmail(phone);
-    await _auth.signInWithEmailAndPassword(email: email, password: password);
+    try {
+      await _auth.signInWithEmailAndPassword(email: email, password: password);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        throw AuthException(AuthErrorCode.userNotFound);
+      }
+      rethrow;
+    }
   }
 
   Future<void> signInWithEmail({

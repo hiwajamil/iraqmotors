@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
+import '../core/l10n_extensions.dart';
 import '../data/iraq_locations.dart';
+import '../views/add_car/add_car_theme.dart';
+import '../views/add_car/widgets/add_car_form_card.dart';
 
 /// Dependent governorate → city pickers backed by [IraqLocations.iraqLocations].
 class IraqLocationDropdowns extends StatelessWidget {
@@ -10,23 +13,20 @@ class IraqLocationDropdowns extends StatelessWidget {
     required this.city,
     required this.onProvinceChanged,
     required this.onCityChanged,
-    this.provinceLabel = 'پارێزگا',
-    this.cityLabel = 'ناوچە / شار',
-    this.provincePlaceholder = 'پارێزگا هەڵبژێرە',
-    this.cityPlaceholder = 'ناوچە هەڵبژێرە',
+    this.provinceLabel,
+    this.cityLabel,
+    this.provincePlaceholder,
+    this.cityPlaceholder,
   });
 
   final String? province;
   final String? city;
   final ValueChanged<String> onProvinceChanged;
   final ValueChanged<String> onCityChanged;
-  final String provinceLabel;
-  final String cityLabel;
-  final String provincePlaceholder;
-  final String cityPlaceholder;
-
-  static const Color _textPrimary = Color(0xFF1D1D1F);
-  static const Color _textSecondary = Color(0xFF86868B);
+  final String? provinceLabel;
+  final String? cityLabel;
+  final String? provincePlaceholder;
+  final String? cityPlaceholder;
 
   List<String> get _cities =>
       province == null ? const [] : IraqLocations.citiesForProvince(province!);
@@ -40,10 +40,8 @@ class IraqLocationDropdowns extends StatelessWidget {
   }) async {
     final result = await showModalBottomSheet<String>(
       context: context,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
+      backgroundColor: AddCarTheme.cardBg,
+      shape: AddCarTheme.bottomSheetShape,
       builder: (ctx) {
         return SafeArea(
           child: Column(
@@ -51,17 +49,9 @@ class IraqLocationDropdowns extends StatelessWidget {
             children: [
               Padding(
                 padding: const EdgeInsets.all(16),
-                child: Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    color: _textPrimary,
-                    letterSpacing: -0.3,
-                  ),
-                ),
+                child: Text(title, style: AddCarTheme.sectionLabel),
               ),
-              const Divider(height: 1, color: Color(0xFFE5E5EA)),
+              const Divider(height: 1, color: AddCarTheme.border),
               Flexible(
                 child: ListView.builder(
                   shrinkWrap: true,
@@ -76,7 +66,7 @@ class IraqLocationDropdowns extends StatelessWidget {
                           fontSize: 16,
                           fontWeight:
                               isSelected ? FontWeight.w600 : FontWeight.w400,
-                          color: _textPrimary,
+                          color: AddCarTheme.textPrimary,
                         ),
                       ),
                       trailing: isSelected
@@ -98,41 +88,50 @@ class IraqLocationDropdowns extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final resolvedProvinceLabel = provinceLabel ?? l10n.addCarProvinceLabel;
+    final resolvedCityLabel = cityLabel ?? l10n.addCarAreaLabel;
+    final resolvedProvincePlaceholder =
+        provincePlaceholder ?? l10n.addCarProvincePlaceholder;
+    final resolvedCityPlaceholder =
+        cityPlaceholder ?? l10n.addCarAreaPlaceholder;
     final cityEnabled = province != null;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        _LocationField(
-          label: provinceLabel,
-          value: province,
-          placeholder: provincePlaceholder,
-          enabled: true,
-          onTap: () => _openPicker(
-            context,
-            title: provinceLabel,
-            options: IraqLocations.provinceOrder,
-            selected: province,
-            onSelected: onProvinceChanged,
+    return AddCarFormCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _LocationField(
+            label: resolvedProvinceLabel,
+            value: province,
+            placeholder: resolvedProvincePlaceholder,
+            enabled: true,
+            onTap: () => _openPicker(
+              context,
+              title: resolvedProvinceLabel,
+              options: IraqLocations.provinceOrder,
+              selected: province,
+              onSelected: onProvinceChanged,
+            ),
           ),
-        ),
-        const SizedBox(height: 16),
-        _LocationField(
-          label: cityLabel,
-          value: city,
-          placeholder: cityPlaceholder,
-          enabled: cityEnabled,
-          onTap: cityEnabled
-              ? () => _openPicker(
-                    context,
-                    title: cityLabel,
-                    options: _cities,
-                    selected: city,
-                    onSelected: onCityChanged,
-                  )
-              : null,
-        ),
-      ],
+          const SizedBox(height: 16),
+          _LocationField(
+            label: resolvedCityLabel,
+            value: city,
+            placeholder: resolvedCityPlaceholder,
+            enabled: cityEnabled,
+            onTap: cityEnabled
+                ? () => _openPicker(
+                      context,
+                      title: resolvedCityLabel,
+                      options: _cities,
+                      selected: city,
+                      onSelected: onCityChanged,
+                    )
+                : null,
+          ),
+        ],
+      ),
     );
   }
 }
@@ -163,10 +162,8 @@ class _LocationFieldState extends State<_LocationField> {
   Widget build(BuildContext context) {
     final hasValue = widget.value != null;
     final textColor = widget.enabled
-        ? (hasValue
-            ? IraqLocationDropdowns._textPrimary
-            : IraqLocationDropdowns._textSecondary)
-        : IraqLocationDropdowns._textSecondary.withValues(alpha: 0.45);
+        ? (hasValue ? AddCarTheme.textPrimary : AddCarTheme.textSecondary)
+        : AddCarTheme.textSecondary.withValues(alpha: 0.45);
 
     return GestureDetector(
       onTapDown: widget.enabled && widget.onTap != null
@@ -182,14 +179,12 @@ class _LocationFieldState extends State<_LocationField> {
       child: AnimatedScale(
         scale: _pressed ? 0.98 : 1,
         duration: const Duration(milliseconds: 100),
-        child: Container(
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
           padding: const EdgeInsetsDirectional.fromSTEB(16, 14, 12, 14),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(
-              color: const Color(0xFFE5E5EA),
-            ),
+          decoration: AddCarTheme.inputDecorationBox(
+            focused: _pressed,
+            enabled: widget.enabled,
           ),
           child: Row(
             children: [
@@ -202,7 +197,7 @@ class _LocationFieldState extends State<_LocationField> {
                       style: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
-                        color: IraqLocationDropdowns._textSecondary,
+                        color: AddCarTheme.textSecondary,
                       ),
                     ),
                     const SizedBox(height: 6),

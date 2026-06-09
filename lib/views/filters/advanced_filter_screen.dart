@@ -9,6 +9,7 @@ import '../../l10n/app_localizations.dart';
 import '../../models/advanced_filter_state.dart';
 import '../../models/car_brand.dart';
 import '../../widgets/brand_search_sheet.dart';
+import '../../widgets/filter_option_picker_dialog.dart';
 
 /// Full-screen Apple-style advanced filter modal.
 class AdvancedFilterScreen extends StatefulWidget {
@@ -221,7 +222,7 @@ class _AdvancedFilterScreenState extends State<AdvancedFilterScreen> {
   }) {
     if (!mounted) return Future.value();
     final future = searchable
-        ? _SearchablePickerSheet.show(
+        ? FilterOptionPickerDialog.showSearchable(
             context,
             title: title,
             searchHint: searchHint ?? title,
@@ -229,7 +230,7 @@ class _AdvancedFilterScreenState extends State<AdvancedFilterScreen> {
             resolveLabel: resolveLabel,
             valueKey: valueKey,
           )
-        : _OptionPickerSheet.show(
+        : FilterOptionPickerDialog.show(
             context,
             title: title,
             optionKeys: optionKeys,
@@ -302,7 +303,7 @@ class _AdvancedFilterScreenState extends State<AdvancedFilterScreen> {
                                 languageCode,
                               )
                             : null,
-                        placeholder: l10n.filterModel,
+                        placeholder: l10n.filterModelPlaceholder,
                         enabled: modelPickerEnabled,
                         onTap: () => _openPicker(
                           title: l10n.filterModel,
@@ -1486,201 +1487,3 @@ class _PrimaryButtonState extends State<_PrimaryButton> {
   }
 }
 
-class _OptionPickerSheet extends StatelessWidget {
-  const _OptionPickerSheet({
-    required this.title,
-    required this.optionKeys,
-    required this.resolveLabel,
-    required this.valueKey,
-  });
-
-  final String title;
-  final List<String> optionKeys;
-  final String Function(String key) resolveLabel;
-  final String? valueKey;
-
-  static Future<String?> show(
-    BuildContext context, {
-    required String title,
-    required List<String> optionKeys,
-    required String Function(String key) resolveLabel,
-    required String? valueKey,
-  }) {
-    return showModalBottomSheet<String>(
-      context: context,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      builder: (_) => _OptionPickerSheet(
-        title: title,
-        optionKeys: optionKeys,
-        resolveLabel: resolveLabel,
-        valueKey: valueKey,
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Text(
-              title,
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: _AdvancedFilterScreenState._textPrimary,
-              ),
-            ),
-          ),
-          Flexible(
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: optionKeys.length,
-              itemBuilder: (context, index) {
-                final key = optionKeys[index];
-                final selected = valueKey == key ||
-                    (valueKey == null && index == 0);
-                return ListTile(
-                  title: Text(resolveLabel(key)),
-                  trailing: selected
-                      ? const Icon(Icons.check_rounded, size: 20)
-                      : null,
-                  onTap: () => Navigator.pop(context, key),
-                );
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _SearchablePickerSheet extends StatefulWidget {
-  const _SearchablePickerSheet({
-    required this.title,
-    required this.searchHint,
-    required this.optionKeys,
-    required this.resolveLabel,
-    required this.valueKey,
-  });
-
-  final String title;
-  final String searchHint;
-  final List<String> optionKeys;
-  final String Function(String key) resolveLabel;
-  final String? valueKey;
-
-  static Future<String?> show(
-    BuildContext context, {
-    required String title,
-    required String searchHint,
-    required List<String> optionKeys,
-    required String Function(String key) resolveLabel,
-    required String? valueKey,
-  }) {
-    return showModalBottomSheet<String>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      builder: (_) => _SearchablePickerSheet(
-        title: title,
-        searchHint: searchHint,
-        optionKeys: optionKeys,
-        resolveLabel: resolveLabel,
-        valueKey: valueKey,
-      ),
-    );
-  }
-
-  @override
-  State<_SearchablePickerSheet> createState() => _SearchablePickerSheetState();
-}
-
-class _SearchablePickerSheetState extends State<_SearchablePickerSheet> {
-  final _controller = TextEditingController();
-  String _query = '';
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  List<String> get _filtered {
-    if (_query.trim().isEmpty) return widget.optionKeys;
-    final q = _query.trim().toLowerCase();
-    return widget.optionKeys
-        .where((k) => widget.resolveLabel(k).toLowerCase().contains(q))
-        .toList();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final maxHeight = MediaQuery.sizeOf(context).height * 0.65;
-
-    return SafeArea(
-      child: SizedBox(
-        height: maxHeight,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-              child: TextField(
-                controller: _controller,
-                onChanged: (v) => setState(() => _query = v),
-                decoration: InputDecoration(
-                  labelText: widget.searchHint,
-                  prefixIcon: const Icon(Icons.search, size: 20),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: Colors.grey.shade300),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: Colors.grey.shade300),
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 12,
-                  ),
-                ),
-              ),
-            ),
-            Expanded(
-              child: ListView.separated(
-                itemCount: _filtered.length,
-                separatorBuilder: (_, __) =>
-                    Divider(height: 1, color: Colors.grey.shade200),
-                itemBuilder: (context, index) {
-                  final key = _filtered[index];
-                  final selected = widget.valueKey == key;
-                  return ListTile(
-                    title: Text(
-                      widget.resolveLabel(key),
-                      textAlign: TextAlign.end,
-                    ),
-                    trailing: selected
-                        ? const Icon(Icons.check_rounded, size: 20)
-                        : null,
-                    onTap: () => Navigator.pop(context, key),
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}

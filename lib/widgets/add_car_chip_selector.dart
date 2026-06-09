@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../views/add_car/add_car_theme.dart';
+import '../views/add_car/widgets/add_car_form_card.dart';
+
 /// Apple-style selectable chip used in the add-car wizard.
 class AddCarSelectChip extends StatefulWidget {
   const AddCarSelectChip({
@@ -18,9 +21,6 @@ class AddCarSelectChip extends StatefulWidget {
   final bool showDropdownIcon;
   final bool fullWidth;
   final bool square;
-
-  static const Color activeFill = Color(0xFF1D1D1F);
-  static const Color inactiveBorder = Color(0xFFE5E5EA);
 
   @override
   State<AddCarSelectChip> createState() => _AddCarSelectChipState();
@@ -51,12 +51,13 @@ class _AddCarSelectChipState extends State<AddCarSelectChip> {
             vertical: widget.square ? 0 : 10,
           ),
           decoration: BoxDecoration(
-            color: widget.selected ? AddCarSelectChip.activeFill : Colors.white,
-            borderRadius: BorderRadius.circular(8),
+            color: widget.selected ? AddCarTheme.textPrimary : AddCarTheme.inputFill,
+            borderRadius: BorderRadius.circular(AddCarTheme.inputRadius),
             border: Border.all(
               color: widget.selected
-                  ? AddCarSelectChip.activeFill
-                  : AddCarSelectChip.inactiveBorder,
+                  ? AddCarTheme.textPrimary
+                  : (_pressed ? AddCarTheme.focusBlue : AddCarTheme.border),
+              width: _pressed && !widget.selected ? 1.5 : 1,
             ),
           ),
           child: Row(
@@ -71,7 +72,9 @@ class _AddCarSelectChipState extends State<AddCarSelectChip> {
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
-                  color: widget.selected ? Colors.white : AddCarSelectChip.activeFill,
+                  color: widget.selected
+                      ? Colors.white
+                      : AddCarTheme.textPrimary,
                 ),
               ),
               if (widget.showDropdownIcon) ...[
@@ -79,7 +82,9 @@ class _AddCarSelectChipState extends State<AddCarSelectChip> {
                 Icon(
                   Icons.keyboard_arrow_down_rounded,
                   size: 18,
-                  color: widget.selected ? Colors.white : const Color(0xFF86868B),
+                  color: widget.selected
+                      ? Colors.white
+                      : AddCarTheme.textSecondary,
                 ),
               ],
             ],
@@ -111,18 +116,14 @@ class AddCarChipSection extends StatelessWidget {
   final String Function(String key) labelFor;
   final String? otherLabel;
 
-  static const Color _textPrimary = Color(0xFF1D1D1F);
-
   bool get _isOtherSelected =>
       selectedKey != null && !chipKeys.contains(selectedKey);
 
   Future<void> _openOtherSheet(BuildContext context) async {
     final result = await showModalBottomSheet<String>(
       context: context,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
+      backgroundColor: AddCarTheme.cardBg,
+      shape: AddCarTheme.bottomSheetShape,
       builder: (ctx) {
         return SafeArea(
           child: Column(
@@ -130,17 +131,9 @@ class AddCarChipSection extends StatelessWidget {
             children: [
               Padding(
                 padding: const EdgeInsets.all(16),
-                child: Text(
-                  label,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    color: _textPrimary,
-                    letterSpacing: -0.3,
-                  ),
-                ),
+                child: Text(label, style: AddCarTheme.sectionLabel),
               ),
-              const Divider(height: 1, color: Color(0xFFE5E5EA)),
+              const Divider(height: 1, color: AddCarTheme.border),
               Flexible(
                 child: ListView.builder(
                   shrinkWrap: true,
@@ -155,7 +148,7 @@ class AddCarChipSection extends StatelessWidget {
                           fontSize: 16,
                           fontWeight:
                               isSelected ? FontWeight.w600 : FontWeight.w400,
-                          color: _textPrimary,
+                          color: AddCarTheme.textPrimary,
                         ),
                       ),
                       trailing: isSelected
@@ -191,33 +184,28 @@ class AddCarChipSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(
-          label,
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            color: _textPrimary,
-            letterSpacing: -0.2,
-          ),
-        ),
+        Text(label, style: AddCarTheme.sectionLabel),
         const SizedBox(height: 12),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: [
-            for (final key in chipKeys)
+        AddCarFormCard(
+          padding: const EdgeInsetsDirectional.all(16),
+          child: Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              for (final key in chipKeys)
+                AddCarSelectChip(
+                  label: labelFor(key),
+                  selected: selectedKey == key,
+                  onTap: () => onSelected(key),
+                ),
               AddCarSelectChip(
-                label: labelFor(key),
-                selected: selectedKey == key,
-                onTap: () => onSelected(key),
+                label: otherDisplayLabel,
+                selected: _isOtherSelected,
+                showDropdownIcon: true,
+                onTap: () => _openOtherSheet(context),
               ),
-            AddCarSelectChip(
-              label: otherDisplayLabel,
-              selected: _isOtherSelected,
-              showDropdownIcon: true,
-              onTap: () => _openOtherSheet(context),
-            ),
-          ],
+            ],
+          ),
         ),
       ],
     );
@@ -245,25 +233,10 @@ class AddCarSimpleChipSection extends StatelessWidget {
   final bool fullWidth;
   final bool squareChips;
 
-  static const Color _textPrimary = Color(0xFF1D1D1F);
-
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            color: _textPrimary,
-            letterSpacing: -0.2,
-          ),
-        ),
-        const SizedBox(height: 12),
-        if (fullWidth)
-          Column(
+    final chips = fullWidth
+        ? Column(
             children: [
               for (var i = 0; i < chipKeys.length; i++) ...[
                 if (i > 0) const SizedBox(height: 8),
@@ -279,8 +252,7 @@ class AddCarSimpleChipSection extends StatelessWidget {
               ],
             ],
           )
-        else
-          Wrap(
+        : Wrap(
             spacing: 8,
             runSpacing: 8,
             children: [
@@ -292,7 +264,17 @@ class AddCarSimpleChipSection extends StatelessWidget {
                   onTap: () => onSelected(key),
                 ),
             ],
-          ),
+          );
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(label, style: AddCarTheme.sectionLabel),
+        const SizedBox(height: 12),
+        AddCarFormCard(
+          padding: const EdgeInsetsDirectional.all(16),
+          child: chips,
+        ),
       ],
     );
   }

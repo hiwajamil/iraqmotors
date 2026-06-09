@@ -1,4 +1,11 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+
+import '../models/activity_log.dart';
+import 'activity_log_service.dart';
+import 'car_bid_service.dart';
+import 'r2_storage_service.dart';
 
 class CarDatabaseException implements Exception {
   CarDatabaseException(this.message);
@@ -11,10 +18,134 @@ class CarDatabaseException implements Exception {
 
 /// Persists car listing documents to Firestore.
 class CarDatabaseService {
-  CarDatabaseService({FirebaseFirestore? firestore})
-      : _firestore = firestore ?? FirebaseFirestore.instance;
+  CarDatabaseService({
+    FirebaseFirestore? firestore,
+    R2StorageService? r2Storage,
+    ActivityLogService? activityLog,
+  })  : _firestore = firestore ?? FirebaseFirestore.instance,
+        _r2 = r2Storage ?? R2StorageService(),
+        _activityLog = activityLog ?? ActivityLogService();
 
   final FirebaseFirestore _firestore;
+  final R2StorageService _r2;
+  final ActivityLogService _activityLog;
+
+  static const String sellerIdField = 'sellerId';
+  static const String likedByUsersField = 'likedByUsers';
+  static const String statusField = 'status';
+  static const String statusPending = 'pending';
+  static const String statusActive = 'active';
+  static const String statusRejected = 'rejected';
+  static const String statusExpired = 'expired';
+  static const String accountTypeField = 'accountType';
+  static const String accountTypeShowroom = 'showroom';
+
+  /// Lists car ads published by [currentUserId] (`sellerId` field).
+  Future<List<Map<String, dynamic>>> fetchUserAds(String currentUserId) async {
+    try {
+      QuerySnapshot<Map<String, dynamic>> snapshot;
+      try {
+        snapshot = await _firestore
+            .collection('cars')
+            .where(sellerIdField, isEqualTo: currentUserId)
+            .orderBy('createdAt', descending: true)
+            .get();
+      } on FirebaseException catch (e) {
+        if (e.code != 'failed-precondition') rethrow;
+        snapshot = await _firestore
+            .collection('cars')
+            .where(sellerIdField, isEqualTo: currentUserId)
+            .get();
+      }
+      return _mapsFromQuery(snapshot);
+    } on FirebaseException catch (e) {
+      throw CarDatabaseException(
+        e.message ?? 'Failed to fetch user ads.',
+      );
+    } catch (e) {
+      throw CarDatabaseException('Failed to fetch user ads: $e');
+    }
+  }
+
+  /// Lists car ads favorited by [currentUserId] (`likedByUsers` array).
+  Future<List<Map<String, dynamic>>> fetchFavoriteAds(
+    String currentUserId,
+  ) async {
+    try {
+      final snapshot = await _firestore
+          .collection('cars')
+          .where(likedByUsersField, arrayContains: currentUserId)
+          .get();
+      return _mapsFromQuery(snapshot);
+    } on FirebaseException catch (e) {
+      throw CarDatabaseException(
+        e.message ?? 'Failed to fetch favorite ads.',
+      );
+    } catch (e) {
+      throw CarDatabaseException('Failed to fetch favorite ads: $e');
+    }
+  }
+
+  /// Adds [userId] to a car's `likedByUsers` array.
+  ///
+  /// When the document does not exist yet (e.g. demo listings), [seedData] is
+  /// written so the favorite can appear in the user dashboard.
+  Future<void> favoriteCarAd({
+    required String adId,
+    required String userId,
+    Map<String, dynamic>? seedData,
+  }) async {
+    try {
+      final docRef = _firestore.collection('cars').doc(adId);
+      final snapshot = await docRef.get();
+      if (snapshot.exists) {
+        await docRef.update({
+          likedByUsersField: FieldValue.arrayUnion([userId]),
+        });
+      } else if (seedData != null) {
+        final data = Map<String, dynamic>.from(seedData)..remove('id');
+        final imageUrl = data.remove('imageUrl')?.toString();
+        final imageUrls = _urlListFromField(data['imageUrls']);
+        if (imageUrls.isEmpty && imageUrl != null && imageUrl.isNotEmpty) {
+          data['imageUrls'] = [imageUrl];
+        }
+        await docRef.set({
+          ...data,
+          likedByUsersField: [userId],
+          statusField: statusActive,
+          CarBidService.highestBidField: 0,
+          'createdAt': FieldValue.serverTimestamp(),
+        });
+      } else {
+        throw CarDatabaseException('Car listing not found.');
+      }
+    } on FirebaseException catch (e) {
+      throw CarDatabaseException(
+        e.message ?? 'Failed to save favorite.',
+      );
+    } catch (e) {
+      if (e is CarDatabaseException) rethrow;
+      throw CarDatabaseException('Failed to save favorite: $e');
+    }
+  }
+
+  /// Removes [userId] from a car's `likedByUsers` array (un-favorite).
+  Future<void> unfavoriteCarAd({
+    required String adId,
+    required String userId,
+  }) async {
+    try {
+      await _firestore.collection('cars').doc(adId).update({
+        likedByUsersField: FieldValue.arrayRemove([userId]),
+      });
+    } on FirebaseException catch (e) {
+      throw CarDatabaseException(
+        e.message ?? 'Failed to remove favorite.',
+      );
+    } catch (e) {
+      throw CarDatabaseException('Failed to remove favorite: $e');
+    }
+  }
 
   /// Saves a car ad to the `cars` collection with [imageUrls] and [createdAt].
   Future<String> publishCarAd(
@@ -25,6 +156,8 @@ class CarDatabaseService {
       final doc = _firestore.collection('cars').doc();
       await doc.set({
         ...carData,
+        statusField: statusPending,
+        CarBidService.highestBidField: 0,
         'imageUrls': imageUrls,
         'createdAt': FieldValue.serverTimestamp(),
       });
@@ -36,5 +169,199 @@ class CarDatabaseService {
     } catch (e) {
       throw CarDatabaseException('Failed to publish car listing: $e');
     }
+  }
+
+  /// Lists car ads awaiting admin approval (`status == pending`).
+  Future<List<Map<String, dynamic>>> fetchPendingAds() async {
+    try {
+      QuerySnapshot<Map<String, dynamic>> snapshot;
+      try {
+        snapshot = await _firestore
+            .collection('cars')
+            .where(statusField, isEqualTo: statusPending)
+            .orderBy('createdAt', descending: true)
+            .get();
+      } on FirebaseException catch (e) {
+        if (e.code != 'failed-precondition') rethrow;
+        snapshot = await _firestore
+            .collection('cars')
+            .where(statusField, isEqualTo: statusPending)
+            .get();
+      }
+      final ads = _mapsFromQuery(snapshot);
+      ads.sort((a, b) {
+        final aTime = a['createdAt'];
+        final bTime = b['createdAt'];
+        if (aTime is Timestamp && bTime is Timestamp) {
+          return bTime.compareTo(aTime);
+        }
+        return 0;
+      });
+      return ads;
+    } on FirebaseException catch (e) {
+      throw CarDatabaseException(
+        e.message ?? 'Failed to fetch pending ads.',
+      );
+    } catch (e) {
+      throw CarDatabaseException('Failed to fetch pending ads: $e');
+    }
+  }
+
+  /// Updates the moderation [newStatus] of a car ad (e.g. `active`, `rejected`).
+  Future<void> updateAdStatus({
+    required String adId,
+    required String newStatus,
+    ActivityAuditContext? audit,
+  }) async {
+    try {
+      await _firestore.collection('cars').doc(adId).update({
+        statusField: newStatus,
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+      if (audit != null) {
+        await _activityLog.logFromAudit(audit);
+      }
+    } on FirebaseException catch (e) {
+      throw CarDatabaseException(
+        e.message ?? 'Failed to update ad status.',
+      );
+    } catch (e) {
+      throw CarDatabaseException('Failed to update ad status: $e');
+    }
+  }
+
+  /// Aggregate counts for the admin dashboard stats cards.
+  Future<Map<String, int>> fetchAdminDashboardStats() async {
+    try {
+      final cars = _firestore.collection('cars');
+      final users = _firestore.collection('users');
+
+      final results = await Future.wait([
+        _countQuery(
+          cars.where(statusField, isEqualTo: statusPending),
+        ),
+        _countQuery(
+          cars.where(statusField, isEqualTo: statusActive),
+        ),
+        _countQuery(users),
+        _countQuery(
+          users.where(accountTypeField, isEqualTo: accountTypeShowroom),
+        ),
+      ]);
+
+      return {
+        'pendingAds': results[0],
+        'activeAds': results[1],
+        'totalUsers': results[2],
+        'totalShowrooms': results[3],
+      };
+    } on FirebaseException catch (e) {
+      throw CarDatabaseException(
+        e.message ?? 'Failed to fetch admin dashboard stats.',
+      );
+    } catch (e) {
+      throw CarDatabaseException('Failed to fetch admin dashboard stats: $e');
+    }
+  }
+
+  Future<int> _countQuery(Query<Map<String, dynamic>> query) async {
+    final snapshot = await query.count().get();
+    return snapshot.count ?? 0;
+  }
+
+  /// Updates an existing car ad, uploading [newImagesToUpload] to R2 and
+  /// merging the resulting URLs with [existingImageUrls].
+  Future<void> updateCarAd({
+    required String adId,
+    required Map<String, dynamic> updatedData,
+    required List<String> existingImageUrls,
+    required List<File> newImagesToUpload,
+  }) async {
+    try {
+      final newUrls = await Future.wait(
+        newImagesToUpload.asMap().entries.map((entry) {
+          final index = entry.key;
+          final file = entry.value;
+          final ext = _extensionFromPath(file.path);
+          final uniqueName =
+              '${DateTime.now().millisecondsSinceEpoch}_$index$ext';
+          return _r2.uploadImageFile(file.path, fileName: uniqueName);
+        }),
+      );
+
+      final imageUrls = [...existingImageUrls, ...newUrls];
+
+      await _firestore.collection('cars').doc(adId).update({
+        ...updatedData,
+        'imageUrls': imageUrls,
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+    } on R2StorageException catch (e) {
+      throw CarDatabaseException(e.message);
+    } on FirebaseException catch (e) {
+      throw CarDatabaseException(
+        e.message ?? 'Failed to update car listing.',
+      );
+    } catch (e) {
+      throw CarDatabaseException('Failed to update car listing: $e');
+    }
+  }
+
+  /// Deletes a car ad document and its associated R2 images when available.
+  Future<void> deleteCarAd({
+    required String adId,
+    ActivityAuditContext? audit,
+  }) async {
+    try {
+      final docRef = _firestore.collection('cars').doc(adId);
+      final snapshot = await docRef.get();
+
+      if (snapshot.exists) {
+        final data = snapshot.data();
+        final imageUrls = _urlListFromField(data?['imageUrls']);
+        final damageUrls = _urlListFromField(data?['damageImageUrls']);
+
+        if (imageUrls.isNotEmpty || damageUrls.isNotEmpty) {
+          try {
+            await _r2.deleteImageUrls([...imageUrls, ...damageUrls]);
+          } on R2StorageException {
+            // Best-effort cleanup — still remove the Firestore document.
+          }
+        }
+      }
+
+      await docRef.delete();
+      if (audit != null) {
+        await _activityLog.logFromAudit(audit);
+      }
+    } on FirebaseException catch (e) {
+      throw CarDatabaseException(
+        e.message ?? 'Failed to delete car listing.',
+      );
+    } catch (e) {
+      if (e is CarDatabaseException) rethrow;
+      throw CarDatabaseException('Failed to delete car listing: $e');
+    }
+  }
+
+  static List<Map<String, dynamic>> _mapsFromQuery(
+    QuerySnapshot<Map<String, dynamic>> snapshot,
+  ) {
+    return snapshot.docs
+        .map((doc) => {'id': doc.id, ...doc.data()})
+        .toList();
+  }
+
+  static List<String> _urlListFromField(dynamic value) {
+    if (value is! List) return const [];
+    return value.map((e) => e.toString()).where((u) => u.isNotEmpty).toList();
+  }
+
+  static String _extensionFromPath(String path) {
+    final dotIndex = path.lastIndexOf('.');
+    if (dotIndex <= 0 || dotIndex >= path.length - 1) {
+      return '.jpg';
+    }
+    return path.substring(dotIndex).toLowerCase();
   }
 }

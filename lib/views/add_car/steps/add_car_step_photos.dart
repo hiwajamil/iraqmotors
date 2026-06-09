@@ -1,25 +1,28 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/l10n_extensions.dart';
+import '../../../core/picked_image_preview.dart';
 import '../../../models/add_car_draft.dart';
+import '../add_car_theme.dart';
+import '../widgets/add_car_form_card.dart';
+import '../widgets/add_car_step_header.dart';
 
-/// Step 2 — photo grid (simulated picker for Phase 1).
+/// Step 2 — photo grid.
 class AddCarStepPhotos extends StatelessWidget {
   const AddCarStepPhotos({
     super.key,
     required this.photos,
-    required this.onPhotoAdded,
+    required this.onPhotoSlotTapped,
+    this.isProcessing = false,
   });
 
   final List<String?> photos;
-  final ValueChanged<int> onPhotoAdded;
-
-  static const Color _textPrimary = Color(0xFF1D1D1F);
-  static const Color _textSecondary = Color(0xFF86868B);
-  static const Color _border = Color(0xFFE5E5EA);
-  static const Color _fill = Color(0xFFF5F5F7);
+  final ValueChanged<int> onPhotoSlotTapped;
+  final bool isProcessing;
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final slots = photos.length >= AddCarDraft.photoSlotCount
         ? photos
         : [
@@ -37,55 +40,44 @@ class AddCarStepPhotos extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Text(
-            'وێنەکان بگرە',
-            style: TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.w700,
-              letterSpacing: -0.6,
-              height: 1.15,
-              color: _textPrimary,
-            ),
-          ),
-          const SizedBox(height: 10),
-          const Text(
-            'بە لایەنی کەمەوە ٤ وێنەی ئۆتۆمبێلەکەت بگرە',
-            style: TextStyle(
-              fontSize: 17,
-              fontWeight: FontWeight.w400,
-              height: 1.4,
-              color: _textSecondary,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            '$filledCount / ${AddCarDraft.minPhotoCount}',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: filledCount >= AddCarDraft.minPhotoCount
-                  ? const Color(0xFF34C759)
-                  : _textSecondary,
+          AddCarStepHeader(
+            title: l10n.addCarPhotosHeading,
+            subtitle: l10n.addCarPhotosSubtitle,
+            trailing: Text(
+              '$filledCount / ${AddCarDraft.minPhotoCount}',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: filledCount >= AddCarDraft.minPhotoCount
+                    ? AddCarTheme.successGreen
+                    : AddCarTheme.textSecondary,
+              ),
             ),
           ),
           const SizedBox(height: 24),
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: AddCarDraft.photoSlotCount,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              mainAxisSpacing: 12,
-              crossAxisSpacing: 12,
+          AddCarFormCard(
+            padding: const EdgeInsetsDirectional.all(16),
+            child: GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: AddCarDraft.photoSlotCount,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                mainAxisSpacing: 12,
+                crossAxisSpacing: 12,
+              ),
+              itemBuilder: (context, index) {
+                final photoPath = slots[index];
+                final hasPhoto = photoPath != null;
+                return _PhotoSlot(
+                  index: index,
+                  photoPath: photoPath,
+                  hasPhoto: hasPhoto,
+                  enabled: !isProcessing,
+                  onTap: () => onPhotoSlotTapped(index),
+                );
+              },
             ),
-            itemBuilder: (context, index) {
-              final hasPhoto = slots[index] != null;
-              return _PhotoSlot(
-                index: index,
-                hasPhoto: hasPhoto,
-                onTap: () => onPhotoAdded(index),
-              );
-            },
           ),
         ],
       ),
@@ -96,12 +88,16 @@ class AddCarStepPhotos extends StatelessWidget {
 class _PhotoSlot extends StatefulWidget {
   const _PhotoSlot({
     required this.index,
+    required this.photoPath,
     required this.hasPhoto,
+    required this.enabled,
     required this.onTap,
   });
 
   final int index;
+  final String? photoPath;
   final bool hasPhoto;
+  final bool enabled;
   final VoidCallback onTap;
 
   @override
@@ -116,47 +112,34 @@ class _PhotoSlotState extends State<_PhotoSlot> {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: widget.onTap,
-        onHighlightChanged: (v) => setState(() => _pressed = v),
-        borderRadius: BorderRadius.circular(16),
+        onTap: widget.enabled ? widget.onTap : null,
+        onHighlightChanged:
+            widget.enabled ? (v) => setState(() => _pressed = v) : null,
+        borderRadius: BorderRadius.circular(AddCarTheme.inputRadius),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 180),
           curve: Curves.easeOut,
           decoration: BoxDecoration(
-            color: widget.hasPhoto ? Colors.white : AddCarStepPhotos._fill,
-            borderRadius: BorderRadius.circular(16),
+            color: widget.hasPhoto ? AddCarTheme.cardBg : AddCarTheme.inputFill,
+            borderRadius: BorderRadius.circular(AddCarTheme.inputRadius),
             border: Border.all(
-              color: widget.hasPhoto
-                  ? AddCarStepPhotos._textPrimary.withValues(alpha: 0.15)
-                  : AddCarStepPhotos._border,
-              width: widget.hasPhoto ? 1.5 : 1,
+              color: _pressed
+                  ? AddCarTheme.focusBlue
+                  : (widget.hasPhoto
+                      ? AddCarTheme.textPrimary.withValues(alpha: 0.15)
+                      : AddCarTheme.border),
+              width: _pressed ? 1.5 : 1,
             ),
-            boxShadow: _pressed
-                ? null
-                : [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.03),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
           ),
           child: widget.hasPhoto
               ? Stack(
                   fit: StackFit.expand,
                   children: [
                     ClipRRect(
-                      borderRadius: BorderRadius.circular(15),
-                      child: ColoredBox(
-                        color: AddCarStepPhotos._textPrimary.withValues(
-                          alpha: 0.06,
-                        ),
-                        child: const Icon(
-                          Icons.directions_car_rounded,
-                          size: 36,
-                          color: AddCarStepPhotos._textSecondary,
-                        ),
+                      borderRadius: BorderRadius.circular(
+                        AddCarTheme.inputRadius - 1,
                       ),
+                      child: PickedImagePreview(path: widget.photoPath!),
                     ),
                     PositionedDirectional(
                       top: 8,
@@ -165,7 +148,7 @@ class _PhotoSlotState extends State<_PhotoSlot> {
                         width: 22,
                         height: 22,
                         decoration: const BoxDecoration(
-                          color: Color(0xFF34C759),
+                          color: AddCarTheme.successGreen,
                           shape: BoxShape.circle,
                         ),
                         child: const Icon(
@@ -183,18 +166,18 @@ class _PhotoSlotState extends State<_PhotoSlot> {
                     Icon(
                       Icons.photo_camera_outlined,
                       size: 28,
-                      color: AddCarStepPhotos._textSecondary.withValues(
+                      color: AddCarTheme.textSecondary.withValues(
                         alpha: _pressed ? 1 : 0.85,
                       ),
                     ),
                     if (widget.index == 0) ...[
                       const SizedBox(height: 6),
                       Text(
-                        'سەرەکی',
+                        context.l10n.addCarPhotoPrimary,
                         style: TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.w500,
-                          color: AddCarStepPhotos._textSecondary.withValues(
+                          color: AddCarTheme.textSecondary.withValues(
                             alpha: 0.9,
                           ),
                         ),
@@ -207,3 +190,4 @@ class _PhotoSlotState extends State<_PhotoSlot> {
     );
   }
 }
+

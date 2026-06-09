@@ -1,0 +1,43 @@
+import '../../models/localized_car_model.dart';
+
+const List<LocalizedCarModel> suzukiModels = [
+  LocalizedCarModel(id: 'swift', ku: 'سویفت', en: 'Swift', ar: 'سويفت'),
+  LocalizedCarModel(id: 'dzire', ku: 'دیزایەر', en: 'Dzire', ar: 'دزاير'),
+  LocalizedCarModel(id: 'fronx', ku: 'فرۆنکس', en: 'Fronx', ar: 'فرونكس'),
+  LocalizedCarModel(id: 'baleno', ku: 'بالینۆ', en: 'Baleno', ar: 'بالينو'),
+  LocalizedCarModel(id: 'ciaz', ku: 'سیاز', en: 'Ciaz', ar: 'سياز'),
+  LocalizedCarModel(id: 'ertiga', ku: 'ئەرتیگا', en: 'Ertiga', ar: 'إرتيغا'),
+  LocalizedCarModel(
+    id: 'grand_vitara',
+    ku: 'گراند ڤیتێرا',
+    en: 'Grand Vitara',
+    ar: 'غراند فيتارا',
+  ),
+  LocalizedCarModel(id: 'jimny', ku: 'جیمی', en: 'Jimny', ar: 'جيمني'),
+  LocalizedCarModel(id: 's_cross', ku: 'S-کرۆس', en: 'S-Cross', ar: 'S-Cross'),
+  LocalizedCarModel(id: 'apv', ku: 'APV', en: 'APV', ar: 'APV'),
+  LocalizedCarModel(
+    id: 'ignis_crossover',
+    ku: 'Ignis Crossover',
+    en: 'Ignis Crossover',
+    ar: 'Ignis Crossover',
+  ),
+  LocalizedCarModel(
+    id: 's_presso',
+    ku: 'S-پرێسۆ',
+    en: 'S-Presso',
+    ar: 'S-Presso',
+  ),
+  LocalizedCarModel(id: 'sx4', ku: 'SX4', en: 'SX4', ar: 'SX4'),
+  LocalizedCarModel(id: 'xl7', ku: 'XL7', en: 'XL7', ar: 'XL7'),
+  LocalizedCarModel(id: 'eeco', ku: 'ئیکۆ', en: 'Eeco', ar: 'إيكو'),
+  LocalizedCarModel(id: 'ignis', ku: 'ئینگنیس', en: 'Ignis', ar: 'إيجنيس'),
+  LocalizedCarModel(id: 'alto', ku: 'ئاڵتۆ', en: 'Alto', ar: 'ألتو'),
+  LocalizedCarModel(id: 'reno', ku: 'ڕینۆ', en: 'Reno', ar: 'رينو'),
+  LocalizedCarModel(id: 'celerio', ku: 'سلێریۆ', en: 'Celerio', ar: 'سيليريو'),
+  LocalizedCarModel(id: 'forenza', ku: 'فۆرێنزا', en: 'Forenza', ar: 'فورينزا'),
+  LocalizedCarModel(id: 'vitara', ku: 'ڤیتارا', en: 'Vitara', ar: 'فيتارا'),
+  LocalizedCarModel(id: 'carry', ku: 'کاری', en: 'Carry', ar: 'كاري'),
+  LocalizedCarModel(id: 'kizashi', ku: 'کیزاشی', en: 'Kizashi', ar: 'كيزاشي'),
+  LocalizedCarModel(id: 'liana', ku: 'لیانا', en: 'Liana', ar: 'ليانا'),
+];

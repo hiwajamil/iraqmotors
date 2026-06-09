@@ -1,8 +1,9 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../controllers/auth_controller.dart';
 import '../../core/auth_l10n.dart';
 import '../../core/l10n_extensions.dart';
 import '../../core/phone_auth_email.dart';
@@ -11,6 +12,7 @@ import '../../core/super_admin_config.dart';
 import '../../l10n/app_localizations.dart';
 import '../../providers/auth_providers.dart';
 import '../../services/auth_service.dart';
+import '../home/home_screen.dart';
 
 String _cityLabel(AppLocalizations l10n, String key) {
   return switch (key) {
@@ -25,7 +27,7 @@ String _cityLabel(AppLocalizations l10n, String key) {
 
 /// Registration / sign-in — individual vs showroom toggle forms.
 class AuthScreen extends ConsumerStatefulWidget {
-  const AuthScreen({super.key, this.initialLoginMode = false});
+  const AuthScreen({super.key, this.initialLoginMode = true});
 
   final bool initialLoginMode;
 
@@ -48,7 +50,9 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
   late bool _isLoginMode;
   bool _isLoading = false;
   bool _isSendingCode = false;
-  late final AuthController _authController;
+  bool _isCodeSent = false;
+  int _resendCountdown = 0;
+  Timer? _resendTimer;
   String? _verificationId;
   PhoneAuthCredential? _autoVerifiedCredential;
 
@@ -86,11 +90,11 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
   void initState() {
     super.initState();
     _isLoginMode = widget.initialLoginMode;
-    _authController = AuthController(ref.read(authServiceProvider));
   }
 
   @override
   void dispose() {
+    _resendTimer?.cancel();
     _loginEmailController.dispose();
     _loginPhoneController.dispose();
     _loginPasswordController.dispose();
@@ -117,10 +121,59 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
   void _clearPhoneVerification() {
     _verificationId = null;
     _autoVerifiedCredential = null;
+    _isCodeSent = false;
+    _resendCountdown = 0;
+    _resendTimer?.cancel();
+    _resendTimer = null;
+  }
+
+  void _startResendCountdown() {
+    _resendTimer?.cancel();
+    _resendCountdown = 60;
+    _resendTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
+      if (_resendCountdown <= 1) {
+        timer.cancel();
+        setState(() {
+          _resendCountdown = 0;
+          _isCodeSent = false;
+        });
+      } else {
+        setState(() => _resendCountdown--);
+      }
+    });
   }
 
   void _toggleAuthMode() {
-    setState(() => _isLoginMode = !_isLoginMode);
+    setState(() {
+      _isLoginMode = !_isLoginMode;
+      if (!_isLoginMode) {
+        final phone = _loginPhoneController.text.trim();
+        if (phone.isNotEmpty) {
+          _individualPhoneController.text = phone;
+          _showroomPhoneController.text = phone;
+        }
+      }
+    });
+  }
+
+  Future<void> _showAccountNotFoundPrompt() async {
+    final l10n = context.l10n;
+    final goToSignUp = await showDialog<bool>(
+      context: context,
+      barrierColor: Colors.black.withValues(alpha: 0.35),
+      builder: (dialogContext) => _AccountNotFoundDialog(
+        message: l10n.authAccountNotFoundPrompt,
+        createAccountLabel: l10n.authCreateNewAccount,
+        cancelLabel: l10n.back,
+      ),
+    );
+    if (goToSignUp == true && mounted) {
+      _toggleAuthMode();
+    }
   }
 
   Future<void> _onSubmit() async {
@@ -174,7 +227,11 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
       if (!mounted) return;
       await _navigateAfterAuth();
     } on AuthException catch (e) {
-      _showMessage(l10n.messageForAuthError(e.code));
+      if (e.code == AuthErrorCode.userNotFound) {
+        await _showAccountNotFoundPrompt();
+      } else {
+        _showMessage(l10n.messageForAuthError(e.code));
+      }
     } on FirebaseAuthException catch (e) {
       _showErrorSnackBar(l10n.messageForFirebaseAuthException(e));
     } catch (e) {
@@ -190,36 +247,57 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
     final verificationId = _verificationId ?? '';
     final smsCode = _activeOtpController.text.trim();
     final autoCredential = _autoVerifiedCredential;
+    final phone = _activePhoneController.text.trim();
+    final password = _accountType == _AccountType.individual
+        ? _individualPasswordController.text
+        : _showroomPasswordController.text;
+
+    if (_accountType == _AccountType.individual &&
+        _fullNameController.text.trim().isEmpty) {
+      _showMessage(l10n.fullNameRequired);
+      return;
+    }
+    if (password.isEmpty) {
+      _showMessage(l10n.passwordRequired);
+      return;
+    }
+    if (autoCredential == null && smsCode.isEmpty) {
+      _showMessage(l10n.otpRequired);
+      return;
+    }
+
+    final userData = <String, dynamic>{
+      'phoneNumber': phone,
+      'password': password,
+      'createdAt': DateTime.now().toIso8601String(),
+      if (_accountType == _AccountType.individual) ...{
+        'fullName': _fullNameController.text.trim(),
+        'userType': 'Normal',
+      } else ...{
+        'fullName': _ownerNameController.text.trim(),
+        'userType': 'Showroom',
+        'showroomName': _showroomNameController.text.trim(),
+        'ownerName': _ownerNameController.text.trim(),
+        'city': _selectedCity,
+      },
+    };
 
     setState(() => _isLoading = true);
     try {
-      if (_accountType == _AccountType.individual) {
-        await auth.registerIndividual(
-          fullName: _fullNameController.text,
-          phone: _individualPhoneController.text.trim(),
-          password: _individualPasswordController.text,
-          verificationId: verificationId,
-          smsCode: smsCode,
-          autoVerifiedCredential: autoCredential,
-        );
-      } else {
-        await auth.registerShowroom(
-          showroomName: _showroomNameController.text,
-          ownerName: _ownerNameController.text,
-          phone: _showroomPhoneController.text.trim(),
-          password: _showroomPasswordController.text,
-          city: _selectedCity!,
-          verificationId: verificationId,
-          smsCode: smsCode,
-          autoVerifiedCredential: autoCredential,
-        );
-      }
+      await auth.verifyOtpAndRegister(
+        verificationId: verificationId,
+        smsCode: smsCode,
+        userData: userData,
+        autoVerifiedCredential: autoCredential,
+      );
       if (!mounted) return;
-      await _navigateAfterAuth();
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute<void>(builder: (_) => const HomeScreen()),
+      );
     } on AuthException catch (e) {
       _showMessage(l10n.messageForAuthError(e.code));
     } on FirebaseAuthException catch (e) {
-      _showErrorSnackBar(AuthController.formatFirebaseAuthError(e));
+      _showErrorSnackBar(l10n.messageForFirebaseAuthException(e));
     } catch (e) {
       _showErrorSnackBar(e.toString());
     } finally {
@@ -272,47 +350,66 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
   }
 
   Future<void> _sendVerificationCode() async {
-    if (_isSendingCode) return;
+    if (_isSendingCode || (_isCodeSent && _resendCountdown > 0)) return;
 
     final l10n = context.l10n;
-    setState(_clearPhoneVerification);
+    final auth = ref.read(authServiceProvider);
+    final rawPhone = _activePhoneController.text.trim();
 
-    final result = await _authController.sendVerificationCode(
-      rawPhone: _activePhoneController.text,
-      onSendingChanged: (sending) {
+    final phone = cleanPhoneInput(rawPhone);
+    if (phone.isEmpty) {
+      _showErrorSnackBar(l10n.enterPhoneFirst);
+      return;
+    }
+    if (!isValidIraqMobile(phone)) {
+      _showErrorSnackBar(l10n.authInvalidPhone);
+      return;
+    }
+
+    setState(() {
+      _verificationId = null;
+      _autoVerifiedCredential = null;
+      _isCodeSent = false;
+      _resendCountdown = 0;
+      _resendTimer?.cancel();
+      _resendTimer = null;
+      _isSendingCode = true;
+    });
+
+    await auth.sendOtp(
+      phoneNumber: rawPhone,
+      onCodeSent: (verificationId) {
         if (!mounted) return;
-        setState(() => _isSendingCode = sending);
+        setState(() {
+          _verificationId = verificationId;
+          _isCodeSent = true;
+          _isSendingCode = false;
+        });
+        _startResendCountdown();
+        _showMessage(
+          l10n.verificationCodeSent(formatIraqPhoneE164(phone)),
+        );
+      },
+      onError: (error) {
+        if (!mounted) return;
+        setState(() => _isSendingCode = false);
+        _showErrorSnackBar(l10n.messageForFirebaseAuthException(error));
+      },
+      onAutoVerified: (credential) {
+        if (!mounted) return;
+        setState(() {
+          _autoVerifiedCredential = credential;
+          _isCodeSent = true;
+          _isSendingCode = false;
+        });
+        _startResendCountdown();
+        _showMessage(l10n.authPhoneAutoVerified);
       },
       onCodeAutoRetrievalTimeout: (verificationId) {
         if (!mounted) return;
         setState(() => _verificationId = verificationId);
       },
-      onError: (message) {
-        if (!mounted) return;
-        final display = switch (message) {
-          'enter_phone_first' => l10n.enterPhoneFirst,
-          'invalid_phone' => l10n.authInvalidPhone,
-          'invalidPhone' => l10n.authInvalidPhone,
-          _ => message,
-        };
-        _showErrorSnackBar(display);
-      },
-      onSuccess: (verificationResult) {
-        if (!mounted) return;
-        setState(() {
-          _verificationId = verificationResult.verificationId;
-          _autoVerifiedCredential = verificationResult.autoVerifiedCredential;
-        });
-        final phone = cleanPhoneInput(_activePhoneController.text.trim());
-        if (verificationResult.isAutoVerified) {
-          _showMessage(l10n.authPhoneAutoVerified);
-        } else {
-          _showMessage(l10n.verificationCodeSent(formatIraqPhoneE164(phone)));
-        }
-      },
     );
-
-    if (result == null || !mounted) return;
   }
 
   void _showMessage(String message) {
@@ -422,6 +519,8 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                                             _individualOtpController,
                                         onSendCode: _sendVerificationCode,
                                         isSendingCode: _isSendingCode,
+                                        isCodeSent: _isCodeSent,
+                                        resendCountdown: _resendCountdown,
                                         passwordController:
                                             _individualPasswordController,
                                         isLoading: _isLoading,
@@ -439,6 +538,8 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                                         otpController: _showroomOtpController,
                                         onSendCode: _sendVerificationCode,
                                         isSendingCode: _isSendingCode,
+                                        isCodeSent: _isCodeSent,
+                                        resendCountdown: _resendCountdown,
                                         passwordController:
                                             _showroomPasswordController,
                                         selectedCity: _selectedCity,
@@ -774,6 +875,8 @@ class _IndividualForm extends StatelessWidget {
     required this.otpController,
     required this.onSendCode,
     required this.isSendingCode,
+    required this.isCodeSent,
+    required this.resendCountdown,
     required this.passwordController,
     required this.isLoading,
     required this.onSubmit,
@@ -785,6 +888,8 @@ class _IndividualForm extends StatelessWidget {
   final TextEditingController otpController;
   final Future<void> Function() onSendCode;
   final bool isSendingCode;
+  final bool isCodeSent;
+  final int resendCountdown;
   final TextEditingController passwordController;
   final bool isLoading;
   final VoidCallback onSubmit;
@@ -819,6 +924,8 @@ class _IndividualForm extends StatelessWidget {
             otpController: otpController,
             onSendCode: onSendCode,
             isSendingCode: isSendingCode,
+            isCodeSent: isCodeSent,
+            resendCountdown: resendCountdown,
           ),
           _PremiumFormField(
             label: l10n.passwordLabel,
@@ -851,6 +958,8 @@ class _ShowroomForm extends StatelessWidget {
     required this.otpController,
     required this.onSendCode,
     required this.isSendingCode,
+    required this.isCodeSent,
+    required this.resendCountdown,
     required this.passwordController,
     required this.selectedCity,
     required this.cityKeys,
@@ -866,6 +975,8 @@ class _ShowroomForm extends StatelessWidget {
   final TextEditingController otpController;
   final Future<void> Function() onSendCode;
   final bool isSendingCode;
+  final bool isCodeSent;
+  final int resendCountdown;
   final TextEditingController passwordController;
   final String? selectedCity;
   final List<String> cityKeys;
@@ -911,6 +1022,8 @@ class _ShowroomForm extends StatelessWidget {
             otpController: otpController,
             onSendCode: onSendCode,
             isSendingCode: isSendingCode,
+            isCodeSent: isCodeSent,
+            resendCountdown: resendCountdown,
           ),
           _PremiumCityDropdown(
             label: l10n.cityLocation,
@@ -1081,11 +1194,15 @@ class _OtpVerificationRow extends StatelessWidget {
     required this.otpController,
     required this.onSendCode,
     required this.isSendingCode,
+    required this.isCodeSent,
+    required this.resendCountdown,
   });
 
   final TextEditingController otpController;
   final Future<void> Function() onSendCode;
   final bool isSendingCode;
+  final bool isCodeSent;
+  final int resendCountdown;
 
   @override
   Widget build(BuildContext context) {
@@ -1118,6 +1235,8 @@ class _OtpVerificationRow extends StatelessWidget {
                 _SendCodeButton(
                   onPressed: onSendCode,
                   isLoading: isSendingCode,
+                  isCodeSent: isCodeSent,
+                  resendCountdown: resendCountdown,
                 ),
               ],
             ),
@@ -1223,10 +1342,14 @@ class _SendCodeButton extends StatefulWidget {
   const _SendCodeButton({
     required this.onPressed,
     this.isLoading = false,
+    this.isCodeSent = false,
+    this.resendCountdown = 0,
   });
 
   final Future<void> Function() onPressed;
   final bool isLoading;
+  final bool isCodeSent;
+  final int resendCountdown;
 
   @override
   State<_SendCodeButton> createState() => _SendCodeButtonState();
@@ -1237,6 +1360,9 @@ class _SendCodeButtonState extends State<_SendCodeButton> {
 
   bool _hovered = false;
 
+  bool get _isDisabled =>
+      widget.isLoading || (widget.isCodeSent && widget.resendCountdown > 0);
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
@@ -1245,9 +1371,9 @@ class _SendCodeButtonState extends State<_SendCodeButton> {
       onExit: (_) => setState(() => _hovered = false),
       child: AnimatedOpacity(
         duration: const Duration(milliseconds: 200),
-        opacity: _hovered ? 0.88 : 1,
+        opacity: _hovered && !_isDisabled ? 0.88 : 1,
         child: ElevatedButton(
-          onPressed: widget.isLoading ? null : () => widget.onPressed(),
+          onPressed: _isDisabled ? null : () => widget.onPressed(),
           style: ElevatedButton.styleFrom(
             backgroundColor: _buttonDark,
             foregroundColor: Colors.white,
@@ -1271,13 +1397,26 @@ class _SendCodeButtonState extends State<_SendCodeButton> {
                     color: Colors.white,
                   ),
                 )
-              : Text(
-                  l10n.sendCode,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
+              : widget.isCodeSent && widget.resendCountdown > 0
+                  ? Text(
+                      '${widget.resendCountdown}s',
+                      style: const TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    )
+                  : widget.isCodeSent
+                      ? const Icon(
+                          Icons.check_rounded,
+                          size: 20,
+                        )
+                      : Text(
+                          l10n.sendCode,
+                          style: const TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
         ),
       ),
     );
@@ -1497,6 +1636,84 @@ class _AuthModeLink extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _AccountNotFoundDialog extends StatelessWidget {
+  const _AccountNotFoundDialog({
+    required this.message,
+    required this.createAccountLabel,
+    required this.cancelLabel,
+  });
+
+  final String message;
+  final String createAccountLabel;
+  final String cancelLabel;
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: _AuthScreenState._cardWhite,
+      elevation: 0,
+      insetPadding: const EdgeInsets.symmetric(horizontal: 28),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(24, 28, 24, 20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: _AuthScreenState._textPrimary,
+                height: 1.5,
+              ),
+            ),
+            const SizedBox(height: 24),
+            SizedBox(
+              width: double.infinity,
+              child: GestureDetector(
+                onTap: () => Navigator.of(context).pop(true),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  decoration: BoxDecoration(
+                    color: _AuthScreenState._accentBlack,
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(
+                    createAccountLabel,
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 10),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              style: TextButton.styleFrom(
+                foregroundColor: _AuthScreenState._textSecondary,
+                padding: const EdgeInsets.symmetric(vertical: 8),
+              ),
+              child: Text(
+                cancelLabel,
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

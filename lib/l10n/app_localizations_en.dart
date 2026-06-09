@@ -207,8 +207,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authWrongCredentials => 'Incorrect phone number or password.';
 
   @override
+  String get authAccountNotFoundPrompt =>
+      'This account was not found. Would you like to create a new account?';
+
+  @override
+  String get authCreateNewAccount => 'Create account';
+
+  @override
   String get authTooManyRequests =>
       'Too many attempts. Please wait and try again.';
+
+  @override
+  String get authDeviceBlocked =>
+      'This device was temporarily blocked after too many verification attempts. Wait a few hours, try another browser, or use the test number 7722141988 with code 112233.';
 
   @override
   String get authNetworkError => 'No internet connection. Please try again.';
@@ -223,6 +234,18 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get authCaptchaFailed =>
       'Security verification failed. Refresh the page and try again.';
+
+  @override
+  String get authInvalidAppCredential =>
+      'Phone verification is not available on this domain. Use iqmotors.net or iqmotors-d588d.web.app, or add this domain in Firebase Console → Authentication → Settings → Authorized domains.';
+
+  @override
+  String get authBillingRequired =>
+      'SMS verification requires Firebase Blaze billing. Contact the app administrator.';
+
+  @override
+  String get authPhoneAuthDisabled =>
+      'Phone sign-in is disabled in Firebase. Enable Phone provider in the Firebase Console.';
 
   @override
   String get cityErbil => 'Erbil';
@@ -313,19 +336,37 @@ class AppLocalizationsEn extends AppLocalizations {
   String get filterModel => 'Model';
 
   @override
+  String get filterModelPlaceholder => 'e.g. BMW X7';
+
+  @override
   String get filterYear => 'Year';
+
+  @override
+  String get filterYearPlaceholder => 'e.g. 2024';
 
   @override
   String get filterMileage => 'Mileage';
 
   @override
+  String get filterMileagePlaceholder => 'e.g. up to 50,000 km';
+
+  @override
   String get filterPrice => 'Price';
+
+  @override
+  String get filterPricePlaceholder => 'e.g. up to \$50,000';
 
   @override
   String get filterCondition => 'Condition';
 
   @override
+  String get filterConditionPlaceholder => 'e.g. used';
+
+  @override
   String get filterEngineType => 'Engine Type';
+
+  @override
+  String get filterEngineTypePlaceholder => 'e.g. petrol';
 
   @override
   String get filterAllModels => 'All Models';
@@ -545,6 +586,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String get specMileage => 'Mileage';
 
   @override
+  String get sellerPriceLabel => 'Seller price:';
+
+  @override
+  String get latestBidLabel => 'Latest bid:';
+
+  @override
+  String get placeYourBid => 'Place your bid';
+
+  @override
+  String get enterBidAmount => 'Enter your bid amount';
+
+  @override
+  String get submitBid => 'Submit';
+
+  @override
+  String get bidTooLowError =>
+      'Please enter an amount higher than the latest bid';
+
+  @override
+  String get bidSuccessMessage => 'Your bid was placed successfully!';
+
+  @override
   String get specTransmission => 'Transmission';
 
   @override
@@ -723,4 +786,557 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get dummyPublisherHiwa => 'Hiwa Jamil';
+
+  @override
+  String get userDashboardTitle => 'User Dashboard';
+
+  @override
+  String get navHomeScreen => 'Home';
+
+  @override
+  String get navMyFavorites => 'My Favorites';
+
+  @override
+  String get navMyAds => 'My Listings';
+
+  @override
+  String get navMessages => 'Messages';
+
+  @override
+  String get userAccountPersonal => 'Personal Account';
+
+  @override
+  String get favoritesSectionTitle => 'My Favorites (Saved)';
+
+  @override
+  String get favoritesEmpty => 'No saved cars yet';
+
+  @override
+  String get myAdsEmpty => 'You have no listings yet';
+
+  @override
+  String get viewAllListings => 'View All';
+
+  @override
+  String get deleteAdTitle => 'Delete Listing';
+
+  @override
+  String get deleteAdConfirm =>
+      'Are you sure you want to delete this listing? This action cannot be undone.';
+
+  @override
+  String get cancelAction => 'Cancel';
+
+  @override
+  String get deleteAction => 'Delete';
+
+  @override
+  String get adDeletedSuccess => 'Listing deleted successfully';
+
+  @override
+  String get sell => 'Sell';
+
+  @override
+  String get sellCarButton => 'Sell Car';
+
+  @override
+  String get editAction => 'Edit';
+
+  @override
+  String get adStatusActive => 'Active';
+
+  @override
+  String get carFallbackTitle => 'Vehicle';
+
+  @override
+  String get messagesEmpty => 'No messages yet';
+
+  @override
+  String get settingsComingSoon => 'Settings coming soon';
+
+  @override
+  String get adminApprovalsByCitySubtitle => 'Ad overview by governorate';
+
+  @override
+  String get adminUsersByCitySubtitle => 'Users by governorate';
+
+  @override
+  String get adminShowroomsByCitySubtitle => 'Showrooms by governorate';
+
+  @override
+  String get adminStatApproved => 'Approved';
+
+  @override
+  String get adminStatPendingReview => 'Pending';
+
+  @override
+  String get adminStatExpired => 'Expired';
+
+  @override
+  String get adminRetry => 'Retry';
+
+  @override
+  String get adminNoUsersInCity => 'No users in this city.';
+
+  @override
+  String get adminNoShowroomsInCity => 'No showrooms in this city.';
+
+  @override
+  String get adminNoPendingListings => 'No pending listings.';
+
+  @override
+  String get adminSectionComingSoon => 'This section is coming soon.';
+
+  @override
+  String get adminAdCountLabel => 'Ad count';
+
+  @override
+  String get adminActiveAdCountLabel => 'Active ads';
+
+  @override
+  String get adminTotalAdCountLabel => 'Total ads';
+
+  @override
+  String get adminUserCountLabel => 'Users';
+
+  @override
+  String get adminShowroomCountLabel => 'Showrooms';
+
+  @override
+  String get adminRejectAdTitle => 'Reject listing';
+
+  @override
+  String get adminRejectAdConfirm =>
+      'Are you sure you want to reject this listing?';
+
+  @override
+  String get adminAdApprovedSuccess => 'Listing approved successfully';
+
+  @override
+  String get adminAdRejectedSuccess => 'Listing rejected';
+
+  @override
+  String get adminDescriptionLabel => 'Description';
+
+  @override
+  String get adminReportsSubtitle => 'Platform analytics and revenue overview';
+
+  @override
+  String get adminDailyActiveUsers => 'Daily Active Users';
+
+  @override
+  String get adminDailyNewAds => 'New Ad Submissions';
+
+  @override
+  String get adminLast30Days => 'Last 30 days';
+
+  @override
+  String get adminTotalRevenue => 'Total Revenue';
+
+  @override
+  String get adminRevenueFromBoost => 'From boost packages';
+
+  @override
+  String get adminRevenueCard => 'Card';
+
+  @override
+  String get adminRevenueEWallet => 'E-Wallet';
+
+  @override
+  String get adminCityPerformance => 'City Performance';
+
+  @override
+  String get adminCityColumn => 'City';
+
+  @override
+  String get adminTotalAdsColumn => 'Total Ads';
+
+  @override
+  String get adminApprovedAdsColumn => 'Approved';
+
+  @override
+  String get adminSettingsSubtitle =>
+      'Manage platform configuration and access';
+
+  @override
+  String get adminSettingsGeneral => 'General Settings';
+
+  @override
+  String get adminSettingsPackages => 'Package Prices';
+
+  @override
+  String get adminSettingsCities => 'Cities & Regions';
+
+  @override
+  String get adminSettingsSecurity => 'Security & Admins';
+
+  @override
+  String get adminSettingsBoostPrice => 'Boost package price (IQD)';
+
+  @override
+  String get adminSettingsSuperBoostPrice => 'Super Boost package price (IQD)';
+
+  @override
+  String get adminSettingsSaveChanges => 'Save Changes';
+
+  @override
+  String get adminSettingsSavedSuccess => 'Settings saved successfully';
+
+  @override
+  String get adminSettingsActiveCities => 'Active cities';
+
+  @override
+  String get adminSettingsAddCity => 'Add New City';
+
+  @override
+  String get adminSettingsNewCityHint => 'City name';
+
+  @override
+  String get adminSettingsAdmins => 'Platform admins';
+
+  @override
+  String get adminSettingsAddAdmin => 'Add New Admin';
+
+  @override
+  String get adminSettingsAdminEmail => 'Email';
+
+  @override
+  String get adminSettingsAdminPhone => 'Phone';
+
+  @override
+  String get adminSettingsAdminName => 'Name';
+
+  @override
+  String get adminSettingsSystemCredentials => 'System credentials';
+
+  @override
+  String get adminSettingsR2Endpoint => 'R2 endpoint URL';
+
+  @override
+  String get adminSettingsR2AccessKey => 'R2 access key';
+
+  @override
+  String get adminSettingsR2SecretKey => 'R2 secret key';
+
+  @override
+  String get adminSettingsR2Bucket => 'R2 bucket name';
+
+  @override
+  String get adminSettingsGeneralInfo => 'Platform information';
+
+  @override
+  String get adminSettingsAppName => 'IQ Motors';
+
+  @override
+  String get adminSettingsAppVersion => 'Version 1.0.0';
+
+  @override
+  String get adminSettingsRemove => 'Remove';
+
+  @override
+  String get adminSettingsAddCityTitle => 'Add city';
+
+  @override
+  String get adminSettingsAddAdminTitle => 'Add admin';
+
+  @override
+  String get adminSettingsCredentialsNote =>
+      'Visible to super admins only. Stored in Firestore system_config.';
+
+  @override
+  String get navActivity => 'Activity Log';
+
+  @override
+  String get adminActivitySubtitle => 'Admin action history and audit trail';
+
+  @override
+  String get adminActivitySearchHint => 'Search by admin name or action';
+
+  @override
+  String get adminActivityEmpty => 'No activity recorded yet.';
+
+  @override
+  String get adminActivityNoResults => 'No matching logs found.';
+
+  @override
+  String get adminActivityPerformedBy => 'By';
+
+  @override
+  String get adminActivityJustNow => 'Just now';
+
+  @override
+  String adminActivityMinutesAgo(int count) {
+    return '$count mins ago';
+  }
+
+  @override
+  String adminActivityHoursAgo(int count) {
+    return '$count hours ago';
+  }
+
+  @override
+  String adminActivityDaysAgo(int count) {
+    return '$count days ago';
+  }
+
+  @override
+  String get adminActivityActionApproved => 'Approved Ad';
+
+  @override
+  String get adminActivityActionRejected => 'Rejected Ad';
+
+  @override
+  String get adminActivityActionDeleted => 'Deleted Ad';
+
+  @override
+  String get adminActivityActionUpdatedPrice => 'Updated Package Price';
+
+  @override
+  String get adminActivityActionUpdatedConfig => 'Updated Settings';
+
+  @override
+  String get adminActivityActionAddedCity => 'Added City';
+
+  @override
+  String get adminActivityActionRemovedCity => 'Removed City';
+
+  @override
+  String get adminActivityActionAddedAdmin => 'Added Admin';
+
+  @override
+  String get adminActivityActionUpdatedCredentials => 'Updated Credentials';
+
+  @override
+  String get adminMessagesTitle => 'Messages & Complaints';
+
+  @override
+  String get adminMessagesSubtitle => 'User support tickets and conversations';
+
+  @override
+  String get adminMessagesFilterAll => 'All';
+
+  @override
+  String get adminMessagesFilterOpen => 'Open';
+
+  @override
+  String get adminMessagesFilterResolved => 'Resolved';
+
+  @override
+  String get adminMessagesStatusOpen => 'Open';
+
+  @override
+  String get adminMessagesStatusResolved => 'Resolved';
+
+  @override
+  String get adminMessagesSend => 'Send';
+
+  @override
+  String get adminMessagesSelectTicket =>
+      'Select a ticket to view the conversation';
+
+  @override
+  String get adminMessagesResolve => 'Mark resolved';
+
+  @override
+  String get adminMessagesReopen => 'Reopen';
+
+  @override
+  String get adminMessagesReplyHint => 'Write a reply…';
+
+  @override
+  String get adminMessagesBackToList => 'Back to list';
+
+  @override
+  String get navFlaggedAds => 'Flagged Reports';
+
+  @override
+  String get adminFlaggedSubtitle => 'Review user-reported listings';
+
+  @override
+  String get adminFlaggedReasonLabel => 'Reason';
+
+  @override
+  String get adminFlaggedReportedByLabel => 'Reported by';
+
+  @override
+  String get adminFlaggedViewAd => 'View Ad';
+
+  @override
+  String get adminFlaggedDeleteAd => 'Delete Ad';
+
+  @override
+  String get adminFlaggedIgnore => 'Dismiss';
+
+  @override
+  String get adminFlaggedEmpty => 'No pending reports.';
+
+  @override
+  String get adminFlaggedDeleteConfirm =>
+      'Are you sure you want to delete this listing?';
+
+  @override
+  String get adminFlaggedDeleteSuccess =>
+      'Listing deleted and report resolved.';
+
+  @override
+  String get adminFlaggedIgnoredSuccess => 'Report dismissed.';
+
+  @override
+  String get adminFlaggedAdMissing => 'Listing no longer available';
+
+  @override
+  String get flaggedReasonSold => 'Car already sold';
+
+  @override
+  String get flaggedReasonWrongPrice => 'Wrong price';
+
+  @override
+  String get flaggedReasonMisleading => 'Misleading information';
+
+  @override
+  String get flaggedReasonSpam => 'Spam';
+
+  @override
+  String get next => 'Next';
+
+  @override
+  String addCarStepProgress(int current, int total) {
+    return 'Step $current of $total';
+  }
+
+  @override
+  String get addCarPublish => 'Publish';
+
+  @override
+  String get addCarSave => 'Save';
+
+  @override
+  String get addCarPublishing => 'Publishing...';
+
+  @override
+  String get addCarSaving => 'Saving...';
+
+  @override
+  String get addCarPhotoProcessing => 'Processing photo...';
+
+  @override
+  String get addCarMinPhotosRequired => 'Please select at least 4 photos.';
+
+  @override
+  String get addCarUploadFailed => 'Photo upload failed.';
+
+  @override
+  String get addCarSaveSuccess => 'Changes saved successfully.';
+
+  @override
+  String get addCarPublishSuccess => 'Your listing was published successfully.';
+
+  @override
+  String get addCarSaveFailed => 'Save failed. Please try again.';
+
+  @override
+  String get addCarPublishFailed => 'Publishing failed. Please try again.';
+
+  @override
+  String get addCarPhotoCheckFailed => 'Photo check failed. Please try again.';
+
+  @override
+  String get addCarStepLocationTitle => 'Location';
+
+  @override
+  String get addCarStepPhotosTitle => 'Photos';
+
+  @override
+  String get addCarStepInfoTitle => 'Info';
+
+  @override
+  String get addCarStepPlateTitle => 'Plate';
+
+  @override
+  String get addCarStepDetailsTitle => 'Details';
+
+  @override
+  String get addCarStepTechnicalTitle => 'Technical';
+
+  @override
+  String get addCarStepInteriorTitle => 'Interior';
+
+  @override
+  String get addCarStepConditionTitle => 'Condition';
+
+  @override
+  String get addCarStepPriceTitle => 'Price';
+
+  @override
+  String get addCarStepReviewTitle => 'Review';
+
+  @override
+  String get addCarStepListingTitle => 'Listing';
+
+  @override
+  String get addCarStepPaymentTitle => 'Payment';
+
+  @override
+  String get addCarLocationHeading => 'Where is your car located?';
+
+  @override
+  String get addCarLocationSubtitle => 'Select province / area';
+
+  @override
+  String get addCarProvinceLabel => 'Province';
+
+  @override
+  String get addCarProvincePlaceholder => 'Select province';
+
+  @override
+  String get addCarAreaLabel => 'Area / City';
+
+  @override
+  String get addCarAreaPlaceholder => 'Select area';
+
+  @override
+  String get addCarPhotosHeading => 'Take photos';
+
+  @override
+  String get addCarPhotosSubtitle => 'Take at least 4 photos of your car';
+
+  @override
+  String get addCarPhotoPrimary => 'Primary';
+
+  @override
+  String get addCarBasicInfoHeading => 'Basic vehicle information';
+
+  @override
+  String get addCarBasicInfoSubtitle =>
+      'Select the details that match your vehicle';
+
+  @override
+  String get addCarBrandLabel => 'Brand';
+
+  @override
+  String get addCarBrandPlaceholder => 'Select brand';
+
+  @override
+  String get addCarModelLabel => 'Model';
+
+  @override
+  String get addCarModelPlaceholder => 'Select model';
+
+  @override
+  String get addCarColorLabel => 'Color';
+
+  @override
+  String get addCarColorPlaceholder => 'Select color';
+
+  @override
+  String get addCarYearLabel => 'Model year';
+
+  @override
+  String get addCarYearPlaceholder => 'Select year';
+
+  @override
+  String get addCarTrimLabel => 'Trim';
+
+  @override
+  String get addCarTrimPlaceholder => 'Select trim';
 }

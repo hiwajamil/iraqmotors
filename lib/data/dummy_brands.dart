@@ -453,6 +453,12 @@ const List<CarBrand> dummyBrands = [
     logoUrl: '$_logoCdn/ford.png',
   ),
   CarBrand(
+    id: 'mercury',
+    nameKurdish: 'مێرکوری',
+    nameEnglish: 'Mercury',
+    logoUrl: '$_logoCdn/mercury.png',
+  ),
+  CarBrand(
     id: 'fiat',
     nameKurdish: 'فیات',
     nameEnglish: 'Fiat',

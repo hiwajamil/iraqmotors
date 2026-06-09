@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/l10n_extensions.dart';
 import '../../../data/add_car_form_options.dart';
 import '../../../data/car_models_by_brand.dart';
 import '../../../data/dummy_brands.dart';
 import '../../../models/car_brand.dart';
 import '../../../widgets/brand_search_sheet.dart';
+import '../add_car_theme.dart';
+import '../widgets/add_car_form_card.dart';
+import '../widgets/add_car_step_header.dart';
 
 /// Step 3 — brand, model, color, year, and trim.
 class AddCarStepBasicInfo extends StatelessWidget {
@@ -20,6 +24,8 @@ class AddCarStepBasicInfo extends StatelessWidget {
     required this.onColorChanged,
     required this.onYearChanged,
     required this.onTrimChanged,
+    this.isAnalyzingAi = false,
+    this.aiFilledFields = const {},
   });
 
   final String? brandId;
@@ -27,14 +33,13 @@ class AddCarStepBasicInfo extends StatelessWidget {
   final String? colorKey;
   final String? year;
   final String? trim;
+  final bool isAnalyzingAi;
+  final Set<String> aiFilledFields;
   final ValueChanged<CarBrand> onBrandChanged;
   final ValueChanged<String> onModelChanged;
   final ValueChanged<String> onColorChanged;
   final ValueChanged<String> onYearChanged;
   final ValueChanged<String> onTrimChanged;
-
-  static const Color _textPrimary = Color(0xFF1D1D1F);
-  static const Color _textSecondary = Color(0xFF86868B);
 
   CarBrand? get _brand {
     if (brandId == null) return null;
@@ -59,7 +64,7 @@ class AddCarStepBasicInfo extends StatelessWidget {
     final languageCode = Localizations.localeOf(context).languageCode;
     final result = await _openOptionSheet(
       context,
-      title: 'مۆدێل',
+      title: context.l10n.addCarModelLabel,
       options: models,
       selectedId: modelKey,
       labelFor: (model) => model.labelFor(languageCode),
@@ -73,28 +78,26 @@ class AddCarStepBasicInfo extends StatelessWidget {
     final languageCode = Localizations.localeOf(context).languageCode;
     final result = await showModalBottomSheet<String>(
       context: context,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
+      backgroundColor: AddCarTheme.cardBg,
+      shape: AddCarTheme.bottomSheetShape,
       builder: (ctx) {
         return SafeArea(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Padding(
-                padding: EdgeInsets.all(16),
+              Padding(
+                padding: const EdgeInsets.all(16),
                 child: Text(
-                  'ڕەنگ',
-                  style: TextStyle(
+                  context.l10n.addCarColorLabel,
+                  style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
-                    color: _textPrimary,
+                    color: AddCarTheme.textPrimary,
                     letterSpacing: -0.3,
                   ),
                 ),
               ),
-              const Divider(height: 1, color: Color(0xFFE5E5EA)),
+              const Divider(height: 1, color: AddCarTheme.border),
               Flexible(
                 child: ListView.builder(
                   shrinkWrap: true,
@@ -121,7 +124,7 @@ class AddCarStepBasicInfo extends StatelessWidget {
                           fontSize: 16,
                           fontWeight:
                               isSelected ? FontWeight.w600 : FontWeight.w400,
-                          color: _textPrimary,
+                          color: AddCarTheme.textPrimary,
                         ),
                       ),
                       trailing: isSelected
@@ -144,7 +147,7 @@ class AddCarStepBasicInfo extends StatelessWidget {
   Future<void> _openYearPicker(BuildContext context) async {
     final result = await _openStringSheet(
       context,
-      title: 'ساڵی مۆدێل',
+      title: context.l10n.addCarYearLabel,
       options: AddCarFormOptions.years,
       selected: year,
     );
@@ -154,7 +157,7 @@ class AddCarStepBasicInfo extends StatelessWidget {
   Future<void> _openTrimPicker(BuildContext context) async {
     final result = await _openStringSheet(
       context,
-      title: 'خاسڵەت',
+      title: context.l10n.addCarTrimLabel,
       options: AddCarFormOptions.trims,
       selected: trim,
     );
@@ -171,10 +174,8 @@ class AddCarStepBasicInfo extends StatelessWidget {
   }) {
     return showModalBottomSheet<T>(
       context: context,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
+      backgroundColor: AddCarTheme.cardBg,
+      shape: AddCarTheme.bottomSheetShape,
       builder: (ctx) {
         return SafeArea(
           child: Column(
@@ -187,12 +188,12 @@ class AddCarStepBasicInfo extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
-                    color: _textPrimary,
+                    color: AddCarTheme.textPrimary,
                     letterSpacing: -0.3,
                   ),
                 ),
               ),
-              const Divider(height: 1, color: Color(0xFFE5E5EA)),
+              const Divider(height: 1, color: AddCarTheme.border),
               Flexible(
                 child: ListView.builder(
                   shrinkWrap: true,
@@ -207,7 +208,7 @@ class AddCarStepBasicInfo extends StatelessWidget {
                           fontSize: 16,
                           fontWeight:
                               isSelected ? FontWeight.w600 : FontWeight.w400,
-                          color: _textPrimary,
+                          color: AddCarTheme.textPrimary,
                         ),
                       ),
                       trailing: isSelected
@@ -233,10 +234,8 @@ class AddCarStepBasicInfo extends StatelessWidget {
   }) {
     return showModalBottomSheet<String>(
       context: context,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
+      backgroundColor: AddCarTheme.cardBg,
+      shape: AddCarTheme.bottomSheetShape,
       builder: (ctx) {
         return SafeArea(
           child: Column(
@@ -249,12 +248,12 @@ class AddCarStepBasicInfo extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
-                    color: _textPrimary,
+                    color: AddCarTheme.textPrimary,
                     letterSpacing: -0.3,
                   ),
                 ),
               ),
-              const Divider(height: 1, color: Color(0xFFE5E5EA)),
+              const Divider(height: 1, color: AddCarTheme.border),
               Flexible(
                 child: ListView.builder(
                   shrinkWrap: true,
@@ -269,7 +268,7 @@ class AddCarStepBasicInfo extends StatelessWidget {
                           fontSize: 16,
                           fontWeight:
                               isSelected ? FontWeight.w600 : FontWeight.w400,
-                          color: _textPrimary,
+                          color: AddCarTheme.textPrimary,
                         ),
                       ),
                       trailing: isSelected
@@ -289,6 +288,7 @@ class AddCarStepBasicInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final languageCode = Localizations.localeOf(context).languageCode;
     final brand = _brand;
 
@@ -308,67 +308,67 @@ class AddCarStepBasicInfo extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Text(
-            'زانیاری سەرەتایی ئۆتۆمبێل',
-            style: TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.w700,
-              letterSpacing: -0.6,
-              height: 1.15,
-              color: _textPrimary,
-            ),
+          AddCarStepHeader(
+            title: l10n.addCarBasicInfoHeading,
+            subtitle: l10n.addCarBasicInfoSubtitle,
           ),
-          const SizedBox(height: 10),
-          const Text(
-            'ئەو زانیارییانە هەڵبژێرە کە لەگەڵ ئۆتۆمبێلەکەت دەگونجێت',
-            style: TextStyle(
-              fontSize: 17,
-              fontWeight: FontWeight.w400,
-              height: 1.4,
-              color: _textSecondary,
-            ),
-          ),
+          if (isAnalyzingAi) ...[
+            const SizedBox(height: 12),
+            const _AiAnalyzingInlineChip(),
+          ],
           const SizedBox(height: 28),
-          _AddCarSelectorField(
-            label: 'براند',
-            showAiBadge: true,
-            value: brandLabel,
-            placeholder: 'براند هەڵبژێرە',
-            aiFilled: brandLabel != null,
-            onTap: () => _openBrandPicker(context),
-          ),
-          const SizedBox(height: 14),
-          _AddCarSelectorField(
-            label: 'مۆدێل',
-            value: modelLabel,
-            placeholder: 'مۆدێل هەڵبژێرە',
-            enabled: brand != null &&
-                (CarModelsByBrand.modelsForBrand(brand)?.isNotEmpty ?? false),
-            onTap: () => _openModelPicker(context),
-          ),
-          const SizedBox(height: 14),
-          _AddCarSelectorField(
-            label: 'ڕەنگ',
-            value: colorLabel,
-            placeholder: 'ڕەنگ هەڵبژێرە',
-            trailing: colorSwatch != null
-                ? _ColorDot(color: colorSwatch)
-                : null,
-            onTap: () => _openColorPicker(context),
-          ),
-          const SizedBox(height: 14),
-          _AddCarSelectorField(
-            label: 'ساڵی مۆدێل',
-            value: year,
-            placeholder: 'ساڵ هەڵبژێرە',
-            onTap: () => _openYearPicker(context),
-          ),
-          const SizedBox(height: 14),
-          _AddCarSelectorField(
-            label: 'خاسڵەت',
-            value: trim,
-            placeholder: 'خاسڵەت هەڵبژێرە',
-            onTap: () => _openTrimPicker(context),
+          AddCarFormCard(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _AddCarSelectorField(
+                  label: l10n.addCarBrandLabel,
+                  showAiBadge: true,
+                  value: brandLabel,
+                  placeholder: l10n.addCarBrandPlaceholder,
+                  aiFilled: aiFilledFields.contains('brandId') && brandLabel != null,
+                  onTap: () => _openBrandPicker(context),
+                ),
+                const SizedBox(height: 14),
+                _AddCarSelectorField(
+                  label: l10n.addCarModelLabel,
+                  showAiBadge: aiFilledFields.contains('modelKey'),
+                  value: modelLabel,
+                  placeholder: l10n.addCarModelPlaceholder,
+                  aiFilled: aiFilledFields.contains('modelKey') && modelLabel != null,
+                  enabled: brand != null &&
+                      (CarModelsByBrand.modelsForBrand(brand)?.isNotEmpty ??
+                          false),
+                  onTap: () => _openModelPicker(context),
+                ),
+                const SizedBox(height: 14),
+                _AddCarSelectorField(
+                  label: l10n.addCarColorLabel,
+                  showAiBadge: aiFilledFields.contains('colorKey'),
+                  value: colorLabel,
+                  placeholder: l10n.addCarColorPlaceholder,
+                  aiFilled: aiFilledFields.contains('colorKey') && colorLabel != null,
+                  trailing: colorSwatch != null
+                      ? _ColorDot(color: colorSwatch)
+                      : null,
+                  onTap: () => _openColorPicker(context),
+                ),
+                const SizedBox(height: 14),
+                _AddCarSelectorField(
+                  label: l10n.addCarYearLabel,
+                  value: year,
+                  placeholder: l10n.addCarYearPlaceholder,
+                  onTap: () => _openYearPicker(context),
+                ),
+                const SizedBox(height: 14),
+                _AddCarSelectorField(
+                  label: l10n.addCarTrimLabel,
+                  value: trim,
+                  placeholder: l10n.addCarTrimPlaceholder,
+                  onTap: () => _openTrimPicker(context),
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -409,13 +409,11 @@ class _AddCarSelectorFieldState extends State<_AddCarSelectorField> {
     final hasValue = widget.value != null && widget.value!.isNotEmpty;
     final fillColor = widget.showAiBadge && widget.aiFilled
         ? AddCarFormOptions.aiAccentFill
-        : Colors.grey.shade200;
+        : AddCarTheme.inputFill;
 
     final textColor = widget.enabled
-        ? (hasValue
-            ? AddCarStepBasicInfo._textPrimary
-            : AddCarStepBasicInfo._textSecondary)
-        : AddCarStepBasicInfo._textSecondary.withValues(alpha: 0.45);
+        ? (hasValue ? AddCarTheme.textPrimary : AddCarTheme.textSecondary)
+        : AddCarTheme.textSecondary.withValues(alpha: 0.45);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -424,12 +422,7 @@ class _AddCarSelectorFieldState extends State<_AddCarSelectorField> {
           children: [
             Text(
               widget.label,
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: AddCarStepBasicInfo._textPrimary,
-                letterSpacing: -0.2,
-              ),
+              style: AddCarTheme.sectionLabel,
             ),
             if (widget.showAiBadge) ...[
               const SizedBox(width: 8),
@@ -453,15 +446,16 @@ class _AddCarSelectorFieldState extends State<_AddCarSelectorField> {
               decoration: BoxDecoration(
                 color: widget.enabled
                     ? fillColor
-                    : Colors.grey.shade200.withValues(alpha: 0.55),
-                borderRadius: BorderRadius.circular(14),
-                border: widget.showAiBadge && widget.aiFilled
-                    ? Border.all(
-                        color: AddCarFormOptions.aiAccentText.withValues(
-                          alpha: 0.2,
-                        ),
-                      )
-                    : null,
+                    : AddCarTheme.inputFill.withValues(alpha: 0.55),
+                borderRadius: BorderRadius.circular(AddCarTheme.inputRadius),
+                border: Border.all(
+                  color: _pressed
+                      ? AddCarTheme.focusBlue
+                      : (widget.showAiBadge && widget.aiFilled
+                          ? AddCarFormOptions.aiAccentText.withValues(alpha: 0.25)
+                          : AddCarTheme.border),
+                  width: _pressed ? 1.5 : 1,
+                ),
               ),
               child: Row(
                 children: [
@@ -493,6 +487,46 @@ class _AddCarSelectorFieldState extends State<_AddCarSelectorField> {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _AiAnalyzingInlineChip extends StatelessWidget {
+  const _AiAnalyzingInlineChip();
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: AlignmentDirectional.centerStart,
+      child: Container(
+        padding: const EdgeInsetsDirectional.symmetric(horizontal: 12, vertical: 7),
+        decoration: BoxDecoration(
+          color: AddCarFormOptions.aiAccentFill,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              width: 12,
+              height: 12,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: AddCarFormOptions.aiAccentText.withValues(alpha: 0.85),
+              ),
+            ),
+            const SizedBox(width: 8),
+            const Text(
+              'AI analyzing...',
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: AddCarFormOptions.aiAccentText,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../core/filter_l10n.dart';
@@ -6,6 +7,7 @@ import '../data/car_models_by_brand.dart';
 import '../l10n/app_localizations.dart';
 import '../models/advanced_filter_state.dart';
 import '../models/car_brand.dart';
+import 'filter_option_picker_dialog.dart';
 import 'location_picker_sheet.dart';
 
 /// Location + advanced search title row above the brands strip.
@@ -301,38 +303,70 @@ class _FilterHeader extends StatelessWidget {
   final VoidCallback onLocationTap;
   final VoidCallback? onAdvancedSearchTap;
 
+  static const Color _locationFill = Color(0xFFEEEEEE); // Colors.grey[200]
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
 
-    return Row(
-      children: [
-        TextButton(
-          onPressed: onAdvancedSearchTap,
-          style: TextButton.styleFrom(
-            padding: EdgeInsets.zero,
-            minimumSize: Size.zero,
-            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            foregroundColor: AdvancedFilterWidget._textPrimary,
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(22),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 20,
+            offset: const Offset(0, 4),
           ),
-          child: Text(
-            l10n.advancedSearch,
-            style: const TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.w600,
-              letterSpacing: -0.2,
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 6,
+            offset: const Offset(0, 1),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          GestureDetector(
+            onTap: onAdvancedSearchTap,
+            behavior: HitTestBehavior.opaque,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  CupertinoIcons.search,
+                  size: 18,
+                  color: AdvancedFilterWidget._textPrimary.withValues(
+                    alpha: 0.7,
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Text(
+                  l10n.advancedSearch,
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: -0.2,
+                    color: AdvancedFilterWidget._textPrimary,
+                  ),
+                ),
+              ],
             ),
           ),
-        ),
-        const Spacer(),
-        _LocationChip(
-          label: FilterL10n.selectedLocationsSummary(
-            l10n,
-            selectedLocationKeys,
+          const Spacer(),
+          _LocationChip(
+            label: FilterL10n.selectedLocationsSummary(
+              l10n,
+              selectedLocationKeys,
+            ),
+            onTap: onLocationTap,
+            backgroundColor: _locationFill,
           ),
-          onTap: onLocationTap,
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
@@ -341,10 +375,12 @@ class _LocationChip extends StatefulWidget {
   const _LocationChip({
     required this.label,
     required this.onTap,
+    this.backgroundColor,
   });
 
   final String label;
   final VoidCallback onTap;
+  final Color? backgroundColor;
 
   @override
   State<_LocationChip> createState() => _LocationChipState();
@@ -355,6 +391,9 @@ class _LocationChipState extends State<_LocationChip> {
 
   @override
   Widget build(BuildContext context) {
+    final baseColor =
+        widget.backgroundColor ?? AdvancedFilterWidget._fill;
+
     return MouseRegion(
       onEnter: (_) => setState(() => _hovered = true),
       onExit: (_) => setState(() => _hovered = false),
@@ -364,13 +403,13 @@ class _LocationChipState extends State<_LocationChip> {
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsetsDirectional.symmetric(
             horizontal: 14,
-            vertical: 10,
+            vertical: 8,
           ),
           decoration: BoxDecoration(
             color: _hovered
-                ? AdvancedFilterWidget._fill.withValues(alpha: 0.9)
-                : AdvancedFilterWidget._fill,
-            borderRadius: BorderRadius.circular(12),
+                ? baseColor.withValues(alpha: 0.85)
+                : baseColor,
+            borderRadius: BorderRadius.circular(20),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -437,43 +476,12 @@ class _FilterDropdownState extends State<_FilterDropdown> {
 
   Future<void> _openPicker() async {
     if (!widget.enabled) return;
-    final picked = await showModalBottomSheet<String>(
-      context: context,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      builder: (ctx) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Text(
-                widget.label,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: AdvancedFilterWidget._textPrimary,
-                ),
-              ),
-            ),
-            ...widget.optionKeys.asMap().entries.map((entry) {
-              final i = entry.key;
-              final key = entry.value;
-              final selected = widget.valueKey == key ||
-                  (widget.valueKey == null && i == 0);
-              return ListTile(
-                title: Text(widget.resolveLabel(key)),
-                trailing: selected
-                    ? const Icon(Icons.check_rounded, size: 20)
-                    : null,
-                onTap: () => Navigator.pop(ctx, key),
-              );
-            }),
-          ],
-        ),
-      ),
+    final picked = await FilterOptionPickerDialog.show(
+      context,
+      title: widget.label,
+      optionKeys: widget.optionKeys,
+      resolveLabel: widget.resolveLabel,
+      valueKey: widget.valueKey,
     );
     if (picked != null) widget.onSelected(picked);
   }

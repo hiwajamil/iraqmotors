@@ -1,0 +1,61 @@
+import '../../models/localized_car_model.dart';
+
+const List<LocalizedCarModel> gacMotorModels = [
+  LocalizedCarModel(id: 'gs4', ku: 'GS4', en: 'GS4', ar: 'GS4'),
+  LocalizedCarModel(id: 'gs5', ku: 'GS5', en: 'GS5', ar: 'GS5'),
+  LocalizedCarModel(id: 'gs8', ku: 'GS8', en: 'GS8', ar: 'GS8'),
+  LocalizedCarModel(
+    id: 'gs8_traveller',
+    ku: 'GS8 تراڤڵەر',
+    en: 'GS8 Traveller',
+    ar: 'GS8 ترافلر',
+  ),
+  LocalizedCarModel(id: 'empow', ku: 'ئیمپاۆ', en: 'Empow', ar: 'إمباو'),
+  LocalizedCarModel(id: 'empow_r', ku: 'ئیمپاۆ R', en: 'Empow R', ar: 'إمباو R'),
+  LocalizedCarModel(id: 'emkoo', ku: 'ئیمکۆ', en: 'Emkoo', ar: 'إمكو'),
+  LocalizedCarModel(id: 'gs3', ku: 'GS3', en: 'GS3', ar: 'GS3'),
+  LocalizedCarModel(id: 'ga3', ku: 'GA3', en: 'GA3', ar: 'GA3'),
+  LocalizedCarModel(id: 'ga4', ku: 'GA4', en: 'GA4', ar: 'GA4'),
+  LocalizedCarModel(id: 'ga5', ku: 'GA5', en: 'GA5', ar: 'GA5'),
+  LocalizedCarModel(id: 'ga8', ku: 'GA8', en: 'GA8', ar: 'GA8'),
+  LocalizedCarModel(id: 'gn6', ku: 'GN6', en: 'GN6', ar: 'GN6'),
+  LocalizedCarModel(id: 'gn8', ku: 'GN8', en: 'GN8', ar: 'GN8'),
+  LocalizedCarModel(
+    id: 'gs3_emzoom',
+    ku: 'GS3 ئیمزووم',
+    en: 'GS3 Emzoom',
+    ar: 'GS3 إمزوم',
+  ),
+  LocalizedCarModel(
+    id: 'gs4_max',
+    ku: 'GS4 ماکس',
+    en: 'GS4 Max',
+    ar: 'GS4 ماكس',
+  ),
+  LocalizedCarModel(id: 'gs7', ku: 'GS7', en: 'GS7', ar: 'GS7'),
+  LocalizedCarModel(id: 'm8', ku: 'M8', en: 'M8', ar: 'M8'),
+  LocalizedCarModel(
+    id: 'aion_es',
+    ku: 'ئایۆن ES',
+    en: 'Aion ES',
+    ar: 'آيون ES',
+  ),
+  LocalizedCarModel(
+    id: 'gonow_way_m1',
+    ku: 'گۆناو وای M1',
+    en: 'Gonow Way M1',
+    ar: 'جونو واي M1',
+  ),
+  LocalizedCarModel(
+    id: 'gonow_ga1030',
+    ku: 'گۆنۆ GA1030',
+    en: 'Gonow GA1030',
+    ar: 'جونو GA1030',
+  ),
+  LocalizedCarModel(
+    id: 'gonow_ga200',
+    ku: 'گۆنۆ GA200',
+    en: 'Gonow GA200',
+    ar: 'جونو GA200',
+  ),
+];

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../../core/l10n_extensions.dart';
 import '../../../data/add_car_option_keys.dart';
+import '../add_car_theme.dart';
+import '../widgets/add_car_step_header.dart';
 
 /// Step 12 — payment method selection.
 class AddCarStepPayment extends StatelessWidget {
@@ -14,9 +16,6 @@ class AddCarStepPayment extends StatelessWidget {
   final String? paymentMethodKey;
   final ValueChanged<String> onPaymentMethodChanged;
 
-  static const Color _textPrimary = Color(0xFF1D1D1F);
-  static const Color _textSecondary = Color(0xFF86868B);
-
   @override
   Widget build(BuildContext context) {
     final locale = context.l10n.localeName.split('_').first;
@@ -26,33 +25,17 @@ class AddCarStepPayment extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            switch (locale) {
+          AddCarStepHeader(
+            title: switch (locale) {
               'en' => 'Payment',
               'ar' => 'الدفع',
               _ => 'پارەدان',
             },
-            style: const TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.w700,
-              letterSpacing: -0.6,
-              height: 1.15,
-              color: _textPrimary,
-            ),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            switch (locale) {
+            subtitle: switch (locale) {
               'en' => 'Choose a payment method',
               'ar' => 'اختر طريقة الدفع',
               _ => 'ڕێگەی پارەدان هەڵبژێرە',
             },
-            style: const TextStyle(
-              fontSize: 17,
-              fontWeight: FontWeight.w400,
-              height: 1.4,
-              color: _textSecondary,
-            ),
           ),
           const SizedBox(height: 28),
           _PaymentMethodTile(
@@ -129,13 +112,11 @@ class _PaymentMethodTileState extends State<_PaymentMethodTile> {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsetsDirectional.all(16),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(14),
+          decoration: AddCarTheme.cardDecoration().copyWith(
             border: Border.all(
               color: widget.selected
-                  ? AddCarStepPayment._textPrimary
-                  : const Color(0xFFE5E5EA),
+                  ? AddCarTheme.textPrimary
+                  : AddCarTheme.border,
               width: widget.selected ? 2 : 1,
             ),
           ),
@@ -151,12 +132,12 @@ class _PaymentMethodTileState extends State<_PaymentMethodTile> {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: widget.selected
-                          ? AddCarStepPayment._textPrimary
+                          ? AddCarTheme.textPrimary
                           : Colors.transparent,
                       border: Border.all(
                         color: widget.selected
-                            ? AddCarStepPayment._textPrimary
-                            : const Color(0xFFC7C7CC),
+                            ? AddCarTheme.textPrimary
+                            : AddCarTheme.border,
                         width: 2,
                       ),
                     ),
@@ -175,7 +156,7 @@ class _PaymentMethodTileState extends State<_PaymentMethodTile> {
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
-                        color: AddCarStepPayment._textPrimary,
+                        color: AddCarTheme.textPrimary,
                       ),
                     ),
                   ),
@@ -269,9 +250,9 @@ class _FibQrPreview extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFFF5F5F7),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFE5E5EA)),
+        color: AddCarTheme.scaffoldBg,
+        borderRadius: BorderRadius.circular(AddCarTheme.inputRadius),
+        border: Border.all(color: AddCarTheme.border),
       ),
       child: Row(
         children: [
@@ -299,7 +280,7 @@ class _FibQrPreview extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w800,
-                    color: AddCarStepPayment._textPrimary,
+                    color: AddCarTheme.textPrimary,
                     letterSpacing: -0.3,
                   ),
                 ),
@@ -314,7 +295,7 @@ class _FibQrPreview extends StatelessWidget {
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
                     height: 1.35,
-                    color: AddCarStepPayment._textSecondary,
+                    color: AddCarTheme.textSecondary,
                   ),
                 ),
               ],

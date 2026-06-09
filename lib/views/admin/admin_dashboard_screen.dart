@@ -1,18 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/activity_actions.dart';
+import '../../core/admin_audit_helper.dart';
 import '../../core/filter_l10n.dart';
 import '../../core/l10n_extensions.dart';
+import '../../data/add_car_form_options.dart';
+import '../../data/car_models_by_brand.dart';
+import '../../data/dummy_brands.dart';
 import '../../l10n/app_localizations.dart';
+import '../../models/account_type.dart';
+import '../../models/user_profile.dart';
+import '../../providers/auth_providers.dart';
+import '../../providers/storage_providers.dart';
+import '../../services/car_database_service.dart';
 import '../home/home_screen.dart';
+import 'admin_activity_logs_view.dart';
+import 'admin_ad_detail_screen.dart';
+import 'admin_approvals_by_city_view.dart';
+import 'admin_flagged_ads_view.dart';
+import 'admin_messages_view.dart';
+import 'admin_reports_view.dart';
+import 'admin_settings_view.dart';
+import 'admin_showrooms_by_city_view.dart';
+import 'admin_users_by_city_view.dart';
 
 /// Platform super-admin dashboard — approvals queue, platform stats, sidebar.
-class SuperAdminDashboardScreen extends ConsumerStatefulWidget {
-  const SuperAdminDashboardScreen({super.key});
+class AdminDashboardScreen extends ConsumerStatefulWidget {
+  const AdminDashboardScreen({super.key});
 
   @override
-  ConsumerState<SuperAdminDashboardScreen> createState() =>
-      _SuperAdminDashboardScreenState();
+  ConsumerState<AdminDashboardScreen> createState() =>
+      _AdminDashboardScreenState();
 }
 
 enum _SuperAdminNav {
@@ -20,89 +39,324 @@ enum _SuperAdminNav {
   approvals,
   users,
   showrooms,
+  flagged,
   reports,
+  messages,
+  activity,
   settings,
 }
 
-class _SuperAdminDashboardScreenState
-    extends ConsumerState<SuperAdminDashboardScreen> {
+class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen> {
   static const Color _bgMain = Color(0xFFF5F5F7);
   static const double _mobileBreakpoint = 992;
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   _SuperAdminNav _activeNav = _SuperAdminNav.dashboard;
 
-  List<_SuperAdminStatData> _buildStats(AppLocalizations l10n) => [
+  List<Map<String, dynamic>> _pendingAds = [];
+  Map<String, UserProfile?> _sellerProfiles = {};
+  bool _isLoadingPending = true;
+  final Set<String> _processingAdIds = {};
+  late Future<Map<String, int>> _statsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _statsFuture = _fetchDashboardStats();
+    _loadPendingAds();
+  }
+
+  Future<Map<String, int>> _fetchDashboardStats() {
+    return ref.read(carDatabaseServiceProvider).fetchAdminDashboardStats();
+  }
+
+  void _refreshDashboardStats() {
+    setState(() {
+      _statsFuture = _fetchDashboardStats();
+    });
+  }
+
+  Future<void> _loadPendingAds() async {
+    setState(() => _isLoadingPending = true);
+    try {
+      final carDb = ref.read(carDatabaseServiceProvider);
+      final auth = ref.read(authServiceProvider);
+      final ads = await carDb.fetchPendingAds();
+
+      final profiles = <String, UserProfile?>{};
+      for (final ad in ads) {
+        final sellerId = ad['sellerId']?.toString();
+        if (sellerId == null || profiles.containsKey(sellerId)) continue;
+        profiles[sellerId] = await auth.fetchProfile(sellerId);
+      }
+
+      if (!mounted) return;
+      setState(() {
+        _pendingAds = ads;
+        _sellerProfiles = profiles;
+        _isLoadingPending = false;
+      });
+    } on CarDatabaseException catch (e) {
+      if (!mounted) return;
+      setState(() => _isLoadingPending = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.message),
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: const Color(0xFFFF3B30),
+        ),
+      );
+    }
+  }
+
+  List<_PendingApprovalData> _mapPendingAds(AppLocalizations l10n) {
+    return _pendingAds.map((ad) {
+      final sellerId = ad['sellerId']?.toString();
+      final profile = sellerId != null ? _sellerProfiles[sellerId] : null;
+      final isShowroom = profile?.accountType == AccountType.showroom;
+
+      return _PendingApprovalData(
+        id: ad['id']?.toString() ?? '',
+        adData: ad,
+        title: _carTitle(ad, l10n),
+        price: _formatPrice(ad),
+        imageUrl: _firstImageUrl(ad),
+        publisherName: profile?.displayName ?? '—',
+        publisherType: isShowroom ? 'showroom' : 'individual',
+        publisherPhone: profile?.phone ?? '—',
+        sellerProfile: profile,
+      );
+    }).toList();
+  }
+
+  String _carTitle(Map<String, dynamic> data, AppLocalizations l10n) {
+    final languageCode = l10n.localeName.split('_').first;
+    final brandId = data['brandId']?.toString();
+    final modelKey = data['modelKey']?.toString();
+    final year = data['year']?.toString();
+    final trim = data['trim']?.toString();
+
+    if (brandId != null) {
+      for (final brand in dummyBrands) {
+        if (brand.id == brandId) {
+          final modelLabel = modelKey != null
+              ? CarModelsByBrand.labelForModel(brand, modelKey, languageCode)
+              : null;
+          final brandName = brand.displayName(languageCode);
+          final parts = [
+            if (modelLabel != null) '$brandName $modelLabel' else brandName,
+            if (year != null && year.isNotEmpty) year,
+            if (trim != null && trim.isNotEmpty) trim,
+          ];
+          if (parts.isNotEmpty) return parts.join(' ');
+          break;
+        }
+      }
+    }
+
+    final parts = [brandId, modelKey, year]
+        .whereType<String>()
+        .where((part) => part.isNotEmpty);
+    if (parts.isNotEmpty) return parts.join(' ');
+    return data['title']?.toString() ?? l10n.carFallbackTitle;
+  }
+
+  String _formatPrice(Map<String, dynamic> data) {
+    final raw = data['priceValue'];
+    if (raw == null) return '—';
+    final amount = raw is num ? raw.toInt() : int.tryParse(raw.toString());
+    if (amount == null) return '—';
+
+    final currencyKey =
+        data['currencyKey']?.toString() ?? AddCarFormOptions.defaultCurrencyKey;
+    final symbol = AddCarFormOptions.currencySymbol(currencyKey);
+    final formatted = amount.toString().replaceAllMapped(
+          RegExp(r'(\d)(?=(\d{3})+(?!\d))'),
+          (match) => '${match[1]},',
+        );
+    return '$symbol$formatted';
+  }
+
+  String _firstImageUrl(Map<String, dynamic> data) {
+    final urls = data['imageUrls'];
+    if (urls is List && urls.isNotEmpty) {
+      return urls.first.toString();
+    }
+    return data['imageUrl']?.toString() ?? '';
+  }
+
+  String _formatCount(int count) {
+    return count.toString().replaceAllMapped(
+          RegExp(r'(\d)(?=(\d{3})+(?!\d))'),
+          (match) => '${match[1]},',
+        );
+  }
+
+  Future<void> _approveAd(_PendingApprovalData data) async {
+    if (data.id.isEmpty || _processingAdIds.contains(data.id)) return;
+
+    setState(() => _processingAdIds.add(data.id));
+    try {
+      await ref.read(carDatabaseServiceProvider).updateAdStatus(
+            adId: data.id,
+            newStatus: CarDatabaseService.statusActive,
+            audit: buildAdminAudit(
+              ref,
+              action: ActivityActions.approvedAd,
+              details: 'Ad ID: ${data.id}, Title: ${data.title}',
+            ),
+          );
+      if (!mounted) return;
+      final l10n = context.l10n;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(l10n.adminAdApprovedSuccess),
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: Color(0xFF34C759),
+        ),
+      );
+      await _loadPendingAds();
+      _refreshDashboardStats();
+    } on CarDatabaseException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.message),
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: const Color(0xFFFF3B30),
+        ),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _processingAdIds.remove(data.id));
+      }
+    }
+  }
+
+  Future<void> _rejectAd(_PendingApprovalData data) async {
+    final l10n = context.l10n;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Text(
+          l10n.adminRejectAdTitle,
+          style: const TextStyle(
+            fontWeight: FontWeight.w700,
+            color: Color(0xFF1D1D1F),
+          ),
+        ),
+        content: Text(
+          l10n.adminRejectAdConfirm,
+          style: const TextStyle(color: Color(0xFF86868B)),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(l10n.cancelAction),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: TextButton.styleFrom(
+              foregroundColor: const Color(0xFFFF3B30),
+            ),
+            child: Text(l10n.actionReject),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true || !mounted) return;
+    if (data.id.isEmpty || _processingAdIds.contains(data.id)) return;
+
+    setState(() => _processingAdIds.add(data.id));
+    try {
+      await ref.read(carDatabaseServiceProvider).updateAdStatus(
+            adId: data.id,
+            newStatus: CarDatabaseService.statusRejected,
+            audit: buildAdminAudit(
+              ref,
+              action: ActivityActions.rejectedAd,
+              details: 'Ad ID: ${data.id}, Title: ${data.title}',
+            ),
+          );
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(l10n.adminAdRejectedSuccess),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      await _loadPendingAds();
+      _refreshDashboardStats();
+    } on CarDatabaseException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.message),
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: const Color(0xFFFF3B30),
+        ),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _processingAdIds.remove(data.id));
+      }
+    }
+  }
+
+  Future<void> _viewAd(_PendingApprovalData data) async {
+    final refreshed = await Navigator.of(context).push<bool>(
+      MaterialPageRoute<bool>(
+        builder: (_) => AdminAdDetailScreen(
+          adData: data.adData,
+          sellerProfile: data.sellerProfile,
+        ),
+      ),
+    );
+    if (refreshed == true && mounted) {
+      await _loadPendingAds();
+      _refreshDashboardStats();
+    }
+  }
+
+  List<_SuperAdminStatData> _buildStats(
+    AppLocalizations l10n, {
+    Map<String, int>? counts,
+    bool isLoading = false,
+  }) =>
+      [
         _SuperAdminStatData(
-          value: '١٤',
+          value: _formatCount(counts?['pendingAds'] ?? 0),
           label: l10n.statPendingApproval,
           icon: Icons.pending_actions_outlined,
           accentBg: const Color(0xFFFFF4E6),
           accentFg: const Color(0xFFFF9500),
+          isLoading: isLoading,
         ),
         _SuperAdminStatData(
-          value: '٢,٤٨٠',
+          value: _formatCount(counts?['totalUsers'] ?? 0),
           label: l10n.statTotalUsers,
           icon: Icons.people_outline,
           accentBg: const Color(0xFFE8F2FF),
           accentFg: const Color(0xFF007AFF),
+          isLoading: isLoading,
         ),
         _SuperAdminStatData(
-          value: '٨٩٢',
+          value: _formatCount(counts?['activeAds'] ?? 0),
           label: l10n.statActiveListings,
           icon: Icons.directions_car_outlined,
           accentBg: const Color(0xFFE8F8ED),
           accentFg: const Color(0xFF34C759),
+          isLoading: isLoading,
         ),
         _SuperAdminStatData(
-          value: '٦٤',
+          value: _formatCount(counts?['totalShowrooms'] ?? 0),
           label: l10n.statRegisteredShowrooms,
           icon: Icons.storefront_outlined,
           accentBg: const Color(0xFFF3EBFF),
           accentFg: const Color(0xFFAF52DE),
-        ),
-      ];
-
-  List<_PendingApprovalData> _buildPendingApprovals(AppLocalizations l10n) => [
-        _PendingApprovalData(
-          id: '1',
-          title: 'Cadillac Escalade-V 2024',
-          price: r'$165,000',
-          imageUrl:
-              'https://images.unsplash.com/photo-1562911791-c7a97b729ec5?q=80&w=200&auto=format&fit=crop',
-          publisherName: l10n.dummyPublisherVipShowroom,
-          publisherType: 'showroom',
-          publisherPhone: '0750 123 4567',
-        ),
-        _PendingApprovalData(
-          id: '2',
-          title: 'Mercedes-Benz S500',
-          price: r'$158,000',
-          imageUrl:
-              'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?q=80&w=200&auto=format&fit=crop',
-          publisherName: l10n.dummyPublisherAras,
-          publisherType: 'individual',
-          publisherPhone: '0770 987 6543',
-        ),
-        _PendingApprovalData(
-          id: '3',
-          title: 'Lexus LX 600 VIP',
-          price: r'$152,000',
-          imageUrl:
-              'https://images.unsplash.com/photo-1614200187524-dc4b892acf16?q=80&w=200&auto=format&fit=crop',
-          publisherName: l10n.dummyPublisherAlofShowroom,
-          publisherType: 'showroom',
-          publisherPhone: '0751 222 3344',
-        ),
-        _PendingApprovalData(
-          id: '4',
-          title: 'BMW X7 M60i',
-          price: r'$142,500',
-          imageUrl:
-              'https://images.unsplash.com/photo-1555215695-3004980ad54e?q=80&w=200&auto=format&fit=crop',
-          publisherName: l10n.dummyPublisherHiwa,
-          publisherType: 'individual',
-          publisherPhone: '0780 555 1212',
+          isLoading: isLoading,
         ),
       ];
 
@@ -113,9 +367,12 @@ class _SuperAdminDashboardScreenState
     }
   }
 
-  void _logout() {
-    Navigator.of(context).pushReplacement(
+  Future<void> _logout() async {
+    await ref.read(authServiceProvider).signOut();
+    if (!mounted) return;
+    Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute<void>(builder: (_) => const HomeScreen()),
+      (_) => false,
     );
   }
 
@@ -136,6 +393,7 @@ class _SuperAdminDashboardScreenState
                 child: _SuperAdminSidebar(
                   isCompact: false,
                   activeNav: _activeNav,
+                  pendingCount: _pendingAds.length,
                   onNavTap: _onNavTap,
                   onLogout: _logout,
                 ),
@@ -168,6 +426,7 @@ class _SuperAdminDashboardScreenState
                   child: _SuperAdminSidebar(
                     isCompact: false,
                     activeNav: _activeNav,
+                    pendingCount: _pendingAds.length,
                     onNavTap: _onNavTap,
                     onLogout: _logout,
                   ),
@@ -182,32 +441,83 @@ class _SuperAdminDashboardScreenState
   }
 
   Widget _buildMainContent({required bool isMobile}) {
+    final padding = EdgeInsetsDirectional.fromSTEB(
+      isMobile ? 20 : _horizontalPadding(context),
+      isMobile ? 20 : 40,
+      isMobile ? 20 : _horizontalPadding(context),
+      40,
+    );
+
+    if (_activeNav == _SuperAdminNav.activity ||
+        _activeNav == _SuperAdminNav.messages) {
+      return Padding(
+        padding: padding,
+        child: switch (_activeNav) {
+          _SuperAdminNav.activity =>
+            AdminActivityLogsView(isMobile: isMobile),
+          _SuperAdminNav.messages => AdminMessagesView(isMobile: isMobile),
+          _ => const SizedBox.shrink(),
+        },
+      );
+    }
+
+    return SingleChildScrollView(
+      padding: padding,
+      child: switch (_activeNav) {
+        _SuperAdminNav.dashboard => _buildDashboardHome(isMobile: isMobile),
+        _SuperAdminNav.approvals => AdminApprovalsByCityView(
+            isMobile: isMobile,
+            horizontalPadding: _horizontalPadding(context),
+          ),
+        _SuperAdminNav.users => AdminUsersByCityView(isMobile: isMobile),
+        _SuperAdminNav.showrooms =>
+          AdminShowroomsByCityView(isMobile: isMobile),
+        _SuperAdminNav.flagged => AdminFlaggedAdsView(isMobile: isMobile),
+        _SuperAdminNav.reports => AdminReportsView(isMobile: isMobile),
+        _SuperAdminNav.settings => AdminSettingsView(isMobile: isMobile),
+        _SuperAdminNav.messages => const SizedBox.shrink(),
+        _SuperAdminNav.activity => const SizedBox.shrink(),
+      },
+    );
+  }
+
+  Widget _buildDashboardHome({required bool isMobile}) {
     final l10n = context.l10n;
     final adminName = l10n.superAdminTitle;
 
-    return SingleChildScrollView(
-      padding: EdgeInsetsDirectional.fromSTEB(
-        isMobile ? 20 : _horizontalPadding(context),
-        isMobile ? 20 : 40,
-        isMobile ? 20 : _horizontalPadding(context),
-        40,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          _SuperAdminHeader(isMobile: isMobile, adminName: adminName),
-          const SizedBox(height: 32),
-          _SuperAdminStatsGrid(
-            stats: _buildStats(l10n),
-            isMobile: isMobile,
-          ),
-          const SizedBox(height: 40),
-          _PendingApprovalsSection(
-            approvals: _buildPendingApprovals(l10n),
-            isMobile: isMobile,
-          ),
-        ],
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _SuperAdminHeader(isMobile: isMobile, adminName: adminName),
+        const SizedBox(height: 32),
+        FutureBuilder<Map<String, int>>(
+          future: _statsFuture,
+          builder: (context, snapshot) {
+            final isLoading =
+                snapshot.connectionState == ConnectionState.waiting;
+            final counts = snapshot.hasError ? null : snapshot.data;
+
+            return _SuperAdminStatsGrid(
+              stats: _buildStats(
+                l10n,
+                counts: counts,
+                isLoading: isLoading,
+              ),
+              isMobile: isMobile,
+            );
+          },
+        ),
+        const SizedBox(height: 40),
+        _PendingApprovalsSection(
+          approvals: _mapPendingAds(l10n),
+          isLoading: _isLoadingPending,
+          processingIds: _processingAdIds,
+          isMobile: isMobile,
+          onView: _viewAd,
+          onReject: _rejectAd,
+          onApprove: _approveAd,
+        ),
+      ],
     );
   }
 
@@ -223,6 +533,7 @@ class _SuperAdminStatData {
     required this.icon,
     required this.accentBg,
     required this.accentFg,
+    this.isLoading = false,
   });
 
   final String value;
@@ -230,26 +541,31 @@ class _SuperAdminStatData {
   final IconData icon;
   final Color accentBg;
   final Color accentFg;
+  final bool isLoading;
 }
 
 class _PendingApprovalData {
   const _PendingApprovalData({
     required this.id,
+    required this.adData,
     required this.title,
     required this.price,
     required this.imageUrl,
     required this.publisherName,
     required this.publisherType,
     required this.publisherPhone,
+    this.sellerProfile,
   });
 
   final String id;
+  final Map<String, dynamic> adData;
   final String title;
   final String price;
   final String imageUrl;
   final String publisherName;
   final String publisherType;
   final String publisherPhone;
+  final UserProfile? sellerProfile;
 }
 
 class _MobileTopBar extends StatelessWidget {
@@ -298,12 +614,14 @@ class _SuperAdminSidebar extends StatelessWidget {
   const _SuperAdminSidebar({
     required this.isCompact,
     required this.activeNav,
+    required this.pendingCount,
     required this.onNavTap,
     required this.onLogout,
   });
 
   final bool isCompact;
   final _SuperAdminNav activeNav;
+  final int pendingCount;
   final ValueChanged<_SuperAdminNav> onNavTap;
   final VoidCallback onLogout;
 
@@ -345,6 +663,7 @@ class _SuperAdminSidebar extends StatelessWidget {
           const SizedBox(height: 36),
           _SuperAdminNavMenu(
             activeNav: activeNav,
+            pendingCount: pendingCount,
             onNavTap: onNavTap,
           ),
           const Spacer(),
@@ -396,10 +715,12 @@ class _BrandBlock extends StatelessWidget {
 class _SuperAdminNavMenu extends StatelessWidget {
   const _SuperAdminNavMenu({
     required this.activeNav,
+    required this.pendingCount,
     required this.onNavTap,
   });
 
   final _SuperAdminNav activeNav;
+  final int pendingCount;
   final ValueChanged<_SuperAdminNav> onNavTap;
 
   static const List<_SuperAdminNavItemConfig> _itemConfigs = [
@@ -410,7 +731,6 @@ class _SuperAdminNavMenu extends StatelessWidget {
     _SuperAdminNavItemConfig(
       nav: _SuperAdminNav.approvals,
       icon: Icons.fact_check_outlined,
-      badgeCount: 14,
     ),
     _SuperAdminNavItemConfig(
       nav: _SuperAdminNav.users,
@@ -421,8 +741,20 @@ class _SuperAdminNavMenu extends StatelessWidget {
       icon: Icons.storefront_outlined,
     ),
     _SuperAdminNavItemConfig(
+      nav: _SuperAdminNav.flagged,
+      icon: Icons.flag_outlined,
+    ),
+    _SuperAdminNavItemConfig(
       nav: _SuperAdminNav.reports,
       icon: Icons.analytics_outlined,
+    ),
+    _SuperAdminNavItemConfig(
+      nav: _SuperAdminNav.messages,
+      icon: Icons.support_agent_outlined,
+    ),
+    _SuperAdminNavItemConfig(
+      nav: _SuperAdminNav.activity,
+      icon: Icons.history_outlined,
     ),
     _SuperAdminNavItemConfig(
       nav: _SuperAdminNav.settings,
@@ -436,7 +768,10 @@ class _SuperAdminNavMenu extends StatelessWidget {
       _SuperAdminNav.approvals => l10n.navApprovals,
       _SuperAdminNav.users => l10n.navUsers,
       _SuperAdminNav.showrooms => l10n.navShowrooms,
+      _SuperAdminNav.flagged => l10n.navFlaggedAds,
       _SuperAdminNav.reports => l10n.navReports,
+      _SuperAdminNav.messages => l10n.adminMessagesTitle,
+      _SuperAdminNav.activity => l10n.navActivity,
       _SuperAdminNav.settings => l10n.navSettings,
     };
   }
@@ -451,7 +786,9 @@ class _SuperAdminNavMenu extends StatelessWidget {
           _SuperAdminNavLink(
             label: _navLabel(l10n, config.nav),
             icon: config.icon,
-            badgeCount: config.badgeCount,
+            badgeCount: config.nav == _SuperAdminNav.approvals && pendingCount > 0
+                ? pendingCount
+                : null,
             isActive: activeNav == config.nav,
             onTap: () => onNavTap(config.nav),
           ),
@@ -466,12 +803,10 @@ class _SuperAdminNavItemConfig {
   const _SuperAdminNavItemConfig({
     required this.nav,
     required this.icon,
-    this.badgeCount,
   });
 
   final _SuperAdminNav nav;
   final IconData icon;
-  final int? badgeCount;
 }
 
 class _SuperAdminNavLink extends StatefulWidget {
@@ -785,14 +1120,21 @@ class _SuperAdminStatCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  data.value,
-                  style: const TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w700,
-                    color: Color(0xFF1D1D1F),
+                if (data.isLoading)
+                  const SizedBox(
+                    height: 26,
+                    width: 26,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                else
+                  Text(
+                    data.value,
+                    style: const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFF1D1D1F),
+                    ),
                   ),
-                ),
                 const SizedBox(height: 2),
                 Text(
                   data.label,
@@ -815,11 +1157,21 @@ class _SuperAdminStatCard extends StatelessWidget {
 class _PendingApprovalsSection extends StatelessWidget {
   const _PendingApprovalsSection({
     required this.approvals,
+    required this.isLoading,
+    required this.processingIds,
     required this.isMobile,
+    required this.onView,
+    required this.onReject,
+    required this.onApprove,
   });
 
   final List<_PendingApprovalData> approvals;
+  final bool isLoading;
+  final Set<String> processingIds;
   final bool isMobile;
+  final ValueChanged<_PendingApprovalData> onView;
+  final ValueChanged<_PendingApprovalData> onReject;
+  final ValueChanged<_PendingApprovalData> onApprove;
 
   @override
   Widget build(BuildContext context) {
@@ -877,23 +1229,45 @@ class _PendingApprovalsSection extends StatelessWidget {
             style: const TextStyle(fontSize: 14, color: Color(0xFF86868B)),
           ),
           const SizedBox(height: 24),
-          if (!isMobile) const _ApprovalsTableHeader(),
-          if (!isMobile) const SizedBox(height: 12),
-          ListView.separated(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: approvals.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 12),
-            itemBuilder: (context, index) {
-              return _PendingApprovalRow(
-                data: approvals[index],
-                isMobile: isMobile,
-                onView: () {},
-                onReject: () {},
-                onApprove: () {},
-              );
-            },
-          ),
+          if (isLoading)
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 40),
+              child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+            )
+          else if (approvals.isEmpty)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 32),
+              child: Text(
+                l10n.adminNoPendingListings,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: Color(0xFF86868B),
+                ),
+              ),
+            )
+          else ...[
+            if (!isMobile) const _ApprovalsTableHeader(),
+            if (!isMobile) const SizedBox(height: 12),
+            ListView.separated(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: approvals.length,
+              separatorBuilder: (_, __) => const SizedBox(height: 12),
+              itemBuilder: (context, index) {
+                final item = approvals[index];
+                final isProcessing = processingIds.contains(item.id);
+                return _PendingApprovalRow(
+                  data: item,
+                  isMobile: isMobile,
+                  isProcessing: isProcessing,
+                  onView: () => onView(item),
+                  onReject: () => onReject(item),
+                  onApprove: () => onApprove(item),
+                );
+              },
+            ),
+          ],
         ],
       ),
     );
@@ -944,6 +1318,7 @@ class _PendingApprovalRow extends StatelessWidget {
   const _PendingApprovalRow({
     required this.data,
     required this.isMobile,
+    required this.isProcessing,
     required this.onView,
     required this.onReject,
     required this.onApprove,
@@ -951,6 +1326,7 @@ class _PendingApprovalRow extends StatelessWidget {
 
   final _PendingApprovalData data;
   final bool isMobile;
+  final bool isProcessing;
   final VoidCallback onView;
   final VoidCallback onReject;
   final VoidCallback onApprove;
@@ -960,6 +1336,7 @@ class _PendingApprovalRow extends StatelessWidget {
     if (isMobile) {
       return _PendingApprovalCard(
         data: data,
+        isProcessing: isProcessing,
         onView: onView,
         onReject: onReject,
         onApprove: onApprove,
@@ -972,8 +1349,9 @@ class _PendingApprovalRow extends StatelessWidget {
         vertical: 14,
       ),
       decoration: BoxDecoration(
-        color: const Color(0xFFF5F5F7),
-        borderRadius: BorderRadius.circular(16),
+        color: const Color(0xFFFFFFFF),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.black.withValues(alpha: 0.04)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -998,6 +1376,7 @@ class _PendingApprovalRow extends StatelessWidget {
               onView: onView,
               onReject: onReject,
               onApprove: onApprove,
+              isProcessing: isProcessing,
               compact: false,
             ),
           ),
@@ -1010,12 +1389,14 @@ class _PendingApprovalRow extends StatelessWidget {
 class _PendingApprovalCard extends StatelessWidget {
   const _PendingApprovalCard({
     required this.data,
+    required this.isProcessing,
     required this.onView,
     required this.onReject,
     required this.onApprove,
   });
 
   final _PendingApprovalData data;
+  final bool isProcessing;
   final VoidCallback onView;
   final VoidCallback onReject;
   final VoidCallback onApprove;
@@ -1025,8 +1406,9 @@ class _PendingApprovalCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFFF5F5F7),
-        borderRadius: BorderRadius.circular(16),
+        color: const Color(0xFFFFFFFF),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.black.withValues(alpha: 0.04)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -1049,6 +1431,7 @@ class _PendingApprovalCard extends StatelessWidget {
             onView: onView,
             onReject: onReject,
             onApprove: onApprove,
+            isProcessing: isProcessing,
             compact: true,
           ),
         ],
@@ -1165,12 +1548,14 @@ class _ApprovalActions extends StatelessWidget {
     required this.onReject,
     required this.onApprove,
     required this.compact,
+    this.isProcessing = false,
   });
 
   final VoidCallback onView;
   final VoidCallback onReject;
   final VoidCallback onApprove;
   final bool compact;
+  final bool isProcessing;
 
   @override
   Widget build(BuildContext context) {
@@ -1181,10 +1566,10 @@ class _ApprovalActions extends StatelessWidget {
         label: l10n.actionView,
         icon: Icons.visibility_outlined,
         fg: const Color(0xFF007AFF),
-        bg: const Color(0xFFE8F2FF),
+        bg: const Color(0xFFE6F0FF),
         border: const Color(0xFF007AFF),
         filled: false,
-        onTap: onView,
+        onTap: isProcessing ? null : onView,
         expand: compact,
       ),
       _ActionChip(
@@ -1194,17 +1579,18 @@ class _ApprovalActions extends StatelessWidget {
         bg: Colors.white,
         border: const Color(0xFFFF3B30),
         filled: false,
-        onTap: onReject,
+        onTap: isProcessing ? null : onReject,
         expand: compact,
       ),
       _ActionChip(
         label: l10n.actionApprove,
         icon: Icons.check,
         fg: Colors.white,
-        bg: const Color(0xFF000000),
-        border: const Color(0xFF000000),
+        bg: const Color(0xFF1D1D1F),
+        border: const Color(0xFF1D1D1F),
         filled: true,
-        onTap: onApprove,
+        isLoading: isProcessing,
+        onTap: isProcessing ? null : onApprove,
         expand: compact,
       ),
     ];
@@ -1243,6 +1629,7 @@ class _ActionChip extends StatefulWidget {
     required this.filled,
     required this.onTap,
     this.expand = false,
+    this.isLoading = false,
   });
 
   final String label;
@@ -1251,8 +1638,9 @@ class _ActionChip extends StatefulWidget {
   final Color bg;
   final Color border;
   final bool filled;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
   final bool expand;
+  final bool isLoading;
 
   @override
   State<_ActionChip> createState() => _ActionChipState();
@@ -1287,16 +1675,27 @@ class _ActionChipState extends State<_ActionChip> {
                 widget.expand ? MainAxisSize.max : MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(widget.icon, size: 14, color: widget.fg),
-              const SizedBox(width: 6),
-              Text(
-                widget.label,
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: widget.fg,
+              if (widget.isLoading)
+                SizedBox(
+                  width: 14,
+                  height: 14,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: widget.fg,
+                  ),
+                )
+              else ...[
+                Icon(widget.icon, size: 14, color: widget.fg),
+                const SizedBox(width: 6),
+                Text(
+                  widget.label,
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: widget.fg,
+                  ),
                 ),
-              ),
+              ],
             ],
           ),
         ),

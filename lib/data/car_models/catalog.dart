@@ -1,10 +1,56 @@
 import '../../models/localized_car_model.dart';
 import 'byd_models.dart';
+import 'cadillac_models.dart';
+import 'chevrolet_models.dart';
+import 'chery_models.dart';
+import 'chrysler_models.dart';
+import 'citro_n_models.dart';
+import 'cmc_models.dart';
+import 'dodge_models.dart';
+import 'gac_motor_models.dart';
+import 'geely_models.dart';
 import 'haval_models.dart';
+import 'hyundai_models.dart';
+import 'jaguar_models.dart';
+import 'jeep_models.dart';
+import 'jaecoo_models.dart';
+import 'jetour_models.dart';
+import 'king_long_models.dart';
 import 'kia_models.dart';
+import 'lamborghini_models.dart';
+import 'land_rover_models.dart';
+import 'lexus_models.dart';
+import 'lincoln_models.dart';
 import 'mercedes_benz_models.dart';
+import 'mazda_models.dart';
+import 'maserati_models.dart';
+import 'maxus_models.dart';
+import 'mclaren_models.dart';
+import 'mercury_models.dart';
+import 'mg_models.dart';
+import 'mini_models.dart';
+import 'mitsubishi_models.dart';
+import 'nissan_models.dart';
+import 'omoda_models.dart';
+import 'opel_models.dart';
+import 'peugeot_models.dart';
+import 'porsche_models.dart';
+import 'proton_models.dart';
+import 'ram_models.dart';
+import 'renault_models.dart';
+import 'rolls_royce_models.dart';
+import 'saab_models.dart';
+import 'seat_models.dart';
+import 'skoda_models.dart';
 import 'soueast_models.dart';
+import 'ssangyong_models.dart';
+import 'subaru_models.dart';
+import 'suzuki_models.dart';
+import 'tata_models.dart';
+import 'tesla_models.dart';
 import 'toyota_models.dart';
+import 'volkswagen_models.dart';
+import 'volvo_models.dart';
 
 /// Brand id ([CarBrand.id]) → localized model catalog.
 const Map<String, List<LocalizedCarModel>> carModelsCatalog = {
@@ -14,4 +60,50 @@ const Map<String, List<LocalizedCarModel>> carModelsCatalog = {
   'byd': bydModels,
   'haval': havalModels,
   'soueast': soueastModels,
+  'omoda': omodaModels,
+  'jaecoo': jaecooModels,
+  'jetour': jetourModels,
+  'volkswagen': volkswagenModels,
+  'chevrolet': chevroletModels,
+  'gac_motor': gacMotorModels,
+  'mitsubishi': mitsubishiModels,
+  'geely': geelyModels,
+  'jaguar': jaguarModels,
+  'hyundai': hyundaiModels,
+  'land_rover': landRoverModels,
+  'dodge': dodgeModels,
+  'cadillac': cadillacModels,
+  'lexus': lexusModels,
+  'jeep': jeepModels,
+  'skoda': skodaModels,
+  'nissan': nissanModels,
+  'mg': mgModels,
+  'mini': miniModels,
+  'mercury': mercuryModels,
+  'mclaren': mclarenModels,
+  'mazda': mazdaModels,
+  'maxus': maxusModels,
+  'maserati': maseratiModels,
+  'lincoln': lincolnModels,
+  'lamborghini': lamborghiniModels,
+  'opel': opelModels,
+  'volvo': volvoModels,
+  'tesla': teslaModels,
+  'tata': tataModels,
+  'suzuki': suzukiModels,
+  'subaru': subaruModels,
+  'ssangyong': ssangyongModels,
+  'seat': seatModels,
+  'saab': saabModels,
+  'rolls_royce': rollsRoyceModels,
+  'renault': renaultModels,
+  'ram': ramModels,
+  'proton': protonModels,
+  'porsche': porscheModels,
+  'peugeot': peugeotModels,
+  'king_long': kingLongModels,
+  'cmc': cmcModels,
+  'citro_n': citroNModels,
+  'chrysler': chryslerModels,
+  'chery': cheryModels,
 };

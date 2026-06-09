@@ -1,7 +1,14 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/l10n_extensions.dart';
+import '../../data/add_car_form_options.dart';
+import '../../providers/auth_providers.dart';
+import '../../providers/storage_providers.dart';
+import '../../services/car_database_service.dart';
 import '../../widgets/wishlist_car_card.dart';
+import '../add_car/add_car_flow_screen.dart';
 import '../home/home_screen.dart';
 
 /// User dashboard — sidebar (RTL start) + wishlist grid + my ads list.
@@ -14,6 +21,7 @@ class UserDashboardScreen extends ConsumerStatefulWidget {
 }
 
 enum _DashboardNav {
+  home,
   wishlist,
   myAds,
   messages,
@@ -30,17 +38,16 @@ class _UserDashboardScreenState extends ConsumerState<UserDashboardScreen> {
   final _wishlistSectionKey = GlobalKey();
   final _myAdsSectionKey = GlobalKey();
 
-  static const String _userName = 'هیوا جەمیل';
-  static const String _userType = 'هەژماری کەسی';
-
-  late List<Map<String, String>> _wishlistCars;
-  late List<Map<String, String>> _myAds;
+  String? _currentUserId;
+  bool _isLoading = false;
+  List<Map<String, dynamic>> _wishlistCars = [];
+  List<Map<String, dynamic>> _myAds = [];
 
   @override
   void initState() {
     super.initState();
-    _wishlistCars = List<Map<String, String>>.from(_initialWishlist);
-    _myAds = List<Map<String, String>>.from(_initialMyAds);
+    _currentUserId = FirebaseAuth.instance.currentUser?.uid;
+    _loadSectionData(_activeNav);
   }
 
   @override
@@ -49,101 +56,320 @@ class _UserDashboardScreenState extends ConsumerState<UserDashboardScreen> {
     super.dispose();
   }
 
-  static const List<Map<String, String>> _initialWishlist = [
-    {
-      'id': '1',
-      'title': 'Cadillac Escalade-V',
-      'price': r'$165,000',
-      'imageUrl':
-          'https://images.unsplash.com/photo-1562911791-c7a97b729ec5?q=80&w=400&auto=format&fit=crop',
-    },
-    {
-      'id': '2',
-      'title': 'Mercedes S-Class',
-      'price': r'$158,000',
-      'imageUrl':
-          'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?q=80&w=400&auto=format&fit=crop',
-    },
-  ];
+  static const Set<String> _displayOnlyKeys = {
+    'title',
+    'price',
+    'imageUrl',
+    'status',
+  };
 
-  static const List<Map<String, String>> _initialMyAds = [
-    {
-      'id': '1',
-      'title': 'BMW 3 Series 2016',
-      'status': 'چالاک',
-      'imageUrl':
-          'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?q=80&w=200&auto=format&fit=crop',
-    },
-  ];
+  Future<void> _loadSectionData(_DashboardNav nav) async {
+    if (nav != _DashboardNav.wishlist && nav != _DashboardNav.myAds) {
+      if (mounted) setState(() => _isLoading = false);
+      return;
+    }
 
-  void _onNavTap(_DashboardNav nav) {
-    setState(() => _activeNav = nav);
-    final targetKey = switch (nav) {
-      _DashboardNav.wishlist => _wishlistSectionKey,
-      _DashboardNav.myAds => _myAdsSectionKey,
-      _ => null,
-    };
-    if (targetKey?.currentContext != null) {
-      Scrollable.ensureVisible(
-        targetKey!.currentContext!,
-        duration: const Duration(milliseconds: 400),
-        curve: Curves.easeInOut,
+    final userId = _currentUserId;
+    if (userId == null) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _wishlistCars = [];
+          _myAds = [];
+        });
+      }
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    try {
+      final carDb = ref.read(carDatabaseServiceProvider);
+      if (nav == _DashboardNav.wishlist) {
+        final docs = await carDb.fetchFavoriteAds(userId);
+        if (!mounted) return;
+        setState(() {
+          _wishlistCars = docs.map(_mapToWishlistItem).toList();
+          _isLoading = false;
+        });
+      } else {
+        final docs = await carDb.fetchUserAds(userId);
+        if (!mounted) return;
+        setState(() {
+          _myAds = docs.map(_mapToMyAdItem).toList();
+          _isLoading = false;
+        });
+      }
+    } on CarDatabaseException catch (e) {
+      if (!mounted) return;
+      setState(() => _isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.message),
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: const Color(0xFFFF3B30),
+        ),
       );
     }
   }
 
-  void _removeWishlistItem(String id) {
-    setState(() {
-      _wishlistCars.removeWhere((c) => c['id'] == id);
-    });
+  Map<String, dynamic> _mapToWishlistItem(Map<String, dynamic> doc) {
+    return {
+      ...doc,
+      'title': _carTitle(doc),
+      'price': _formatPrice(doc),
+      'imageUrl': _firstImageUrl(doc),
+    };
   }
 
-  void _logout() {
-    Navigator.of(context).pushReplacement(
+  Map<String, dynamic> _mapToMyAdItem(Map<String, dynamic> doc) {
+    final l10n = context.l10n;
+    return {
+      ...doc,
+      'title': _carTitle(doc),
+      'status': doc['status']?.toString() ?? l10n.adStatusActive,
+      'imageUrl': _firstImageUrl(doc),
+    };
+  }
+
+  Map<String, dynamic> _carDataForEdit(Map<String, dynamic> ad) {
+    return Map<String, dynamic>.from(ad)
+      ..remove('id')
+      ..removeWhere((key, _) => _displayOnlyKeys.contains(key));
+  }
+
+  String _carTitle(Map<String, dynamic> data) {
+    final brand = data['brandId']?.toString();
+    final model = data['modelKey']?.toString();
+    final year = data['year']?.toString();
+    final parts = [brand, model, year]
+        .whereType<String>()
+        .where((part) => part.isNotEmpty);
+    if (parts.isNotEmpty) return parts.join(' ');
+
+    final make = data['make']?.toString();
+    final modelName = data['model']?.toString();
+    final demoParts = [make, modelName]
+        .whereType<String>()
+        .where((part) => part.isNotEmpty);
+    if (demoParts.isNotEmpty) return demoParts.join(' ');
+
+    return data['title']?.toString() ?? context.l10n.carFallbackTitle;
+  }
+
+  String _formatPrice(Map<String, dynamic> data) {
+    final raw = data['priceValue'];
+    if (raw == null) {
+      final displayPrice = data['price']?.toString();
+      if (displayPrice != null && displayPrice.isNotEmpty) {
+        return displayPrice;
+      }
+      return '—';
+    }
+    final amount = raw is num ? raw.toInt() : int.tryParse(raw.toString());
+    if (amount == null) return '—';
+
+    final currencyKey =
+        data['currencyKey']?.toString() ?? AddCarFormOptions.defaultCurrencyKey;
+    final symbol = AddCarFormOptions.currencySymbol(currencyKey);
+    final formatted = amount.toString().replaceAllMapped(
+          RegExp(r'(\d)(?=(\d{3})+(?!\d))'),
+          (match) => '${match[1]},',
+        );
+    return '$symbol$formatted';
+  }
+
+  String _firstImageUrl(Map<String, dynamic> data) {
+    final urls = data['imageUrls'];
+    if (urls is List && urls.isNotEmpty) {
+      return urls.first.toString();
+    }
+    return data['imageUrl']?.toString() ?? '';
+  }
+
+  void _onEditAd(Map<String, dynamic> ad) {
+    final adId = ad['id']?.toString();
+    if (adId == null) return;
+
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => AddCarFlowScreen(
+          existingAdId: adId,
+          existingCarData: _carDataForEdit(ad),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _onDeleteAd(Map<String, dynamic> ad) async {
+    final adId = ad['id']?.toString();
+    if (adId == null) return;
+
+    final l10n = context.l10n;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        backgroundColor: const Color(0xFFFFFFFF),
+        surfaceTintColor: Colors.transparent,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Text(
+          l10n.deleteAdTitle,
+          style: const TextStyle(
+            fontSize: 17,
+            fontWeight: FontWeight.w600,
+            color: Color(0xFF1D1D1F),
+            letterSpacing: -0.2,
+          ),
+        ),
+        content: Text(
+          l10n.deleteAdConfirm,
+          style: const TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w400,
+            color: Color(0xFF6E6E73),
+            height: 1.45,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: Text(
+              l10n.cancelAction,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w400,
+                color: Color(0xFF1D1D1F),
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: Text(
+              l10n.deleteAction,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: Color(0xFFFF3B30),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true || !mounted) return;
+
+    try {
+      await ref.read(carDatabaseServiceProvider).deleteCarAd(adId: adId);
+      if (!mounted) return;
+
+      setState(() {
+        _myAds.removeWhere((item) => item['id']?.toString() == adId);
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(context.l10n.adDeletedSuccess),
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: const Color(0xFF34C759),
+        ),
+      );
+    } on CarDatabaseException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.message),
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: const Color(0xFFFF3B30),
+        ),
+      );
+    }
+  }
+
+  void _onNavTap(_DashboardNav nav) {
+    if (nav == _DashboardNav.home) {
+      _goHome();
+      return;
+    }
+    setState(() => _activeNav = nav);
+    _loadSectionData(nav);
+  }
+
+  void _goHome() {
+    Navigator.of(context).popUntil((route) => route.isFirst);
+  }
+
+  Future<void> _removeWishlistItem(String id) async {
+    final userId = _currentUserId;
+    if (userId == null) return;
+
+    try {
+      await ref.read(carDatabaseServiceProvider).unfavoriteCarAd(
+            adId: id,
+            userId: userId,
+          );
+      if (!mounted) return;
+      setState(() {
+        _wishlistCars.removeWhere((c) => c['id']?.toString() == id);
+      });
+    } on CarDatabaseException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.message),
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: const Color(0xFFFF3B30),
+        ),
+      );
+    }
+  }
+
+  Future<void> _logout() async {
+    await ref.read(authServiceProvider).signOut();
+    if (!mounted) return;
+    Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute<void>(builder: (_) => const HomeScreen()),
+      (_) => false,
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(
-        backgroundColor: _bgMain,
-        body: SafeArea(
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              final isMobile = constraints.maxWidth < _mobileBreakpoint;
-              if (isMobile) {
-                return Column(
-                  children: [
-                    _DashboardSidebar(
-                      isCompact: true,
-                      activeNav: _activeNav,
-                      onNavTap: _onNavTap,
-                      onLogout: _logout,
-                    ),
-                    Expanded(child: _buildMainContent(isMobile: true)),
-                  ],
-                );
-              }
-              return Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+    return Scaffold(
+      backgroundColor: _bgMain,
+      body: SafeArea(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final isMobile = constraints.maxWidth < _mobileBreakpoint;
+            if (isMobile) {
+              return Column(
                 children: [
-                  SizedBox(
-                    height: constraints.maxHeight,
-                    child: _DashboardSidebar(
-                      isCompact: false,
-                      activeNav: _activeNav,
-                      onNavTap: _onNavTap,
-                      onLogout: _logout,
-                    ),
+                  _DashboardSidebar(
+                    isCompact: true,
+                    activeNav: _activeNav,
+                    onNavTap: _onNavTap,
+                    onLogout: _logout,
                   ),
-                  Expanded(child: _buildMainContent(isMobile: false)),
+                  Expanded(child: _buildMainContent(isMobile: true)),
                 ],
               );
-            },
-          ),
+            }
+            return Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                SizedBox(
+                  height: constraints.maxHeight,
+                  child: _DashboardSidebar(
+                    isCompact: false,
+                    activeNav: _activeNav,
+                    onNavTap: _onNavTap,
+                    onLogout: _logout,
+                  ),
+                ),
+                Expanded(child: _buildMainContent(isMobile: false)),
+              ],
+            );
+          },
         ),
       ),
     );
@@ -163,20 +389,45 @@ class _UserDashboardScreenState extends ConsumerState<UserDashboardScreen> {
         children: [
           _DashboardHeader(isMobile: isMobile),
           const SizedBox(height: 40),
-          _WishlistSection(
-            sectionKey: _wishlistSectionKey,
-            cars: _wishlistCars,
-            onRemove: _removeWishlistItem,
-          ),
-          const SizedBox(height: 50),
-          _MyAdsSection(
-            sectionKey: _myAdsSectionKey,
-            ads: _myAds,
-            isMobile: isMobile,
-          ),
+          _buildActiveSection(isMobile: isMobile),
         ],
       ),
     );
+  }
+
+  Widget _buildActiveSection({required bool isMobile}) {
+    if (_isLoading) {
+      return const Padding(
+        padding: EdgeInsets.symmetric(vertical: 80),
+        child: Center(
+          child: SizedBox(
+            width: 32,
+            height: 32,
+            child: CircularProgressIndicator(strokeWidth: 3),
+          ),
+        ),
+      );
+    }
+
+    return switch (_activeNav) {
+      _DashboardNav.home => const SizedBox.shrink(),
+      _DashboardNav.wishlist => _WishlistSection(
+          sectionKey: _wishlistSectionKey,
+          cars: _wishlistCars,
+          onRemove: _removeWishlistItem,
+        ),
+      _DashboardNav.myAds => _MyAdsSection(
+          sectionKey: _myAdsSectionKey,
+          ads: _myAds,
+          isMobile: isMobile,
+          onEdit: _onEditAd,
+          onDelete: _onDeleteAd,
+        ),
+      _DashboardNav.messages =>
+        _EmptyPlaceholder(message: context.l10n.messagesEmpty),
+      _DashboardNav.settings =>
+        _EmptyPlaceholder(message: context.l10n.settingsComingSoon),
+    };
   }
 
   double constraintsPadding(BuildContext context) {
@@ -262,6 +513,7 @@ class _UserProfileSummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final avatar = Container(
       width: isCompact ? 60 : 80,
       height: isCompact ? 60 : 80,
@@ -282,7 +534,7 @@ class _UserProfileSummary extends StatelessWidget {
           isCompact ? CrossAxisAlignment.start : CrossAxisAlignment.center,
       children: [
         Text(
-          _UserDashboardScreenState._userName,
+          l10n.dummyPublisherHiwa,
           style: TextStyle(
             fontSize: isCompact ? 17 : 19.2,
             fontWeight: FontWeight.w700,
@@ -291,9 +543,9 @@ class _UserProfileSummary extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 4),
-        const Text(
-          _UserDashboardScreenState._userType,
-          style: TextStyle(
+        Text(
+          l10n.userAccountPersonal,
+          style: const TextStyle(
             fontSize: 13,
             color: Color(0xFF86868B),
             height: 1.3,
@@ -343,26 +595,32 @@ class _NavMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const items = <_NavItemData>[
+    final l10n = context.l10n;
+    final items = <_NavItemData>[
+      _NavItemData(
+        nav: _DashboardNav.home,
+        label: l10n.navHomeScreen,
+        icon: Icons.home_outlined,
+      ),
       _NavItemData(
         nav: _DashboardNav.wishlist,
-        label: 'دڵخوازەکانم',
+        label: l10n.navMyFavorites,
         icon: Icons.favorite_border,
       ),
       _NavItemData(
         nav: _DashboardNav.myAds,
-        label: 'ڕیکلامەکانم',
+        label: l10n.navMyAds,
         icon: Icons.directions_car_outlined,
       ),
       _NavItemData(
         nav: _DashboardNav.messages,
-        label: 'نامەکان',
+        label: l10n.navMessages,
         icon: Icons.mail_outline,
         badgeCount: 2,
       ),
       _NavItemData(
         nav: _DashboardNav.settings,
-        label: 'ڕێکخستنەکان',
+        label: l10n.navSettings,
         icon: Icons.settings_outlined,
       ),
     ];
@@ -548,13 +806,13 @@ class _LogoutButtonState extends State<_LogoutButton> {
                 : Colors.transparent,
             borderRadius: BorderRadius.circular(12),
           ),
-          child: const Row(
+          child: Row(
             children: [
-              Icon(Icons.logout, size: 18, color: Color(0xFFFF3B30)),
-              SizedBox(width: 15),
+              const Icon(Icons.logout, size: 18, color: Color(0xFFFF3B30)),
+              const SizedBox(width: 15),
               Text(
-                'چوونەدەرەوە',
-                style: TextStyle(
+                context.l10n.signOut,
+                style: const TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w500,
                   color: Color(0xFFFF3B30),
@@ -575,8 +833,9 @@ class _DashboardHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final title = Text(
-      'داشبۆردی بەکارهێنەر',
+      l10n.userDashboardTitle,
       style: TextStyle(
         fontSize: isMobile ? 26 : 32,
         fontWeight: FontWeight.w700,
@@ -587,8 +846,14 @@ class _DashboardHeader extends StatelessWidget {
     );
 
     final cta = _PrimaryCtaButton(
-      label: 'فرۆشتنی ئۆتۆمبێل',
-      onTap: () {},
+      label: l10n.sellCarButton,
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute<void>(
+            builder: (_) => const AddCarFlowScreen(),
+          ),
+        );
+      },
     );
 
     if (isMobile) {
@@ -678,19 +943,20 @@ class _WishlistSection extends StatelessWidget {
   });
 
   final GlobalKey sectionKey;
-  final List<Map<String, String>> cars;
-  final void Function(String id) onRemove;
+  final List<Map<String, dynamic>> cars;
+  final Future<void> Function(String id) onRemove;
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return KeyedSubtree(
       key: sectionKey,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Text(
-            'دڵخوازەکانم (سەیڤکراو)',
-            style: TextStyle(
+          Text(
+            l10n.favoritesSectionTitle,
+            style: const TextStyle(
               fontSize: 22.4,
               fontWeight: FontWeight.w600,
               color: Color(0xFF1D1D1F),
@@ -698,7 +964,7 @@ class _WishlistSection extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           if (cars.isEmpty)
-            const _EmptyPlaceholder(message: 'هیچ ئۆتۆمبێلێکی سەیڤکراو نییە')
+            _EmptyPlaceholder(message: l10n.favoritesEmpty)
           else
             LayoutBuilder(
               builder: (context, constraints) {
@@ -718,10 +984,10 @@ class _WishlistSection extends StatelessWidget {
                       SizedBox(
                         width: tileWidth,
                         child: WishlistCarCard(
-                          title: car['title']!,
-                          price: car['price']!,
-                          imageUrl: car['imageUrl']!,
-                          onRemove: () => onRemove(car['id']!),
+                          title: car['title']?.toString() ?? '',
+                          price: car['price']?.toString() ?? '—',
+                          imageUrl: car['imageUrl']?.toString() ?? '',
+                          onRemove: () => onRemove(car['id']?.toString() ?? ''),
                         ),
                       ),
                   ],
@@ -739,14 +1005,19 @@ class _MyAdsSection extends StatelessWidget {
     required this.sectionKey,
     required this.ads,
     required this.isMobile,
+    required this.onEdit,
+    required this.onDelete,
   });
 
   final GlobalKey sectionKey;
-  final List<Map<String, String>> ads;
+  final List<Map<String, dynamic>> ads;
   final bool isMobile;
+  final ValueChanged<Map<String, dynamic>> onEdit;
+  final ValueChanged<Map<String, dynamic>> onDelete;
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return KeyedSubtree(
       key: sectionKey,
       child: Column(
@@ -755,9 +1026,9 @@ class _MyAdsSection extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                'ڕیکلامەکانم',
-                style: TextStyle(
+              Text(
+                l10n.navMyAds,
+                style: const TextStyle(
                   fontSize: 22.4,
                   fontWeight: FontWeight.w600,
                   color: Color(0xFF1D1D1F),
@@ -765,9 +1036,9 @@ class _MyAdsSection extends StatelessWidget {
               ),
               GestureDetector(
                 onTap: () {},
-                child: const Text(
-                  'بینینی هەمووی',
-                  style: TextStyle(
+                child: Text(
+                  l10n.viewAllListings,
+                  style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
                     color: Color(0xFF007AFF),
@@ -791,13 +1062,15 @@ class _MyAdsSection extends StatelessWidget {
               ],
             ),
             child: ads.isEmpty
-                ? const _EmptyPlaceholder(message: 'هیچ ڕیکلامێکت نییە')
+                ? _EmptyPlaceholder(message: l10n.myAdsEmpty)
                 : Column(
                     children: [
                       for (var i = 0; i < ads.length; i++) ...[
                         _AdListItem(
                           ad: ads[i],
                           isMobile: isMobile,
+                          onEdit: () => onEdit(ads[i]),
+                          onDelete: () => onDelete(ads[i]),
                         ),
                         if (i < ads.length - 1)
                           const Divider(
@@ -819,19 +1092,24 @@ class _AdListItem extends StatelessWidget {
   const _AdListItem({
     required this.ad,
     required this.isMobile,
+    required this.onEdit,
+    required this.onDelete,
   });
 
-  final Map<String, String> ad;
+  final Map<String, dynamic> ad;
   final bool isMobile;
+  final VoidCallback onEdit;
+  final VoidCallback onDelete;
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final info = Row(
       children: [
         ClipRRect(
           borderRadius: BorderRadius.circular(10),
           child: Image.network(
-            ad['imageUrl']!,
+            ad['imageUrl']?.toString() ?? '',
             width: 60,
             height: 60,
             fit: BoxFit.cover,
@@ -849,7 +1127,7 @@ class _AdListItem extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                ad['title']!,
+                ad['title']?.toString() ?? '',
                 style: const TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
@@ -865,7 +1143,7 @@ class _AdListItem extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  ad['status']!,
+                  ad['status']?.toString() ?? l10n.adStatusActive,
                   style: const TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
@@ -882,11 +1160,11 @@ class _AdListItem extends StatelessWidget {
     final actions = Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        _ActionButton(label: 'دەستکاری', onTap: () {}),
+        _ActionButton(label: l10n.editAction, onTap: onEdit),
         const SizedBox(width: 10),
         _ActionButton(
-          label: 'سڕینەوە',
-          onTap: () {},
+          label: l10n.deleteAction,
+          onTap: onDelete,
           isDestructive: true,
         ),
       ],

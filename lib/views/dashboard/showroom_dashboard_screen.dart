@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../models/showroom_listing_status.dart';
+import '../../providers/auth_providers.dart';
 import '../../widgets/showroom_car_list_item.dart';
 import '../home/home_screen.dart';
 
@@ -105,9 +106,12 @@ class _ShowroomDashboardScreenState
     setState(() => _activeNav = nav);
   }
 
-  void _logout() {
-    Navigator.of(context).pushReplacement(
+  Future<void> _logout() async {
+    await ref.read(authServiceProvider).signOut();
+    if (!mounted) return;
+    Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute<void>(builder: (_) => const HomeScreen()),
+      (_) => false,
     );
   }
 

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../core/l10n_extensions.dart';
 import '../../../data/add_car_form_options.dart';
 import '../../../widgets/add_car_chip_selector.dart';
+import '../widgets/add_car_step_header.dart';
 
 /// Step 7 — seat material and seat count.
 class AddCarStepInterior extends StatelessWidget {
@@ -19,9 +20,6 @@ class AddCarStepInterior extends StatelessWidget {
   final ValueChanged<String> onSeatMaterialChanged;
   final ValueChanged<String> onSeatCountChanged;
 
-  static const Color _textPrimary = Color(0xFF1D1D1F);
-  static const Color _textSecondary = Color(0xFF86868B);
-
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
@@ -32,33 +30,17 @@ class AddCarStepInterior extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            switch (locale) {
+          AddCarStepHeader(
+            title: switch (locale) {
               'en' => 'Interior details',
               'ar' => 'تفاصيل الداخلية',
               _ => 'وردەکاریەکانی ناوەوە',
             },
-            style: const TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.w700,
-              letterSpacing: -0.6,
-              height: 1.15,
-              color: _textPrimary,
-            ),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            switch (locale) {
+            subtitle: switch (locale) {
               'en' => 'Select the correct details',
               'ar' => 'اختر التفاصيل الصحيحة',
               _ => 'وردەکاریە ڕاستەکان هەڵبژێرە',
             },
-            style: const TextStyle(
-              fontSize: 17,
-              fontWeight: FontWeight.w400,
-              height: 1.4,
-              color: _textSecondary,
-            ),
           ),
           const SizedBox(height: 32),
           AddCarSimpleChipSection(

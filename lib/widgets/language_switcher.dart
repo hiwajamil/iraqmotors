@@ -14,15 +14,21 @@ class LanguageSwitcherButton extends ConsumerWidget {
   static const Color _iconColor = Color(0xFF1D1D1F);
 
   static Future<void> showLanguageSheet(BuildContext context, WidgetRef ref) {
-    return showModalBottomSheet<void>(
+    return showDialog<void>(
       context: context,
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      builder: (sheetContext) => _LanguagePickerSheet(
-        onSelected: (locale) {
-          ref.read(localeProvider.notifier).setLocale(locale);
-          Navigator.pop(sheetContext);
-        },
+      barrierColor: Colors.black.withValues(alpha: 0.4),
+      builder: (dialogContext) => Dialog(
+        backgroundColor: Colors.transparent,
+        insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 400),
+          child: _LanguagePickerSheet(
+            onSelected: (locale) {
+              ref.read(localeProvider.notifier).setLocale(locale);
+              Navigator.pop(dialogContext);
+            },
+          ),
+        ),
       ),
     );
   }
@@ -96,33 +102,21 @@ class _LanguagePickerSheet extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
     final current = ref.watch(localeProvider);
-    final bottomInset = MediaQuery.viewPaddingOf(context).bottom;
 
     return ClipRRect(
-      borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+      borderRadius: BorderRadius.circular(20),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 24, sigmaY: 24),
         child: Container(
           decoration: BoxDecoration(
             color: Colors.white.withValues(alpha: 0.96),
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-            border: Border(
-              top: BorderSide(color: Colors.black.withValues(alpha: 0.06)),
-            ),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: Colors.black.withValues(alpha: 0.06)),
           ),
-          padding: EdgeInsets.fromLTRB(20, 12, 20, 20 + bottomInset),
+          padding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Container(
-                width: 36,
-                height: 5,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFD2D2D7),
-                  borderRadius: BorderRadius.circular(3),
-                ),
-              ),
-              const SizedBox(height: 20),
               Text(
                 l10n.selectLanguage,
                 style: const TextStyle(

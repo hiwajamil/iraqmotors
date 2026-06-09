@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../../../core/l10n_extensions.dart';
 import '../../../data/add_car_option_keys.dart';
+import '../../../models/admin_system_config.dart';
+import '../add_car_theme.dart';
+import '../widgets/add_car_step_header.dart';
 
 /// Step 11 — boost package selection.
 class AddCarStepPackages extends StatelessWidget {
@@ -9,36 +12,47 @@ class AddCarStepPackages extends StatelessWidget {
     super.key,
     required this.selectedPackageKey,
     required this.onPackageChanged,
+    this.boostPriceIqd,
+    this.superBoostPriceIqd,
   });
 
   final String? selectedPackageKey;
   final ValueChanged<String> onPackageChanged;
+  final int? boostPriceIqd;
+  final int? superBoostPriceIqd;
 
-  static const Color _textPrimary = Color(0xFF1D1D1F);
-  static const Color _textSecondary = Color(0xFF86868B);
+  static String _formatPrice(int amount) {
+    return amount.toString().replaceAllMapped(
+          RegExp(r'(\d)(?=(\d{3})+(?!\d))'),
+          (match) => '${match[1]},',
+        );
+  }
 
   @override
   Widget build(BuildContext context) {
     final locale = context.l10n.localeName.split('_').first;
+    final boostPrice = boostPriceIqd ??
+        AdminSystemConfig.defaultPackagePrices[AddCarOptionKeys.packageBoost]!;
+    final superBoostPrice = superBoostPriceIqd ??
+        AdminSystemConfig
+            .defaultPackagePrices[AddCarOptionKeys.packageSuperBoost]!;
 
     return SingleChildScrollView(
       padding: const EdgeInsetsDirectional.fromSTEB(24, 8, 24, 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            switch (locale) {
+          AddCarStepHeader(
+            title: switch (locale) {
               'en' => 'Choose listing type',
               'ar' => 'اختر نوع الإعلان',
               _ => 'هەڵبژاردنی جۆری بڵاوکردنەوە',
             },
-            style: const TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.w700,
-              letterSpacing: -0.6,
-              height: 1.15,
-              color: _textPrimary,
-            ),
+            subtitle: switch (locale) {
+              'en' => 'Boost your listing visibility',
+              'ar' => 'عزز ظهور إعلانك',
+              _ => 'بینینی ڕاگەیاندنەکەت زیاد بکە',
+            },
           ),
           const SizedBox(height: 24),
           _PackageCard(
@@ -47,7 +61,7 @@ class AddCarStepPackages extends StatelessWidget {
               'ar' => 'تعزيز',
               _ => 'بووست',
             },
-            price: '10,000',
+            price: _formatPrice(boostPrice),
             priceSuffix: switch (locale) {
               'en' => 'IQD',
               'ar' => 'د.ع',
@@ -71,7 +85,7 @@ class AddCarStepPackages extends StatelessWidget {
               'ar' => 'سوبر تعزيز',
               _ => 'سوپەر بووست',
             },
-            price: '60,000',
+            price: _formatPrice(superBoostPrice),
             priceSuffix: switch (locale) {
               'en' => 'IQD',
               'ar' => 'د.ع',
@@ -139,30 +153,13 @@ class _PackageCardState extends State<_PackageCard> {
           duration: const Duration(milliseconds: 220),
           curve: Curves.easeOutCubic,
           padding: const EdgeInsetsDirectional.all(20),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
+          decoration: AddCarTheme.cardDecoration().copyWith(
             border: Border.all(
               color: widget.selected
-                  ? AddCarStepPackages._textPrimary
-                  : const Color(0xFFE5E5EA),
+                  ? AddCarTheme.textPrimary
+                  : AddCarTheme.border,
               width: widget.selected ? 2 : 1,
             ),
-            boxShadow: widget.selected
-                ? [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.08),
-                      blurRadius: 20,
-                      offset: const Offset(0, 8),
-                    ),
-                  ]
-                : [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.03),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -177,7 +174,7 @@ class _PackageCardState extends State<_PackageCard> {
                         fontSize: 20,
                         fontWeight: FontWeight.w700,
                         letterSpacing: -0.3,
-                        color: AddCarStepPackages._textPrimary,
+                        color: AddCarTheme.textPrimary,
                       ),
                     ),
                   ),
@@ -188,7 +185,7 @@ class _PackageCardState extends State<_PackageCard> {
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: AddCarStepPackages._textPrimary,
+                        color: AddCarTheme.textPrimary,
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
@@ -212,7 +209,7 @@ class _PackageCardState extends State<_PackageCard> {
                       fontSize: 28,
                       fontWeight: FontWeight.w800,
                       letterSpacing: -0.8,
-                      color: AddCarStepPackages._textPrimary,
+                      color: AddCarTheme.textPrimary,
                     ),
                   ),
                   const SizedBox(width: 6),
@@ -223,7 +220,7 @@ class _PackageCardState extends State<_PackageCard> {
                       style: const TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
-                        color: AddCarStepPackages._textSecondary,
+                        color: AddCarTheme.textSecondary,
                       ),
                     ),
                   ),
@@ -235,12 +232,12 @@ class _PackageCardState extends State<_PackageCard> {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: widget.selected
-                          ? AddCarStepPackages._textPrimary
+                          ? AddCarTheme.textPrimary
                           : Colors.transparent,
                       border: Border.all(
                         color: widget.selected
-                            ? AddCarStepPackages._textPrimary
-                            : const Color(0xFFC7C7CC),
+                            ? AddCarTheme.textPrimary
+                            : AddCarTheme.border,
                         width: 2,
                       ),
                     ),
@@ -261,7 +258,7 @@ class _PackageCardState extends State<_PackageCard> {
                   fontSize: 15,
                   fontWeight: FontWeight.w400,
                   height: 1.45,
-                  color: AddCarStepPackages._textSecondary,
+                  color: AddCarTheme.textSecondary,
                 ),
               ),
             ],

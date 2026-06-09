@@ -1,7 +1,8 @@
 import 'dart:io';
-import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:mime/mime.dart';
 import 'package:minio/io.dart';
 import 'package:minio/minio.dart';
@@ -138,6 +139,70 @@ class R2StorageService {
     }
 
     return '$_publicBaseUrl/$objectKey';
+  }
+
+  /// Uploads a gallery-picked image (native path or web blob URL).
+  Future<String> uploadPickedImage({
+    required String path,
+    XFile? xFile,
+    String? fileName,
+  }) async {
+    if (!kIsWeb && !path.startsWith('blob:')) {
+      final file = File(path);
+      if (await file.exists()) {
+        return uploadImageFile(path, fileName: fileName);
+      }
+    }
+
+    final picked = xFile ?? XFile(path);
+    final bytes = await picked.readAsBytes();
+    final resolvedName = fileName ?? picked.name;
+    final mime = lookupMimeType(resolvedName) ?? 'image/jpeg';
+
+    return uploadImageBytes(
+      bytes,
+      fileName: resolvedName,
+      contentType: mime,
+    );
+  }
+
+  /// Extracts the R2 object key from a public URL, or null if not managed by R2.
+  String? objectKeyFromPublicUrl(String url) {
+    final base = _publicBaseUrl;
+    if (url.startsWith(base)) {
+      final path = url.substring(base.length).replaceFirst(RegExp(r'^/+'), '');
+      return path.isEmpty ? null : path;
+    }
+
+    final uri = Uri.tryParse(url);
+    if (uri == null) return null;
+
+    final segments = uri.pathSegments;
+    final carsIndex = segments.indexOf(_objectPrefix);
+    if (carsIndex >= 0) {
+      return segments.sublist(carsIndex).join('/');
+    }
+    return null;
+  }
+
+  /// Deletes objects in R2 for the given public [urls] (skips non-R2 URLs).
+  Future<void> deleteImageUrls(List<String> urls) async {
+    final keys = urls
+        .map(objectKeyFromPublicUrl)
+        .whereType<String>()
+        .toSet()
+        .toList();
+    if (keys.isEmpty) return;
+
+    try {
+      await Future.wait(
+        keys.map((key) => _minio.removeObject(_bucket, key)),
+      );
+    } on MinioError catch (e) {
+      throw R2StorageException('Delete failed: ${e.message ?? e}');
+    } catch (e) {
+      throw R2StorageException('Delete failed: $e');
+    }
   }
 
   /// Uploads multiple local image paths concurrently.

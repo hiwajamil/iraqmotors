@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import '../../../core/l10n_extensions.dart';
 import '../../../data/add_car_form_options.dart';
 import '../../../widgets/add_car_chip_selector.dart';
+import '../add_car_theme.dart';
+import '../widgets/add_car_form_card.dart';
+import '../widgets/add_car_step_header.dart';
 
 /// Step 8 — paint/damage condition and extra features.
 class AddCarStepConditionFeatures extends StatelessWidget {
@@ -25,9 +28,6 @@ class AddCarStepConditionFeatures extends StatelessWidget {
   final ValueChanged<bool> onSelectAllFeatures;
   final VoidCallback onDamagePhotoAdded;
 
-  static const Color _textPrimary = Color(0xFF1D1D1F);
-  static const Color _textSecondary = Color(0xFF86868B);
-
   bool get _allFeaturesSelected =>
       selectedFeatures.length >= AddCarFormOptions.featureKeys.length;
 
@@ -41,46 +41,32 @@ class AddCarStepConditionFeatures extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            switch (locale) {
+          AddCarStepHeader(
+            title: switch (locale) {
               'en' => 'Painted panels',
               'ar' => 'القطع المطلية',
               _ => 'پارچەی بۆیاخکراو',
             },
-            style: const TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.w700,
-              letterSpacing: -0.6,
-              height: 1.15,
-              color: _textPrimary,
-            ),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            switch (locale) {
+            subtitle: switch (locale) {
               'en' => 'Specify if your car has damaged panels',
               'ar' => 'حدد إذا كان لسيارتك قطع متضررة',
               _ => 'دیاریبکە ئەگەر ئۆتۆمبێلەکەت پارچەی زیانپێگەیشتووی هەیە',
             },
-            style: const TextStyle(
-              fontSize: 17,
-              fontWeight: FontWeight.w400,
-              height: 1.4,
-              color: _textSecondary,
-            ),
           ),
           const SizedBox(height: 20),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              for (final key in AddCarFormOptions.conditionChipKeys)
-                AddCarSelectChip(
-                  label: AddCarFormOptions.conditionLabel(l10n, key),
-                  selected: conditionKey == key,
-                  onTap: () => onConditionChanged(key),
-                ),
-            ],
+          AddCarFormCard(
+            child: Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                for (final key in AddCarFormOptions.conditionChipKeys)
+                  AddCarSelectChip(
+                    label: AddCarFormOptions.conditionLabel(l10n, key),
+                    selected: conditionKey == key,
+                    onTap: () => onConditionChanged(key),
+                  ),
+              ],
+            ),
           ),
           const SizedBox(height: 16),
           _DamagePhotoButton(
@@ -99,12 +85,7 @@ class AddCarStepConditionFeatures extends StatelessWidget {
               'ar' => 'ميزات إضافية',
               _ => 'تایبەتمەندی زیاتر',
             },
-            style: const TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.w700,
-              letterSpacing: -0.4,
-              color: _textPrimary,
-            ),
+            style: AddCarTheme.sectionTitle,
           ),
           const SizedBox(height: 14),
           _SelectAllRow(
@@ -117,17 +98,19 @@ class AddCarStepConditionFeatures extends StatelessWidget {
             onChanged: onSelectAllFeatures,
           ),
           const SizedBox(height: 16),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              for (final key in AddCarFormOptions.featureKeys)
-                AddCarSelectChip(
-                  label: AddCarFormOptions.featureLabel(l10n, key),
-                  selected: selectedFeatures.contains(key),
-                  onTap: () => onFeatureToggled(key),
-                ),
-            ],
+          AddCarFormCard(
+            child: Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                for (final key in AddCarFormOptions.featureKeys)
+                  AddCarSelectChip(
+                    label: AddCarFormOptions.featureLabel(l10n, key),
+                    selected: selectedFeatures.contains(key),
+                    onTap: () => onFeatureToggled(key),
+                  ),
+              ],
+            ),
           ),
         ],
       ),
@@ -163,15 +146,10 @@ class _DamagePhotoButtonState extends State<_DamagePhotoButton> {
       child: AnimatedScale(
         scale: _pressed ? 0.98 : 1,
         duration: const Duration(milliseconds: 100),
-        child: Container(
+        child: AddCarFormCard(
           padding: const EdgeInsetsDirectional.symmetric(
             horizontal: 16,
             vertical: 14,
-          ),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: const Color(0xFFE5E5EA)),
           ),
           child: Row(
             children: [
@@ -179,13 +157,13 @@ class _DamagePhotoButtonState extends State<_DamagePhotoButton> {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade200,
+                  color: AddCarTheme.inputFill,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: const Icon(
                   Icons.photo_camera_outlined,
                   size: 22,
-                  color: AddCarStepConditionFeatures._textPrimary,
+                  color: AddCarTheme.textPrimary,
                 ),
               ),
               const SizedBox(width: 14),
@@ -195,7 +173,7 @@ class _DamagePhotoButtonState extends State<_DamagePhotoButton> {
                   style: const TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
-                    color: AddCarStepConditionFeatures._textPrimary,
+                    color: AddCarTheme.textPrimary,
                   ),
                 ),
               ),
@@ -206,7 +184,7 @@ class _DamagePhotoButtonState extends State<_DamagePhotoButton> {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: AddCarStepConditionFeatures._textPrimary,
+                    color: AddCarTheme.textPrimary,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
@@ -240,19 +218,14 @@ class _SelectAllRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(12),
+      color: Colors.transparent,
       child: InkWell(
         onTap: () => onChanged(!value),
-        borderRadius: BorderRadius.circular(12),
-        child: Container(
+        borderRadius: BorderRadius.circular(AddCarTheme.cardRadius),
+        child: AddCarFormCard(
           padding: const EdgeInsetsDirectional.symmetric(
             horizontal: 14,
             vertical: 12,
-          ),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: const Color(0xFFE5E5EA)),
           ),
           child: Row(
             children: [
@@ -262,14 +235,14 @@ class _SelectAllRow extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
-                    color: AddCarStepConditionFeatures._textPrimary,
+                    color: AddCarTheme.textPrimary,
                   ),
                 ),
               ),
               Switch.adaptive(
                 value: value,
                 onChanged: onChanged,
-                activeTrackColor: AddCarStepConditionFeatures._textPrimary,
+                activeTrackColor: AddCarTheme.textPrimary,
               ),
             ],
           ),

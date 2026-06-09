@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -8,8 +9,8 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'core/app_localization_delegates.dart';
+import 'core/firebase_web_config.dart';
 import 'core/locale_config.dart';
-import 'firebase_options.dart';
 import 'providers/locale_provider.dart';
 import 'views/home/home_screen.dart';
 import 'views/startup_error_screen.dart';
@@ -25,8 +26,19 @@ Future<void> main() async {
       }
 
       await Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform,
+        options: resolveFirebaseOptions(),
       );
+
+      // Required for Firebase Phone Auth reCAPTCHA on web (v2 + Enterprise).
+      if (kIsWeb) {
+        try {
+          await FirebaseAuth.instance.initializeRecaptchaConfig();
+        } catch (e) {
+          if (kDebugMode) {
+            debugPrint('initializeRecaptchaConfig failed: $e');
+          }
+        }
+      }
 
       Locale initialLocale = AppLocaleConfig.defaultLocale;
       try {

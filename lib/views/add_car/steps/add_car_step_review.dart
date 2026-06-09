@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../../../core/l10n_extensions.dart';
 import '../../../models/add_car_draft.dart';
 import '../add_car_review_summary.dart';
+import '../add_car_theme.dart';
+import '../widgets/add_car_step_header.dart';
 
 /// Step 10 — full listing review before publish.
 class AddCarStepReview extends StatelessWidget {
@@ -15,9 +17,6 @@ class AddCarStepReview extends StatelessWidget {
   final AddCarDraft draft;
   final ValueChanged<int> onEditStep;
 
-  static const Color _textPrimary = Color(0xFF1D1D1F);
-  static const Color _textSecondary = Color(0xFF86868B);
-
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
@@ -29,33 +28,17 @@ class AddCarStepReview extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            switch (locale) {
+          AddCarStepHeader(
+            title: switch (locale) {
               'en' => 'Review',
               'ar' => 'مراجعة',
               _ => 'پێداچوونەوە',
             },
-            style: const TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.w700,
-              letterSpacing: -0.6,
-              height: 1.15,
-              color: _textPrimary,
-            ),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            switch (locale) {
+            subtitle: switch (locale) {
               'en' => 'Make sure all your car details are correct',
               'ar' => 'تأكد من صحة جميع تفاصيل سيارتك',
               _ => 'دڵنیابە کە هەموو تایبەتمەندییەکانی ئۆتۆمبێلەکەت ڕاستن',
             },
-            style: const TextStyle(
-              fontSize: 17,
-              fontWeight: FontWeight.w400,
-              height: 1.4,
-              color: _textSecondary,
-            ),
           ),
           const SizedBox(height: 24),
           for (var i = 0; i < sections.length; i++) ...[
@@ -90,11 +73,7 @@ class _ReviewSectionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xFFE5E5EA)),
-      ),
+      decoration: AddCarTheme.cardDecoration(),
       padding: const EdgeInsetsDirectional.fromSTEB(16, 14, 16, 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -107,7 +86,7 @@ class _ReviewSectionCard extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
-                    color: AddCarStepReview._textPrimary,
+                    color: AddCarTheme.textPrimary,
                     letterSpacing: -0.2,
                   ),
                 ),
@@ -127,7 +106,7 @@ class _ReviewSectionCard extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: Color(0xFF0071E3),
+                    color: AddCarTheme.focusBlue,
                   ),
                 ),
               ),
@@ -136,7 +115,7 @@ class _ReviewSectionCard extends StatelessWidget {
           const SizedBox(height: 8),
           for (var i = 0; i < section.rows.length; i++) ...[
             if (i > 0)
-              const Divider(height: 16, color: Color(0xFFF0F0F2)),
+              const Divider(height: 16, color: AddCarTheme.border),
             _ReviewRow(row: section.rows[i]),
           ],
         ],
@@ -162,7 +141,7 @@ class _ReviewRow extends StatelessWidget {
             style: const TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w500,
-              color: AddCarStepReview._textSecondary,
+              color: AddCarTheme.textSecondary,
             ),
           ),
         ),
@@ -175,7 +154,7 @@ class _ReviewRow extends StatelessWidget {
             style: const TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w600,
-              color: AddCarStepReview._textPrimary,
+              color: AddCarTheme.textPrimary,
               height: 1.35,
             ),
           ),

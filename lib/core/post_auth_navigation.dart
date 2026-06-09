@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/account_type.dart';
-import '../views/admin/super_admin_dashboard_screen.dart';
+import '../views/admin/admin_dashboard_screen.dart';
 import '../views/dashboard/showroom_dashboard_screen.dart';
 import '../views/dashboard/user_dashboard_screen.dart';
 import 'super_admin_config.dart';
@@ -13,7 +13,7 @@ Widget dashboardForAuthenticatedUser({
   AccountType? accountType,
 }) {
   if (isSuperAdminUser(email: email, phone: phone)) {
-    return const SuperAdminDashboardScreen();
+    return const AdminDashboardScreen();
   }
   if (accountType == AccountType.showroom) {
     return const ShowroomDashboardScreen();

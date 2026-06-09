@@ -1,13 +1,17 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../core/l10n_extensions.dart';
 import '../../data/localized_dummy_data.dart';
 import '../../l10n/app_localizations.dart';
+import '../../providers/favorites_provider.dart';
+import '../../services/car_database_service.dart';
+import '../auth/auth_screen.dart';
 
 /// Car details (زانیاری ئۆتۆمبێل) — gallery collage, specs, sticky seller card.
-class CarDetailsScreen extends StatefulWidget {
+class CarDetailsScreen extends ConsumerStatefulWidget {
   const CarDetailsScreen({
     super.key,
     this.car,
@@ -17,10 +21,10 @@ class CarDetailsScreen extends StatefulWidget {
   final Map<String, dynamic>? car;
 
   @override
-  State<CarDetailsScreen> createState() => _CarDetailsScreenState();
+  ConsumerState<CarDetailsScreen> createState() => _CarDetailsScreenState();
 }
 
-class _CarDetailsScreenState extends State<CarDetailsScreen> {
+class _CarDetailsScreenState extends ConsumerState<CarDetailsScreen> {
   static const Color _background = Color(0xFFF5F5F7);
   static const Color _cardWhite = Color(0xFFFFFFFF);
   static const Color _textPrimary = Color(0xFF1D1D1F);
@@ -31,7 +35,7 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
   static const Color _callBlack = Color(0xFF000000);
   static const double _desktopBreakpoint = 992;
 
-  bool _isSaved = false;
+  bool _prototypeSaved = false;
 
   Map<String, dynamic> _data(AppLocalizations l10n) {
     final prototype = LocalizedDummyData.prototypeCar(l10n);
@@ -58,11 +62,18 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
     return 20;
   }
 
+  bool _isSaved() {
+    final carId = widget.car?['id']?.toString();
+    if (carId == null || carId.isEmpty) return _prototypeSaved;
+    return ref.watch(favoritesProvider).contains(carId);
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final data = _data(l10n);
     final images = _images(l10n);
+    final isSaved = _isSaved();
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -75,7 +86,7 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
               ? null
               : _MobileSellerBar(
                   data: data,
-                  isSaved: _isSaved,
+                  isSaved: isSaved,
                   onSaveToggle: _toggleSave,
                 ),
           body: SafeArea(
@@ -90,7 +101,7 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
                           data: data,
                           images: images,
                           horizontalPadding: hPad,
-                          isSaved: _isSaved,
+                          isSaved: isSaved,
                           onSaveToggle: _toggleSave,
                         )
                       : _MobileScrollBody(
@@ -107,7 +118,31 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
     );
   }
 
-  void _toggleSave() => setState(() => _isSaved = !_isSaved);
+  Future<void> _toggleSave() async {
+    final car = widget.car;
+    if (car == null) {
+      setState(() => _prototypeSaved = !_prototypeSaved);
+      return;
+    }
+
+    try {
+      await ref.read(favoritesProvider.notifier).toggle(car);
+    } on FavoritesAuthRequired {
+      if (!mounted) return;
+      Navigator.of(context).push(
+        MaterialPageRoute<void>(builder: (_) => const AuthScreen()),
+      );
+    } on CarDatabaseException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.message),
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: const Color(0xFFFF3B30),
+        ),
+      );
+    }
+  }
 }
 
 class _DetailsAppBar extends StatelessWidget {

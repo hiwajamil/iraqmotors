@@ -1,0 +1,37 @@
+import '../../models/localized_car_model.dart';
+
+const List<LocalizedCarModel> volvoModels = [
+  LocalizedCarModel(id: 'volvo_240', ku: '240', en: '240', ar: '240'),
+  LocalizedCarModel(id: 'gle_244', ku: 'GLE 244', en: 'GLE 244', ar: 'GLE 244'),
+  LocalizedCarModel(id: 'volvo_440', ku: '440', en: '440', ar: '440'),
+  LocalizedCarModel(id: 'volvo_740', ku: '740', en: '740', ar: '740'),
+  LocalizedCarModel(id: 'volvo_940', ku: '940', en: '940', ar: '940'),
+  LocalizedCarModel(id: 'volvo_960', ku: '960', en: '960', ar: '960'),
+  LocalizedCarModel(id: 'c30', ku: 'C30', en: 'C30', ar: 'C30'),
+  LocalizedCarModel(id: 'c70', ku: 'C70', en: 'C70', ar: 'C70'),
+  LocalizedCarModel(id: 's40', ku: 'S40', en: 'S40', ar: 'S40'),
+  LocalizedCarModel(id: 's60', ku: 'S60', en: 'S60', ar: 'S60'),
+  LocalizedCarModel(
+    id: 's60_polestar',
+    ku: 'S60 پۆلستار',
+    en: 'S60 Polestar',
+    ar: 'S60 بولستار',
+  ),
+  LocalizedCarModel(id: 's80', ku: 'S80', en: 'S80', ar: 'S80'),
+  LocalizedCarModel(id: 's90', ku: 'S90', en: 'S90', ar: 'S90'),
+  LocalizedCarModel(id: 'v40', ku: 'V40', en: 'V40', ar: 'V40'),
+  LocalizedCarModel(id: 'v50', ku: 'V50', en: 'V50', ar: 'V50'),
+  LocalizedCarModel(id: 'v60', ku: 'V60', en: 'V60', ar: 'V60'),
+  LocalizedCarModel(
+    id: 'v60_polestar',
+    ku: 'V60 پولستار',
+    en: 'V60 Polestar',
+    ar: 'V60 بولستار',
+  ),
+  LocalizedCarModel(id: 'v70', ku: 'V70', en: 'V70', ar: 'V70'),
+  LocalizedCarModel(id: 'v90', ku: 'V90', en: 'V90', ar: 'V90'),
+  LocalizedCarModel(id: 'xc40', ku: 'XC40', en: 'XC40', ar: 'XC40'),
+  LocalizedCarModel(id: 'xc60', ku: 'XC60', en: 'XC60', ar: 'XC60'),
+  LocalizedCarModel(id: 'xc70', ku: 'XC70', en: 'XC70', ar: 'XC70'),
+  LocalizedCarModel(id: 'xc90', ku: 'XC90', en: 'XC90', ar: 'XC90'),
+];

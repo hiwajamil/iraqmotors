@@ -4,6 +4,9 @@ import 'package:flutter/services.dart';
 import '../../../core/l10n_extensions.dart';
 import '../../../data/add_car_form_options.dart';
 import '../../../widgets/add_car_chip_selector.dart';
+import '../add_car_theme.dart';
+import '../widgets/add_car_form_card.dart';
+import '../widgets/add_car_step_header.dart';
 
 /// Step 5 — mileage and fuel type.
 class AddCarStepMileageFuel extends StatefulWidget {
@@ -29,9 +32,6 @@ class AddCarStepMileageFuel extends StatefulWidget {
 }
 
 class _AddCarStepMileageFuelState extends State<AddCarStepMileageFuel> {
-  static const Color _textPrimary = Color(0xFF1D1D1F);
-  static const Color _textSecondary = Color(0xFF86868B);
-
   late final TextEditingController _mileageController;
 
   @override
@@ -59,10 +59,8 @@ class _AddCarStepMileageFuelState extends State<AddCarStepMileageFuel> {
     final l10n = context.l10n;
     final result = await showModalBottomSheet<String>(
       context: context,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
+      backgroundColor: AddCarTheme.cardBg,
+      shape: AddCarTheme.bottomSheetShape,
       builder: (ctx) {
         return SafeArea(
           child: Column(
@@ -76,14 +74,10 @@ class _AddCarStepMileageFuelState extends State<AddCarStepMileageFuel> {
                     'ar' => 'الوحدة',
                     _ => 'یەکە',
                   },
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    color: _textPrimary,
-                  ),
+                  style: AddCarTheme.sectionLabel,
                 ),
               ),
-              const Divider(height: 1, color: Color(0xFFE5E5EA)),
+              const Divider(height: 1, color: AddCarTheme.border),
               ...AddCarFormOptions.mileageUnits.map((unit) {
                 final isSelected = unit == widget.mileageUnit;
                 return ListTile(
@@ -93,7 +87,7 @@ class _AddCarStepMileageFuelState extends State<AddCarStepMileageFuel> {
                       fontSize: 16,
                       fontWeight:
                           isSelected ? FontWeight.w600 : FontWeight.w400,
-                      color: _textPrimary,
+                      color: AddCarTheme.textPrimary,
                     ),
                   ),
                   trailing: isSelected
@@ -121,33 +115,17 @@ class _AddCarStepMileageFuelState extends State<AddCarStepMileageFuel> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            switch (locale) {
+          AddCarStepHeader(
+            title: switch (locale) {
               'en' => 'More details',
               'ar' => 'تفاصيل إضافية',
               _ => 'وردەکاریەکانیتر',
             },
-            style: const TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.w700,
-              letterSpacing: -0.6,
-              height: 1.15,
-              color: _textPrimary,
-            ),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            switch (locale) {
+            subtitle: switch (locale) {
               'en' => 'Select the correct details',
               'ar' => 'اختر التفاصيل الصحيحة',
               _ => 'وردەکاریە ڕاستەکان هەڵبژێرە',
             },
-            style: const TextStyle(
-              fontSize: 17,
-              fontWeight: FontWeight.w400,
-              height: 1.4,
-              color: _textSecondary,
-            ),
           ),
           const SizedBox(height: 32),
           Text(
@@ -156,46 +134,29 @@ class _AddCarStepMileageFuelState extends State<AddCarStepMileageFuel> {
               'ar' => 'المسافة المقطوعة',
               _ => 'ماوەی ڕۆیشتن',
             },
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: _textPrimary,
-              letterSpacing: -0.2,
-            ),
+            style: AddCarTheme.sectionLabel,
           ),
           const SizedBox(height: 12),
-          _MileageInput(
-            controller: _mileageController,
-            unitLabel: AddCarFormOptions.mileageUnitLabel(l10n, widget.mileageUnit),
-            onChanged: widget.onMileageChanged,
-            onUnitTap: () => _openUnitPicker(context),
+          AddCarFormCard(
+            padding: EdgeInsets.zero,
+            child: _MileageInput(
+              controller: _mileageController,
+              unitLabel: AddCarFormOptions.mileageUnitLabel(l10n, widget.mileageUnit),
+              onChanged: widget.onMileageChanged,
+              onUnitTap: () => _openUnitPicker(context),
+            ),
           ),
           const SizedBox(height: 28),
-          Text(
-            switch (locale) {
+          AddCarSimpleChipSection(
+            label: switch (locale) {
               'en' => 'Fuel',
               'ar' => 'الوقود',
               _ => 'سووتەمەنی',
             },
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: _textPrimary,
-              letterSpacing: -0.2,
-            ),
-          ),
-          const SizedBox(height: 12),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              for (final key in AddCarFormOptions.fuelChipKeys)
-                AddCarSelectChip(
-                  label: AddCarFormOptions.fuelLabel(l10n, key),
-                  selected: widget.fuelKey == key,
-                  onTap: () => widget.onFuelChanged(key),
-                ),
-            ],
+            chipKeys: AddCarFormOptions.fuelChipKeys,
+            selectedKey: widget.fuelKey,
+            onSelected: widget.onFuelChanged,
+            labelFor: (key) => AddCarFormOptions.fuelLabel(l10n, key),
           ),
         ],
       ),
@@ -216,18 +177,13 @@ class _MileageInput extends StatelessWidget {
   final ValueChanged<String> onChanged;
   final VoidCallback onUnitTap;
 
-  static const Color _textPrimary = Color(0xFF1D1D1F);
-  static const Color _border = Color(0xFFE5E5EA);
-
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: _border),
-      ),
       clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(AddCarTheme.cardRadius),
+      ),
       child: IntrinsicHeight(
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -243,7 +199,7 @@ class _MileageInput extends StatelessWidget {
                 style: const TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.w600,
-                  color: _textPrimary,
+                  color: AddCarTheme.textPrimary,
                   letterSpacing: -0.5,
                 ),
                 decoration: InputDecoration(
@@ -251,9 +207,15 @@ class _MileageInput extends StatelessWidget {
                   hintStyle: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.w500,
-                    color: _textPrimary.withValues(alpha: 0.25),
+                    color: AddCarTheme.textPrimary.withValues(alpha: 0.25),
                   ),
+                  filled: true,
+                  fillColor: AddCarTheme.inputFill,
                   border: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  focusedBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(color: AddCarTheme.focusBlue, width: 1.5),
+                  ),
                   contentPadding: const EdgeInsetsDirectional.symmetric(
                     horizontal: 16,
                     vertical: 16,
@@ -263,7 +225,7 @@ class _MileageInput extends StatelessWidget {
               ),
             ),
             Material(
-              color: Colors.grey.shade200,
+              color: AddCarTheme.inputFill,
               child: InkWell(
                 onTap: onUnitTap,
                 child: Padding(
@@ -279,13 +241,13 @@ class _MileageInput extends StatelessWidget {
                         style: const TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w600,
-                          color: _textPrimary,
+                          color: AddCarTheme.textPrimary,
                         ),
                       ),
                       const Icon(
                         Icons.keyboard_arrow_down_rounded,
                         size: 20,
-                        color: Color(0xFF86868B),
+                        color: AddCarTheme.textSecondary,
                       ),
                     ],
                   ),
