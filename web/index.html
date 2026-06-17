@@ -46,6 +46,150 @@
     window.addEventListener('unhandledrejection', function (event) {
       console.error('IQ Motors unhandled rejection:', event.reason);
     });
+
+    // Pick a file and upload in one JS flow (must run synchronously from tap).
+    window.iqMotorsPickAndUploadImage = function () {
+      return new Promise(function (resolve) {
+        var input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'image/*';
+        input.style.display = 'none';
+        document.body.appendChild(input);
+
+        function finish(payload) {
+          input.remove();
+          resolve(JSON.stringify(payload));
+        }
+
+        input.onchange = function () {
+          var file = input.files && input.files[0];
+          if (!file) {
+            finish({ ok: false, cancelled: true, error: 'cancelled' });
+            return;
+          }
+
+          console.log('[IQ Motors] picked file:', file.name, file.size);
+          var reader = new FileReader();
+          reader.onload = async function () {
+            try {
+              var bytes = new Uint8Array(reader.result);
+              try {
+                bytes = await window.iqMotorsCompressImage(bytes);
+                console.log('[IQ Motors] compressed to', bytes.length, 'bytes');
+              } catch (compressErr) {
+                console.warn('[IQ Motors] compress failed, uploading original:', compressErr);
+              }
+              var uploadRaw = await window.iqMotorsUploadImage(bytes);
+              var upload = JSON.parse(uploadRaw);
+              if (!upload.ok) {
+                finish({
+                  ok: false,
+                  error: upload.body,
+                  status: upload.status,
+                });
+                return;
+              }
+              var body = JSON.parse(upload.body);
+              finish({ ok: true, url: body.url, status: upload.status });
+            } catch (err) {
+              finish({ ok: false, error: String(err) });
+            }
+          };
+          reader.onerror = function () {
+            finish({ ok: false, error: 'read failed' });
+          };
+          reader.readAsArrayBuffer(file);
+        };
+
+        // Must run synchronously while user-gesture is active.
+        input.click();
+      });
+    };
+
+    // Base64 bridge — reliable Dart→JS byte transfer on CanvasKit web.
+    window.iqMotorsUploadImageBase64 = async function (base64) {
+      const binary = atob(base64);
+      const bytes = new Uint8Array(binary.length);
+      for (var i = 0; i < binary.length; i++) {
+        bytes[i] = binary.charCodeAt(i);
+      }
+      console.log('[IQ Motors] upload bytes length', bytes.length);
+      return window.iqMotorsUploadImage(bytes);
+    };
+
+    // Compress to JPEG (~70% quality, max 1920px) before upload.
+    window.iqMotorsCompressImage = function (bytes, maxDim, quality) {
+      maxDim = maxDim || 1920;
+      quality = quality == null ? 0.7 : quality;
+      return new Promise(function (resolve, reject) {
+        var blob = new Blob([bytes]);
+        var objectUrl = URL.createObjectURL(blob);
+        var img = new Image();
+        img.onload = function () {
+          URL.revokeObjectURL(objectUrl);
+          var w = img.width;
+          var h = img.height;
+          if (w > maxDim || h > maxDim) {
+            if (w >= h) {
+              h = Math.round((h * maxDim) / w);
+              w = maxDim;
+            } else {
+              w = Math.round((w * maxDim) / h);
+              h = maxDim;
+            }
+          }
+          var canvas = document.createElement('canvas');
+          canvas.width = w;
+          canvas.height = h;
+          canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+          canvas.toBlob(
+            function (jpegBlob) {
+              if (!jpegBlob) {
+                reject(new Error('canvas toBlob failed'));
+                return;
+              }
+              var reader = new FileReader();
+              reader.onload = function () {
+                resolve(new Uint8Array(reader.result));
+              };
+              reader.onerror = function () {
+                reject(new Error('read compressed bytes failed'));
+              };
+              reader.readAsArrayBuffer(jpegBlob);
+            },
+            'image/jpeg',
+            quality
+          );
+        };
+        img.onerror = function () {
+          URL.revokeObjectURL(objectUrl);
+          reject(new Error('image decode failed'));
+        };
+        img.src = objectUrl;
+      });
+    };
+
+    // Raw POST with image/jpeg — no multipart.
+    window.iqMotorsUploadImage = async function (bytes) {
+      console.log('[IQ Motors] upload bytes length', bytes && bytes.length);
+      const WORKER_URL = 'https://iqmotors-upload-api.hiwa-constructions.workers.dev/';
+      try {
+        var res = await fetch(WORKER_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'image/jpeg' },
+          body: bytes,
+        });
+        var body = await res.text();
+        if (res.ok) {
+          return JSON.stringify({ status: res.status, body: body, ok: true });
+        }
+        console.warn('[IQ Motors] Upload HTTP ' + res.status + ':', body);
+        return JSON.stringify({ status: res.status, body: body, ok: false });
+      } catch (err) {
+        console.warn('[IQ Motors] Upload network error:', err);
+        return JSON.stringify({ status: 0, body: String(err), ok: false });
+      }
+    };
   </script>
   <script src="flutter_bootstrap.js" async></script>
 </body>

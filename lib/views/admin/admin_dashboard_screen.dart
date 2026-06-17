@@ -10,13 +10,14 @@ import '../../data/car_models_by_brand.dart';
 import '../../data/dummy_brands.dart';
 import '../../l10n/app_localizations.dart';
 import '../../models/account_type.dart';
+import '../../models/add_car_draft.dart';
 import '../../models/user_profile.dart';
+import '../add_car/add_car_review_summary.dart';
 import '../../providers/auth_providers.dart';
 import '../../providers/storage_providers.dart';
 import '../../services/car_database_service.dart';
 import '../home/home_screen.dart';
 import 'admin_activity_logs_view.dart';
-import 'admin_ad_detail_screen.dart';
 import 'admin_approvals_by_city_view.dart';
 import 'admin_flagged_ads_view.dart';
 import 'admin_messages_view.dart';
@@ -56,6 +57,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen> {
   List<Map<String, dynamic>> _pendingAds = [];
   Map<String, UserProfile?> _sellerProfiles = {};
   bool _isLoadingPending = true;
+  String? _pendingAdsError;
   final Set<String> _processingAdIds = {};
   late Future<Map<String, int>> _statsFuture;
 
@@ -77,7 +79,10 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen> {
   }
 
   Future<void> _loadPendingAds() async {
-    setState(() => _isLoadingPending = true);
+    setState(() {
+      _isLoadingPending = true;
+      _pendingAdsError = null;
+    });
     try {
       final carDb = ref.read(carDatabaseServiceProvider);
       final auth = ref.read(authServiceProvider);
@@ -87,7 +92,12 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen> {
       for (final ad in ads) {
         final sellerId = ad['sellerId']?.toString();
         if (sellerId == null || profiles.containsKey(sellerId)) continue;
-        profiles[sellerId] = await auth.fetchProfile(sellerId);
+        try {
+          profiles[sellerId] = await auth.fetchProfile(sellerId);
+        } catch (e) {
+          debugPrint('Admin Fetch Error: $e');
+          profiles[sellerId] = null;
+        }
       }
 
       if (!mounted) return;
@@ -95,17 +105,15 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen> {
         _pendingAds = ads;
         _sellerProfiles = profiles;
         _isLoadingPending = false;
+        _pendingAdsError = null;
       });
-    } on CarDatabaseException catch (e) {
+    } catch (e) {
+      debugPrint('Admin Fetch Error: $e');
       if (!mounted) return;
-      setState(() => _isLoadingPending = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(e.message),
-          behavior: SnackBarBehavior.floating,
-          backgroundColor: const Color(0xFFFF3B30),
-        ),
-      );
+      setState(() {
+        _isLoadingPending = false;
+        _pendingAdsError = e.toString();
+      });
     }
   }
 
@@ -120,7 +128,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen> {
         adData: ad,
         title: _carTitle(ad, l10n),
         price: _formatPrice(ad),
-        imageUrl: _firstImageUrl(ad),
+        imageUrls: _imageUrls(ad),
         publisherName: profile?.displayName ?? '—',
         publisherType: isShowroom ? 'showroom' : 'individual',
         publisherPhone: profile?.phone ?? '—',
@@ -177,12 +185,17 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen> {
     return '$symbol$formatted';
   }
 
-  String _firstImageUrl(Map<String, dynamic> data) {
+  List<String> _imageUrls(Map<String, dynamic> data) {
     final urls = data['imageUrls'];
-    if (urls is List && urls.isNotEmpty) {
-      return urls.first.toString();
+    if (urls is List) {
+      return urls
+          .map((e) => e.toString())
+          .where((url) => url.isNotEmpty)
+          .toList();
     }
-    return data['imageUrl']?.toString() ?? '';
+    final single = data['imageUrl']?.toString();
+    if (single != null && single.isNotEmpty) return [single];
+    return const [];
   }
 
   String _formatCount(int count) {
@@ -192,8 +205,8 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen> {
         );
   }
 
-  Future<void> _approveAd(_PendingApprovalData data) async {
-    if (data.id.isEmpty || _processingAdIds.contains(data.id)) return;
+  Future<bool> _approveAd(_PendingApprovalData data) async {
+    if (data.id.isEmpty || _processingAdIds.contains(data.id)) return false;
 
     setState(() => _processingAdIds.add(data.id));
     try {
@@ -206,7 +219,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen> {
               details: 'Ad ID: ${data.id}, Title: ${data.title}',
             ),
           );
-      if (!mounted) return;
+      if (!mounted) return false;
       final l10n = context.l10n;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -217,8 +230,9 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen> {
       );
       await _loadPendingAds();
       _refreshDashboardStats();
+      return true;
     } on CarDatabaseException catch (e) {
-      if (!mounted) return;
+      if (!mounted) return false;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(e.message),
@@ -226,6 +240,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen> {
           backgroundColor: const Color(0xFFFF3B30),
         ),
       );
+      return false;
     } finally {
       if (mounted) {
         setState(() => _processingAdIds.remove(data.id));
@@ -233,7 +248,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen> {
     }
   }
 
-  Future<void> _rejectAd(_PendingApprovalData data) async {
+  Future<bool> _rejectAd(_PendingApprovalData data) async {
     final l10n = context.l10n;
     final confirmed = await showDialog<bool>(
       context: context,
@@ -266,8 +281,8 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen> {
       ),
     );
 
-    if (confirmed != true || !mounted) return;
-    if (data.id.isEmpty || _processingAdIds.contains(data.id)) return;
+    if (confirmed != true || !mounted) return false;
+    if (data.id.isEmpty || _processingAdIds.contains(data.id)) return false;
 
     setState(() => _processingAdIds.add(data.id));
     try {
@@ -280,7 +295,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen> {
               details: 'Ad ID: ${data.id}, Title: ${data.title}',
             ),
           );
-      if (!mounted) return;
+      if (!mounted) return false;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(l10n.adminAdRejectedSuccess),
@@ -289,8 +304,9 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen> {
       );
       await _loadPendingAds();
       _refreshDashboardStats();
+      return true;
     } on CarDatabaseException catch (e) {
-      if (!mounted) return;
+      if (!mounted) return false;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(e.message),
@@ -298,6 +314,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen> {
           backgroundColor: const Color(0xFFFF3B30),
         ),
       );
+      return false;
     } finally {
       if (mounted) {
         setState(() => _processingAdIds.remove(data.id));
@@ -306,18 +323,15 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen> {
   }
 
   Future<void> _viewAd(_PendingApprovalData data) async {
-    final refreshed = await Navigator.of(context).push<bool>(
-      MaterialPageRoute<bool>(
-        builder: (_) => AdminAdDetailScreen(
-          adData: data.adData,
-          sellerProfile: data.sellerProfile,
-        ),
+    await showDialog<void>(
+      context: context,
+      barrierColor: Colors.black.withValues(alpha: 0.45),
+      builder: (dialogContext) => _PendingAdDetailDialog(
+        data: data,
+        onApprove: () => _approveAd(data),
+        onReject: () => _rejectAd(data),
       ),
     );
-    if (refreshed == true && mounted) {
-      await _loadPendingAds();
-      _refreshDashboardStats();
-    }
   }
 
   List<_SuperAdminStatData> _buildStats(
@@ -496,14 +510,30 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen> {
             final isLoading =
                 snapshot.connectionState == ConnectionState.waiting;
             final counts = snapshot.hasError ? null : snapshot.data;
+            final statsError = snapshot.hasError ? snapshot.error.toString() : null;
 
-            return _SuperAdminStatsGrid(
-              stats: _buildStats(
-                l10n,
-                counts: counts,
-                isLoading: isLoading,
-              ),
-              isMobile: isMobile,
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _SuperAdminStatsGrid(
+                  stats: _buildStats(
+                    l10n,
+                    counts: counts,
+                    isLoading: isLoading,
+                  ),
+                  isMobile: isMobile,
+                ),
+                if (statsError != null) ...[
+                  const SizedBox(height: 12),
+                  Text(
+                    statsError,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      color: Color(0xFFFF3B30),
+                    ),
+                  ),
+                ],
+              ],
             );
           },
         ),
@@ -511,6 +541,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen> {
         _PendingApprovalsSection(
           approvals: _mapPendingAds(l10n),
           isLoading: _isLoadingPending,
+          errorMessage: _pendingAdsError,
           processingIds: _processingAdIds,
           isMobile: isMobile,
           onView: _viewAd,
@@ -550,7 +581,7 @@ class _PendingApprovalData {
     required this.adData,
     required this.title,
     required this.price,
-    required this.imageUrl,
+    required this.imageUrls,
     required this.publisherName,
     required this.publisherType,
     required this.publisherPhone,
@@ -561,7 +592,7 @@ class _PendingApprovalData {
   final Map<String, dynamic> adData;
   final String title;
   final String price;
-  final String imageUrl;
+  final List<String> imageUrls;
   final String publisherName;
   final String publisherType;
   final String publisherPhone;
@@ -1158,6 +1189,7 @@ class _PendingApprovalsSection extends StatelessWidget {
   const _PendingApprovalsSection({
     required this.approvals,
     required this.isLoading,
+    this.errorMessage,
     required this.processingIds,
     required this.isMobile,
     required this.onView,
@@ -1167,6 +1199,7 @@ class _PendingApprovalsSection extends StatelessWidget {
 
   final List<_PendingApprovalData> approvals;
   final bool isLoading;
+  final String? errorMessage;
   final Set<String> processingIds;
   final bool isMobile;
   final ValueChanged<_PendingApprovalData> onView;
@@ -1229,7 +1262,18 @@ class _PendingApprovalsSection extends StatelessWidget {
             style: const TextStyle(fontSize: 14, color: Color(0xFF86868B)),
           ),
           const SizedBox(height: 24),
-          if (isLoading)
+          if (errorMessage != null)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 24),
+              child: Text(
+                errorMessage!,
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: Color(0xFFFF3B30),
+                ),
+              ),
+            )
+          else if (isLoading)
             const Padding(
               padding: EdgeInsets.symmetric(vertical: 40),
               child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
@@ -1281,14 +1325,61 @@ class _ApprovalsTableHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
 
+    return _ApprovalsRowLayout(
+      isHeader: true,
+      car: _HeaderCell(l10n.tableCar),
+      publisher: _HeaderCell(l10n.tablePublisher),
+      price: _HeaderCell(l10n.tablePrice),
+      actions: _HeaderCell(l10n.tableActions),
+    );
+  }
+}
+
+class _ApprovalsRowLayout extends StatelessWidget {
+  const _ApprovalsRowLayout({
+    required this.car,
+    required this.publisher,
+    required this.price,
+    required this.actions,
+    this.isHeader = false,
+  });
+
+  final Widget car;
+  final Widget publisher;
+  final Widget price;
+  final Widget actions;
+  final bool isHeader;
+
+  static const double _horizontalPadding = 12;
+
+  @override
+  Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsetsDirectional.only(start: 8, end: 8, bottom: 4),
+      padding: EdgeInsetsDirectional.fromSTEB(
+        _horizontalPadding,
+        isHeader ? 0 : 14,
+        _horizontalPadding,
+        isHeader ? 4 : 14,
+      ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Expanded(flex: 4, child: _HeaderCell(l10n.tableCar)),
-          Expanded(flex: 3, child: _HeaderCell(l10n.tablePublisher)),
-          Expanded(flex: 2, child: _HeaderCell(l10n.tablePrice)),
-          Expanded(flex: 3, child: _HeaderCell(l10n.tableActions)),
+          Expanded(flex: 4, child: car),
+          Expanded(flex: 3, child: publisher),
+          Expanded(
+            flex: 2,
+            child: Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: price,
+            ),
+          ),
+          Expanded(
+            flex: 3,
+            child: Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: actions,
+            ),
+          ),
         ],
       ),
     );
@@ -1344,43 +1435,30 @@ class _PendingApprovalRow extends StatelessWidget {
     }
 
     return Container(
-      padding: const EdgeInsetsDirectional.symmetric(
-        horizontal: 12,
-        vertical: 14,
-      ),
       decoration: BoxDecoration(
         color: const Color(0xFFFFFFFF),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.black.withValues(alpha: 0.04)),
       ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Expanded(flex: 4, child: _CarCell(data: data)),
-          Expanded(flex: 3, child: _PublisherCell(data: data)),
-          Expanded(
-            flex: 2,
-            child: Text(
-              data.price,
-              textDirection: TextDirection.ltr,
-              style: const TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-                color: Color(0xFF1D1D1F),
-              ),
-            ),
+      child: _ApprovalsRowLayout(
+        car: _CarCell(data: data),
+        publisher: _PublisherCell(data: data),
+        price: Text(
+          data.price,
+          textDirection: TextDirection.ltr,
+          style: const TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w600,
+            color: Color(0xFF1D1D1F),
           ),
-          Expanded(
-            flex: 3,
-            child: _ApprovalActions(
-              onView: onView,
-              onReject: onReject,
-              onApprove: onApprove,
-              isProcessing: isProcessing,
-              compact: false,
-            ),
-          ),
-        ],
+        ),
+        actions: _ApprovalActions(
+          onView: onView,
+          onReject: onReject,
+          onApprove: onApprove,
+          isProcessing: isProcessing,
+          compact: false,
+        ),
       ),
     );
   }
@@ -1449,21 +1527,7 @@ class _CarCell extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(12),
-          child: Image.network(
-            data.imageUrl,
-            width: 56,
-            height: 56,
-            fit: BoxFit.cover,
-            errorBuilder: (_, __, ___) => Container(
-              width: 56,
-              height: 56,
-              color: const Color(0xFFE5E5EA),
-              child: const Icon(Icons.directions_car_outlined),
-            ),
-          ),
-        ),
+        _CarThumbnailRow(urls: data.imageUrls),
         const SizedBox(width: 14),
         Expanded(
           child: Text(
@@ -1478,6 +1542,58 @@ class _CarCell extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _CarThumbnailRow extends StatelessWidget {
+  const _CarThumbnailRow({required this.urls});
+
+  final List<String> urls;
+
+  static const double _size = 45;
+  static const double _radius = 10;
+
+  @override
+  Widget build(BuildContext context) {
+    final previews = urls.take(4).toList();
+    if (previews.isEmpty) {
+      return _placeholder();
+    }
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        for (var i = 0; i < previews.length; i++) ...[
+          if (i > 0) const SizedBox(width: 6),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(_radius),
+            child: Image.network(
+              previews[i],
+              width: _size,
+              height: _size,
+              fit: BoxFit.cover,
+              errorBuilder: (_, __, ___) => _placeholder(),
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+
+  Widget _placeholder() {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(_radius),
+      child: Container(
+        width: _size,
+        height: _size,
+        color: const Color(0xFFE5E5EA),
+        child: const Icon(
+          Icons.directions_car_outlined,
+          size: 20,
+          color: Color(0xFF86868B),
+        ),
+      ),
     );
   }
 }
@@ -1706,5 +1822,510 @@ class _ActionChipState extends State<_ActionChip> {
       return SizedBox(width: double.infinity, child: child);
     }
     return child;
+  }
+}
+
+class _PendingAdDetailDialog extends StatefulWidget {
+  const _PendingAdDetailDialog({
+    required this.data,
+    required this.onApprove,
+    required this.onReject,
+  });
+
+  final _PendingApprovalData data;
+  final Future<bool> Function() onApprove;
+  final Future<bool> Function() onReject;
+
+  @override
+  State<_PendingAdDetailDialog> createState() => _PendingAdDetailDialogState();
+}
+
+class _PendingAdDetailDialogState extends State<_PendingAdDetailDialog> {
+  static const Color _textPrimary = Color(0xFF1D1D1F);
+  static const Color _textSecondary = Color(0xFF86868B);
+  static const Color _divider = Color(0xFFE5E5EA);
+
+  late final PageController _pageController;
+  int _currentPage = 0;
+  bool _isProcessing = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController();
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  AddCarDraft get _draft => AddCarDraft.fromFirestoreMap(widget.data.adData);
+
+  Future<void> _handleApprove() async {
+    if (_isProcessing) return;
+    setState(() => _isProcessing = true);
+    final success = await widget.onApprove();
+    if (!mounted) return;
+    setState(() => _isProcessing = false);
+    if (success) Navigator.of(context).pop();
+  }
+
+  Future<void> _handleReject() async {
+    if (_isProcessing) return;
+    setState(() => _isProcessing = true);
+    final success = await widget.onReject();
+    if (!mounted) return;
+    setState(() => _isProcessing = false);
+    if (success) Navigator.of(context).pop();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final isMobile = MediaQuery.sizeOf(context).width < 600;
+    final sections = AddCarReviewSummary.build(l10n, _draft);
+    final profile = widget.data.sellerProfile;
+    final imageUrls = widget.data.imageUrls;
+
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      insetPadding: EdgeInsets.symmetric(
+        horizontal: isMobile ? 16 : 48,
+        vertical: 24,
+      ),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxWidth: 560,
+          maxHeight: MediaQuery.sizeOf(context).height * 0.9,
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: Material(
+            color: Colors.white,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                  padding: const EdgeInsetsDirectional.fromSTEB(16, 12, 8, 0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          l10n.actionView,
+                          style: const TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.w700,
+                            color: _textPrimary,
+                            letterSpacing: -0.3,
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: _isProcessing
+                            ? null
+                            : () => Navigator.of(context).pop(),
+                        icon: const Icon(
+                          Icons.close,
+                          size: 20,
+                          color: _textSecondary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Flexible(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsetsDirectional.fromSTEB(20, 8, 20, 0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        if (imageUrls.isNotEmpty) ...[
+                          _DetailImageCarousel(
+                            urls: imageUrls,
+                            pageController: _pageController,
+                            currentPage: _currentPage,
+                            onPageChanged: (index) =>
+                                setState(() => _currentPage = index),
+                          ),
+                          const SizedBox(height: 20),
+                        ],
+                        Text(
+                          widget.data.title,
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700,
+                            color: _textPrimary,
+                            letterSpacing: -0.3,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          widget.data.price,
+                          textDirection: TextDirection.ltr,
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700,
+                            color: _textPrimary,
+                          ),
+                        ),
+                        if (profile != null) ...[
+                          const SizedBox(height: 16),
+                          _DetailPublisherRow(
+                            name: profile.displayName,
+                            phone: profile.phone,
+                            isShowroom:
+                                profile.accountType == AccountType.showroom,
+                          ),
+                        ],
+                        const SizedBox(height: 16),
+                        for (final section in sections) ...[
+                          _DetailSectionBlock(section: section),
+                          const SizedBox(height: 10),
+                        ],
+                        if (_draft.description != null &&
+                            _draft.description!.trim().isNotEmpty) ...[
+                          _DetailDescriptionBlock(
+                            label: l10n.adminDescriptionLabel,
+                            text: _draft.description!,
+                          ),
+                          const SizedBox(height: 10),
+                        ],
+                      ],
+                    ),
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsetsDirectional.fromSTEB(20, 12, 20, 20),
+                  decoration: const BoxDecoration(
+                    border: Border(top: BorderSide(color: _divider)),
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: _DetailActionButton(
+                          label: l10n.actionReject,
+                          fg: const Color(0xFFFF3B30),
+                          bg: Colors.white,
+                          border: const Color(0xFFFF3B30),
+                          isLoading: _isProcessing,
+                          onTap: _handleReject,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: _DetailActionButton(
+                          label: l10n.actionApprove,
+                          fg: Colors.white,
+                          bg: const Color(0xFF1D1D1F),
+                          border: const Color(0xFF1D1D1F),
+                          filled: true,
+                          isLoading: _isProcessing,
+                          onTap: _handleApprove,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _DetailImageCarousel extends StatelessWidget {
+  const _DetailImageCarousel({
+    required this.urls,
+    required this.pageController,
+    required this.currentPage,
+    required this.onPageChanged,
+  });
+
+  final List<String> urls;
+  final PageController pageController;
+  final int currentPage;
+  final ValueChanged<int> onPageChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(14),
+          child: AspectRatio(
+            aspectRatio: 16 / 10,
+            child: PageView.builder(
+              controller: pageController,
+              itemCount: urls.length,
+              onPageChanged: onPageChanged,
+              itemBuilder: (context, index) {
+                return Image.network(
+                  urls[index],
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => Container(
+                    color: _PendingAdDetailDialogState._divider,
+                    child: const Icon(
+                      Icons.directions_car_outlined,
+                      size: 48,
+                      color: _PendingAdDetailDialogState._textSecondary,
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
+        if (urls.length > 1) ...[
+          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              for (var i = 0; i < urls.length; i++)
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  margin: const EdgeInsets.symmetric(horizontal: 3),
+                  width: currentPage == i ? 18 : 6,
+                  height: 6,
+                  decoration: BoxDecoration(
+                    color: currentPage == i
+                        ? _PendingAdDetailDialogState._textPrimary
+                        : _PendingAdDetailDialogState._divider,
+                    borderRadius: BorderRadius.circular(3),
+                  ),
+                ),
+            ],
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+class _DetailPublisherRow extends StatelessWidget {
+  const _DetailPublisherRow({
+    required this.name,
+    required this.phone,
+    required this.isShowroom,
+  });
+
+  final String name;
+  final String phone;
+  final bool isShowroom;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF5F5F7),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: isShowroom
+                  ? const Color(0xFFF3EBFF)
+                  : const Color(0xFFE6F0FF),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(
+              isShowroom ? Icons.storefront_outlined : Icons.person_outline,
+              size: 20,
+              color: isShowroom
+                  ? const Color(0xFFAF52DE)
+                  : const Color(0xFF007AFF),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  name,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: _PendingAdDetailDialogState._textPrimary,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  phone,
+                  textDirection: TextDirection.ltr,
+                  style: const TextStyle(
+                    fontSize: 13,
+                    color: _PendingAdDetailDialogState._textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DetailSectionBlock extends StatelessWidget {
+  const _DetailSectionBlock({required this.section});
+
+  final AddCarReviewSection section;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF5F5F7),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            section.title,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+              color: _PendingAdDetailDialogState._textPrimary,
+            ),
+          ),
+          const SizedBox(height: 12),
+          for (var i = 0; i < section.rows.length; i++) ...[
+            if (i > 0) const SizedBox(height: 10),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: Text(
+                    section.rows[i].label,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      color: _PendingAdDetailDialogState._textSecondary,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 3,
+                  child: Text(
+                    section.rows[i].value,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      color: _PendingAdDetailDialogState._textPrimary,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _DetailDescriptionBlock extends StatelessWidget {
+  const _DetailDescriptionBlock({
+    required this.label,
+    required this.text,
+  });
+
+  final String label;
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF5F5F7),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+              color: _PendingAdDetailDialogState._textPrimary,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            text,
+            style: const TextStyle(
+              fontSize: 13,
+              height: 1.5,
+              color: _PendingAdDetailDialogState._textSecondary,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DetailActionButton extends StatelessWidget {
+  const _DetailActionButton({
+    required this.label,
+    required this.fg,
+    required this.bg,
+    required this.border,
+    required this.onTap,
+    this.filled = false,
+    this.isLoading = false,
+  });
+
+  final String label;
+  final Color fg;
+  final Color bg;
+  final Color border;
+  final bool filled;
+  final bool isLoading;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: isLoading ? null : onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 13),
+        decoration: BoxDecoration(
+          color: bg,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: border),
+        ),
+        alignment: Alignment.center,
+        child: isLoading
+            ? SizedBox(
+                width: 18,
+                height: 18,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: filled ? Colors.white : fg,
+                ),
+              )
+            : Text(
+                label,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: fg,
+                ),
+              ),
+      ),
+    );
   }
 }

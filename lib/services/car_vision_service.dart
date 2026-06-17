@@ -268,14 +268,21 @@ class CarVisionService {
   Future<bool> validateIsVehicle(String imagePath) async {
     if (!_mlKitAvailable) return true;
 
-    final inputImage = InputImage.fromFilePath(imagePath);
-    final objects = await _objectDetector.processImage(inputImage);
-    if (!_hasProminentObject(objects, inputImage)) {
-      return false;
-    }
+    try {
+      final inputImage = InputImage.fromFilePath(imagePath);
+      final objects = await _objectDetector.processImage(inputImage);
+      if (!_hasProminentObject(objects, inputImage)) {
+        return false;
+      }
 
-    final labels = await _imageLabeler.processImage(inputImage);
-    return _containsVehicleLabel(labels);
+      final labels = await _imageLabeler.processImage(inputImage);
+      return _containsVehicleLabel(labels);
+    } catch (e, stackTrace) {
+      debugPrint('Vision validation error (ML Kit): $e');
+      debugPrint('$stackTrace');
+      // Do not block uploads when on-device vision fails unexpectedly.
+      return true;
+    }
   }
 
   /// Compares [newImagePath] against [firstImagePath] using color histograms.
@@ -285,7 +292,10 @@ class CarVisionService {
   }) async {
     if (firstImagePath == null ||
         firstImagePath == newImagePath ||
-        _isRemoteUrl(firstImagePath)) {
+        _isRemoteUrl(firstImagePath) ||
+        kIsWeb ||
+        firstImagePath.startsWith('blob:') ||
+        newImagePath.startsWith('blob:')) {
       return true;
     }
 

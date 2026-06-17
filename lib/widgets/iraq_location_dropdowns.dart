@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../core/iraq_location_l10n.dart';
 import '../core/l10n_extensions.dart';
 import '../data/iraq_locations.dart';
 import '../views/add_car/add_car_theme.dart';
@@ -37,6 +38,7 @@ class IraqLocationDropdowns extends StatelessWidget {
     required List<String> options,
     required String? selected,
     required ValueChanged<String> onSelected,
+    required String Function(String option) labelForOption,
   }) async {
     final result = await showModalBottomSheet<String>(
       context: context,
@@ -61,7 +63,7 @@ class IraqLocationDropdowns extends StatelessWidget {
                     final isSelected = option == selected;
                     return ListTile(
                       title: Text(
-                        option,
+                        labelForOption(option),
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight:
@@ -103,7 +105,9 @@ class IraqLocationDropdowns extends StatelessWidget {
         children: [
           _LocationField(
             label: resolvedProvinceLabel,
-            value: province,
+            value: province == null
+                ? null
+                : IraqLocationL10n.provinceLabel(l10n, province!),
             placeholder: resolvedProvincePlaceholder,
             enabled: true,
             onTap: () => _openPicker(
@@ -112,12 +116,16 @@ class IraqLocationDropdowns extends StatelessWidget {
               options: IraqLocations.provinceOrder,
               selected: province,
               onSelected: onProvinceChanged,
+              labelForOption: (option) =>
+                  IraqLocationL10n.provinceLabel(l10n, option),
             ),
           ),
           const SizedBox(height: 16),
           _LocationField(
             label: resolvedCityLabel,
-            value: city,
+            value: city == null
+                ? null
+                : IraqLocationL10n.cityLabel(l10n, city!),
             placeholder: resolvedCityPlaceholder,
             enabled: cityEnabled,
             onTap: cityEnabled
@@ -127,6 +135,10 @@ class IraqLocationDropdowns extends StatelessWidget {
                       options: _cities,
                       selected: city,
                       onSelected: onCityChanged,
+                      labelForOption: (option) => IraqLocationL10n.cityLabel(
+                        l10n,
+                        option,
+                      ),
                     )
                 : null,
           ),

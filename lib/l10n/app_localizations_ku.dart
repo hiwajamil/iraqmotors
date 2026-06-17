@@ -849,6 +849,35 @@ class AppLocalizationsKu extends AppLocalizations {
   String get adStatusActive => 'چالاک';
 
   @override
+  String get adStatusSold => 'فرۆشرا';
+
+  @override
+  String get soldAction => 'فرۆشرا';
+
+  @override
+  String get markAsSoldTitle => 'نیشانکردن وەک فرۆشراو';
+
+  @override
+  String get markAsSoldConfirm =>
+      'ئایا دڵنیایت لە نیشانکردنی ئەم ڕیکلامە وەک فرۆشراو؟ کڕیاران نیشانەی فرۆشراو دەبینن.';
+
+  @override
+  String get adMarkedSoldSuccess => 'ڕیکلامەکە وەک فرۆشراو نیشانکرا';
+
+  @override
+  String adPostedAt(String date) {
+    return 'کاتی دانان: $date';
+  }
+
+  @override
+  String adDaysRemaining(int days) {
+    return 'ماوەی ڕیکلام: $days ڕۆژی ماوە';
+  }
+
+  @override
+  String get soldBadgeLabel => 'فرۆشرا';
+
+  @override
   String get carFallbackTitle => 'ئۆتۆمبێل';
 
   @override
@@ -1023,6 +1052,10 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get adminSettingsR2Bucket => 'ناوی bucket ی R2';
+
+  @override
+  String get adminSettingsR2PublicBaseUrl =>
+      'بەستەری گشتی R2 (https://pub-xxxx.r2.dev)';
 
   @override
   String get adminSettingsGeneralInfo => 'زانیاری پلاتفۆرم';

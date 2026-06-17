@@ -46,6 +46,52 @@ class CarBidService {
     return int.tryParse(raw?.toString() ?? '') ?? fallback;
   }
 
+  /// Ensures a car document exists before bidding (seeds demo listings when needed).
+  Future<void> ensureCarListingForBid({
+    required String carId,
+    Map<String, dynamic>? seedData,
+  }) async {
+    final docRef = _firestore.collection('cars').doc(carId);
+    final snapshot = await docRef.get();
+    if (snapshot.exists) return;
+
+    if (seedData == null) {
+      throw CarBidException('Car listing not found.');
+    }
+
+    final data = Map<String, dynamic>.from(seedData)..remove('id');
+    final imageUrl = data.remove('imageUrl')?.toString();
+    final imageUrls = _urlListFromField(data['imageUrls']);
+    if (imageUrls.isEmpty && imageUrl != null && imageUrl.isNotEmpty) {
+      data['imageUrls'] = [imageUrl];
+    }
+
+    await docRef.set({
+      ...data,
+      'status': 'active',
+      highestBidField: _initialHighestBidFromSeed(data),
+      'createdAt': FieldValue.serverTimestamp(),
+    });
+  }
+
+  static int _initialHighestBidFromSeed(Map<String, dynamic> data) {
+    final fromBid = parseBidAmount(data['latestBid']?.toString() ?? '');
+    if (fromBid != null && fromBid > 0) return fromBid;
+
+    final fromPrice = parseBidAmount(data['price']?.toString() ?? '');
+    if (fromPrice != null && fromPrice > 0) return fromPrice;
+
+    final priceValue = data['priceValue'];
+    if (priceValue is num) return priceValue.toInt();
+
+    return 0;
+  }
+
+  static List<String> _urlListFromField(dynamic value) {
+    if (value is! List) return const [];
+    return value.map((e) => e.toString()).where((u) => u.isNotEmpty).toList();
+  }
+
   /// Fetches the latest highest bid (1 Firestore read).
   Future<int> fetchHighestBid(String carId) async {
     final snapshot = await fetchCarDoc(carId);
@@ -67,6 +113,8 @@ class CarBidService {
     }
 
     final docRef = _firestore.collection('cars').doc(carId);
+    // ignore: avoid_print
+    print('Attempting to submit offer for carId: $carId');
 
     try {
       await docRef.update({

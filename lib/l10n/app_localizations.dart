@@ -1714,6 +1714,54 @@ abstract class AppLocalizations {
   /// **'چالاک'**
   String get adStatusActive;
 
+  /// No description provided for @adStatusSold.
+  ///
+  /// In ku, this message translates to:
+  /// **'فرۆشرا'**
+  String get adStatusSold;
+
+  /// No description provided for @soldAction.
+  ///
+  /// In ku, this message translates to:
+  /// **'فرۆشرا'**
+  String get soldAction;
+
+  /// No description provided for @markAsSoldTitle.
+  ///
+  /// In ku, this message translates to:
+  /// **'نیشانکردن وەک فرۆشراو'**
+  String get markAsSoldTitle;
+
+  /// No description provided for @markAsSoldConfirm.
+  ///
+  /// In ku, this message translates to:
+  /// **'ئایا دڵنیایت لە نیشانکردنی ئەم ڕیکلامە وەک فرۆشراو؟ کڕیاران نیشانەی فرۆشراو دەبینن.'**
+  String get markAsSoldConfirm;
+
+  /// No description provided for @adMarkedSoldSuccess.
+  ///
+  /// In ku, this message translates to:
+  /// **'ڕیکلامەکە وەک فرۆشراو نیشانکرا'**
+  String get adMarkedSoldSuccess;
+
+  /// No description provided for @adPostedAt.
+  ///
+  /// In ku, this message translates to:
+  /// **'کاتی دانان: {date}'**
+  String adPostedAt(String date);
+
+  /// No description provided for @adDaysRemaining.
+  ///
+  /// In ku, this message translates to:
+  /// **'ماوەی ڕیکلام: {days} ڕۆژی ماوە'**
+  String adDaysRemaining(int days);
+
+  /// No description provided for @soldBadgeLabel.
+  ///
+  /// In ku, this message translates to:
+  /// **'فرۆشرا'**
+  String get soldBadgeLabel;
+
   /// No description provided for @carFallbackTitle.
   ///
   /// In ku, this message translates to:
@@ -2061,6 +2109,12 @@ abstract class AppLocalizations {
   /// In ku, this message translates to:
   /// **'ناوی bucket ی R2'**
   String get adminSettingsR2Bucket;
+
+  /// No description provided for @adminSettingsR2PublicBaseUrl.
+  ///
+  /// In ku, this message translates to:
+  /// **'بەستەری گشتی R2 (https://pub-xxxx.r2.dev)'**
+  String get adminSettingsR2PublicBaseUrl;
 
   /// No description provided for @adminSettingsGeneralInfo.
   ///

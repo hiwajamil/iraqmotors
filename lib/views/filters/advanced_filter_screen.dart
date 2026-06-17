@@ -878,7 +878,7 @@ class _BrandSquareCard extends StatelessWidget {
         height: 72,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(14),
+          shape: BoxShape.circle,
           border: Border.all(
             color: isSelected
                 ? _AdvancedFilterScreenState._textPrimary
@@ -893,8 +893,7 @@ class _BrandSquareCard extends StatelessWidget {
             ),
           ],
         ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(12),
+        child: ClipOval(
           child: Padding(
             padding: const EdgeInsets.all(10),
             child: CachedNetworkImage(
@@ -931,7 +930,7 @@ class _ViewAllBrandCard extends StatelessWidget {
         height: 72,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(14),
+          shape: BoxShape.circle,
           border: Border.all(color: Colors.grey.shade300),
         ),
         child: const Icon(
@@ -1286,27 +1285,22 @@ class _ColorSwatchRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 48,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        itemCount: colorKeys.length + 1,
-        separatorBuilder: (_, __) => const SizedBox(width: 10),
-        itemBuilder: (context, index) {
-          if (index == 0) {
-            return _ColorPickerButton(
-              selected: selectedKey == null,
-              onTap: () => onSelected(null),
-            );
-          }
-          final key = colorKeys[index - 1];
-          return _ColorSwatch(
+    return Wrap(
+      alignment: WrapAlignment.center,
+      spacing: 10,
+      runSpacing: 10,
+      children: [
+        _ColorPickerButton(
+          selected: selectedKey == null,
+          onTap: () => onSelected(null),
+        ),
+        for (final key in colorKeys)
+          _ColorSwatch(
             color: _colorForKey(key),
             selected: selectedKey == key,
             onTap: () => onSelected(key),
-          );
-        },
-      ),
+          ),
+      ],
     );
   }
 }
@@ -1326,7 +1320,7 @@ class _ColorPickerButton extends StatelessWidget {
         height: 44,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(10),
+          shape: BoxShape.circle,
           border: Border.all(
             color: selected
                 ? _AdvancedFilterScreenState._textPrimary
@@ -1364,7 +1358,7 @@ class _ColorSwatch extends StatelessWidget {
         height: 44,
         decoration: BoxDecoration(
           color: color,
-          borderRadius: BorderRadius.circular(10),
+          shape: BoxShape.circle,
           border: Border.all(
             color: selected
                 ? _AdvancedFilterScreenState._textPrimary

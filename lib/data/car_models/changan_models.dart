@@ -1,0 +1,52 @@
+import '../../models/localized_car_model.dart';
+
+const List<LocalizedCarModel> changanModels = [
+  LocalizedCarModel(id: 'cm5', ku: 'CM5', en: 'CM5', ar: 'CM5'),
+  LocalizedCarModel(id: 'cs15', ku: 'CS15', en: 'CS15', ar: 'CS15'),
+  LocalizedCarModel(id: 'cs35', ku: 'CS35', en: 'CS35', ar: 'CS35'),
+  LocalizedCarModel(
+    id: 'cs35_plus',
+    ku: 'CS35 پڵەس',
+    en: 'CS35 Plus',
+    ar: 'CS35 بلس',
+  ),
+  LocalizedCarModel(id: 'cs75', ku: 'CS75', en: 'CS75', ar: 'CS75'),
+  LocalizedCarModel(
+    id: 'cs75_plus',
+    ku: 'CS75 پڵەس',
+    en: 'CS75 Plus',
+    ar: 'CS75 بلس',
+  ),
+  LocalizedCarModel(id: 'cs85', ku: 'CS85', en: 'CS85', ar: 'CS85'),
+  LocalizedCarModel(id: 'cs95', ku: 'CS95', en: 'CS95', ar: 'CS95'),
+  LocalizedCarModel(id: 'e_star', ku: 'E-Star', en: 'E-Star', ar: 'E-Star'),
+  LocalizedCarModel(id: 'uni_k', ku: 'UNI-K', en: 'UNI-K', ar: 'UNI-K'),
+  LocalizedCarModel(id: 'uni_s', ku: 'UNI-S', en: 'UNI-S', ar: 'UNI-S'),
+  LocalizedCarModel(id: 'uni_t', ku: 'UNI-T', en: 'UNI-T', ar: 'UNI-T'),
+  LocalizedCarModel(id: 'uni_v', ku: 'UNI-V', en: 'UNI-V', ar: 'UNI-V'),
+  LocalizedCarModel(
+    id: 'x5_plus',
+    ku: 'X5 پڵەس',
+    en: 'X5 Plus',
+    ar: 'X5 بلس',
+  ),
+  LocalizedCarModel(id: 'alsvin', ku: 'ئەلسڤین', en: 'Alsvin', ar: 'ألسفين'),
+  LocalizedCarModel(
+    id: 'eado_plus',
+    ku: 'ئیدۆ پڵەس',
+    en: 'Eado Plus',
+    ar: 'إيدو بلس',
+  ),
+  LocalizedCarModel(id: 'eado', ku: 'ئایدۆ', en: 'Eado', ar: 'إيدو'),
+  LocalizedCarModel(id: 'raeton', ku: 'ڕایتۆن', en: 'Raeton', ar: 'رايتون'),
+  LocalizedCarModel(id: 'star_9', ku: 'ستار 9', en: 'Star 9', ar: 'ستار 9'),
+  LocalizedCarModel(
+    id: 'star_truck',
+    ku: 'ستار تراک',
+    en: 'Star Truck',
+    ar: 'ستار تراك',
+  ),
+  LocalizedCarModel(id: 'victory', ku: 'ڤیکتۆری', en: 'Victory', ar: 'فيكتوري'),
+  LocalizedCarModel(id: 'hunter', ku: 'هەنتەر', en: 'Hunter', ar: 'هنتر'),
+  LocalizedCarModel(id: 'uni_z', ku: 'یونی -Z', en: 'UNI-Z', ar: 'UNI-Z'),
+];

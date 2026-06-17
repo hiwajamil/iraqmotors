@@ -33,6 +33,11 @@ class PickedImagePreview extends StatelessWidget {
         fit: fit,
         width: double.infinity,
         height: double.infinity,
+        gaplessPlayback: true,
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          return _loadingPlaceholder(loadingProgress);
+        },
         errorBuilder: (_, __, ___) => _errorPlaceholder(),
       );
     }
@@ -42,7 +47,29 @@ class PickedImagePreview extends StatelessWidget {
       fit: fit,
       width: double.infinity,
       height: double.infinity,
+      gaplessPlayback: true,
       errorBuilder: (_, __, ___) => _errorPlaceholder(),
+    );
+  }
+
+  Widget _loadingPlaceholder(ImageChunkEvent progress) {
+    final total = progress.expectedTotalBytes;
+    final loaded = progress.cumulativeBytesLoaded;
+    final value = total != null ? loaded / total : null;
+
+    return ColoredBox(
+      color: AddCarTheme.inputFill,
+      child: Center(
+        child: SizedBox(
+          width: 24,
+          height: 24,
+          child: CircularProgressIndicator(
+            strokeWidth: 2,
+            value: value,
+            color: AddCarTheme.focusBlue,
+          ),
+        ),
+      ),
     );
   }
 

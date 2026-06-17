@@ -50,12 +50,16 @@ dependencies:
   font_awesome_flutter: ^10.8.0
   shared_preferences: ^2.5.3
   image_picker: ^1.1.2
+  file_picker: ^10.1.9
   fl_chart: ^1.2.0
   image: ^4.8.0
   google_mlkit_object_detection: ^0.15.1
   image_pixels: ^4.0.2
   google_mlkit_image_labeling: ^0.14.2
   google_generative_ai: ^0.4.7
+  http: ^1.4.0
+  flutter_image_compress: ^2.4.0
+  web: ^1.1.1
 
 dev_dependencies:
   flutter_test:
@@ -74,6 +78,9 @@ dev_dependencies:
 # The following section is specific to Flutter packages.
 flutter:
   generate: true
+
+  assets:
+    - .env
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

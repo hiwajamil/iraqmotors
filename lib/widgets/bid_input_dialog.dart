@@ -16,6 +16,7 @@ class BidInputDialog {
   static Future<int?> show(
     BuildContext context, {
     required String carId,
+    Map<String, dynamic>? car,
   }) {
     return showDialog<int>(
       context: context,
@@ -31,7 +32,7 @@ class BidInputDialog {
         contentPadding: EdgeInsets.zero,
         content: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 400),
-          child: _BidForm(carId: carId),
+          child: _BidForm(carId: carId, car: car),
         ),
       ),
     );
@@ -39,9 +40,10 @@ class BidInputDialog {
 }
 
 class _BidForm extends ConsumerStatefulWidget {
-  const _BidForm({required this.carId});
+  const _BidForm({required this.carId, this.car});
 
   final String carId;
+  final Map<String, dynamic>? car;
 
   @override
   ConsumerState<_BidForm> createState() => _BidFormState();
@@ -97,6 +99,12 @@ class _BidFormState extends ConsumerState<_BidForm> {
 
     try {
       final bidService = ref.read(carBidServiceProvider);
+      // ignore: avoid_print
+      print('Attempting to submit offer for carId: ${widget.carId}');
+      await bidService.ensureCarListingForBid(
+        carId: widget.carId,
+        seedData: widget.car,
+      );
       final highestBid = await bidService.fetchHighestBid(widget.carId);
 
       if (newBid <= highestBid) {

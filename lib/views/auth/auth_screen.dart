@@ -27,9 +27,14 @@ String _cityLabel(AppLocalizations l10n, String key) {
 
 /// Registration / sign-in — individual vs showroom toggle forms.
 class AuthScreen extends ConsumerStatefulWidget {
-  const AuthScreen({super.key, this.initialLoginMode = true});
+  const AuthScreen({
+    super.key,
+    this.initialLoginMode = true,
+    this.postAuthRoute = PostAuthRoute.dashboard,
+  });
 
   final bool initialLoginMode;
+  final PostAuthRoute postAuthRoute;
 
   @override
   ConsumerState<AuthScreen> createState() => _AuthScreenState();
@@ -317,7 +322,8 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
 
     Navigator.of(context).pushReplacement(
       MaterialPageRoute<void>(
-        builder: (_) => dashboardForAuthenticatedUser(
+        builder: (_) => screenForPostAuthRoute(
+          widget.postAuthRoute,
           email: email,
           phone: profile?.phone ?? _loginPhoneController.text.trim(),
           accountType: profile?.accountType,

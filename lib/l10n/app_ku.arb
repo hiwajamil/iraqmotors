@@ -307,6 +307,28 @@
   "sellCarButton": "فرۆشتنی ئۆتۆمبێل",
   "editAction": "دەستکاری",
   "adStatusActive": "چالاک",
+  "adStatusSold": "فرۆشرا",
+  "soldAction": "فرۆشرا",
+  "markAsSoldTitle": "نیشانکردن وەک فرۆشراو",
+  "markAsSoldConfirm": "ئایا دڵنیایت لە نیشانکردنی ئەم ڕیکلامە وەک فرۆشراو؟ کڕیاران نیشانەی فرۆشراو دەبینن.",
+  "adMarkedSoldSuccess": "ڕیکلامەکە وەک فرۆشراو نیشانکرا",
+  "adPostedAt": "کاتی دانان: {date}",
+  "@adPostedAt": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "adDaysRemaining": "ماوەی ڕیکلام: {days} ڕۆژی ماوە",
+  "@adDaysRemaining": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "soldBadgeLabel": "فرۆشرا",
   "carFallbackTitle": "ئۆتۆمبێل",
   "messagesEmpty": "هیچ نامەیەک نییە",
   "settingsComingSoon": "ڕێکخستنەکان بەزووی زیاد دەکرێت",
@@ -365,6 +387,7 @@
   "adminSettingsR2AccessKey": "کلیلی دەستگەیشتنی R2",
   "adminSettingsR2SecretKey": "کلیلی نهێنی R2",
   "adminSettingsR2Bucket": "ناوی bucket ی R2",
+  "adminSettingsR2PublicBaseUrl": "بەستەری گشتی R2 (https://pub-xxxx.r2.dev)",
   "adminSettingsGeneralInfo": "زانیاری پلاتفۆرم",
   "adminSettingsAppName": "IQ Motors",
   "adminSettingsAppVersion": "وەشان 1.0.0",

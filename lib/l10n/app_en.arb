@@ -306,6 +306,28 @@
   "sellCarButton": "Sell Car",
   "editAction": "Edit",
   "adStatusActive": "Active",
+  "adStatusSold": "Sold",
+  "soldAction": "Sold",
+  "markAsSoldTitle": "Mark as Sold",
+  "markAsSoldConfirm": "Mark this listing as sold? Buyers will see a sold badge on the listing.",
+  "adMarkedSoldSuccess": "Listing marked as sold",
+  "adPostedAt": "Posted: {date}",
+  "@adPostedAt": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "adDaysRemaining": "{days} days remaining",
+  "@adDaysRemaining": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "soldBadgeLabel": "SOLD",
   "carFallbackTitle": "Vehicle",
   "messagesEmpty": "No messages yet",
   "settingsComingSoon": "Settings coming soon",
@@ -364,6 +386,7 @@
   "adminSettingsR2AccessKey": "R2 access key",
   "adminSettingsR2SecretKey": "R2 secret key",
   "adminSettingsR2Bucket": "R2 bucket name",
+  "adminSettingsR2PublicBaseUrl": "R2 public URL (https://pub-xxxx.r2.dev)",
   "adminSettingsGeneralInfo": "Platform information",
   "adminSettingsAppName": "IQ Motors",
   "adminSettingsAppVersion": "Version 1.0.0",

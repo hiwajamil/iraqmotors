@@ -841,6 +841,35 @@ class AppLocalizationsAr extends AppLocalizations {
   String get adStatusActive => 'نشط';
 
   @override
+  String get adStatusSold => 'مباع';
+
+  @override
+  String get soldAction => 'مباع';
+
+  @override
+  String get markAsSoldTitle => 'تحديد كمباع';
+
+  @override
+  String get markAsSoldConfirm =>
+      'هل تريد تحديد هذا الإعلان كمباع؟ سيرى المشترون شارة مباع على الإعلان.';
+
+  @override
+  String get adMarkedSoldSuccess => 'تم تحديد الإعلان كمباع';
+
+  @override
+  String adPostedAt(String date) {
+    return 'تاريخ النشر: $date';
+  }
+
+  @override
+  String adDaysRemaining(int days) {
+    return 'مدة الإعلان: $days يوم متبقي';
+  }
+
+  @override
+  String get soldBadgeLabel => 'مباع';
+
+  @override
   String get carFallbackTitle => 'مركبة';
 
   @override
@@ -1014,6 +1043,10 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get adminSettingsR2Bucket => 'اسم bucket R2';
+
+  @override
+  String get adminSettingsR2PublicBaseUrl =>
+      'رابط R2 العام (https://pub-xxxx.r2.dev)';
 
   @override
   String get adminSettingsGeneralInfo => 'معلومات المنصة';

@@ -5,7 +5,22 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Iq Motors</string>
+	<string>IQ Motors</string>
+	<key>NSCameraUsageDescription</key>
+	<string>IQ Motors needs camera access to photograph cars for your listings.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>IQ Motors needs photo library access to upload car images for your listings.</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.426861136448-gn8241prr7s02kmfem6vcanvb03ds25o</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>

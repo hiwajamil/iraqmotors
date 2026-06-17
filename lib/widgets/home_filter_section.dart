@@ -30,11 +30,9 @@ class HomeFilterSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ConstrainedBox(
-      constraints: const BoxConstraints(maxWidth: 720),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
           AdvancedFilterHeader(
             selectedLocationKeys: filterValues.selectedLocationKeys,
             onLocationTap: () => _pickLocation(context),
@@ -78,8 +76,7 @@ class HomeFilterSection extends StatelessWidget {
                   : const SizedBox.shrink(key: ValueKey('collapsed')),
             ),
           ),
-        ],
-      ),
+      ],
     );
   }
 

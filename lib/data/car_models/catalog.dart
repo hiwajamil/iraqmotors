@@ -1,25 +1,86 @@
 import '../../models/localized_car_model.dart';
+import 'acura_models.dart';
+import 'alfa_romeo_models.dart';
+import 'aston_martin_models.dart';
+import 'audi_models.dart';
+import 'austin_models.dart';
+import 'avatr_models.dart';
+import 'baic_models.dart';
+import 'baw_models.dart';
+import 'bentley_models.dart';
+import 'bestune_models.dart';
+import 'bmw_models.dart';
+import 'borgward_models.dart';
+import 'brilliance_models.dart';
+import 'bugatti_models.dart';
+import 'buick_models.dart';
 import 'byd_models.dart';
 import 'cadillac_models.dart';
+import 'cevo_mobility_models.dart';
+import 'changan_models.dart';
 import 'chevrolet_models.dart';
 import 'chery_models.dart';
 import 'chrysler_models.dart';
 import 'citro_n_models.dart';
 import 'cmc_models.dart';
+import 'dadi_auto_models.dart';
+import 'daewoo_models.dart';
+import 'deepal_models.dart';
+import 'denza_models.dart';
+import 'daihatsu_models.dart';
+import 'dfsk_models.dart';
+import 'dongfeng_models.dart';
 import 'dodge_models.dart';
+import 'faw_models.dart';
+import 'exeed_models.dart';
+import 'ferrari_models.dart';
+import 'fiat_models.dart';
+import 'ford_models.dart';
+import 'foton_models.dart';
 import 'gac_motor_models.dart';
+import 'gaz_models.dart';
 import 'geely_models.dart';
+import 'genesis_models.dart';
+import 'gmc_models.dart';
+import 'great_wall_models.dart';
+import 'gwm_tank_models.dart';
+import 'hafei_models.dart';
+import 'higer_models.dart';
+import 'hino_models.dart';
+import 'haima_models.dart';
 import 'haval_models.dart';
+import 'hawtai_models.dart';
+import 'honda_models.dart';
+import 'hongqi_models.dart';
+import 'huanghai_models.dart';
+import 'hummer_models.dart';
+import 'hyptec_models.dart';
 import 'hyundai_models.dart';
+import 'ikco_models.dart';
+import 'ineos_models.dart';
+import 'infiniti_models.dart';
+import 'isuzu_models.dart';
+import 'iveco_models.dart';
+import 'jac_models.dart';
 import 'jaguar_models.dart';
 import 'jeep_models.dart';
 import 'jaecoo_models.dart';
 import 'jetour_models.dart';
+import 'jinbei_models.dart';
+import 'jmc_models.dart';
+import 'jonway_models.dart';
+import 'kawei_models.dart';
+import 'kaiyi_models.dart';
+import 'karry_models.dart';
+import 'kawasaki_models.dart';
 import 'king_long_models.dart';
 import 'kia_models.dart';
+import 'lada_models.dart';
 import 'lamborghini_models.dart';
 import 'land_rover_models.dart';
 import 'lexus_models.dart';
+import 'lifan_models.dart';
+import 'lynk_and_co_models.dart';
 import 'lincoln_models.dart';
 import 'mercedes_benz_models.dart';
 import 'mazda_models.dart';
@@ -28,56 +89,113 @@ import 'maxus_models.dart';
 import 'mclaren_models.dart';
 import 'mercury_models.dart';
 import 'mg_models.dart';
+import 'm_hero_models.dart';
 import 'mini_models.dart';
 import 'mitsubishi_models.dart';
+import 'mitsuoka_models.dart';
+import 'morris_models.dart';
 import 'nissan_models.dart';
+import 'neta_models.dart';
 import 'omoda_models.dart';
+import 'oldsmobile_models.dart';
 import 'opel_models.dart';
+import 'ora_models.dart';
 import 'peugeot_models.dart';
+import 'polaris_models.dart';
+import 'polarsun_models.dart';
+import 'pontiac_models.dart';
+import 'poer_models.dart';
+import 'polestar_models.dart';
 import 'porsche_models.dart';
 import 'proton_models.dart';
 import 'ram_models.dart';
 import 'renault_models.dart';
+import 'renault_samsung_motors_models.dart';
 import 'rolls_royce_models.dart';
+import 'rox_models.dart';
+import 'roewe_models.dart';
 import 'saab_models.dart';
+import 'saipa_models.dart';
+import 'saturn_models.dart';
 import 'seat_models.dart';
+import 'scion_models.dart';
 import 'skoda_models.dart';
+import 'smart_models.dart';
 import 'soueast_models.dart';
 import 'ssangyong_models.dart';
 import 'subaru_models.dart';
 import 'suzuki_models.dart';
+import 'swm_motors_models.dart';
 import 'tata_models.dart';
 import 'tesla_models.dart';
 import 'toyota_models.dart';
+import 'uaz_models.dart';
+import 'vanderhall_models.dart';
 import 'volkswagen_models.dart';
 import 'volvo_models.dart';
+import 'voyah_models.dart';
+import 'wuling_models.dart';
+import 'xev_models.dart';
+import 'xiaomi_models.dart';
+import 'xpeng_models.dart';
+import 'yangwang_models.dart';
+import 'zimmer_models.dart';
+import 'zotye_models.dart';
+import 'zx_auto_models.dart';
+import 'zyle_daewoo_commercial_vehicles_models.dart';
 
 /// Brand id ([CarBrand.id]) → localized model catalog.
 const Map<String, List<LocalizedCarModel>> carModelsCatalog = {
   'toyota': toyotaModels,
   'mercedes_benz': mercedesBenzModels,
   'kia': kiaModels,
+  'kawei': kaweiModels,
+  'kaiyi': kaiyiModels,
+  'karry': karryModels,
+  'kawasaki': kawasakiModels,
   'byd': bydModels,
+  'hafei': hafeiModels,
+  'higer': higerModels,
+  'hino': hinoModels,
+  'haima': haimaModels,
   'haval': havalModels,
+  'hawtai': hawtaiModels,
   'soueast': soueastModels,
   'omoda': omodaModels,
+  'oldsmobile': oldsmobileModels,
   'jaecoo': jaecooModels,
   'jetour': jetourModels,
+  'jonway': jonwayModels,
+  'jinbei': jinbeiModels,
   'volkswagen': volkswagenModels,
   'chevrolet': chevroletModels,
   'gac_motor': gacMotorModels,
+  'gaz': gazModels,
   'mitsubishi': mitsubishiModels,
+  'mitsuoka': mitsuokaModels,
+  'morris': morrisModels,
   'geely': geelyModels,
+  'genesis': genesisModels,
+  'gmc': gmcModels,
+  'great_wall': greatWallModels,
+  'gwm_tank': gwmTankModels,
   'jaguar': jaguarModels,
   'hyundai': hyundaiModels,
+  'hyptec': hyptecModels,
   'land_rover': landRoverModels,
   'dodge': dodgeModels,
   'cadillac': cadillacModels,
+  'cevo_mobility': cevoMobilityModels,
   'lexus': lexusModels,
+  'lifan': lifanModels,
+  'lynk_and_co': lynkAndCoModels,
   'jeep': jeepModels,
   'skoda': skodaModels,
+  'smart': smartModels,
   'nissan': nissanModels,
+  'neta': netaModels,
   'mg': mgModels,
+  'm_hero': mHeroModels,
   'mini': miniModels,
   'mercury': mercuryModels,
   'mclaren': mclarenModels,
@@ -85,25 +203,91 @@ const Map<String, List<LocalizedCarModel>> carModelsCatalog = {
   'maxus': maxusModels,
   'maserati': maseratiModels,
   'lincoln': lincolnModels,
+  'lada': ladaModels,
   'lamborghini': lamborghiniModels,
   'opel': opelModels,
+  'ora': oraModels,
   'volvo': volvoModels,
+  'voyah': voyahModels,
+  'wuling': wulingModels,
   'tesla': teslaModels,
   'tata': tataModels,
   'suzuki': suzukiModels,
+  'swm_motors': swmMotorsModels,
   'subaru': subaruModels,
   'ssangyong': ssangyongModels,
   'seat': seatModels,
+  'scion': scionModels,
   'saab': saabModels,
+  'saipa': saipaModels,
+  'saturn': saturnModels,
   'rolls_royce': rollsRoyceModels,
+  'rox': roxModels,
+  'roewe': roeweModels,
   'renault': renaultModels,
+  'renault_samsung_motors': renaultSamsungMotorsModels,
   'ram': ramModels,
   'proton': protonModels,
   'porsche': porscheModels,
   'peugeot': peugeotModels,
+  'polaris': polarisModels,
+  'polarsun': polarsunModels,
+  'pontiac': pontiacModels,
+  'poer': poerModels,
+  'polestar': polestarModels,
   'king_long': kingLongModels,
   'cmc': cmcModels,
   'citro_n': citroNModels,
   'chrysler': chryslerModels,
   'chery': cheryModels,
+  'changan': changanModels,
+  'brilliance': brillianceModels,
+  'borgward': borgwardModels,
+  'bmw': bmwModels,
+  'bugatti': bugattiModels,
+  'buick': buickModels,
+  'bentley': bentleyModels,
+  'bestune': bestuneModels,
+  'baic': baicModels,
+  'baw': bawModels,
+  'audi': audiModels,
+  'austin': austinModels,
+  'avatr': avatrModels,
+  'aston_martin': astonMartinModels,
+  'alfa_romeo': alfaRomeoModels,
+  'acura': acuraModels,
+  'dadi_auto': dadiAutoModels,
+  'daewoo': daewooModels,
+  'deepal': deepalModels,
+  'denza': denzaModels,
+  'daihatsu': daihatsuModels,
+  'dfsk': dfskModels,
+  'dongfeng': dongfengModels,
+  'faw': fawModels,
+  'exeed': exeedModels,
+  'ferrari': ferrariModels,
+  'fiat': fiatModels,
+  'ford': fordModels,
+  'foton': fotonModels,
+  'jac': jacModels,
+  'jmc': jmcModels,
+  'isuzu': isuzuModels,
+  'iveco': ivecoModels,
+  'infiniti': infinitiModels,
+  'ikco': ikcoModels,
+  'ineos': ineosModels,
+  'hummer': hummerModels,
+  'honda': hondaModels,
+  'hongqi': hongqiModels,
+  'huanghai': huanghaiModels,
+  'zotye': zotyeModels,
+  'uaz': uazModels,
+  'vanderhall': vanderhallModels,
+  'zx_auto': zxAutoModels,
+  'zimmer': zimmerModels,
+  'xev': xevModels,
+  'xiaomi': xiaomiModels,
+  'xpeng': xpengModels,
+  'yangwang': yangwangModels,
+  'zyle_daewoo_commercial_vehicles': zyleDaewooCommercialVehiclesModels,
 };

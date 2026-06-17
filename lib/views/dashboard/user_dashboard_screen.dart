@@ -1,6 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 import '../../core/l10n_extensions.dart';
 import '../../data/add_car_form_options.dart';
@@ -21,6 +24,7 @@ class UserDashboardScreen extends ConsumerStatefulWidget {
 }
 
 enum _DashboardNav {
+  dashboard,
   home,
   wishlist,
   myAds,
@@ -32,7 +36,15 @@ class _UserDashboardScreenState extends ConsumerState<UserDashboardScreen> {
   static const Color _bgMain = Color(0xFFF5F5F7);
   static const double _mobileBreakpoint = 900;
 
-  _DashboardNav _activeNav = _DashboardNav.wishlist;
+  static const List<_DashboardNav> _mobileNavOrder = [
+    _DashboardNav.dashboard,
+    _DashboardNav.myAds,
+    _DashboardNav.wishlist,
+    _DashboardNav.messages,
+  ];
+
+  _DashboardNav _activeNav = _DashboardNav.dashboard;
+  int _currentIndex = 0;
 
   final _scrollController = ScrollController();
   final _wishlistSectionKey = GlobalKey();
@@ -123,12 +135,14 @@ class _UserDashboardScreenState extends ConsumerState<UserDashboardScreen> {
   }
 
   Map<String, dynamic> _mapToMyAdItem(Map<String, dynamic> doc) {
-    final l10n = context.l10n;
+    final rawStatus =
+        doc['status']?.toString() ?? CarDatabaseService.statusActive;
     return {
       ...doc,
       'title': _carTitle(doc),
-      'status': doc['status']?.toString() ?? l10n.adStatusActive,
+      'status': rawStatus,
       'imageUrl': _firstImageUrl(doc),
+      'photoUrls': _photoUrls(doc),
     };
   }
 
@@ -180,11 +194,62 @@ class _UserDashboardScreenState extends ConsumerState<UserDashboardScreen> {
   }
 
   String _firstImageUrl(Map<String, dynamic> data) {
+    final urls = _photoUrls(data);
+    if (urls.isNotEmpty) return urls.first;
+    return data['imageUrl']?.toString() ?? '';
+  }
+
+  List<String> _photoUrls(Map<String, dynamic> data) {
+    final photos = data['photos'];
+    if (photos is List && photos.isNotEmpty) {
+      return photos
+          .map((e) => e.toString())
+          .where((url) => url.isNotEmpty)
+          .take(4)
+          .toList();
+    }
     final urls = data['imageUrls'];
     if (urls is List && urls.isNotEmpty) {
-      return urls.first.toString();
+      return urls
+          .map((e) => e.toString())
+          .where((url) => url.isNotEmpty)
+          .take(4)
+          .toList();
     }
-    return data['imageUrl']?.toString() ?? '';
+    final single = data['imageUrl']?.toString();
+    if (single != null && single.isNotEmpty) return [single];
+    return const [];
+  }
+
+  DateTime? _parseCreatedAt(dynamic value) {
+    if (value is Timestamp) return value.toDate();
+    if (value is DateTime) return value;
+    return null;
+  }
+
+  static const int _adLifetimeDays = 30;
+
+  int? _daysRemaining(DateTime? createdAt) {
+    if (createdAt == null) return null;
+    final expiresAt = createdAt.add(const Duration(days: _adLifetimeDays));
+    final remaining = expiresAt.difference(DateTime.now()).inDays;
+    return remaining < 0 ? 0 : remaining;
+  }
+
+  String _formatPostedDate(DateTime? createdAt) {
+    if (createdAt == null) return '—';
+    return DateFormat.yMMMd().format(createdAt);
+  }
+
+  String _statusLabel(String rawStatus) {
+    final l10n = context.l10n;
+    return switch (rawStatus) {
+      CarDatabaseService.statusSold => l10n.adStatusSold,
+      CarDatabaseService.statusPending => l10n.adminStatPendingReview,
+      CarDatabaseService.statusRejected => l10n.adminAdRejectedSuccess,
+      CarDatabaseService.statusExpired => l10n.adminStatExpired,
+      _ => l10n.adStatusActive,
+    };
   }
 
   void _onEditAd(Map<String, dynamic> ad) {
@@ -286,12 +351,121 @@ class _UserDashboardScreenState extends ConsumerState<UserDashboardScreen> {
     }
   }
 
+  Future<void> _onMarkAsSold(Map<String, dynamic> ad) async {
+    final adId = ad['id']?.toString();
+    if (adId == null) return;
+
+    final l10n = context.l10n;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        backgroundColor: const Color(0xFFFFFFFF),
+        surfaceTintColor: Colors.transparent,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Text(
+          l10n.markAsSoldTitle,
+          style: const TextStyle(
+            fontSize: 17,
+            fontWeight: FontWeight.w600,
+            color: Color(0xFF1D1D1F),
+            letterSpacing: -0.2,
+          ),
+        ),
+        content: Text(
+          l10n.markAsSoldConfirm,
+          style: const TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w400,
+            color: Color(0xFF6E6E73),
+            height: 1.45,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: Text(
+              l10n.cancelAction,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w400,
+                color: Color(0xFF1D1D1F),
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: Text(
+              l10n.soldAction,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF1B5E20),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true || !mounted) return;
+
+    try {
+      await ref.read(carDatabaseServiceProvider).updateAdStatus(
+            adId: adId,
+            newStatus: CarDatabaseService.statusSold,
+          );
+      if (!mounted) return;
+
+      setState(() {
+        final index = _myAds.indexWhere(
+          (item) => item['id']?.toString() == adId,
+        );
+        if (index >= 0) {
+          _myAds[index] = {
+            ..._myAds[index],
+            'status': CarDatabaseService.statusSold,
+          };
+        }
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(l10n.adMarkedSoldSuccess),
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: const Color(0xFF1B5E20),
+        ),
+      );
+    } on CarDatabaseException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.message),
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: const Color(0xFFFF3B30),
+        ),
+      );
+    }
+  }
+
   void _onNavTap(_DashboardNav nav) {
     if (nav == _DashboardNav.home) {
       _goHome();
       return;
     }
-    setState(() => _activeNav = nav);
+    setState(() {
+      _activeNav = nav;
+      final mobileIndex = _mobileNavOrder.indexOf(nav);
+      if (mobileIndex >= 0) _currentIndex = mobileIndex;
+    });
+    _loadSectionData(nav);
+  }
+
+  void _onBottomNavTap(int index) {
+    final nav = _mobileNavOrder[index];
+    setState(() {
+      _currentIndex = index;
+      _activeNav = nav;
+    });
     _loadSectionData(nav);
   }
 
@@ -335,22 +509,19 @@ class _UserDashboardScreenState extends ConsumerState<UserDashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isMobile =
+        MediaQuery.sizeOf(context).width < _mobileBreakpoint;
+
     return Scaffold(
       backgroundColor: _bgMain,
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
-            final isMobile = constraints.maxWidth < _mobileBreakpoint;
             if (isMobile) {
               return Column(
                 children: [
-                  _DashboardSidebar(
-                    isCompact: true,
-                    activeNav: _activeNav,
-                    onNavTap: _onNavTap,
-                    onLogout: _logout,
-                  ),
-                  Expanded(child: _buildMainContent(isMobile: true)),
+                  const _MobileTopBar(),
+                  Expanded(child: _buildMobileTabBody()),
                 ],
               );
             }
@@ -360,7 +531,6 @@ class _UserDashboardScreenState extends ConsumerState<UserDashboardScreen> {
                 SizedBox(
                   height: constraints.maxHeight,
                   child: _DashboardSidebar(
-                    isCompact: false,
                     activeNav: _activeNav,
                     onNavTap: _onNavTap,
                     onLogout: _logout,
@@ -372,6 +542,15 @@ class _UserDashboardScreenState extends ConsumerState<UserDashboardScreen> {
           },
         ),
       ),
+      bottomNavigationBar: isMobile ? _buildBottomNavBar() : null,
+    );
+  }
+
+  Widget _buildMobileTabBody() {
+    return SingleChildScrollView(
+      controller: _scrollController,
+      padding: const EdgeInsetsDirectional.fromSTEB(20, 24, 20, 24),
+      child: _buildActiveSection(isMobile: true),
     );
   }
 
@@ -379,9 +558,9 @@ class _UserDashboardScreenState extends ConsumerState<UserDashboardScreen> {
     return SingleChildScrollView(
       controller: _scrollController,
       padding: EdgeInsetsDirectional.fromSTEB(
-        isMobile ? 20 : constraintsPadding(context),
-        isMobile ? 24 : 40,
-        isMobile ? 20 : constraintsPadding(context),
+        constraintsPadding(context),
+        40,
+        constraintsPadding(context),
         40,
       ),
       child: Column(
@@ -390,6 +569,64 @@ class _UserDashboardScreenState extends ConsumerState<UserDashboardScreen> {
           _DashboardHeader(isMobile: isMobile),
           const SizedBox(height: 40),
           _buildActiveSection(isMobile: isMobile),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBottomNavBar() {
+    final l10n = context.l10n;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 12,
+            offset: const Offset(0, -2),
+          ),
+        ],
+      ),
+      child: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        backgroundColor: Colors.white,
+        elevation: 0,
+        currentIndex: _currentIndex,
+        onTap: _onBottomNavTap,
+        selectedItemColor: Colors.black,
+        unselectedItemColor: Colors.grey[400],
+        selectedFontSize: 10,
+        unselectedFontSize: 10,
+        selectedLabelStyle: const TextStyle(
+          fontWeight: FontWeight.w600,
+          letterSpacing: -0.1,
+        ),
+        unselectedLabelStyle: const TextStyle(
+          fontWeight: FontWeight.w400,
+          letterSpacing: -0.1,
+        ),
+        items: [
+          BottomNavigationBarItem(
+            icon: const Icon(CupertinoIcons.person),
+            activeIcon: const Icon(CupertinoIcons.person_fill),
+            label: l10n.navDashboard,
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(CupertinoIcons.car),
+            activeIcon: const Icon(CupertinoIcons.car_fill),
+            label: l10n.navMyAds,
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(CupertinoIcons.heart),
+            activeIcon: const Icon(CupertinoIcons.heart_fill),
+            label: l10n.navMyFavorites,
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(CupertinoIcons.chat_bubble),
+            activeIcon: const Icon(CupertinoIcons.chat_bubble_fill),
+            label: l10n.navMessages,
+          ),
         ],
       ),
     );
@@ -410,6 +647,9 @@ class _UserDashboardScreenState extends ConsumerState<UserDashboardScreen> {
     }
 
     return switch (_activeNav) {
+      _DashboardNav.dashboard => isMobile
+          ? _DashboardOverview(isMobile: true, onLogout: _logout)
+          : const SizedBox.shrink(),
       _DashboardNav.home => const SizedBox.shrink(),
       _DashboardNav.wishlist => _WishlistSection(
           sectionKey: _wishlistSectionKey,
@@ -422,6 +662,11 @@ class _UserDashboardScreenState extends ConsumerState<UserDashboardScreen> {
           isMobile: isMobile,
           onEdit: _onEditAd,
           onDelete: _onDeleteAd,
+          onMarkAsSold: _onMarkAsSold,
+          statusLabel: _statusLabel,
+          formatPostedDate: _formatPostedDate,
+          daysRemaining: _daysRemaining,
+          parseCreatedAt: _parseCreatedAt,
         ),
       _DashboardNav.messages =>
         _EmptyPlaceholder(message: context.l10n.messagesEmpty),
@@ -436,15 +681,35 @@ class _UserDashboardScreenState extends ConsumerState<UserDashboardScreen> {
   }
 }
 
+class _MobileTopBar extends StatelessWidget {
+  const _MobileTopBar();
+
+  static const Color _bgCard = Color(0xFFFFFFFF);
+  static const Color _borderLight = Color(0xFFE5E5EA);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      decoration: const BoxDecoration(
+        color: _bgCard,
+        border: Border(
+          bottom: BorderSide(color: _borderLight),
+        ),
+      ),
+      padding: const EdgeInsetsDirectional.fromSTEB(20, 16, 20, 16),
+      child: const _UserProfileSummary(isCompact: true),
+    );
+  }
+}
+
 class _DashboardSidebar extends StatelessWidget {
   const _DashboardSidebar({
-    required this.isCompact,
     required this.activeNav,
     required this.onNavTap,
     required this.onLogout,
   });
 
-  final bool isCompact;
   final _DashboardNav activeNav;
   final ValueChanged<_DashboardNav> onNavTap;
   final VoidCallback onLogout;
@@ -454,31 +719,6 @@ class _DashboardSidebar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (isCompact) {
-      return Container(
-        width: double.infinity,
-        decoration: const BoxDecoration(
-          color: _bgCard,
-          border: Border(
-            bottom: BorderSide(color: _borderLight),
-          ),
-        ),
-        padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const _UserProfileSummary(isCompact: true),
-            const SizedBox(height: 16),
-            _NavMenu(
-              isHorizontal: true,
-              activeNav: activeNav,
-              onNavTap: onNavTap,
-            ),
-          ],
-        ),
-      );
-    }
-
     return Container(
       width: 260,
       decoration: const BoxDecoration(
@@ -494,7 +734,6 @@ class _DashboardSidebar extends StatelessWidget {
           const _UserProfileSummary(isCompact: false),
           const SizedBox(height: 8),
           _NavMenu(
-            isHorizontal: false,
             activeNav: activeNav,
             onNavTap: onNavTap,
           ),
@@ -584,12 +823,10 @@ class _UserProfileSummary extends StatelessWidget {
 
 class _NavMenu extends StatelessWidget {
   const _NavMenu({
-    required this.isHorizontal,
     required this.activeNav,
     required this.onNavTap,
   });
 
-  final bool isHorizontal;
   final _DashboardNav activeNav;
   final ValueChanged<_DashboardNav> onNavTap;
 
@@ -625,32 +862,12 @@ class _NavMenu extends StatelessWidget {
       ),
     ];
 
-    if (isHorizontal) {
-      return SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          children: [
-            for (final item in items) ...[
-              _NavLink(
-                item: item,
-                isActive: activeNav == item.nav,
-                isHorizontal: true,
-                onTap: () => onNavTap(item.nav),
-              ),
-              if (item != items.last) const SizedBox(width: 8),
-            ],
-          ],
-        ),
-      );
-    }
-
     return Column(
       children: [
         for (final item in items) ...[
           _NavLink(
             item: item,
             isActive: activeNav == item.nav,
-            isHorizontal: false,
             onTap: () => onNavTap(item.nav),
           ),
           if (item != items.last) const SizedBox(height: 8),
@@ -678,13 +895,11 @@ class _NavLink extends StatefulWidget {
   const _NavLink({
     required this.item,
     required this.isActive,
-    required this.isHorizontal,
     required this.onTap,
   });
 
   final _NavItemData item;
   final bool isActive;
-  final bool isHorizontal;
   final VoidCallback onTap;
 
   @override
@@ -723,24 +938,11 @@ class _NavLinkState extends State<_NavLink> {
             borderRadius: BorderRadius.circular(12),
           ),
           child: Row(
-            mainAxisSize:
-                widget.isHorizontal ? MainAxisSize.min : MainAxisSize.max,
             children: [
               Icon(widget.item.icon, size: 18, color: fg),
-              SizedBox(width: widget.isHorizontal ? 8 : 15),
-              if (!widget.isHorizontal)
-                Expanded(
-                  child: Text(
-                    widget.item.label,
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w500,
-                      color: fg,
-                    ),
-                  ),
-                )
-              else
-                Text(
+              const SizedBox(width: 15),
+              Expanded(
+                child: Text(
                   widget.item.label,
                   style: TextStyle(
                     fontSize: 15,
@@ -748,6 +950,7 @@ class _NavLinkState extends State<_NavLink> {
                     color: fg,
                   ),
                 ),
+              ),
               if (widget.item.badgeCount != null) ...[
                 const SizedBox(width: 8),
                 Container(
@@ -822,6 +1025,30 @@ class _LogoutButtonState extends State<_LogoutButton> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _DashboardOverview extends StatelessWidget {
+  const _DashboardOverview({
+    required this.isMobile,
+    required this.onLogout,
+  });
+
+  final bool isMobile;
+  final VoidCallback onLogout;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _DashboardHeader(isMobile: isMobile),
+        if (isMobile) ...[
+          const SizedBox(height: 32),
+          _LogoutButton(onTap: onLogout),
+        ],
+      ],
     );
   }
 }
@@ -1007,6 +1234,11 @@ class _MyAdsSection extends StatelessWidget {
     required this.isMobile,
     required this.onEdit,
     required this.onDelete,
+    required this.onMarkAsSold,
+    required this.statusLabel,
+    required this.formatPostedDate,
+    required this.daysRemaining,
+    required this.parseCreatedAt,
   });
 
   final GlobalKey sectionKey;
@@ -1014,6 +1246,11 @@ class _MyAdsSection extends StatelessWidget {
   final bool isMobile;
   final ValueChanged<Map<String, dynamic>> onEdit;
   final ValueChanged<Map<String, dynamic>> onDelete;
+  final ValueChanged<Map<String, dynamic>> onMarkAsSold;
+  final String Function(String rawStatus) statusLabel;
+  final String Function(DateTime? createdAt) formatPostedDate;
+  final int? Function(DateTime? createdAt) daysRemaining;
+  final DateTime? Function(dynamic value) parseCreatedAt;
 
   @override
   Widget build(BuildContext context) {
@@ -1071,6 +1308,11 @@ class _MyAdsSection extends StatelessWidget {
                           isMobile: isMobile,
                           onEdit: () => onEdit(ads[i]),
                           onDelete: () => onDelete(ads[i]),
+                          onMarkAsSold: () => onMarkAsSold(ads[i]),
+                          statusLabel: statusLabel,
+                          formatPostedDate: formatPostedDate,
+                          daysRemaining: daysRemaining,
+                          parseCreatedAt: parseCreatedAt,
                         ),
                         if (i < ads.length - 1)
                           const Divider(
@@ -1094,94 +1336,167 @@ class _AdListItem extends StatelessWidget {
     required this.isMobile,
     required this.onEdit,
     required this.onDelete,
+    required this.onMarkAsSold,
+    required this.statusLabel,
+    required this.formatPostedDate,
+    required this.daysRemaining,
+    required this.parseCreatedAt,
   });
 
   final Map<String, dynamic> ad;
   final bool isMobile;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
+  final VoidCallback onMarkAsSold;
+  final String Function(String rawStatus) statusLabel;
+  final String Function(DateTime? createdAt) formatPostedDate;
+  final int? Function(DateTime? createdAt) daysRemaining;
+  final DateTime? Function(dynamic value) parseCreatedAt;
+
+  static const Color _dateColor = Color(0xFF6E6E73);
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final info = Row(
+    final rawStatus =
+        ad['status']?.toString() ?? CarDatabaseService.statusActive;
+    final isSold = rawStatus == CarDatabaseService.statusSold;
+    final createdAt = parseCreatedAt(ad['createdAt']);
+    final remaining = daysRemaining(createdAt);
+    final photoUrls = (ad['photoUrls'] as List?)
+            ?.map((e) => e.toString())
+            .where((url) => url.isNotEmpty)
+            .take(4)
+            .toList() ??
+        const <String>[];
+
+    final statusColors = isSold
+        ? (
+            bg: const Color(0xFF1B5E20).withValues(alpha: 0.1),
+            fg: const Color(0xFF1B5E20),
+          )
+        : rawStatus == CarDatabaseService.statusActive
+            ? (
+                bg: const Color(0xFF34C759).withValues(alpha: 0.1),
+                fg: const Color(0xFF34C759),
+              )
+            : (
+                bg: const Color(0xFF86868B).withValues(alpha: 0.1),
+                fg: const Color(0xFF86868B),
+              );
+
+    final info = Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(10),
-          child: Image.network(
-            ad['imageUrl']?.toString() ?? '',
-            width: 60,
-            height: 60,
-            fit: BoxFit.cover,
-            errorBuilder: (_, __, ___) => Container(
-              width: 60,
-              height: 60,
-              color: const Color(0xFFF5F5F7),
-              child: const Icon(Icons.directions_car_outlined),
-            ),
-          ),
-        ),
-        const SizedBox(width: 15),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                ad['title']?.toString() ?? '',
-                style: const TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFF1D1D1F),
-                ),
-              ),
-              const SizedBox(height: 4),
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF34C759).withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  ad['status']?.toString() ?? l10n.adStatusActive,
-                  style: const TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF34C759),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _PhotoThumbnailRow(urls: photoUrls),
+            const SizedBox(width: 15),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    ad['title']?.toString() ?? '',
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF1D1D1F),
+                      height: 1.3,
+                    ),
                   ),
-                ),
+                  const SizedBox(height: 6),
+                  Text(
+                    l10n.adPostedAt(formatPostedDate(createdAt)),
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: _dateColor,
+                      height: 1.35,
+                    ),
+                  ),
+                  if (remaining != null) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      l10n.adDaysRemaining(remaining),
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: _dateColor,
+                        height: 1.35,
+                      ),
+                    ),
+                  ],
+                  const SizedBox(height: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: statusColors.bg,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      statusLabel(rawStatus),
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                        color: statusColors.fg,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ],
     );
 
-    final actions = Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        _ActionButton(label: l10n.editAction, onTap: onEdit),
-        const SizedBox(width: 10),
+    final actionButtons = <Widget>[
+      _ActionButton(label: l10n.editAction, onTap: onEdit),
+      if (!isSold)
         _ActionButton(
-          label: l10n.deleteAction,
-          onTap: onDelete,
-          isDestructive: true,
+          label: l10n.soldAction,
+          onTap: onMarkAsSold,
+          isOutlined: true,
+          accentColor: const Color(0xFF1B5E20),
         ),
-      ],
-    );
+      _ActionButton(
+        label: l10n.deleteAction,
+        onTap: onDelete,
+        isDestructive: true,
+      ),
+    ];
+
+    final actions = isMobile
+        ? Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            alignment: WrapAlignment.end,
+            children: actionButtons,
+          )
+        : Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              for (var i = 0; i < actionButtons.length; i++) ...[
+                if (i > 0) const SizedBox(width: 8),
+                actionButtons[i],
+              ],
+            ],
+          );
 
     if (isMobile) {
       return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 15),
+        padding: const EdgeInsets.symmetric(vertical: 18),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(child: info),
-                actions,
-              ],
+            info,
+            const SizedBox(height: 14),
+            Align(
+              alignment: AlignmentDirectional.centerEnd,
+              child: actions,
             ),
           ],
         ),
@@ -1189,12 +1504,79 @@ class _AdListItem extends StatelessWidget {
     }
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 15),
+      padding: const EdgeInsets.symmetric(vertical: 18),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(child: info),
+          const SizedBox(width: 16),
           actions,
         ],
+      ),
+    );
+  }
+}
+
+class _PhotoThumbnailRow extends StatelessWidget {
+  const _PhotoThumbnailRow({required this.urls});
+
+  final List<String> urls;
+
+  static const double _size = 55;
+  static const double _gap = 6;
+
+  @override
+  Widget build(BuildContext context) {
+    final slots = urls.length >= 4
+        ? urls.take(4).toList()
+        : [
+            ...urls,
+            for (var i = urls.length; i < 4; i++) null,
+          ];
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        for (var i = 0; i < slots.length; i++) ...[
+          if (i > 0) const SizedBox(width: _gap),
+          _PhotoThumb(url: slots[i]),
+        ],
+      ],
+    );
+  }
+}
+
+class _PhotoThumb extends StatelessWidget {
+  const _PhotoThumb({required this.url});
+
+  final String? url;
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(10),
+      child: SizedBox(
+        width: _PhotoThumbnailRow._size,
+        height: _PhotoThumbnailRow._size,
+        child: url != null && url!.isNotEmpty
+            ? Image.network(
+                url!,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => _placeholder(),
+              )
+            : _placeholder(),
+      ),
+    );
+  }
+
+  Widget _placeholder() {
+    return Container(
+      color: const Color(0xFFF5F5F7),
+      alignment: Alignment.center,
+      child: Icon(
+        Icons.directions_car_outlined,
+        size: 22,
+        color: Colors.black.withValues(alpha: 0.12),
       ),
     );
   }
@@ -1205,11 +1587,15 @@ class _ActionButton extends StatefulWidget {
     required this.label,
     required this.onTap,
     this.isDestructive = false,
+    this.isOutlined = false,
+    this.accentColor,
   });
 
   final String label;
   final VoidCallback onTap;
   final bool isDestructive;
+  final bool isOutlined;
+  final Color? accentColor;
 
   @override
   State<_ActionButton> createState() => _ActionButtonState();
@@ -1220,9 +1606,12 @@ class _ActionButtonState extends State<_ActionButton> {
 
   @override
   Widget build(BuildContext context) {
+    final accent = widget.accentColor ?? const Color(0xFF1D1D1F);
     final color = widget.isDestructive
         ? const Color(0xFFFF3B30)
-        : const Color(0xFF1D1D1F);
+        : widget.isOutlined
+            ? accent
+            : const Color(0xFF1D1D1F);
 
     return MouseRegion(
       onEnter: (_) => setState(() => _hovered = true),
@@ -1233,10 +1622,20 @@ class _ActionButtonState extends State<_ActionButton> {
           duration: const Duration(milliseconds: 150),
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(
-            color: _hovered
-                ? const Color(0xFFE5E5EA)
-                : const Color(0xFFF5F5F7),
+            color: widget.isOutlined
+                ? (_hovered
+                    ? accent.withValues(alpha: 0.08)
+                    : Colors.transparent)
+                : (_hovered
+                    ? const Color(0xFFE5E5EA)
+                    : const Color(0xFFF5F5F7)),
             borderRadius: BorderRadius.circular(8),
+            border: widget.isOutlined
+                ? Border.all(
+                    color: accent.withValues(alpha: _hovered ? 0.9 : 0.55),
+                    width: 1.2,
+                  )
+                : null,
           ),
           child: Text(
             widget.label,

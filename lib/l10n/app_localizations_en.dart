@@ -846,6 +846,35 @@ class AppLocalizationsEn extends AppLocalizations {
   String get adStatusActive => 'Active';
 
   @override
+  String get adStatusSold => 'Sold';
+
+  @override
+  String get soldAction => 'Sold';
+
+  @override
+  String get markAsSoldTitle => 'Mark as Sold';
+
+  @override
+  String get markAsSoldConfirm =>
+      'Mark this listing as sold? Buyers will see a sold badge on the listing.';
+
+  @override
+  String get adMarkedSoldSuccess => 'Listing marked as sold';
+
+  @override
+  String adPostedAt(String date) {
+    return 'Posted: $date';
+  }
+
+  @override
+  String adDaysRemaining(int days) {
+    return '$days days remaining';
+  }
+
+  @override
+  String get soldBadgeLabel => 'SOLD';
+
+  @override
   String get carFallbackTitle => 'Vehicle';
 
   @override
@@ -1020,6 +1049,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get adminSettingsR2Bucket => 'R2 bucket name';
+
+  @override
+  String get adminSettingsR2PublicBaseUrl =>
+      'R2 public URL (https://pub-xxxx.r2.dev)';
 
   @override
   String get adminSettingsGeneralInfo => 'Platform information';

@@ -1,0 +1,19 @@
+{
+  "CORSRules": [
+    {
+      "AllowedOrigins": [
+        "https://iqmotors.net",
+        "https://www.iqmotors.net",
+        "https://iqmotors-d588d.web.app",
+        "https://iqmotors-d588d.firebaseapp.com",
+        "http://localhost:8080",
+        "http://localhost:5000",
+        "http://127.0.0.1:8080"
+      ],
+      "AllowedMethods": ["GET", "PUT", "HEAD", "POST", "DELETE"],
+      "AllowedHeaders": ["content-type", "x-amz-content-sha256", "x-amz-date", "authorization"],
+      "ExposeHeaders": ["ETag"],
+      "MaxAgeSeconds": 3600
+    }
+  ]
+}

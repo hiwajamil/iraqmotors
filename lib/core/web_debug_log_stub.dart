@@ -1,0 +1,1 @@
+void webDebugLog(String message) {}

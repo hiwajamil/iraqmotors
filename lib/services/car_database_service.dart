@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 
 import '../models/activity_log.dart';
 import 'activity_log_service.dart';
@@ -37,6 +38,7 @@ class CarDatabaseService {
   static const String statusActive = 'active';
   static const String statusRejected = 'rejected';
   static const String statusExpired = 'expired';
+  static const String statusSold = 'sold';
   static const String accountTypeField = 'accountType';
   static const String accountTypeShowroom = 'showroom';
 
@@ -199,10 +201,12 @@ class CarDatabaseService {
       });
       return ads;
     } on FirebaseException catch (e) {
+      debugPrint('Admin Fetch Error: $e');
       throw CarDatabaseException(
         e.message ?? 'Failed to fetch pending ads.',
       );
     } catch (e) {
+      debugPrint('Admin Fetch Error: $e');
       throw CarDatabaseException('Failed to fetch pending ads: $e');
     }
   }
@@ -256,10 +260,12 @@ class CarDatabaseService {
         'totalShowrooms': results[3],
       };
     } on FirebaseException catch (e) {
+      debugPrint('Admin Fetch Error: $e');
       throw CarDatabaseException(
         e.message ?? 'Failed to fetch admin dashboard stats.',
       );
     } catch (e) {
+      debugPrint('Admin Fetch Error: $e');
       throw CarDatabaseException('Failed to fetch admin dashboard stats: $e');
     }
   }
@@ -344,11 +350,64 @@ class CarDatabaseService {
     }
   }
 
+  /// Real-time stream of publicly visible car ads (`status == active`).
+  Stream<List<Map<String, dynamic>>> watchActiveAds() {
+    return _activeAdsQuery().snapshots().map((snapshot) {
+      final ads = _mapsFromQuery(snapshot);
+      ads.sort(_compareByCreatedAtDesc);
+      return ads;
+    });
+  }
+
+  Query<Map<String, dynamic>> _activeAdsQuery() {
+    return _firestore
+        .collection('cars')
+        .where(statusField, isEqualTo: statusActive)
+        .orderBy('createdAt', descending: true);
+  }
+
+  static int _compareByCreatedAtDesc(
+    Map<String, dynamic> a,
+    Map<String, dynamic> b,
+  ) {
+    final aTime = a['createdAt'];
+    final bTime = b['createdAt'];
+    if (aTime is Timestamp && bTime is Timestamp) {
+      return bTime.compareTo(aTime);
+    }
+    return 0;
+  }
+
+  /// Lists publicly visible car ads (`status == active`).
+  Future<List<Map<String, dynamic>>> fetchActiveAds() async {
+    try {
+      QuerySnapshot<Map<String, dynamic>> snapshot;
+      try {
+        snapshot = await _activeAdsQuery().get();
+      } on FirebaseException catch (e) {
+        if (e.code != 'failed-precondition') rethrow;
+        snapshot = await _firestore
+            .collection('cars')
+            .where(statusField, isEqualTo: statusActive)
+            .get();
+      }
+      final ads = _mapsFromQuery(snapshot);
+      ads.sort(_compareByCreatedAtDesc);
+      return ads;
+    } on FirebaseException catch (e) {
+      throw CarDatabaseException(
+        e.message ?? 'Failed to fetch active ads.',
+      );
+    } catch (e) {
+      throw CarDatabaseException('Failed to fetch active ads: $e');
+    }
+  }
+
   static List<Map<String, dynamic>> _mapsFromQuery(
     QuerySnapshot<Map<String, dynamic>> snapshot,
   ) {
     return snapshot.docs
-        .map((doc) => {'id': doc.id, ...doc.data()})
+        .map((doc) => {...doc.data(), 'id': doc.id})
         .toList();
   }
 

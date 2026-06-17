@@ -12,18 +12,24 @@ import 'core/app_localization_delegates.dart';
 import 'core/firebase_web_config.dart';
 import 'core/locale_config.dart';
 import 'providers/locale_provider.dart';
+import 'views/coming_soon_screen.dart';
 import 'views/home/home_screen.dart';
 import 'views/startup_error_screen.dart';
 
-Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+/// True on web when the app is served from the public production domain.
+bool get isProductionWebDomain {
+  if (!kIsWeb) return false;
+  final host = Uri.base.host;
+  return host == 'iqmotors.net' || host == 'www.iqmotors.net';
+}
 
+Future<void> main() async {
   await runZonedGuarded(() async {
+    WidgetsFlutterBinding.ensureInitialized();
+
     try {
-      // R2 secrets live in .env for native builds only — never required on web.
-      if (!kIsWeb) {
-        await dotenv.load(fileName: '.env', isOptional: true);
-      }
+      // R2 + Gemini keys from bundled `.env` (optional; falls back to code defaults).
+      await dotenv.load(fileName: '.env', isOptional: true);
 
       await Firebase.initializeApp(
         options: resolveFirebaseOptions(),
@@ -102,7 +108,9 @@ class IQMotorsApp extends ConsumerWidget {
           onSurface: Color(0xFF1D1D1F),
         ),
       ),
-      home: const HomeScreen(),
+      home: isProductionWebDomain
+          ? const ComingSoonScreen()
+          : const HomeScreen(),
     );
   }
 }

@@ -287,6 +287,28 @@
   "sellCarButton": "بيع سيارة",
   "editAction": "تعديل",
   "adStatusActive": "نشط",
+  "adStatusSold": "مباع",
+  "soldAction": "مباع",
+  "markAsSoldTitle": "تحديد كمباع",
+  "markAsSoldConfirm": "هل تريد تحديد هذا الإعلان كمباع؟ سيرى المشترون شارة مباع على الإعلان.",
+  "adMarkedSoldSuccess": "تم تحديد الإعلان كمباع",
+  "adPostedAt": "تاريخ النشر: {date}",
+  "@adPostedAt": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "adDaysRemaining": "مدة الإعلان: {days} يوم متبقي",
+  "@adDaysRemaining": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "soldBadgeLabel": "مباع",
   "carFallbackTitle": "مركبة",
   "messagesEmpty": "لا توجد رسائل",
   "settingsComingSoon": "الإعدادات قريباً",
@@ -345,6 +367,7 @@
   "adminSettingsR2AccessKey": "مفتاح وصول R2",
   "adminSettingsR2SecretKey": "المفتاح السري R2",
   "adminSettingsR2Bucket": "اسم bucket R2",
+  "adminSettingsR2PublicBaseUrl": "رابط R2 العام (https://pub-xxxx.r2.dev)",
   "adminSettingsGeneralInfo": "معلومات المنصة",
   "adminSettingsAppName": "IQ Motors",
   "adminSettingsAppVersion": "الإصدار 1.0.0",

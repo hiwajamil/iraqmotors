@@ -11,6 +11,8 @@ class AdminSystemConfig {
     this.r2AccessKey = '',
     this.r2SecretKey = '',
     this.r2Bucket = '',
+    this.r2PublicBaseUrl = '',
+    this.r2Region = 'auto',
   });
 
   static const String firestoreDocPath = 'system_config/platform';
@@ -39,6 +41,8 @@ class AdminSystemConfig {
   final String r2AccessKey;
   final String r2SecretKey;
   final String r2Bucket;
+  final String r2PublicBaseUrl;
+  final String r2Region;
 
   int priceForPackage(String packageKey) {
     return packagePrices[packageKey] ??
@@ -106,6 +110,8 @@ class AdminSystemConfig {
       r2AccessKey: data['r2AccessKey']?.toString() ?? '',
       r2SecretKey: data['r2SecretKey']?.toString() ?? '',
       r2Bucket: data['r2Bucket']?.toString() ?? '',
+      r2PublicBaseUrl: data['r2PublicBaseUrl']?.toString() ?? '',
+      r2Region: data['r2Region']?.toString() ?? 'auto',
     );
   }
 
@@ -118,6 +124,8 @@ class AdminSystemConfig {
       'r2AccessKey': r2AccessKey,
       'r2SecretKey': r2SecretKey,
       'r2Bucket': r2Bucket,
+      'r2PublicBaseUrl': r2PublicBaseUrl,
+      'r2Region': r2Region,
     };
   }
 
@@ -129,6 +137,8 @@ class AdminSystemConfig {
     String? r2AccessKey,
     String? r2SecretKey,
     String? r2Bucket,
+    String? r2PublicBaseUrl,
+    String? r2Region,
   }) {
     return AdminSystemConfig(
       packagePrices: packagePrices ?? this.packagePrices,
@@ -138,6 +148,8 @@ class AdminSystemConfig {
       r2AccessKey: r2AccessKey ?? this.r2AccessKey,
       r2SecretKey: r2SecretKey ?? this.r2SecretKey,
       r2Bucket: r2Bucket ?? this.r2Bucket,
+      r2PublicBaseUrl: r2PublicBaseUrl ?? this.r2PublicBaseUrl,
+      r2Region: r2Region ?? this.r2Region,
     );
   }
 }

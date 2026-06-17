@@ -13,6 +13,7 @@ import '../../core/post_auth_navigation.dart';
 import '../../data/localized_dummy_data.dart';
 import '../../providers/auth_providers.dart';
 import '../../providers/favorites_provider.dart';
+import '../../providers/storage_providers.dart';
 import '../../services/car_database_service.dart';
 import '../../widgets/brand_search_sheet.dart';
 import '../../widgets/home_filter_section.dart';
@@ -38,7 +39,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   static const Color _textSecondary = Color(0xFF86868B);
 
   /// Dummy listings — matches the HTML prototype exactly.
-  static final List<Map<String, dynamic>> _cars =
+  static final List<Map<String, dynamic>> _fallbackCars =
       LocalizedDummyData.homeListings();
 
   CarBrand? _selectedBrand;
@@ -66,6 +67,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     _heroController.forward();
   }
 
+  List<Map<String, dynamic>> _carsFromStream(
+    AsyncValue<List<Map<String, dynamic>>> activeAds,
+  ) {
+    return activeAds.when(
+      data: (ads) => ads.isNotEmpty ? ads : _fallbackCars,
+      loading: () => _fallbackCars,
+      error: (_, __) => _fallbackCars,
+    );
+  }
+
   @override
   void dispose() {
     _heroController.dispose();
@@ -85,12 +96,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     return _advancedFilters;
   }
 
-  Future<void> _openAdvancedFilter(BuildContext context) async {
+  Future<void> _openAdvancedFilter(
+    BuildContext context,
+    List<Map<String, dynamic>> cars,
+  ) async {
     final result = await AdvancedFilterScreen.show(
       context,
       initialFilters: _advancedFilters,
       initialBrand: _selectedBrand,
-      resultCount: _cars.length,
+      resultCount: cars.length,
     );
     if (result == null || !mounted) return;
     setState(() {
@@ -105,9 +119,27 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   double _horizontalPadding(double width) => width * 0.08;
 
   int _gridCrossAxisCount(double width, double padding) {
+    if (width < 768) return 2;
     final available = width - (padding * 2);
     final count = (available / 350).floor();
-    return count.clamp(1, 4);
+    return count.clamp(2, 4);
+  }
+
+  SliverGridDelegate _gridDelegate(double width, int crossAxisCount) {
+    if (width < 768) {
+      return const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        mainAxisSpacing: 10,
+        crossAxisSpacing: 10,
+        childAspectRatio: 0.68,
+      );
+    }
+    return SliverGridDelegateWithFixedCrossAxisCount(
+      crossAxisCount: crossAxisCount,
+      mainAxisSpacing: 30,
+      crossAxisSpacing: 30,
+      mainAxisExtent: 530,
+    );
   }
 
   Future<void> _onWishlistTap(Map<String, dynamic> car) async {
@@ -149,6 +181,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     final l10n = context.l10n;
     final navLinks = [l10n.navAllModels, l10n.navTuning, l10n.navShowrooms];
     final favoriteIds = ref.watch(favoritesProvider);
+    final activeAds = ref.watch(activeAdsProvider);
+    final cars = _carsFromStream(activeAds);
 
     return Scaffold(
       backgroundColor: _background,
@@ -176,7 +210,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                         selectedBrand: _selectedBrand,
                         filterValues: _advancedFilters,
                         showAdvancedFilter: _showAdvancedFilter,
-                        onAdvancedSearchToggle: () => _openAdvancedFilter(context),
+                        onAdvancedSearchToggle: () =>
+                            _openAdvancedFilter(context, cars),
                         onBrandSelected: (brand) {
                           setState(() {
                             _selectedBrand = brand;
@@ -212,25 +247,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 ),
                 SliverPadding(
                   padding: EdgeInsetsDirectional.fromSTEB(
-                    hPadding,
+                    isWide ? hPadding : 10,
                     0,
-                    hPadding,
+                    isWide ? hPadding : 10,
                     0,
                   ),
                   sliver: SliverGrid(
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: crossAxisCount,
-                      mainAxisSpacing: 30,
-                      crossAxisSpacing: 30,
-                      mainAxisExtent: 530,
-                    ),
+                    gridDelegate: _gridDelegate(width, crossAxisCount),
                     delegate: SliverChildBuilderDelegate(
                       (context, index) {
-                        final car = _cars[index];
+                        final car = cars[index];
                         final carId = car['id']?.toString();
 
                         return PremiumCarCard(
+                          key: ValueKey(carId ?? 'car-$index'),
                           car: car,
+                          compact: !isWide,
                           animationDelay: Duration(
                             milliseconds: 100 * (index + 1),
                           ),
@@ -247,7 +279,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                           onWishlistTap: () => _onWishlistTap(car),
                         );
                       },
-                      childCount: _cars.length,
+                      childCount: cars.length,
+                      findChildIndexCallback: (Key key) {
+                        if (key is! ValueKey<String>) return null;
+                        final id = key.value;
+                        final index = cars.indexWhere(
+                          (car) => (car['id']?.toString() ?? '') == id,
+                        );
+                        return index >= 0 ? index : null;
+                      },
                     ),
                   ),
                 ),
@@ -316,14 +356,18 @@ class _GlassNavBar extends StatelessWidget {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Text(
-                        l10n.appTitle,
-                        style: const TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: -0.5,
-                          height: 1.0,
-                          color: Color(0xFF1D1D1F),
+                      Expanded(
+                        child: Text(
+                          l10n.appTitle,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: isWide ? 24 : 18,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: -0.5,
+                            height: 1.0,
+                            color: const Color(0xFF1D1D1F),
+                          ),
                         ),
                       ),
                     if (isWide) ...[
@@ -338,19 +382,37 @@ class _GlassNavBar extends StatelessWidget {
                       ),
                       const Spacer(),
                     ] else
-                      const Spacer(),
+                      const SizedBox(width: 8),
                     const LanguageSwitcherButton(),
-                    const SizedBox(width: 12),
-                    _SellButton(
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute<void>(
-                            builder: (_) => const AddCarFlowScreen(),
-                          ),
+                    SizedBox(width: isWide ? 12 : 6),
+                    Consumer(
+                      builder: (context, ref, _) {
+                        final isSignedIn =
+                            ref.watch(authStateProvider).value != null;
+
+                        return _SellButton(
+                          compact: !isWide,
+                          onTap: () {
+                            if (isSignedIn) {
+                              Navigator.of(context).push(
+                                MaterialPageRoute<void>(
+                                  builder: (_) => const AddCarFlowScreen(),
+                                ),
+                              );
+                              return;
+                            }
+                            Navigator.of(context).push(
+                              MaterialPageRoute<void>(
+                                builder: (_) => const AuthScreen(
+                                  postAuthRoute: PostAuthRoute.sellCar,
+                                ),
+                              ),
+                            );
+                          },
                         );
                       },
                     ),
-                    const SizedBox(width: 12),
+                    SizedBox(width: isWide ? 12 : 6),
                     Consumer(
                       builder: (context, ref, _) {
                         final user = ref.watch(authStateProvider).value;
@@ -362,6 +424,7 @@ class _GlassNavBar extends StatelessWidget {
 
                         return _AccountButton(
                           label: label,
+                          compact: !isWide,
                           onTap: () {
                             if (isSignedIn) {
                               Navigator.of(context).push(
@@ -434,9 +497,13 @@ class _NavLinkState extends State<_NavLink> {
 }
 
 class _SellButton extends StatefulWidget {
-  const _SellButton({required this.onTap});
+  const _SellButton({
+    required this.onTap,
+    this.compact = false,
+  });
 
   final VoidCallback onTap;
+  final bool compact;
 
   @override
   State<_SellButton> createState() => _SellButtonState();
@@ -460,9 +527,9 @@ class _SellButtonState extends State<_SellButton> {
           curve: Curves.easeOut,
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
-            padding: const EdgeInsetsDirectional.symmetric(
-              horizontal: 20,
-              vertical: 9,
+            padding: EdgeInsetsDirectional.symmetric(
+              horizontal: widget.compact ? 12 : 20,
+              vertical: widget.compact ? 8 : 9,
             ),
             decoration: BoxDecoration(
               color: _hovered
@@ -479,8 +546,8 @@ class _SellButtonState extends State<_SellButton> {
             ),
             child: Text(
               l10n.sell,
-              style: const TextStyle(
-                fontSize: 14,
+              style: TextStyle(
+                fontSize: widget.compact ? 13 : 14,
                 fontWeight: FontWeight.w600,
                 letterSpacing: -0.2,
                 color: Colors.white,
@@ -497,10 +564,12 @@ class _AccountButton extends StatefulWidget {
   const _AccountButton({
     required this.label,
     required this.onTap,
+    this.compact = false,
   });
 
   final String label;
   final VoidCallback onTap;
+  final bool compact;
 
   @override
   State<_AccountButton> createState() => _AccountButtonState();
@@ -522,22 +591,27 @@ class _AccountButtonState extends State<_AccountButton> {
           curve: Curves.easeOut,
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
-            padding: const EdgeInsetsDirectional.symmetric(
-              horizontal: 24,
+            padding: EdgeInsetsDirectional.symmetric(
+              horizontal: widget.compact ? 10 : 24,
               vertical: 8,
             ),
             decoration: BoxDecoration(
               color: _hovered ? Colors.black : _HomeScreenState._textPrimary,
               borderRadius: BorderRadius.circular(30),
             ),
-            child: Text(
-              widget.label,
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: Colors.white,
-              ),
-            ),
+            child: widget.compact
+                ? const Icon(Icons.person_outline_rounded,
+                    size: 20, color: Colors.white)
+                : Text(
+                    widget.label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.white,
+                    ),
+                  ),
           ),
         ),
       ),
@@ -574,62 +648,71 @@ class _HeroSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
 
-    return Padding(
-      padding: EdgeInsetsDirectional.fromSTEB(
-        20,
-        isWide ? 100 : 72,
-        20,
-        0,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text(
-            l10n.heroTitle,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: isWide ? 64 : 44.8,
-              fontWeight: FontWeight.w700,
-              letterSpacing: -1.5,
-              color: _HomeScreenState._textPrimary,
-              height: 1.1,
-            ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Padding(
+          padding: EdgeInsetsDirectional.fromSTEB(
+            20,
+            isWide ? 100 : 72,
+            20,
+            0,
           ),
-          const SizedBox(height: 15),
-          ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 600),
-            child: Text(
-              l10n.heroSubtitle,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: isWide ? 22.4 : 19.2,
-                fontWeight: FontWeight.w400,
-                color: _HomeScreenState._textSecondary,
-                height: 1.5,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                l10n.heroTitle,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: isWide ? 64 : 44.8,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: -1.5,
+                  color: _HomeScreenState._textPrimary,
+                  height: 1.1,
+                ),
               ),
-            ),
+              const SizedBox(height: 15),
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 600),
+                child: Text(
+                  l10n.heroSubtitle,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: isWide ? 22.4 : 19.2,
+                    fontWeight: FontWeight.w400,
+                    color: _HomeScreenState._textSecondary,
+                    height: 1.5,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 36),
+              Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 850),
+                  child: HomeFilterSection(
+                    selectedBrand: selectedBrand,
+                    filterValues: filterValues,
+                    showAdvancedFilter: showAdvancedFilter,
+                    onFilterChanged: onFilterChanged,
+                    onClearFilters: onClearFilters,
+                    onShowResults: onShowResults,
+                    onAdvancedSearchToggle: onAdvancedSearchToggle,
+                  ),
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 36),
-          Center(
-            child: HomeFilterSection(
-              selectedBrand: selectedBrand,
-              filterValues: filterValues,
-              showAdvancedFilter: showAdvancedFilter,
-              onFilterChanged: onFilterChanged,
-              onClearFilters: onClearFilters,
-              onShowResults: onShowResults,
-              onAdvancedSearchToggle: onAdvancedSearchToggle,
-            ),
-          ),
-          const SizedBox(height: 20),
-          _BrandHorizontalStrip(
-            selectedBrandId: selectedBrand?.id,
-            onBrandSelected: onBrandSelected,
-            onViewAllTap: onViewAllBrands,
-          ),
-          const SizedBox(height: 48),
-        ],
-      ),
+        ),
+        const SizedBox(height: 20),
+        _BrandHorizontalStrip(
+          isWide: isWide,
+          selectedBrandId: selectedBrand?.id,
+          onBrandSelected: onBrandSelected,
+          onViewAllTap: onViewAllBrands,
+        ),
+        const SizedBox(height: 48),
+      ],
     );
   }
 }
@@ -637,26 +720,26 @@ class _HeroSection extends StatelessWidget {
 /// Horizontally scrollable brand logos — logo above name.
 class _BrandHorizontalStrip extends StatelessWidget {
   const _BrandHorizontalStrip({
+    required this.isWide,
     required this.selectedBrandId,
     required this.onBrandSelected,
     required this.onViewAllTap,
   });
 
+  final bool isWide;
   final String? selectedBrandId;
   final ValueChanged<CarBrand?> onBrandSelected;
   final VoidCallback onViewAllTap;
 
   static const Color _brandTextPrimary = Color(0xFF1D1D1F);
-  static const Color _brandTextSecondary = Color(0xFF86868B);
   static const Color _brandFill = Color(0xFFE8E8ED);
   static const Color _brandSelectedRing = Color(0xFF1D1D1F);
 
-  /// 1.5× prior ~64px discs — premium, prominent brand marks.
-  static const double _circleSize = 100;
-  static const double _logoPadding = 8;
-  static const double _stripHeight = 180;
-  static const double _itemWidth = 124;
-  static const double _itemSpacing = 18;
+  double get _circleSize => isWide ? 88 : 70;
+  double get _logoPadding => isWide ? 6 : 5;
+  double get _stripHeight => isWide ? 160 : 118;
+  double get _itemWidth => isWide ? 104 : 70;
+  double get _itemSpacing => isWide ? 18 : 16;
 
   /// Clearbit Logo API — current high-quality marks from official domains.
   static String clearbitLogoUrl(CarBrand brand) {
@@ -688,38 +771,79 @@ class _BrandHorizontalStrip extends StatelessWidget {
   Widget build(BuildContext context) {
     final brands = homeStripBrands;
 
+    if (isWide) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Wrap(
+          alignment: WrapAlignment.center,
+          spacing: 20,
+          runSpacing: 12,
+          children: [
+            for (final brand in brands)
+              _BrandItem(
+                brand: brand,
+                circleSize: _circleSize,
+                logoPadding: _logoPadding,
+                itemWidth: _itemWidth,
+                isSelected: selectedBrandId == brand.id,
+                onTap: () {
+                  final isSelected = selectedBrandId == brand.id;
+                  onBrandSelected(isSelected ? null : brand);
+                },
+              ),
+            _BrandMoreChip(
+              circleSize: _circleSize,
+              itemWidth: _itemWidth,
+              onTap: onViewAllTap,
+            ),
+          ],
+        ),
+      );
+    }
+
     return SizedBox(
       height: _stripHeight,
       width: double.infinity,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         primary: false,
-        physics: const BouncingScrollPhysics(
-          parent: AlwaysScrollableScrollPhysics(),
-        ),
+        physics: const BouncingScrollPhysics(),
         clipBehavior: Clip.none,
-        padding: const EdgeInsetsDirectional.symmetric(horizontal: 4),
+        padding: const EdgeInsets.symmetric(horizontal: 20),
         itemCount: brands.length + 1,
         itemBuilder: (context, index) {
           if (index == brands.length) {
             return Padding(
-              padding: EdgeInsetsDirectional.only(
-                start: index == 0 ? 0 : _itemSpacing,
+              padding: EdgeInsets.only(
+                left: index == 0 ? 0 : _itemSpacing,
               ),
-              child: _BrandMoreChip(onTap: onViewAllTap),
+              child: SizedBox(
+                height: _stripHeight,
+                child: _BrandMoreChip(
+                  circleSize: _circleSize,
+                  itemWidth: _itemWidth,
+                  onTap: onViewAllTap,
+                ),
+              ),
             );
           }
 
           final brand = brands[index];
           final isSelected = selectedBrandId == brand.id;
           return Padding(
-            padding: EdgeInsetsDirectional.only(
-              start: index == 0 ? 0 : _itemSpacing,
+            padding: EdgeInsets.only(
+              left: index == 0 ? 0 : _itemSpacing,
             ),
-            child: _BrandItem(
-              brand: brand,
-              isSelected: isSelected,
-              onTap: () => onBrandSelected(isSelected ? null : brand),
+            child: SizedBox(
+              height: _stripHeight,
+              child: _BrandItem(
+                brand: brand,
+                circleSize: _circleSize,
+                logoPadding: _logoPadding,
+                itemWidth: _itemWidth,
+                isSelected: isSelected,
+                onTap: () => onBrandSelected(isSelected ? null : brand),
+              ),
             ),
           );
         },
@@ -734,19 +858,24 @@ class _BrandLogoCircle extends StatelessWidget {
     required this.brand,
     required this.fallbackLetter,
     required this.isSelected,
+    required this.circleSize,
+    required this.logoPadding,
   });
 
   final CarBrand brand;
   final String fallbackLetter;
   final bool isSelected;
+  final double circleSize;
+  final double logoPadding;
 
   @override
   Widget build(BuildContext context) {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 280),
       curve: Curves.easeOutCubic,
-      width: _BrandHorizontalStrip._circleSize,
-      height: _BrandHorizontalStrip._circleSize,
+      clipBehavior: Clip.antiAlias,
+      width: circleSize,
+      height: circleSize,
       decoration: BoxDecoration(
         color: Colors.white,
         shape: BoxShape.circle,
@@ -764,13 +893,15 @@ class _BrandLogoCircle extends StatelessWidget {
           width: isSelected ? 2 : 1,
         ),
       ),
-      child: ClipOval(
-        child: Padding(
-          padding:
-              const EdgeInsets.all(_BrandHorizontalStrip._logoPadding),
-          child: _BrandLogoImage(
-            brand: brand,
-            fallbackLetter: fallbackLetter,
+      child: Padding(
+        padding: EdgeInsets.all(logoPadding),
+        child: ClipOval(
+          child: SizedBox.expand(
+            child: _BrandLogoImage(
+              brand: brand,
+              fallbackLetter: fallbackLetter,
+              circleSize: circleSize,
+            ),
           ),
         ),
       ),
@@ -783,10 +914,12 @@ class _BrandLogoImage extends StatefulWidget {
   const _BrandLogoImage({
     required this.brand,
     required this.fallbackLetter,
+    required this.circleSize,
   });
 
   final CarBrand brand;
   final String fallbackLetter;
+  final double circleSize;
 
   @override
   State<_BrandLogoImage> createState() => _BrandLogoImageState();
@@ -802,14 +935,22 @@ class _BrandLogoImageState extends State<_BrandLogoImage> {
 
   @override
   Widget build(BuildContext context) {
+    final cacheExtent =
+        (widget.circleSize * MediaQuery.devicePixelRatioOf(context)).round();
+
     return CachedNetworkImage(
       imageUrl: _urls[_sourceIndex],
       fit: BoxFit.contain,
-      placeholder: (_, __) => const Center(
+      width: double.infinity,
+      height: double.infinity,
+      filterQuality: FilterQuality.high,
+      memCacheWidth: cacheExtent,
+      memCacheHeight: cacheExtent,
+      placeholder: (_, __) => Center(
         child: SizedBox(
-          width: 22,
-          height: 22,
-          child: CircularProgressIndicator(strokeWidth: 2),
+          width: widget.circleSize * 0.28,
+          height: widget.circleSize * 0.28,
+          child: const CircularProgressIndicator(strokeWidth: 2),
         ),
       ),
       errorWidget: (_, __, ___) {
@@ -819,19 +960,36 @@ class _BrandLogoImageState extends State<_BrandLogoImage> {
               setState(() => _sourceIndex++);
             }
           });
-          return const SizedBox.shrink();
         }
-        return Center(
-          child: Text(
-            widget.fallbackLetter,
-            style: const TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.w600,
-              color: _BrandHorizontalStrip._brandTextSecondary,
-            ),
-          ),
+        return _BrandLogoLetterFallback(
+          letter: widget.fallbackLetter,
+          circleSize: widget.circleSize,
         );
       },
+    );
+  }
+}
+
+class _BrandLogoLetterFallback extends StatelessWidget {
+  const _BrandLogoLetterFallback({
+    required this.letter,
+    required this.circleSize,
+  });
+
+  final String letter;
+  final double circleSize;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Text(
+        letter,
+        style: TextStyle(
+          fontSize: circleSize * 0.36,
+          fontWeight: FontWeight.w600,
+          color: Colors.grey[700],
+        ),
+      ),
     );
   }
 }
@@ -839,11 +997,17 @@ class _BrandLogoImageState extends State<_BrandLogoImage> {
 class _BrandItem extends StatefulWidget {
   const _BrandItem({
     required this.brand,
+    required this.circleSize,
+    required this.logoPadding,
+    required this.itemWidth,
     required this.isSelected,
     required this.onTap,
   });
 
   final CarBrand brand;
+  final double circleSize;
+  final double logoPadding;
+  final double itemWidth;
   final bool isSelected;
   final VoidCallback onTap;
 
@@ -867,29 +1031,34 @@ class _BrandItemState extends State<_BrandItem> {
         scale: _pressed ? 0.94 : 1,
         duration: const Duration(milliseconds: 120),
         child: SizedBox(
-          width: _BrandHorizontalStrip._itemWidth,
+          width: widget.itemWidth,
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               _BrandLogoCircle(
                 brand: widget.brand,
                 fallbackLetter: widget.brand.nameEnglish[0].toUpperCase(),
                 isSelected: widget.isSelected,
+                circleSize: widget.circleSize,
+                logoPadding: widget.logoPadding,
               ),
-              const SizedBox(height: 10),
-              Text(
-                widget.brand.displayName(lang),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight:
-                      widget.isSelected ? FontWeight.w600 : FontWeight.w500,
-                  color: widget.isSelected
-                      ? _BrandHorizontalStrip._brandTextPrimary
-                      : _BrandHorizontalStrip._brandTextSecondary,
+              const SizedBox(height: 8),
+              SizedBox(
+                width: widget.itemWidth,
+                child: Text(
+                  widget.brand.displayName(lang),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight:
+                        widget.isSelected ? FontWeight.w600 : FontWeight.w500,
+                    color: widget.isSelected
+                        ? _BrandHorizontalStrip._brandTextPrimary
+                        : Colors.grey[700],
+                  ),
                 ),
               ),
             ],
@@ -901,8 +1070,14 @@ class _BrandItemState extends State<_BrandItem> {
 }
 
 class _BrandMoreChip extends StatefulWidget {
-  const _BrandMoreChip({required this.onTap});
+  const _BrandMoreChip({
+    required this.circleSize,
+    required this.itemWidth,
+    required this.onTap,
+  });
 
+  final double circleSize;
+  final double itemWidth;
   final VoidCallback onTap;
 
   @override
@@ -923,14 +1098,15 @@ class _BrandMoreChipState extends State<_BrandMoreChip> {
         scale: _pressed ? 0.94 : 1,
         duration: const Duration(milliseconds: 120),
         child: SizedBox(
-          width: _BrandHorizontalStrip._itemWidth,
+          width: widget.itemWidth,
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Container(
-                width: _BrandHorizontalStrip._circleSize,
-                height: _BrandHorizontalStrip._circleSize,
+                clipBehavior: Clip.antiAlias,
+                width: widget.circleSize,
+                height: widget.circleSize,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   shape: BoxShape.circle,
@@ -946,24 +1122,27 @@ class _BrandMoreChipState extends State<_BrandMoreChip> {
                     width: 1,
                   ),
                 ),
-                child: const Center(
+                child: Center(
                   child: Icon(
                     Icons.grid_view_rounded,
-                    size: 40,
-                    color: Color(0xFF1D1D1F),
+                    size: widget.circleSize * 0.4,
+                    color: const Color(0xFF1D1D1F),
                   ),
                 ),
               ),
-              const SizedBox(height: 10),
-              const Text(
-                'زیاتر',
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                  color: _BrandHorizontalStrip._brandTextSecondary,
+              const SizedBox(height: 8),
+              SizedBox(
+                width: widget.itemWidth,
+                child: Text(
+                  'زیاتر',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.grey[700],
+                  ),
                 ),
               ),
             ],

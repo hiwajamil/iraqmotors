@@ -1,13 +1,16 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../core/l10n_extensions.dart';
+import '../../core/web_debug_log.dart';
 import '../../l10n/app_localizations.dart';
 import '../../models/account_type.dart';
 import '../../models/add_car_draft.dart';
@@ -16,10 +19,12 @@ import '../../models/car_brand.dart';
 import '../../data/add_car_option_keys.dart';
 import '../../providers/admin_settings_provider.dart';
 import '../../providers/auth_providers.dart';
+import '../../providers/r2_storage_provider.dart';
 import '../../providers/storage_providers.dart';
 import '../../services/car_database_service.dart';
 import '../../services/car_vision_service.dart';
 import '../../services/r2_storage_service.dart';
+import 'package:http/http.dart' as http;
 import 'add_car_theme.dart';
 import 'steps/add_car_step_basic_info.dart';
 import 'steps/add_car_step_condition_features.dart';
@@ -56,13 +61,16 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
   final ImagePicker _imagePicker = ImagePicker();
   int _currentStep = 0;
   bool _isPublishing = false;
-  bool _isProcessingPhoto = false;
   bool _isAnalyzingAi = false;
+  final Set<int> _uploadingPhotoSlots = {};
+  final Map<int, Uint8List> _slotPreviewBytes = {};
   final Set<String> _aiFilledFields = {};
   late AddCarDraft _draft;
   late List<XFile?> _selectedImages;
 
   bool get _isEditMode => widget.existingAdId != null;
+
+  bool get _isAnyPhotoUploading => _uploadingPhotoSlots.isNotEmpty;
 
   @override
   void initState() {
@@ -111,7 +119,7 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
   }
 
   void _goBack() {
-    if (_isPublishing || _isProcessingPhoto) return;
+    if (_isPublishing || _isAnyPhotoUploading) return;
     if (_currentStep == 0) {
       Navigator.of(context).maybePop();
       return;
@@ -120,7 +128,7 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
   }
 
   void _goNext() {
-    if (!_canProceed || _isPublishing || _isProcessingPhoto) return;
+    if (!_canProceed || _isPublishing || _isAnyPhotoUploading) return;
 
     if (_currentStep >= _stepCount - 1) {
       if (_isEditMode) {
@@ -182,35 +190,6 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
     }
 
     return result.where((url) => url.isNotEmpty).toList();
-  }
-
-  Future<List<String>> _uploadLocalPhotoPaths(
-    R2StorageService r2,
-    List<String> photoPaths,
-  ) async {
-    if (photoPaths.isEmpty) return const [];
-
-    final slots = _draft.normalizedPhotos();
-    final urls = <String>[];
-
-    for (final path in photoPaths) {
-      final slotIndex = slots.indexOf(path);
-      final xFile = slotIndex >= 0 ? _selectedImages[slotIndex] : null;
-      final dotIndex = path.lastIndexOf('.');
-      final ext =
-          dotIndex > 0 ? path.substring(dotIndex).toLowerCase() : '.jpg';
-      final uniqueName = '${DateTime.now().millisecondsSinceEpoch}_${urls.length}$ext';
-
-      urls.add(
-        await r2.uploadPickedImage(
-          path: path,
-          xFile: xFile,
-          fileName: uniqueName,
-        ),
-      );
-    }
-
-    return urls;
   }
 
   Future<void> _saveChanges() async {
@@ -293,14 +272,13 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
     final sellerId = FirebaseAuth.instance.currentUser?.uid;
 
     try {
-      final photoPaths = _draft.localPhotoPaths;
-      if (photoPaths.isEmpty) {
-        throw R2StorageException(l10n.addCarMinPhotosRequired);
-      }
-
-      final imageUrls = await _uploadLocalPhotoPaths(r2, photoPaths);
+      final imageUrls = await _resolveOrderedImageUrls(
+        r2,
+        _draft.normalizedPhotos(),
+        xFiles: _selectedImages,
+      );
       if (imageUrls.isEmpty) {
-        throw R2StorageException(l10n.addCarUploadFailed);
+        throw R2StorageException(l10n.addCarMinPhotosRequired);
       }
 
       final damageUrls = _draft.damagePhotos.isNotEmpty
@@ -365,101 +343,264 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
     setState(() => _draft = _draft.copyWith(city: city));
   }
 
-  int _consecutiveEmptySlotsFrom(int startIndex) {
-    final slots = _draft.normalizedPhotos();
-    var count = 0;
-    for (var i = startIndex; i < AddCarDraft.photoSlotCount; i++) {
-      if (slots[i] == null) {
-        count++;
-      } else {
-        break;
-      }
-    }
-    return count;
+  void _showPhotoFlowError(Object error) {
+    final message = error.toString();
+    webDebugLog('Photo flow error: $message');
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: const Color(0xFFFF3B30),
+        duration: const Duration(seconds: 10),
+      ),
+    );
+    showDialog<void>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Photo error'),
+        content: SingleChildScrollView(child: Text(message)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
   }
 
-  Future<void> _onPhotoSlotTapped(int index) async {
-    final slots = _draft.normalizedPhotos();
-    final slotHasPhoto = slots[index] != null;
-    final emptySlots = slotHasPhoto ? 1 : _consecutiveEmptySlotsFrom(index);
-
-    // pickMultiImage is unreliable on web; always use single pick there.
-    var picked = <XFile>[];
-    if (!kIsWeb && emptySlots > 1) {
-      picked = await _imagePicker.pickMultiImage(
-        imageQuality: 85,
-        limit: emptySlots,
-      );
-    }
-    if (picked.isEmpty) {
-      final single = await _imagePicker.pickImage(
-        source: ImageSource.gallery,
-        imageQuality: 85,
-        requestFullMetadata: !kIsWeb,
-      );
-      if (single != null) picked = [single];
+  /// Opens the gallery for a single photo (one slot per tap).
+  Future<List<_PickedPhoto>> _pickPhotos() async {
+    if (kIsWeb) {
+      return _pickPhotosWeb();
     }
 
-    if (picked.isEmpty || !mounted) return;
+    final single = await _imagePicker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 85,
+      requestFullMetadata: true,
+    );
+    if (single == null) return const [];
 
-    setState(() => _isProcessingPhoto = true);
+    final bytes = await _loadXFileBytes(single);
+    return [_PickedPhoto(file: single, bytes: bytes)];
+  }
+
+  /// Web: pick image and load bytes in memory (never rely on [File.path]).
+  Future<List<_PickedPhoto>> _pickPhotosWeb() async {
+    Object? filePickerError;
+    try {
+      final fromFilePicker = await _pickViaFilePickerWeb();
+      if (fromFilePicker != null) return [fromFilePicker];
+    } catch (e) {
+      filePickerError = e;
+      webDebugLog('FilePicker failed: $e');
+    }
+
+    webDebugLog('FilePicker empty — trying image_picker…');
+    try {
+      final fromImagePicker = await _pickViaImagePickerWeb();
+      if (fromImagePicker != null) return [fromImagePicker];
+    } catch (e) {
+      if (filePickerError != null) {
+        throw Exception(
+          'FilePicker: $filePickerError\nimage_picker: $e',
+        );
+      }
+      rethrow;
+    }
+
+    if (filePickerError != null) {
+      throw Exception('FilePicker failed: $filePickerError');
+    }
+    return const [];
+  }
+
+  Future<_PickedPhoto?> _pickViaFilePickerWeb() async {
+    webDebugLog('Opening FilePicker…');
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.image,
+      allowMultiple: false,
+      withData: true,
+    );
+
+    if (result == null || result.files.isEmpty) {
+      webDebugLog('FilePicker cancelled');
+      return null;
+    }
+
+    final platformFile = result.files.single;
+    var bytes = platformFile.bytes;
+    if (bytes == null || bytes.isEmpty) {
+      final stream = platformFile.readStream;
+      if (stream != null) {
+        webDebugLog('Reading FilePicker stream…');
+        bytes = await _collectStreamBytes(stream);
+      }
+    }
+
+    webDebugLog('FilePicker ${bytes?.length ?? 0} bytes (${platformFile.name})');
+    if (bytes == null || bytes.isEmpty) {
+      throw StateError(
+        'FilePicker returned no bytes for ${platformFile.name}',
+      );
+    }
+
+    final name = platformFile.name.isNotEmpty ? platformFile.name : 'photo.jpg';
+    return _PickedPhoto(
+      file: XFile.fromData(bytes, name: name),
+      bytes: bytes,
+    );
+  }
+
+  Future<_PickedPhoto?> _pickViaImagePickerWeb() async {
+    final single = await _imagePicker.pickImage(source: ImageSource.gallery);
+    if (single == null) return null;
+
+    final bytes = await _loadXFileBytes(single);
+    if (bytes == null || bytes.isEmpty) {
+      throw StateError(
+        'image_picker returned no bytes for ${single.name} (path: ${single.path})',
+      );
+    }
+
+    webDebugLog('image_picker ${bytes.length} bytes (${single.name})');
+    return _PickedPhoto(file: single, bytes: bytes);
+  }
+
+  Future<Uint8List> _collectStreamBytes(Stream<List<int>> stream) async {
+    final builder = BytesBuilder(copy: false);
+    await stream.forEach(builder.add);
+    return builder.takeBytes();
+  }
+
+  void _onPhotoSlotTapped(int index) {
+    if (_uploadingPhotoSlots.contains(index) || _isPublishing) return;
+    _handlePhotoSlotTap(index);
+  }
+
+  /// Pick + upload for all platforms (spinner shown before picker opens).
+  Future<void> _handlePhotoSlotTap(int index) async {
+    setState(() => _uploadingPhotoSlots.add(index));
 
     try {
+      final picked = await _pickPhotos();
+      if (!mounted) return;
+
+      if (picked.isEmpty) {
+        setState(() => _uploadingPhotoSlots.remove(index));
+        return;
+      }
+
       for (var i = 0; i < picked.length; i++) {
         final slotIndex = index + i;
         if (slotIndex >= AddCarDraft.photoSlotCount) break;
 
-        await _assignPhotoToSlot(slotIndex, picked[i]);
+        final photo = picked[i];
+        if (photo.bytes == null || photo.bytes!.isEmpty) {
+          throw StateError(
+            'Could not read image bytes for ${photo.file.name}',
+          );
+        }
+
+        await _assignPhotoToSlot(
+          slotIndex,
+          photo.file,
+          bytes: photo.bytes,
+        );
         if (!mounted) return;
       }
-    } on CarVisionException catch (e) {
+    } catch (e, stackTrace) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(e.userMessage),
-          behavior: SnackBarBehavior.floating,
-          backgroundColor: const Color(0xFFFF3B30),
-        ),
-      );
-    } catch (_) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(context.l10n.addCarPhotoCheckFailed),
-          behavior: SnackBarBehavior.floating,
-          backgroundColor: const Color(0xFFFF3B30),
-        ),
-      );
-    } finally {
-      if (mounted) {
-        setState(() => _isProcessingPhoto = false);
-      }
+      setState(() => _uploadingPhotoSlots.remove(index));
+      webDebugLog('Photo slot tap failed: $e');
+      webDebugLog('$stackTrace');
+      _showPhotoFlowError(e);
     }
   }
 
-  Future<void> _assignPhotoToSlot(int index, XFile picked) async {
-    final vision = ref.read(carVisionServiceProvider);
-    final existingLocal = _draft.localPhotoPaths;
-    final firstImagePath =
-        existingLocal.isNotEmpty ? existingLocal.first : null;
+  Future<Uint8List?> _loadXFileBytes(XFile file) async {
+    try {
+      final bytes = await file.readAsBytes();
+      if (bytes.isNotEmpty) return bytes;
+    } catch (e) {
+      webDebugLog('readAsBytes failed: $e');
+      if (!kIsWeb) rethrow;
+    }
 
-    await vision.validatePhotoUpload(
-      imagePath: picked.path,
-      firstImagePath: index == 0 ? null : firstImagePath,
+    if (kIsWeb && file.path.startsWith('blob:')) {
+      try {
+        final response = await http.get(Uri.parse(file.path));
+        if (response.statusCode == 200 && response.bodyBytes.isNotEmpty) {
+          return response.bodyBytes;
+        }
+        throw StateError(
+          'blob fetch HTTP ${response.statusCode} for ${file.path}',
+        );
+      } catch (e) {
+        webDebugLog('blob fetch failed: $e');
+        rethrow;
+      }
+    }
+    return null;
+  }
+
+  Future<Uint8List> _readPickedImageBytes(XFile picked, Uint8List? cached) async {
+    if (cached != null && cached.isNotEmpty) return cached;
+
+    final loaded = await _loadXFileBytes(picked);
+    if (loaded != null && loaded.isNotEmpty) return loaded;
+
+    throw StateError('Could not read image bytes');
+  }
+
+  static const bool _enableAiAutoFill = false;
+
+  Future<void> _assignPhotoToSlot(
+    int index,
+    XFile picked, {
+    Uint8List? bytes,
+  }) async {
+    final pickedName = picked.name;
+    final dotIndex = pickedName.lastIndexOf('.');
+    final ext =
+        dotIndex > 0 ? pickedName.substring(dotIndex).toLowerCase() : '.jpg';
+    final fileName =
+        '${DateTime.now().millisecondsSinceEpoch}_$index$ext';
+
+    final imageBytes = await _readPickedImageBytes(picked, bytes);
+    if (imageBytes.isEmpty) {
+      throw StateError('Image bytes are empty');
+    }
+    webDebugLog('Uploading ${imageBytes.length} bytes as $fileName');
+    final uploadService = ref.read(cloudflareUploadServiceProvider);
+    final uploadedUrl = await uploadService.uploadImageToCloudflare(
+      imageBytes,
+      fileName,
     );
+    webDebugLog('Upload OK: $uploadedUrl');
+
+    // NOTE: re-enable CarVision ML Kit validation after upload issues are resolved.
+    // if (!kIsWeb) {
+    //   final vision = ref.read(carVisionServiceProvider);
+    //   ...
+    //   await vision.validatePhotoUpload(...);
+    // }
 
     if (!mounted) return;
     HapticFeedback.lightImpact();
 
     final slots = _draft.normalizedPhotos();
     setState(() {
-      _selectedImages[index] = picked;
+      _uploadingPhotoSlots.remove(index);
+      _selectedImages[index] = null;
+      _slotPreviewBytes[index] = imageBytes;
       _draft = _draft.copyWith(
-        photos: List<String?>.from(slots)..[index] = picked.path,
+        photos: List<String?>.from(slots)..[index] = uploadedUrl,
       );
     });
 
-    if (index == 0 && !kIsWeb) {
+    if (_enableAiAutoFill && index == 0 && !kIsWeb) {
       _runAiAutoFill(File(picked.path));
     }
   }
@@ -638,18 +779,24 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
   }
 
   Future<void> _onDamagePhotoAdded() async {
-    final picked = await _imagePicker.pickImage(
-      source: ImageSource.gallery,
-      imageQuality: 85,
-    );
-    if (picked == null || !mounted) return;
+    if (_isAnyPhotoUploading || _isPublishing) return;
 
-    HapticFeedback.lightImpact();
-    setState(() {
-      _draft = _draft.copyWith(
-        damagePhotos: [..._draft.damagePhotos, picked.path],
-      );
-    });
+    try {
+      final picked = await _pickPhotos();
+      if (picked.isEmpty || !mounted) return;
+
+      HapticFeedback.lightImpact();
+      setState(() {
+        _draft = _draft.copyWith(
+          damagePhotos: [..._draft.damagePhotos, picked.first.file.path],
+        );
+      });
+    } catch (e, stackTrace) {
+      if (!mounted) return;
+      webDebugLog('Damage photo pick failed: $e');
+      webDebugLog('$stackTrace');
+      _showPhotoFlowError(e);
+    }
   }
 
   void _onDescriptionChanged(String description) {
@@ -741,6 +888,27 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
           ],
         ),
         centerTitle: true,
+        actions: [
+          if (_isEditMode)
+            Padding(
+              padding: const EdgeInsetsDirectional.only(end: 4),
+              child: TextButton(
+                onPressed: (_isPublishing || _isAnyPhotoUploading)
+                    ? null
+                    : _saveChanges,
+                child: Text(
+                  l10n.addCarSave,
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: (_isPublishing || _isAnyPhotoUploading)
+                        ? AddCarTheme.textSecondary
+                        : AddCarTheme.focusBlue,
+                  ),
+                ),
+              ),
+            ),
+        ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(8),
           child: Padding(
@@ -770,7 +938,8 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
           AddCarStepPhotos(
             photos: _draft.normalizedPhotos(),
             onPhotoSlotTapped: _onPhotoSlotTapped,
-            isProcessing: _isProcessingPhoto,
+            uploadingSlots: _uploadingPhotoSlots,
+            previewBytesBySlot: _slotPreviewBytes,
           ),
           AddCarStepBasicInfo(
             brandId: _draft.brandId,
@@ -852,17 +1021,22 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
         ],
       ),
       bottomNavigationBar: _BottomActionBar(
-        canProceed: _canProceed && !_isPublishing && !_isProcessingPhoto,
+        canProceed: _canProceed && !_isPublishing && !_isAnyPhotoUploading,
         onBack: _goBack,
         onNext: _goNext,
         backLabel: l10n.back,
         nextLabel: _nextLabel(l10n, _currentStep),
+        saveLabel: _isEditMode && _currentStep < _stepCount - 1
+            ? l10n.addCarSave
+            : null,
+        onSave: _isEditMode && _currentStep < _stepCount - 1
+            ? _saveChanges
+            : null,
+        canSave: !_isPublishing && !_isAnyPhotoUploading,
       ),
     ),
         if (_isPublishing)
           _PublishingOverlay(isEditMode: _isEditMode, l10n: l10n),
-        if (_isProcessingPhoto)
-          _PhotoProcessingOverlay(l10n: l10n),
         if (_isAnalyzingAi)
           const _AiAnalyzingChipOverlay(),
       ],
@@ -915,45 +1089,11 @@ class _PublishingOverlay extends StatelessWidget {
   }
 }
 
-class _PhotoProcessingOverlay extends StatelessWidget {
-  const _PhotoProcessingOverlay({required this.l10n});
+class _PickedPhoto {
+  const _PickedPhoto({required this.file, this.bytes});
 
-  final AppLocalizations l10n;
-
-  @override
-  Widget build(BuildContext context) {
-    return AbsorbPointer(
-      child: Container(
-        color: Colors.black.withValues(alpha: 0.35),
-        alignment: Alignment.center,
-        child: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 40),
-          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 32),
-          decoration: AddCarTheme.cardDecoration(),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const SizedBox(
-                width: 36,
-                height: 36,
-                child: CircularProgressIndicator(strokeWidth: 3),
-              ),
-              const SizedBox(height: 20),
-              Text(
-                l10n.addCarPhotoProcessing,
-                style: const TextStyle(
-                  fontSize: 17,
-                  fontWeight: FontWeight.w600,
-                  color: AddCarTheme.textPrimary,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+  final XFile file;
+  final Uint8List? bytes;
 }
 
 class _AiAnalyzingChipOverlay extends StatelessWidget {
@@ -1023,6 +1163,9 @@ class _BottomActionBar extends StatelessWidget {
     required this.onNext,
     required this.backLabel,
     required this.nextLabel,
+    this.saveLabel,
+    this.onSave,
+    this.canSave = true,
   });
 
   final bool canProceed;
@@ -1030,6 +1173,9 @@ class _BottomActionBar extends StatelessWidget {
   final VoidCallback onNext;
   final String backLabel;
   final String nextLabel;
+  final String? saveLabel;
+  final VoidCallback? onSave;
+  final bool canSave;
 
   @override
   Widget build(BuildContext context) {
@@ -1044,23 +1190,99 @@ class _BottomActionBar extends StatelessWidget {
         boxShadow: AddCarTheme.cardShadow,
       ),
       padding: EdgeInsetsDirectional.fromSTEB(20, 12, 20, 12 + bottomInset),
-      child: Row(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Expanded(
-            child: _SecondaryBarButton(
-              label: backLabel,
-              onTap: onBack,
+          if (saveLabel != null && onSave != null) ...[
+            _SaveBarButton(
+              label: saveLabel!,
+              enabled: canSave,
+              onTap: onSave!,
             ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: _PrimaryBarButton(
-              label: nextLabel,
-              enabled: canProceed,
-              onTap: onNext,
-            ),
+            const SizedBox(height: 10),
+          ],
+          Row(
+            children: [
+              Expanded(
+                child: _SecondaryBarButton(
+                  label: backLabel,
+                  onTap: onBack,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _PrimaryBarButton(
+                  label: nextLabel,
+                  enabled: canProceed,
+                  onTap: onNext,
+                ),
+              ),
+            ],
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _SaveBarButton extends StatefulWidget {
+  const _SaveBarButton({
+    required this.label,
+    required this.enabled,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool enabled;
+  final VoidCallback onTap;
+
+  @override
+  State<_SaveBarButton> createState() => _SaveBarButtonState();
+}
+
+class _SaveBarButtonState extends State<_SaveBarButton> {
+  bool _pressed = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTapDown: widget.enabled ? (_) => setState(() => _pressed = true) : null,
+      onTapUp: widget.enabled ? (_) => setState(() => _pressed = false) : null,
+      onTapCancel:
+          widget.enabled ? () => setState(() => _pressed = false) : null,
+      onTap: widget.enabled ? widget.onTap : null,
+      child: AnimatedScale(
+        scale: _pressed ? 0.98 : 1,
+        duration: const Duration(milliseconds: 120),
+        child: AnimatedOpacity(
+          duration: const Duration(milliseconds: 200),
+          opacity: widget.enabled ? 1 : 0.45,
+          child: Container(
+            width: double.infinity,
+            height: 48,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: AddCarTheme.focusBlue,
+              borderRadius: BorderRadius.circular(AddCarTheme.pillRadius),
+              boxShadow: [
+                BoxShadow(
+                  color: AddCarTheme.focusBlue.withValues(alpha: 0.28),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Text(
+              widget.label,
+              style: const TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
+                letterSpacing: -0.2,
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }

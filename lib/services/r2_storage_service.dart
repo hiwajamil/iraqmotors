@@ -1,11 +1,12 @@
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mime/mime.dart';
 import 'package:minio/io.dart';
 import 'package:minio/minio.dart';
+
+import '../models/r2_config.dart';
 
 class R2StorageException implements Exception {
   R2StorageException(this.message);
@@ -18,73 +19,47 @@ class R2StorageException implements Exception {
 
 /// Cloudflare R2 upload service (S3-compatible API via Minio client).
 class R2StorageService {
-  R2StorageService({Minio? client}) : _clientOverride = client;
+  R2StorageService({
+    R2Config? config,
+    Minio? client,
+  })  : _config = config ?? R2Config.resolve(),
+        _clientOverride = client;
 
+  final R2Config _config;
   final Minio? _clientOverride;
   Minio? _client;
 
   static const _objectPrefix = 'cars';
 
-  // Default R2 credentials — override via `.env` when available.
-  static const _defaultEndpointHost =
-      'e5c493b87507d1d2efbeac09b1ee959d.r2.cloudflarestorage.com';
-  static const _defaultRegion = 'auto';
-  static const _defaultAccessKeyId = '8b7cb47968648404a58c718723d9eeb9';
-  static const _defaultSecretAccessKey =
-      'f9ede02ddf10a0f5934da9aa52ee4186d0e3800399f77a61aec4f65c292b29ed';
-  static const _defaultBucketName = 'iqmotors-media';
-  static const _defaultPublicBaseUrl =
-      'https://pub-YOUR_R2_DEV_SUBDOMAIN.r2.dev';
-
-  String _envOrDefault(String key, String fallback) {
-    final value = dotenv.env[key]?.trim();
-    if (value != null && value.isNotEmpty) return value;
-    return fallback;
-  }
-
-  String get _bucket => _envOrDefault('R2_BUCKET_NAME', _defaultBucketName);
-
-  String get _accessKey =>
-      _envOrDefault('R2_ACCESS_KEY_ID', _defaultAccessKeyId);
-
-  String get _secretKey =>
-      _envOrDefault('R2_SECRET_ACCESS_KEY', _defaultSecretAccessKey);
-
-  String get _endpointHost {
-    final raw = _envOrDefault(
-      'R2_ENDPOINT_URL',
-      'https://$_defaultEndpointHost',
-    );
-    final uri = Uri.tryParse(raw);
-    if (uri != null && uri.host.isNotEmpty) return uri.host;
-    return _defaultEndpointHost;
-  }
-
-  bool get _useSsl {
-    final raw = _envOrDefault(
-      'R2_ENDPOINT_URL',
-      'https://$_defaultEndpointHost',
-    );
-    final scheme = Uri.tryParse(raw)?.scheme.toLowerCase();
-    return scheme == null || scheme.isEmpty || scheme == 'https';
-  }
-
-  String get _region => _envOrDefault('R2_REGION', _defaultRegion);
+  String get _bucket => _config.bucketName;
 
   String get _publicBaseUrl {
-    final base = _envOrDefault('R2_PUBLIC_BASE_URL', _defaultPublicBaseUrl);
-    return base.replaceAll(RegExp(r'/+$'), '');
+    if (!_config.hasPublicBaseUrl) {
+      throw R2StorageException(
+        'R2_PUBLIC_BASE_URL is not configured. In Cloudflare: R2 → '
+        'iqmotors-media → Settings → enable Public access (R2.dev), then set '
+        'the https://pub-xxxx.r2.dev URL in .env or Admin → Security.',
+      );
+    }
+    return _config.normalizedPublicBaseUrl;
   }
 
   Minio get _minio {
+    if (!_config.hasCredentials) {
+      throw R2StorageException(
+        'R2 credentials are missing. Set R2_ACCESS_KEY_ID and '
+        'R2_SECRET_ACCESS_KEY in .env or Admin → Security.',
+      );
+    }
+
     final override = _clientOverride;
     if (override != null) return override;
     return _client ??= Minio(
-      endPoint: _endpointHost,
-      accessKey: _accessKey,
-      secretKey: _secretKey,
-      useSSL: _useSsl,
-      region: _region,
+      endPoint: _config.endpointHost,
+      accessKey: _config.accessKeyId,
+      secretKey: _config.secretAccessKey,
+      useSSL: _config.useSsl,
+      region: _config.region,
       pathStyle: true,
     );
   }
@@ -110,6 +85,7 @@ class R2StorageService {
     } on MinioError catch (e) {
       throw R2StorageException('Upload failed: ${e.message ?? e}');
     } catch (e) {
+      if (e is R2StorageException) rethrow;
       throw R2StorageException('Upload failed: $e');
     }
 
@@ -135,6 +111,7 @@ class R2StorageService {
     } on MinioError catch (e) {
       throw R2StorageException('Upload failed: ${e.message ?? e}');
     } catch (e) {
+      if (e is R2StorageException) rethrow;
       throw R2StorageException('Upload failed: $e');
     }
 
@@ -168,10 +145,12 @@ class R2StorageService {
 
   /// Extracts the R2 object key from a public URL, or null if not managed by R2.
   String? objectKeyFromPublicUrl(String url) {
-    final base = _publicBaseUrl;
-    if (url.startsWith(base)) {
-      final path = url.substring(base.length).replaceFirst(RegExp(r'^/+'), '');
-      return path.isEmpty ? null : path;
+    if (_config.hasPublicBaseUrl) {
+      final base = _config.normalizedPublicBaseUrl;
+      if (url.startsWith(base)) {
+        final path = url.substring(base.length).replaceFirst(RegExp(r'^/+'), '');
+        return path.isEmpty ? null : path;
+      }
     }
 
     final uri = Uri.tryParse(url);
@@ -201,6 +180,7 @@ class R2StorageService {
     } on MinioError catch (e) {
       throw R2StorageException('Delete failed: ${e.message ?? e}');
     } catch (e) {
+      if (e is R2StorageException) rethrow;
       throw R2StorageException('Delete failed: $e');
     }
   }

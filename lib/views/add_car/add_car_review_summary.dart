@@ -1,3 +1,4 @@
+import '../../core/iraq_location_l10n.dart';
 import '../../l10n/app_localizations.dart';
 import '../../models/add_car_draft.dart';
 import '../../data/add_car_form_options.dart';
@@ -83,7 +84,10 @@ abstract final class AddCarReviewSummary {
               'ar' => 'المحافظة / المدينة',
               _ => 'پارێزگا / شار',
             },
-            value: '${draft.province ?? '—'} · ${draft.city ?? '—'}',
+            value: draft.province == null || draft.city == null
+                ? '—'
+                : '${IraqLocationL10n.provinceLabel(l10n, draft.province!)} · '
+                    '${IraqLocationL10n.cityLabel(l10n, draft.city!)}',
           ),
         ],
       ),

@@ -39,6 +39,7 @@ class _AdminSettingsViewState extends ConsumerState<AdminSettingsView> {
   late TextEditingController _r2AccessKeyCtrl;
   late TextEditingController _r2SecretKeyCtrl;
   late TextEditingController _r2BucketCtrl;
+  late TextEditingController _r2PublicBaseUrlCtrl;
   bool _obscureSecret = true;
 
   @override
@@ -50,6 +51,7 @@ class _AdminSettingsViewState extends ConsumerState<AdminSettingsView> {
     _r2AccessKeyCtrl = TextEditingController();
     _r2SecretKeyCtrl = TextEditingController();
     _r2BucketCtrl = TextEditingController();
+    _r2PublicBaseUrlCtrl = TextEditingController();
     _loadConfig();
   }
 
@@ -61,6 +63,7 @@ class _AdminSettingsViewState extends ConsumerState<AdminSettingsView> {
     _r2AccessKeyCtrl.dispose();
     _r2SecretKeyCtrl.dispose();
     _r2BucketCtrl.dispose();
+    _r2PublicBaseUrlCtrl.dispose();
     super.dispose();
   }
 
@@ -91,6 +94,7 @@ class _AdminSettingsViewState extends ConsumerState<AdminSettingsView> {
     _r2AccessKeyCtrl.text = config.r2AccessKey;
     _r2SecretKeyCtrl.text = config.r2SecretKey;
     _r2BucketCtrl.text = config.r2Bucket;
+    _r2PublicBaseUrlCtrl.text = config.r2PublicBaseUrl;
   }
 
   AdminSystemConfig _configFromControllers() {
@@ -108,6 +112,7 @@ class _AdminSettingsViewState extends ConsumerState<AdminSettingsView> {
       r2AccessKey: _r2AccessKeyCtrl.text.trim(),
       r2SecretKey: _r2SecretKeyCtrl.text.trim(),
       r2Bucket: _r2BucketCtrl.text.trim(),
+      r2PublicBaseUrl: _r2PublicBaseUrlCtrl.text.trim(),
     );
   }
 
@@ -438,6 +443,7 @@ class _AdminSettingsViewState extends ConsumerState<AdminSettingsView> {
                   accessKeyController: _r2AccessKeyCtrl,
                   secretKeyController: _r2SecretKeyCtrl,
                   bucketController: _r2BucketCtrl,
+                  publicBaseUrlController: _r2PublicBaseUrlCtrl,
                   obscureSecret: _obscureSecret,
                   onToggleSecret: () =>
                       setState(() => _obscureSecret = !_obscureSecret),
@@ -689,6 +695,7 @@ class _SecuritySection extends StatelessWidget {
     required this.accessKeyController,
     required this.secretKeyController,
     required this.bucketController,
+    required this.publicBaseUrlController,
     required this.obscureSecret,
     required this.onToggleSecret,
     required this.isSaving,
@@ -703,6 +710,7 @@ class _SecuritySection extends StatelessWidget {
   final TextEditingController accessKeyController;
   final TextEditingController secretKeyController;
   final TextEditingController bucketController;
+  final TextEditingController publicBaseUrlController;
   final bool obscureSecret;
   final VoidCallback onToggleSecret;
   final bool isSaving;
@@ -785,6 +793,11 @@ class _SecuritySection extends StatelessWidget {
         _SettingsField(
           label: l10n.adminSettingsR2Bucket,
           controller: bucketController,
+        ),
+        const SizedBox(height: 14),
+        _SettingsField(
+          label: l10n.adminSettingsR2PublicBaseUrl,
+          controller: publicBaseUrlController,
         ),
         const SizedBox(height: 24),
         _SaveButton(

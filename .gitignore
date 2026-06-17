@@ -1,6 +1,10 @@
 # Environment secrets
 .env
 
+# Tooling
+tool/node_modules/
+tool/package-lock.json
+
 # Miscellaneous
 *.class
 *.log
