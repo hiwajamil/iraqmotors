@@ -17,6 +17,7 @@ class HomeFilterSection extends StatelessWidget {
     required this.onShowResults,
     this.onAdvancedSearchToggle,
     this.resultCount = 734,
+    this.heroStyle = false,
   });
 
   final CarBrand? selectedBrand;
@@ -27,6 +28,7 @@ class HomeFilterSection extends StatelessWidget {
   final VoidCallback onShowResults;
   final VoidCallback? onAdvancedSearchToggle;
   final int resultCount;
+  final bool heroStyle;
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +39,7 @@ class HomeFilterSection extends StatelessWidget {
             selectedLocationKeys: filterValues.selectedLocationKeys,
             onLocationTap: () => _pickLocation(context),
             onAdvancedSearchTap: onAdvancedSearchToggle,
+            heroStyle: heroStyle,
           ),
           AnimatedSize(
             duration: const Duration(milliseconds: 400),

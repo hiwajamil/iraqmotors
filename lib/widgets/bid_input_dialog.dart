@@ -115,11 +115,14 @@ class _BidFormState extends ConsumerState<_BidForm> {
       }
 
       final userId = ref.read(authStateProvider).value?.uid;
+      final profile = ref.read(userProfileProvider).value;
       await bidService.submitValidatedBid(
         carId: widget.carId,
         newBid: newBid,
         highestBid: highestBid,
         userId: userId,
+        bidderName: profile?.displayName,
+        bidderPhone: profile?.phone,
       );
 
       if (!mounted) return;
@@ -140,6 +143,10 @@ class _BidFormState extends ConsumerState<_BidForm> {
           ),
         );
       }
+    } on CarBidSoldException {
+      if (!mounted) return;
+      setState(() => _isSubmitting = false);
+      _showErrorSnackBar(context.l10n.carSoldNoBids);
     } on CarBidTooLowException {
       if (!mounted) return;
       setState(() => _isSubmitting = false);

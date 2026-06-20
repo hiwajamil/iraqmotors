@@ -25,9 +25,11 @@ final carDatabaseServiceProvider = Provider<CarDatabaseService>((ref) {
   );
 });
 
-/// Live home-feed listings (`status == active`).
+/// Live home-feed listings — admin-approved ads only (`status == active`).
 final activeAdsProvider = StreamProvider<List<Map<String, dynamic>>>((ref) {
-  return ref.watch(carDatabaseServiceProvider).watchActiveAds();
+  return ref.watch(carDatabaseServiceProvider).watchActiveCars().map(
+        (cars) => cars.map((car) => car.toMap()).toList(),
+      );
 });
 
 final carBidServiceProvider = Provider<CarBidService>((ref) {

@@ -9,6 +9,31 @@ service cloud.firestore {
       );
     }
 
+    function isCarOwner() {
+      return request.auth != null
+        && resource.data.sellerId == request.auth.uid;
+    }
+
+    function isCarOwnerOnCreate() {
+      return request.auth != null
+        && request.resource.data.sellerId == request.auth.uid;
+    }
+
+    function sellerIdUnchanged() {
+      return !('sellerId' in request.resource.data)
+        || request.resource.data.sellerId == resource.data.sellerId;
+    }
+
+    function onlyBidFieldsChanged() {
+      return request.resource.data.diff(resource.data).affectedKeys()
+        .hasOnly(['highestBid', 'lastBidAt', 'lastBidBy']);
+    }
+
+    function onlyLikedByUsersChanged() {
+      return request.resource.data.diff(resource.data).affectedKeys()
+        .hasOnly(['likedByUsers']);
+    }
+
     match /users/{userId} {
       allow read: if request.auth != null
         && (request.auth.uid == userId || isSuperAdmin());
@@ -18,9 +43,41 @@ service cloud.firestore {
 
     match /cars/{carId} {
       allow read: if true;
-      allow create: if request.auth != null;
-      allow update: if request.auth != null;
-      allow delete: if request.auth != null;
+
+      allow create: if isCarOwnerOnCreate();
+
+      allow update: if isSuperAdmin()
+        || (isCarOwner() && sellerIdUnchanged())
+        || (request.auth != null && onlyBidFieldsChanged())
+        || (request.auth != null && onlyLikedByUsersChanged());
+
+      allow delete: if isSuperAdmin() || isCarOwner();
+
+      match /bids/{bidId} {
+        function isBidCarOwner() {
+          return request.auth != null
+            && get(/databases/$(database)/documents/cars/$(carId)).data.sellerId
+              == request.auth.uid;
+        }
+
+        allow read: if isSuperAdmin() || isBidCarOwner();
+
+        allow create: if request.auth != null
+          && request.resource.data.keys().hasOnly([
+            'amount', 'bidderName', 'bidderPhone', 'bidderId', 'createdAt'
+          ])
+          && request.resource.data.amount is int
+          && request.resource.data.amount > 0;
+
+        allow update, delete: if false;
+      }
+    }
+
+    // Platform settings (package prices, cities, R2 upload config).
+    // Authenticated users need read access to publish car listings with photos.
+    match /system_config/{docId} {
+      allow read: if request.auth != null;
+      allow write: if isSuperAdmin();
     }
   }
 }

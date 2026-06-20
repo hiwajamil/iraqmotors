@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/activity_actions.dart';
 import '../../core/admin_audit_helper.dart';
+import '../../core/car_image_urls.dart';
 import '../../core/filter_l10n.dart';
 import '../../core/l10n_extensions.dart';
 import '../../data/add_car_form_options.dart';
@@ -12,6 +13,7 @@ import '../../l10n/app_localizations.dart';
 import '../../models/account_type.dart';
 import '../../models/add_car_draft.dart';
 import '../../models/user_profile.dart';
+import '../../widgets/car_network_image.dart';
 import '../add_car/add_car_review_summary.dart';
 import '../../providers/auth_providers.dart';
 import '../../providers/storage_providers.dart';
@@ -185,18 +187,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen> {
     return '$symbol$formatted';
   }
 
-  List<String> _imageUrls(Map<String, dynamic> data) {
-    final urls = data['imageUrls'];
-    if (urls is List) {
-      return urls
-          .map((e) => e.toString())
-          .where((url) => url.isNotEmpty)
-          .toList();
-    }
-    final single = data['imageUrl']?.toString();
-    if (single != null && single.isNotEmpty) return [single];
-    return const [];
-  }
+  List<String> _imageUrls(Map<String, dynamic> data) => carImageUrlsFromAd(data);
 
   String _formatCount(int count) {
     return count.toString().replaceAllMapped(
@@ -323,6 +314,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen> {
   }
 
   Future<void> _viewAd(_PendingApprovalData data) async {
+    print('Admin Dialog - Car image URLs: ${data.imageUrls}');
     await showDialog<void>(
       context: context,
       barrierColor: Colors.black.withValues(alpha: 0.45),
@@ -1568,8 +1560,8 @@ class _CarThumbnailRow extends StatelessWidget {
           if (i > 0) const SizedBox(width: 6),
           ClipRRect(
             borderRadius: BorderRadius.circular(_radius),
-            child: Image.network(
-              previews[i],
+            child: CarNetworkImage(
+              imageUrl: previews[i],
               width: _size,
               height: _size,
               fit: BoxFit.cover,
@@ -1887,7 +1879,7 @@ class _PendingAdDetailDialogState extends State<_PendingAdDetailDialog> {
     final isMobile = MediaQuery.sizeOf(context).width < 600;
     final sections = AddCarReviewSummary.build(l10n, _draft);
     final profile = widget.data.sellerProfile;
-    final imageUrls = widget.data.imageUrls;
+    final imageUrls = carImageUrlsFromAd(widget.data.adData);
 
     return Dialog(
       backgroundColor: Colors.transparent,
@@ -1941,16 +1933,14 @@ class _PendingAdDetailDialogState extends State<_PendingAdDetailDialog> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        if (imageUrls.isNotEmpty) ...[
-                          _DetailImageCarousel(
-                            urls: imageUrls,
-                            pageController: _pageController,
-                            currentPage: _currentPage,
-                            onPageChanged: (index) =>
-                                setState(() => _currentPage = index),
-                          ),
-                          const SizedBox(height: 20),
-                        ],
+                        _DetailImageCarousel(
+                          urls: imageUrls,
+                          pageController: _pageController,
+                          currentPage: _currentPage,
+                          onPageChanged: (index) =>
+                              setState(() => _currentPage = index),
+                        ),
+                        const SizedBox(height: 20),
                         Text(
                           widget.data.title,
                           style: const TextStyle(
@@ -2052,6 +2042,10 @@ class _DetailImageCarousel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (urls.isEmpty) {
+      return _emptyImagePlaceholder();
+    }
+
     return Column(
       children: [
         ClipRRect(
@@ -2063,15 +2057,32 @@ class _DetailImageCarousel extends StatelessWidget {
               itemCount: urls.length,
               onPageChanged: onPageChanged,
               itemBuilder: (context, index) {
-                return Image.network(
-                  urls[index],
+                final url = urls[index];
+                return CarNetworkImage(
+                  imageUrl: url,
                   fit: BoxFit.cover,
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return Container(
+                      color: _PendingAdDetailDialogState._divider,
+                      alignment: Alignment.center,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        value: loadingProgress.expectedTotalBytes != null
+                            ? loadingProgress.cumulativeBytesLoaded /
+                                loadingProgress.expectedTotalBytes!
+                            : null,
+                      ),
+                    );
+                  },
                   errorBuilder: (_, __, ___) => Container(
                     color: _PendingAdDetailDialogState._divider,
-                    child: const Icon(
-                      Icons.directions_car_outlined,
-                      size: 48,
-                      color: _PendingAdDetailDialogState._textSecondary,
+                    alignment: Alignment.center,
+                    child: Icon(
+                      Icons.broken_image_outlined,
+                      size: 40,
+                      color: _PendingAdDetailDialogState._textSecondary
+                          .withValues(alpha: 0.7),
                     ),
                   ),
                 );
@@ -2101,6 +2112,24 @@ class _DetailImageCarousel extends StatelessWidget {
           ),
         ],
       ],
+    );
+  }
+
+  Widget _emptyImagePlaceholder() {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(14),
+      child: AspectRatio(
+        aspectRatio: 16 / 10,
+        child: Container(
+          color: _PendingAdDetailDialogState._divider,
+          alignment: Alignment.center,
+          child: const Icon(
+            Icons.directions_car_outlined,
+            size: 48,
+            color: _PendingAdDetailDialogState._textSecondary,
+          ),
+        ),
+      ),
     );
   }
 }

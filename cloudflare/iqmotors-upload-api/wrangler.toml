@@ -1,0 +1,13 @@
+name = "iqmotors-upload-api"
+main = "src/index.js"
+compatibility_date = "2024-09-23"
+
+# R2 bucket binding — must match your bucket in Cloudflare Dashboard.
+[[r2_buckets]]
+binding = "BUCKET"
+bucket_name = "iqmotors-media"
+
+# Public R2.dev URL (no trailing slash). Update after enabling public access.
+[vars]
+R2_PUBLIC_BASE_URL = "https://pub-4d3c544f5beb41b1a3cd7a4bd0c205ed.r2.dev"
+OBJECT_PREFIX = "cars"

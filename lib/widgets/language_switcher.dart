@@ -9,7 +9,9 @@ import '../providers/locale_provider.dart';
 
 /// Minimal globe icon that opens an Apple-style language picker sheet.
 class LanguageSwitcherButton extends ConsumerWidget {
-  const LanguageSwitcherButton({super.key});
+  const LanguageSwitcherButton({super.key, this.iconColor});
+
+  final Color? iconColor;
 
   static const Color _iconColor = Color(0xFF1D1D1F);
 
@@ -37,14 +39,19 @@ class LanguageSwitcherButton extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return _LanguageIconButton(
       onTap: () => showLanguageSheet(context, ref),
+      iconColor: iconColor ?? _iconColor,
     );
   }
 }
 
 class _LanguageIconButton extends StatefulWidget {
-  const _LanguageIconButton({required this.onTap});
+  const _LanguageIconButton({
+    required this.onTap,
+    required this.iconColor,
+  });
 
   final VoidCallback onTap;
+  final Color iconColor;
 
   @override
   State<_LanguageIconButton> createState() => _LanguageIconButtonState();
@@ -75,10 +82,10 @@ class _LanguageIconButtonState extends State<_LanguageIconButton> {
               shape: BoxShape.circle,
             ),
             alignment: Alignment.center,
-            child: const Icon(
+            child: Icon(
               Icons.language_rounded,
               size: 22,
-              color: LanguageSwitcherButton._iconColor,
+              color: widget.iconColor,
             ),
           ),
         ),

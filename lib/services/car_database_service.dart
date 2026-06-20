@@ -4,7 +4,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 
 import '../models/activity_log.dart';
+import '../models/car.dart';
 import 'activity_log_service.dart';
+import 'car_filter_service.dart';
 import 'car_bid_service.dart';
 import 'r2_storage_service.dart';
 
@@ -39,6 +41,9 @@ class CarDatabaseService {
   static const String statusRejected = 'rejected';
   static const String statusExpired = 'expired';
   static const String statusSold = 'sold';
+
+  /// Statuses shown on the public home feed (live listings + sold).
+  static const List<String> publicFeedStatuses = [statusActive, statusSold];
   static const String accountTypeField = 'accountType';
   static const String accountTypeShowroom = 'showroom';
 
@@ -154,6 +159,12 @@ class CarDatabaseService {
     Map<String, dynamic> carData,
     List<String> imageUrls,
   ) async {
+    if (imageUrls.isEmpty) {
+      throw CarDatabaseException(
+        'Cannot publish car listing without image URLs.',
+      );
+    }
+
     try {
       final doc = _firestore.collection('cars').doc();
       await doc.set({
@@ -161,6 +172,7 @@ class CarDatabaseService {
         statusField: statusPending,
         CarBidService.highestBidField: 0,
         'imageUrls': imageUrls,
+        'imageUrl': imageUrls.first,
         'createdAt': FieldValue.serverTimestamp(),
       });
       return doc.id;
@@ -285,13 +297,19 @@ class CarDatabaseService {
   }) async {
     try {
       final newUrls = await Future.wait(
-        newImagesToUpload.asMap().entries.map((entry) {
+        newImagesToUpload.asMap().entries.map((entry) async {
           final index = entry.key;
           final file = entry.value;
           final ext = _extensionFromPath(file.path);
           final uniqueName =
               '${DateTime.now().millisecondsSinceEpoch}_$index$ext';
-          return _r2.uploadImageFile(file.path, fileName: uniqueName);
+          final bytes = await file.readAsBytes();
+          if (bytes.isEmpty) {
+            throw R2StorageException(
+              'Image byte array is empty! Cannot upload 0 bytes.',
+            );
+          }
+          return _r2.uploadImageBytes(bytes, fileName: uniqueName);
         }),
       );
 
@@ -300,6 +318,7 @@ class CarDatabaseService {
       await _firestore.collection('cars').doc(adId).update({
         ...updatedData,
         'imageUrls': imageUrls,
+        if (imageUrls.isNotEmpty) 'imageUrl': imageUrls.first,
         'updatedAt': FieldValue.serverTimestamp(),
       });
     } on R2StorageException catch (e) {
@@ -350,19 +369,96 @@ class CarDatabaseService {
     }
   }
 
-  /// Real-time stream of publicly visible car ads (`status == active`).
+  /// Real-time stream of publicly visible car ads (`active` and `sold`).
   Stream<List<Map<String, dynamic>>> watchActiveAds() {
-    return _activeAdsQuery().snapshots().map((snapshot) {
-      final ads = _mapsFromQuery(snapshot);
-      ads.sort(_compareByCreatedAtDesc);
-      return ads;
-    });
+    return watchActiveCars().map(
+      (cars) => cars.map((car) => car.toMap()).toList(),
+    );
+  }
+
+  /// Real-time stream of parsed active listings for the home feed.
+  Stream<List<Car>> watchActiveCars() {
+    return watchFilteredActiveCars(const CarFirestoreFilterQuery());
+  }
+
+  /// Real-time stream of active listings with equality filters on Firestore.
+  ///
+  /// Range filters (price, mileage, year range) are applied client-side.
+  Stream<List<Car>> watchFilteredActiveCars(CarFirestoreFilterQuery query) {
+    return _filteredActiveCarsQuery(query)
+        .snapshots()
+        .map(_carsFromSnapshot);
+  }
+
+  Query<Map<String, dynamic>> _filteredActiveCarsQuery(
+    CarFirestoreFilterQuery query,
+  ) {
+    Query<Map<String, dynamic>> q = _firestore
+        .collection('cars')
+        .where(statusField, whereIn: publicFeedStatuses);
+
+    if (query.brandId != null) {
+      q = q.where('brandId', isEqualTo: query.brandId);
+    }
+    if (query.modelKey != null) {
+      q = q.where('modelKey', isEqualTo: query.modelKey);
+    }
+    if (query.year != null) {
+      q = q.where('year', isEqualTo: query.year);
+    }
+    if (query.conditionKey != null) {
+      q = q.where('conditionKey', isEqualTo: query.conditionKey);
+    }
+    if (query.fuelKey != null) {
+      q = q.where('fuelKey', isEqualTo: query.fuelKey);
+    }
+    if (query.colorKey != null) {
+      q = q.where('colorKey', isEqualTo: query.colorKey);
+    }
+    if (query.transmissionKey != null) {
+      q = q.where('transmissionKey', isEqualTo: query.transmissionKey);
+    }
+    if (query.plateCityKey != null) {
+      q = q.where('plateCityKey', isEqualTo: query.plateCityKey);
+    }
+    if (query.plateTypeKey != null) {
+      q = q.where('plateTypeKey', isEqualTo: query.plateTypeKey);
+    }
+    if (query.engineSizeKey != null) {
+      q = q.where('engineSizeKey', isEqualTo: query.engineSizeKey);
+    }
+    if (query.cylindersKey != null) {
+      q = q.where('cylindersKey', isEqualTo: query.cylindersKey);
+    }
+    if (query.importCountryKey != null) {
+      q = q.where('importCountryKey', isEqualTo: query.importCountryKey);
+    }
+    if (query.seatMaterialKey != null) {
+      q = q.where('seatMaterialKey', isEqualTo: query.seatMaterialKey);
+    }
+
+    return q;
+  }
+
+  static List<Car> _carsFromSnapshot(
+    QuerySnapshot<Map<String, dynamic>> snapshot,
+  ) {
+    final cars = snapshot.docs
+        .map((doc) => Car.fromMap(doc.id, doc.data()))
+        .whereType<Car>()
+        .toList();
+    // ignore: avoid_print
+    print(
+      'Fetched ${snapshot.docs.length} docs, successfully parsed ${cars.length} cars',
+    );
+    cars.sort((a, b) => _compareByCreatedAtDesc(a.toMap(), b.toMap()));
+    return cars;
   }
 
   Query<Map<String, dynamic>> _activeAdsQuery() {
     return _firestore
         .collection('cars')
-        .where(statusField, isEqualTo: statusActive)
+        .where(statusField, whereIn: publicFeedStatuses)
         .orderBy('createdAt', descending: true);
   }
 
@@ -388,7 +484,7 @@ class CarDatabaseService {
         if (e.code != 'failed-precondition') rethrow;
         snapshot = await _firestore
             .collection('cars')
-            .where(statusField, isEqualTo: statusActive)
+            .where(statusField, whereIn: publicFeedStatuses)
             .get();
       }
       final ads = _mapsFromQuery(snapshot);

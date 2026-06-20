@@ -17,11 +17,13 @@ class AdvancedFilterHeader extends StatelessWidget {
     required this.selectedLocationKeys,
     required this.onLocationTap,
     this.onAdvancedSearchTap,
+    this.heroStyle = false,
   });
 
   final Set<String> selectedLocationKeys;
   final VoidCallback onLocationTap;
   final VoidCallback? onAdvancedSearchTap;
+  final bool heroStyle;
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +31,7 @@ class AdvancedFilterHeader extends StatelessWidget {
       selectedLocationKeys: selectedLocationKeys,
       onLocationTap: onLocationTap,
       onAdvancedSearchTap: onAdvancedSearchTap,
+      heroStyle: heroStyle,
     );
   }
 }
@@ -297,37 +300,47 @@ class _FilterHeader extends StatelessWidget {
     required this.selectedLocationKeys,
     required this.onLocationTap,
     this.onAdvancedSearchTap,
+    this.heroStyle = false,
   });
 
   final Set<String> selectedLocationKeys;
   final VoidCallback onLocationTap;
   final VoidCallback? onAdvancedSearchTap;
+  final bool heroStyle;
 
   static const Color _locationFill = Color(0xFFEEEEEE); // Colors.grey[200]
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final primaryColor = heroStyle
+        ? Colors.white
+        : AdvancedFilterWidget._textPrimary;
+    final secondaryColor = heroStyle
+        ? Colors.white70
+        : AdvancedFilterWidget._textSecondary;
 
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(22),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 20,
-            offset: const Offset(0, 4),
-          ),
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 6,
-            offset: const Offset(0, 1),
-          ),
-        ],
-      ),
+      decoration: heroStyle
+          ? null
+          : BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(22),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 20,
+                  offset: const Offset(0, 4),
+                ),
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.03),
+                  blurRadius: 6,
+                  offset: const Offset(0, 1),
+                ),
+              ],
+            ),
       child: Row(
         children: [
           GestureDetector(
@@ -339,18 +352,16 @@ class _FilterHeader extends StatelessWidget {
                 Icon(
                   CupertinoIcons.search,
                   size: 18,
-                  color: AdvancedFilterWidget._textPrimary.withValues(
-                    alpha: 0.7,
-                  ),
+                  color: primaryColor.withValues(alpha: heroStyle ? 0.9 : 0.7),
                 ),
                 const SizedBox(width: 10),
                 Text(
                   l10n.advancedSearch,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w700,
                     letterSpacing: -0.2,
-                    color: AdvancedFilterWidget._textPrimary,
+                    color: primaryColor,
                   ),
                 ),
               ],
@@ -363,7 +374,11 @@ class _FilterHeader extends StatelessWidget {
               selectedLocationKeys,
             ),
             onTap: onLocationTap,
-            backgroundColor: _locationFill,
+            backgroundColor: heroStyle
+                ? Colors.white.withValues(alpha: 0.15)
+                : _locationFill,
+            foregroundColor: primaryColor,
+            secondaryColor: secondaryColor,
           ),
         ],
       ),
@@ -376,11 +391,15 @@ class _LocationChip extends StatefulWidget {
     required this.label,
     required this.onTap,
     this.backgroundColor,
+    this.foregroundColor,
+    this.secondaryColor,
   });
 
   final String label;
   final VoidCallback onTap;
   final Color? backgroundColor;
+  final Color? foregroundColor;
+  final Color? secondaryColor;
 
   @override
   State<_LocationChip> createState() => _LocationChipState();
@@ -393,6 +412,10 @@ class _LocationChipState extends State<_LocationChip> {
   Widget build(BuildContext context) {
     final baseColor =
         widget.backgroundColor ?? AdvancedFilterWidget._fill;
+    final textColor =
+        widget.foregroundColor ?? AdvancedFilterWidget._textPrimary;
+    final mutedColor =
+        widget.secondaryColor ?? AdvancedFilterWidget._textSecondary;
 
     return MouseRegion(
       onEnter: (_) => setState(() => _hovered = true),
@@ -417,26 +440,24 @@ class _LocationChipState extends State<_LocationChip> {
               Icon(
                 Icons.location_on_outlined,
                 size: 18,
-                color: AdvancedFilterWidget._textPrimary.withValues(
-                  alpha: _hovered ? 1 : 0.85,
-                ),
+                color: textColor.withValues(alpha: _hovered ? 1 : 0.85),
               ),
               const SizedBox(width: 6),
               Flexible(
                 child: Text(
                   widget.label,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
-                    color: AdvancedFilterWidget._textPrimary,
+                    color: textColor,
                   ),
                 ),
               ),
               const SizedBox(width: 4),
-              const Icon(
+              Icon(
                 Icons.keyboard_arrow_down_rounded,
                 size: 20,
-                color: AdvancedFilterWidget._textSecondary,
+                color: mutedColor,
               ),
             ],
           ),

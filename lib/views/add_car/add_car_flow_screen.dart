@@ -142,54 +142,58 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
     _goToStep(_currentStep + 1);
   }
 
-  Future<List<String>> _resolveOrderedImageUrls(
+  /// Uploads each filled photo slot to R2 in order before Firestore save.
+  /// Existing remote URLs (edit mode) are reused without re-uploading.
+  Future<List<String>> _uploadCarImagesSequentially(
     R2StorageService r2,
     List<String?> slots, {
     List<XFile?>? xFiles,
+    Map<int, Uint8List>? previewBytesBySlot,
   }) async {
-    final result = <String>[];
-    final pendingUploads = <({String path, int slotIndex, int resultIndex})>[];
+    final images = slots
+        .whereType<String>()
+        .where((path) => path.trim().isNotEmpty)
+        .toList();
+    // ignore: avoid_print
+    print('Starting upload for ${images.length} images...');
+
+    final urls = <String>[];
+    var uploadIndex = 0;
 
     for (var slotIndex = 0; slotIndex < slots.length; slotIndex++) {
-      final slot = slots[slotIndex];
-      if (slot == null) continue;
+      final slot = slots[slotIndex]?.trim();
+      if (slot == null || slot.isEmpty) continue;
+
       if (AddCarDraft.isRemoteImageUrl(slot) && !slot.startsWith('blob:')) {
-        result.add(slot);
-      } else {
-        pendingUploads.add((
+        urls.add(slot);
+        continue;
+      }
+
+      final dotIndex = slot.lastIndexOf('.');
+      final ext =
+          dotIndex > 0 ? slot.substring(dotIndex).toLowerCase() : '.jpg';
+      final uniqueName =
+          '${DateTime.now().millisecondsSinceEpoch}_$uploadIndex$ext';
+      uploadIndex++;
+
+      try {
+        final url = await r2.uploadPickedImage(
           path: slot,
-          slotIndex: slotIndex,
-          resultIndex: result.length,
-        ));
-        result.add('');
+          xFile: xFiles?[slotIndex],
+          fileName: uniqueName,
+          bytes: previewBytesBySlot?[slotIndex],
+        );
+        // ignore: avoid_print
+        print('Successfully uploaded to R2: $url');
+        urls.add(url);
+      } catch (e) {
+        // ignore: avoid_print
+        print('Error during image upload: $e');
+        rethrow;
       }
     }
 
-    if (pendingUploads.isNotEmpty) {
-      final uploaded = await Future.wait(
-        pendingUploads.asMap().entries.map((entry) {
-          final uploadIndex = entry.key;
-          final pending = entry.value;
-          final dotIndex = pending.path.lastIndexOf('.');
-          final ext = dotIndex > 0
-              ? pending.path.substring(dotIndex).toLowerCase()
-              : '.jpg';
-          final uniqueName =
-              '${DateTime.now().millisecondsSinceEpoch}_$uploadIndex$ext';
-          final xFile = xFiles?[pending.slotIndex];
-          return r2.uploadPickedImage(
-            path: pending.path,
-            xFile: xFile,
-            fileName: uniqueName,
-          );
-        }),
-      );
-      for (var i = 0; i < uploaded.length; i++) {
-        result[pendingUploads[i].resultIndex] = uploaded[i];
-      }
-    }
-
-    return result.where((url) => url.isNotEmpty).toList();
+    return urls;
   }
 
   Future<void> _saveChanges() async {
@@ -197,7 +201,7 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
     setState(() => _isPublishing = true);
 
     final l10n = context.l10n;
-    final r2 = ref.read(r2StorageServiceProvider);
+    final r2 = await readR2StorageServiceForUpload(ref);
     final carDb = ref.read(carDatabaseServiceProvider);
     final sellerId = FirebaseAuth.instance.currentUser?.uid;
 
@@ -207,10 +211,11 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
       final List<File> newImagesToUpload;
 
       if (hasNewLocalPhotos) {
-        existingImageUrls = await _resolveOrderedImageUrls(
+        existingImageUrls = await _uploadCarImagesSequentially(
           r2,
           _draft.normalizedPhotos(),
           xFiles: _selectedImages,
+          previewBytesBySlot: _slotPreviewBytes,
         );
         newImagesToUpload = const [];
       } else {
@@ -224,7 +229,7 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
 
       List<String> damageUrls = _draft.existingDamageImageUrls;
       if (_draft.newLocalDamagePhotoPaths.isNotEmpty) {
-        damageUrls = await _resolveOrderedImageUrls(
+        damageUrls = await _uploadCarImagesSequentially(
           r2,
           _draft.damagePhotos.cast<String?>(),
         );
@@ -267,29 +272,36 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
     setState(() => _isPublishing = true);
 
     final l10n = context.l10n;
-    final r2 = ref.read(r2StorageServiceProvider);
+    final r2 = await readR2StorageServiceForUpload(ref);
     final carDb = ref.read(carDatabaseServiceProvider);
     final sellerId = FirebaseAuth.instance.currentUser?.uid;
 
     try {
-      final imageUrls = await _resolveOrderedImageUrls(
+      final imageUrls = await _uploadCarImagesSequentially(
         r2,
         _draft.normalizedPhotos(),
         xFiles: _selectedImages,
+        previewBytesBySlot: _slotPreviewBytes,
       );
       if (imageUrls.isEmpty) {
         throw R2StorageException(l10n.addCarMinPhotosRequired);
       }
 
       final damageUrls = _draft.damagePhotos.isNotEmpty
-          ? await r2.uploadImagePaths(_draft.damagePhotos)
+          ? await _uploadCarImagesSequentially(
+              r2,
+              _draft.damagePhotos.cast<String?>(),
+            )
           : <String>[];
 
       final carData = _draft.toFirestoreMap(sellerId: sellerId);
+      carData['imageUrls'] = imageUrls;
       if (damageUrls.isNotEmpty) {
         carData['damageImageUrls'] = damageUrls;
       }
 
+      // ignore: avoid_print
+      print('Publishing car with ${imageUrls.length} imageUrls to Firestore');
       await carDb.publishCarAd(carData, imageUrls);
 
       if (!mounted) return;
@@ -308,6 +320,8 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
     } on CarDatabaseException catch (e) {
       _showPublishError(e.message);
     } catch (e) {
+      // ignore: avoid_print
+      print('Error during image upload: $e');
       _showPublishError(l10n.addCarPublishFailed);
     }
   }
@@ -561,31 +575,11 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
     XFile picked, {
     Uint8List? bytes,
   }) async {
-    final pickedName = picked.name;
-    final dotIndex = pickedName.lastIndexOf('.');
-    final ext =
-        dotIndex > 0 ? pickedName.substring(dotIndex).toLowerCase() : '.jpg';
-    final fileName =
-        '${DateTime.now().millisecondsSinceEpoch}_$index$ext';
-
     final imageBytes = await _readPickedImageBytes(picked, bytes);
     if (imageBytes.isEmpty) {
       throw StateError('Image bytes are empty');
     }
-    webDebugLog('Uploading ${imageBytes.length} bytes as $fileName');
-    final uploadService = ref.read(cloudflareUploadServiceProvider);
-    final uploadedUrl = await uploadService.uploadImageToCloudflare(
-      imageBytes,
-      fileName,
-    );
-    webDebugLog('Upload OK: $uploadedUrl');
-
-    // NOTE: re-enable CarVision ML Kit validation after upload issues are resolved.
-    // if (!kIsWeb) {
-    //   final vision = ref.read(carVisionServiceProvider);
-    //   ...
-    //   await vision.validatePhotoUpload(...);
-    // }
+    webDebugLog('Photo ready (${imageBytes.length} bytes) — upload deferred to publish');
 
     if (!mounted) return;
     HapticFeedback.lightImpact();
@@ -593,10 +587,10 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
     final slots = _draft.normalizedPhotos();
     setState(() {
       _uploadingPhotoSlots.remove(index);
-      _selectedImages[index] = null;
+      _selectedImages[index] = picked;
       _slotPreviewBytes[index] = imageBytes;
       _draft = _draft.copyWith(
-        photos: List<String?>.from(slots)..[index] = uploadedUrl,
+        photos: List<String?>.from(slots)..[index] = picked.path,
       );
     });
 

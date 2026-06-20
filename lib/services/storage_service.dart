@@ -1,7 +1,7 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:minio/io.dart';
 import 'package:minio/minio.dart';
 
 class StorageException implements Exception {
@@ -86,8 +86,21 @@ class StorageService {
 
     final objectKey = '$_objectPrefix/$safeName';
 
+    final Uint8List bytes = await imageFile.readAsBytes();
+    if (bytes.isEmpty) {
+      throw StorageException(
+        'Image byte array is empty! Cannot upload 0 bytes.',
+      );
+    }
+
     try {
-      await _minio.fPutObject(_bucket, objectKey, imageFile.path);
+      await _minio.putObject(
+        _bucket,
+        objectKey,
+        Stream<Uint8List>.value(bytes),
+        size: bytes.length,
+        metadata: {'Content-Type': 'image/jpeg'},
+      );
     } on MinioError catch (e) {
       throw StorageException('Upload failed: ${e.message ?? e}');
     } catch (e) {

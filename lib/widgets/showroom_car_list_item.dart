@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'car_network_image.dart';
+
 import '../models/showroom_listing_status.dart';
 
 /// Single car row for the showroom dashboard listings table.
@@ -137,8 +139,8 @@ class _CarBasicInfo extends StatelessWidget {
       children: [
         ClipRRect(
           borderRadius: BorderRadius.circular(10),
-          child: Image.network(
-            imageUrl,
+          child: CarNetworkImage(
+            imageUrl: imageUrl,
             width: 80,
             height: 60,
             fit: BoxFit.cover,

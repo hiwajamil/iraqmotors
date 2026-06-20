@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'car_network_image.dart';
+
 /// Compact saved-listing card for the user dashboard wishlist grid.
 class WishlistCarCard extends StatefulWidget {
   const WishlistCarCard({
@@ -63,8 +65,8 @@ class _WishlistCarCardState extends State<WishlistCarCard> {
                   child: Stack(
                     fit: StackFit.expand,
                     children: [
-                      Image.network(
-                        widget.imageUrl,
+                      CarNetworkImage(
+                        imageUrl: widget.imageUrl,
                         fit: BoxFit.cover,
                         errorBuilder: (_, __, ___) => Container(
                           color: const Color(0xFFF5F5F7),

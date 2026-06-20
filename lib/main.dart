@@ -28,8 +28,20 @@ Future<void> main() async {
     WidgetsFlutterBinding.ensureInitialized();
 
     try {
-      // R2 + Gemini keys from bundled `.env` (optional; falls back to code defaults).
-      await dotenv.load(fileName: '.env', isOptional: true);
+      // R2 + Gemini keys from bundled `.env` (must be listed in pubspec assets).
+      await dotenv.load(fileName: '.env');
+      if (kDebugMode) {
+        final hasR2Keys =
+            (dotenv.env['R2_ACCESS_KEY_ID']?.trim().isNotEmpty ?? false) &&
+                (dotenv.env['R2_SECRET_ACCESS_KEY']?.trim().isNotEmpty ??
+                    false);
+        if (!hasR2Keys) {
+          debugPrint(
+            'R2 credentials not loaded from .env. Copy .env.example to .env '
+            'in the project root, or set keys in Admin → Security.',
+          );
+        }
+      }
 
       await Firebase.initializeApp(
         options: resolveFirebaseOptions(),

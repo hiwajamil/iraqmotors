@@ -1,12 +1,13 @@
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:mime/mime.dart';
-import 'package:minio/io.dart';
 import 'package:minio/minio.dart';
 
 import '../models/r2_config.dart';
+import 'cloudflare_upload_service.dart';
 
 class R2StorageException implements Exception {
   R2StorageException(this.message);
@@ -22,11 +23,14 @@ class R2StorageService {
   R2StorageService({
     R2Config? config,
     Minio? client,
+    CloudflareUploadService? webUpload,
   })  : _config = config ?? R2Config.resolve(),
-        _clientOverride = client;
+        _clientOverride = client,
+        _webUpload = webUpload ?? CloudflareUploadService();
 
   final R2Config _config;
   final Minio? _clientOverride;
+  final CloudflareUploadService _webUpload;
   Minio? _client;
 
   static const _objectPrefix = 'cars';
@@ -70,9 +74,31 @@ class R2StorageService {
     required String fileName,
     String? contentType,
   }) async {
+    if (bytes.isEmpty) {
+      throw R2StorageException(
+        'Image byte array is empty! Cannot upload 0 bytes.',
+      );
+    }
+
     final safeName = _sanitizeFileName(fileName);
     final objectKey = '$_objectPrefix/$safeName';
     final mime = contentType ?? lookupMimeType(safeName) ?? 'image/jpeg';
+
+    // ignore: avoid_print
+    print('Uploading image of size: ${bytes.lengthInBytes} bytes');
+
+    if (kIsWeb) {
+      try {
+        final url = await _webUpload.uploadImageToCloudflare(bytes, safeName);
+        // ignore: avoid_print
+        print('Successfully uploaded via worker: $url');
+        return url;
+      } catch (e) {
+        // ignore: avoid_print
+        print('Error during web image upload: $e');
+        throw R2StorageException('Upload failed: $e');
+      }
+    }
 
     try {
       await _minio.putObject(
@@ -82,14 +108,20 @@ class R2StorageService {
         size: bytes.length,
         metadata: {'Content-Type': mime},
       );
+      final url = '$_publicBaseUrl/$objectKey';
+      // ignore: avoid_print
+      print('Successfully uploaded to R2: $url');
+      return url;
     } on MinioError catch (e) {
+      // ignore: avoid_print
+      print('Error during image upload: $e');
       throw R2StorageException('Upload failed: ${e.message ?? e}');
     } catch (e) {
+      // ignore: avoid_print
+      print('Error during image upload: $e');
       if (e is R2StorageException) rethrow;
       throw R2StorageException('Upload failed: $e');
     }
-
-    return '$_publicBaseUrl/$objectKey';
   }
 
   /// Uploads a local [filePath] to R2 and returns the public object URL.
@@ -103,19 +135,14 @@ class R2StorageService {
     }
 
     final resolvedName = fileName ?? file.uri.pathSegments.last;
-    final safeName = _sanitizeFileName(resolvedName);
-    final objectKey = '$_objectPrefix/$safeName';
-
-    try {
-      await _minio.fPutObject(_bucket, objectKey, file.path);
-    } on MinioError catch (e) {
-      throw R2StorageException('Upload failed: ${e.message ?? e}');
-    } catch (e) {
-      if (e is R2StorageException) rethrow;
-      throw R2StorageException('Upload failed: $e');
+    final bytes = await file.readAsBytes();
+    if (bytes.isEmpty) {
+      throw R2StorageException(
+        'Image byte array is empty! Cannot upload 0 bytes.',
+      );
     }
 
-    return '$_publicBaseUrl/$objectKey';
+    return uploadImageBytes(bytes, fileName: resolvedName);
   }
 
   /// Uploads a gallery-picked image (native path or web blob URL).
@@ -123,24 +150,50 @@ class R2StorageService {
     required String path,
     XFile? xFile,
     String? fileName,
+    Uint8List? bytes,
   }) async {
-    if (!kIsWeb && !path.startsWith('blob:')) {
-      final file = File(path);
-      if (await file.exists()) {
-        return uploadImageFile(path, fileName: fileName);
-      }
+    final picked = xFile ?? XFile(path);
+    final resolvedName = fileName ?? picked.name;
+    final imageBytes =
+        bytes ?? await _readPickedImageBytes(picked, path: path);
+
+    if (imageBytes.isEmpty) {
+      throw R2StorageException(
+        'Image byte array is empty! Cannot upload 0 bytes.',
+      );
     }
 
-    final picked = xFile ?? XFile(path);
-    final bytes = await picked.readAsBytes();
-    final resolvedName = fileName ?? picked.name;
     final mime = lookupMimeType(resolvedName) ?? 'image/jpeg';
-
     return uploadImageBytes(
-      bytes,
+      imageBytes,
       fileName: resolvedName,
       contentType: mime,
     );
+  }
+
+  /// Reads image bytes from [file] without relying on filesystem paths for upload.
+  static Future<Uint8List> _readPickedImageBytes(
+    XFile file, {
+    required String path,
+  }) async {
+    try {
+      final bytes = await file.readAsBytes();
+      if (bytes.isNotEmpty) return bytes;
+    } catch (e) {
+      if (!kIsWeb) rethrow;
+    }
+
+    if (kIsWeb && path.startsWith('blob:')) {
+      final response = await http.get(Uri.parse(path));
+      if (response.statusCode == 200 && response.bodyBytes.isNotEmpty) {
+        return response.bodyBytes;
+      }
+      throw R2StorageException(
+        'Failed to read blob URL (HTTP ${response.statusCode}).',
+      );
+    }
+
+    return Uint8List(0);
   }
 
   /// Extracts the R2 object key from a public URL, or null if not managed by R2.

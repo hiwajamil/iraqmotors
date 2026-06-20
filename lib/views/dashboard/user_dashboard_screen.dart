@@ -10,6 +10,7 @@ import '../../data/add_car_form_options.dart';
 import '../../providers/auth_providers.dart';
 import '../../providers/storage_providers.dart';
 import '../../services/car_database_service.dart';
+import '../../widgets/car_bid_history_sheet.dart';
 import '../../widgets/wishlist_car_card.dart';
 import '../add_car/add_car_flow_screen.dart';
 import '../home/home_screen.dart';
@@ -498,6 +499,18 @@ class _UserDashboardScreenState extends ConsumerState<UserDashboardScreen> {
     }
   }
 
+  void _onViewOffers(Map<String, dynamic> ad) {
+    final adId = ad['id']?.toString();
+    if (adId == null) return;
+
+    CarBidHistorySheet.show(
+      context,
+      carId: adId,
+      carTitle: ad['title']?.toString() ?? '',
+      currencyKey: ad['currencyKey']?.toString(),
+    );
+  }
+
   Future<void> _logout() async {
     await ref.read(authServiceProvider).signOut();
     if (!mounted) return;
@@ -663,6 +676,7 @@ class _UserDashboardScreenState extends ConsumerState<UserDashboardScreen> {
           onEdit: _onEditAd,
           onDelete: _onDeleteAd,
           onMarkAsSold: _onMarkAsSold,
+          onViewOffers: _onViewOffers,
           statusLabel: _statusLabel,
           formatPostedDate: _formatPostedDate,
           daysRemaining: _daysRemaining,
@@ -1235,6 +1249,7 @@ class _MyAdsSection extends StatelessWidget {
     required this.onEdit,
     required this.onDelete,
     required this.onMarkAsSold,
+    required this.onViewOffers,
     required this.statusLabel,
     required this.formatPostedDate,
     required this.daysRemaining,
@@ -1247,6 +1262,7 @@ class _MyAdsSection extends StatelessWidget {
   final ValueChanged<Map<String, dynamic>> onEdit;
   final ValueChanged<Map<String, dynamic>> onDelete;
   final ValueChanged<Map<String, dynamic>> onMarkAsSold;
+  final ValueChanged<Map<String, dynamic>> onViewOffers;
   final String Function(String rawStatus) statusLabel;
   final String Function(DateTime? createdAt) formatPostedDate;
   final int? Function(DateTime? createdAt) daysRemaining;
@@ -1309,6 +1325,7 @@ class _MyAdsSection extends StatelessWidget {
                           onEdit: () => onEdit(ads[i]),
                           onDelete: () => onDelete(ads[i]),
                           onMarkAsSold: () => onMarkAsSold(ads[i]),
+                          onViewOffers: () => onViewOffers(ads[i]),
                           statusLabel: statusLabel,
                           formatPostedDate: formatPostedDate,
                           daysRemaining: daysRemaining,
@@ -1337,6 +1354,7 @@ class _AdListItem extends StatelessWidget {
     required this.onEdit,
     required this.onDelete,
     required this.onMarkAsSold,
+    required this.onViewOffers,
     required this.statusLabel,
     required this.formatPostedDate,
     required this.daysRemaining,
@@ -1348,6 +1366,7 @@ class _AdListItem extends StatelessWidget {
   final VoidCallback onEdit;
   final VoidCallback onDelete;
   final VoidCallback onMarkAsSold;
+  final VoidCallback onViewOffers;
   final String Function(String rawStatus) statusLabel;
   final String Function(DateTime? createdAt) formatPostedDate;
   final int? Function(DateTime? createdAt) daysRemaining;
@@ -1455,6 +1474,13 @@ class _AdListItem extends StatelessWidget {
 
     final actionButtons = <Widget>[
       _ActionButton(label: l10n.editAction, onTap: onEdit),
+      _ActionButton(
+        label: l10n.offersAction,
+        icon: Icons.gavel_rounded,
+        onTap: onViewOffers,
+        isOutlined: true,
+        accentColor: const Color(0xFF007AFF),
+      ),
       if (!isSold)
         _ActionButton(
           label: l10n.soldAction,
@@ -1586,6 +1612,7 @@ class _ActionButton extends StatefulWidget {
   const _ActionButton({
     required this.label,
     required this.onTap,
+    this.icon,
     this.isDestructive = false,
     this.isOutlined = false,
     this.accentColor,
@@ -1593,6 +1620,7 @@ class _ActionButton extends StatefulWidget {
 
   final String label;
   final VoidCallback onTap;
+  final IconData? icon;
   final bool isDestructive;
   final bool isOutlined;
   final Color? accentColor;
@@ -1637,13 +1665,22 @@ class _ActionButtonState extends State<_ActionButton> {
                   )
                 : null,
           ),
-          child: Text(
-            widget.label,
-            style: TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w500,
-              color: color,
-            ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (widget.icon != null) ...[
+                Icon(widget.icon, size: 14, color: color),
+                const SizedBox(width: 5),
+              ],
+              Text(
+                widget.label,
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                  color: color,
+                ),
+              ),
+            ],
           ),
         ),
       ),

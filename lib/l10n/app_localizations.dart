@@ -1642,6 +1642,18 @@ abstract class AppLocalizations {
   /// **'دڵخوازەکانم (سەیڤکراو)'**
   String get favoritesSectionTitle;
 
+  /// No description provided for @homeFeedEmpty.
+  ///
+  /// In ku, this message translates to:
+  /// **'لە ئێستادا هیچ ئۆتۆمبێلێک بەردەست نییە'**
+  String get homeFeedEmpty;
+
+  /// No description provided for @homeFeedLoadError.
+  ///
+  /// In ku, this message translates to:
+  /// **'نەتوانرا ڕیکلامەکان بار بکرێن. تکایە دووبارە هەوڵ بدەرەوە.'**
+  String get homeFeedLoadError;
+
   /// No description provided for @favoritesEmpty.
   ///
   /// In ku, this message translates to:
@@ -1761,6 +1773,54 @@ abstract class AppLocalizations {
   /// In ku, this message translates to:
   /// **'فرۆشرا'**
   String get soldBadgeLabel;
+
+  /// No description provided for @carSoldNoBids.
+  ///
+  /// In ku, this message translates to:
+  /// **'ئەم ئۆتۆمبێلە فرۆشراوە'**
+  String get carSoldNoBids;
+
+  /// No description provided for @offersAction.
+  ///
+  /// In ku, this message translates to:
+  /// **'نرخەکان'**
+  String get offersAction;
+
+  /// No description provided for @bidHistoryTitle.
+  ///
+  /// In ku, this message translates to:
+  /// **'مێژووی نرخەکان'**
+  String get bidHistoryTitle;
+
+  /// No description provided for @bidHistoryEmpty.
+  ///
+  /// In ku, this message translates to:
+  /// **'تا ئێستا هیچ نرخێک دانەنراوە'**
+  String get bidHistoryEmpty;
+
+  /// No description provided for @bidHistoryBidderName.
+  ///
+  /// In ku, this message translates to:
+  /// **'ناوی کەس'**
+  String get bidHistoryBidderName;
+
+  /// No description provided for @bidHistoryBidderPhone.
+  ///
+  /// In ku, this message translates to:
+  /// **'ژمارەی مۆبایل'**
+  String get bidHistoryBidderPhone;
+
+  /// No description provided for @bidHistoryAmount.
+  ///
+  /// In ku, this message translates to:
+  /// **'بڕی نرخ'**
+  String get bidHistoryAmount;
+
+  /// No description provided for @bidHistoryDate.
+  ///
+  /// In ku, this message translates to:
+  /// **'کات و بەروار'**
+  String get bidHistoryDate;
 
   /// No description provided for @carFallbackTitle.
   ///

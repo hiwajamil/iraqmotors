@@ -30,8 +30,8 @@ Future<({int statusCode, String body})> postImageBytes(
   final jsDirect = await _tryJsUploadDirect(payload);
   if (jsDirect != null) return jsDirect;
 
-  webDebugLog('JS upload failed, trying Dart multipart…');
-  return _postMultipart(url, payload);
+  webDebugLog('JS upload failed, trying Dart raw POST…');
+  return _postRawBytes(url, payload, contentType);
 }
 
 Future<({int statusCode, String body})?> _tryJsUploadBase64(
@@ -81,21 +81,20 @@ Future<({int statusCode, String body})?> _tryJsUploadDirect(
   return null;
 }
 
-Future<({int statusCode, String body})> _postMultipart(
+Future<({int statusCode, String body})> _postRawBytes(
   Uri url,
   Uint8List bytes,
+  String contentType,
 ) async {
-  final request = XMLHttpRequest();
-  final form = FormData();
-  form.append(
-    'file',
-    Blob(
-      [bytes.toJS].toJS,
-      BlobPropertyBag(type: 'image/jpeg'),
-    ),
-    'photo.jpg',
-  );
+  if (bytes.isEmpty) {
+    throw Exception('Upload Error: empty image bytes');
+  }
 
+  webDebugLog('Raw POST ${bytes.length} bytes ($contentType)');
+  // ignore: avoid_print
+  print('Uploading image of size: ${bytes.lengthInBytes} bytes');
+
+  final request = XMLHttpRequest();
   final done = Completer<({int statusCode, String body})>();
   late final JSFunction loadListener;
   late final JSFunction errorListener;
@@ -109,14 +108,15 @@ Future<({int statusCode, String body})> _postMultipart(
 
   errorListener = ((Event _) {
     if (!done.isCompleted) {
-      done.completeError(Exception('Multipart upload network error'));
+      done.completeError(Exception('Raw upload network error'));
     }
   }).toJS;
 
   request.addEventListener('load', loadListener);
   request.addEventListener('error', errorListener);
   request.open('POST', url.toString());
-  request.send(form);
+  request.setRequestHeader('Content-Type', contentType);
+  request.send(bytes.toJS);
 
   try {
     return await done.future;

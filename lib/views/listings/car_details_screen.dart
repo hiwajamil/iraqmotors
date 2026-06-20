@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+import '../../core/car_image_urls.dart';
 import '../../core/l10n_extensions.dart';
 import '../../data/localized_dummy_data.dart';
 import '../../l10n/app_localizations.dart';
 import '../../providers/favorites_provider.dart';
 import '../../services/car_database_service.dart';
+import '../../widgets/car_network_image.dart';
 import '../auth/auth_screen.dart';
 
 /// Car details (زانیاری ئۆتۆمبێل) — gallery collage, specs, sticky seller card.
@@ -45,16 +47,14 @@ class _CarDetailsScreenState extends ConsumerState<CarDetailsScreen> {
 
   List<String> _images(AppLocalizations l10n) {
     final data = _data(l10n);
+    final fromListing = carImageUrlsFromAd(data);
+    if (fromListing.isNotEmpty) return fromListing;
+
     final prototype = LocalizedDummyData.prototypeCar(l10n);
     if (data['images'] is List) {
       return List<String>.from(data['images'] as List);
     }
-    final primary = data['imageUrl'] as String?;
-    final defaults = List<String>.from(prototype['images'] as List);
-    if (primary != null && primary.isNotEmpty) {
-      return [primary, ...defaults.skip(1)];
-    }
-    return defaults;
+    return List<String>.from(prototype['images'] as List);
   }
 
   double _horizontalPadding(double width) {
@@ -515,22 +515,25 @@ class _GalleryImage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ClipRRect(
       borderRadius: borderRadius,
-      child: CachedNetworkImage(
+      child: CarNetworkImage(
         imageUrl: url,
         fit: BoxFit.cover,
         width: double.infinity,
         height: double.infinity,
-        placeholder: (_, __) => Container(
-          color: const Color(0xFFE8E8ED),
-          child: const Center(
-            child: SizedBox(
-              width: 28,
-              height: 28,
-              child: CircularProgressIndicator(strokeWidth: 2),
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          return Container(
+            color: const Color(0xFFE8E8ED),
+            child: const Center(
+              child: SizedBox(
+                width: 28,
+                height: 28,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              ),
             ),
-          ),
-        ),
-        errorWidget: (_, __, ___) => Container(
+          );
+        },
+        errorBuilder: (_, __, ___) => Container(
           color: const Color(0xFFE8E8ED),
           alignment: Alignment.center,
           child: Icon(

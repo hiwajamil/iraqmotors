@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/filter_l10n.dart';
 import '../../core/l10n_extensions.dart';
@@ -8,11 +9,14 @@ import '../../data/dummy_brands.dart';
 import '../../l10n/app_localizations.dart';
 import '../../models/advanced_filter_state.dart';
 import '../../models/car_brand.dart';
+import '../../models/home_filter_state.dart';
+import '../../providers/storage_providers.dart';
+import '../../services/car_filter_service.dart';
 import '../../widgets/brand_search_sheet.dart';
 import '../../widgets/filter_option_picker_dialog.dart';
 
 /// Full-screen Apple-style advanced filter modal.
-class AdvancedFilterScreen extends StatefulWidget {
+class AdvancedFilterScreen extends ConsumerStatefulWidget {
   const AdvancedFilterScreen({
     super.key,
     required this.initialFilters,
@@ -43,10 +47,11 @@ class AdvancedFilterScreen extends StatefulWidget {
   }
 
   @override
-  State<AdvancedFilterScreen> createState() => _AdvancedFilterScreenState();
+  ConsumerState<AdvancedFilterScreen> createState() =>
+      _AdvancedFilterScreenState();
 }
 
-class _AdvancedFilterScreenState extends State<AdvancedFilterScreen> {
+class _AdvancedFilterScreenState extends ConsumerState<AdvancedFilterScreen> {
   static const Color _background = Color(0xFFF5F5F7);
   static const Color _textPrimary = Color(0xFF1D1D1F);
   static const Color _textSecondary = Color(0xFF86868B);
@@ -248,6 +253,11 @@ class _AdvancedFilterScreenState extends State<AdvancedFilterScreen> {
     final l10n = context.l10n;
     final languageCode = Localizations.localeOf(context).languageCode;
     final bottomInset = MediaQuery.paddingOf(context).bottom;
+    final allCars = ref.watch(activeAdsProvider).value ?? const [];
+    final previewCount = CarFilterService.applyClientFilters(
+      allCars,
+      HomeFilterState(brand: _selectedBrand, filters: _filters),
+    ).length;
     final modelOptionKeys =
         CarModelsByBrand.modelOptionKeysForBrand(_selectedBrand);
     final modelPickerEnabled = _selectedBrand != null &&
@@ -742,7 +752,7 @@ class _AdvancedFilterScreenState extends State<AdvancedFilterScreen> {
               bottomInset: bottomInset,
               clearLabel: l10n.clearFilters,
               showLabel: l10n.filterShowResults(
-                _formatCount(l10n, widget.resultCount),
+                _formatCount(l10n, previewCount),
               ),
               onClear: _clearFilters,
               onShow: _apply,

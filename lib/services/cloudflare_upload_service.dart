@@ -22,8 +22,15 @@ class CloudflareUploadService {
     }
 
     final prepared = await prepareImageBytesForUpload(imageBytes);
+    if (prepared.isEmpty) {
+      throw Exception(
+        'Image byte array is empty! Cannot upload 0 bytes.',
+      );
+    }
     const contentType = 'image/jpeg';
 
+    // ignore: avoid_print
+    print('Uploading image of size: ${prepared.lengthInBytes} bytes');
     webDebugLog(
       'POST ${prepared.length} bytes (${_jpegFileName(fileName)}) to worker…',
     );

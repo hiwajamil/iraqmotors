@@ -809,6 +809,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get favoritesSectionTitle => 'My Favorites (Saved)';
 
   @override
+  String get homeFeedEmpty => 'No cars available at the moment';
+
+  @override
+  String get homeFeedLoadError => 'Could not load listings. Please try again.';
+
+  @override
   String get favoritesEmpty => 'No saved cars yet';
 
   @override
@@ -873,6 +879,30 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get soldBadgeLabel => 'SOLD';
+
+  @override
+  String get carSoldNoBids => 'This car has been sold';
+
+  @override
+  String get offersAction => 'Offers';
+
+  @override
+  String get bidHistoryTitle => 'Offer History';
+
+  @override
+  String get bidHistoryEmpty => 'No offers placed yet';
+
+  @override
+  String get bidHistoryBidderName => 'Bidder name';
+
+  @override
+  String get bidHistoryBidderPhone => 'Phone number';
+
+  @override
+  String get bidHistoryAmount => 'Bid amount';
+
+  @override
+  String get bidHistoryDate => 'Date & time';
 
   @override
   String get carFallbackTitle => 'Vehicle';

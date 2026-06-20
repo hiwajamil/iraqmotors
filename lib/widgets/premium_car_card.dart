@@ -4,11 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/bid_display.dart';
+import '../core/car_image_urls.dart';
 import '../core/l10n_extensions.dart';
 import '../l10n/app_localizations.dart';
 import '../services/car_bid_service.dart';
 import '../services/car_database_service.dart';
 import '../widgets/bid_input_dialog.dart';
+import 'car_network_image.dart';
 
 /// Premium listing card matching the IQ Motors HTML prototype.
 class PremiumCarCard extends ConsumerStatefulWidget {
@@ -98,6 +100,10 @@ class _PremiumCarCardState extends ConsumerState<PremiumCarCard>
   }
 
   Future<void> _onPlaceBidTap() async {
+    if (widget.car['status']?.toString() == CarDatabaseService.statusSold) {
+      return;
+    }
+
     if (widget.onBidTap != null) {
       widget.onBidTap!();
       return;
@@ -165,6 +171,16 @@ class _PremiumCarCardState extends ConsumerState<PremiumCarCard>
   }
 
   Widget _buildBidButton(AppLocalizations l10n, {required bool compact}) {
+    final isSold =
+        widget.car['status']?.toString() == CarDatabaseService.statusSold;
+    if (isSold) {
+      return _BidButton(
+        label: l10n.carSoldNoBids,
+        compact: compact,
+        enabled: false,
+      );
+    }
+
     return _BidButton(
       label: l10n.placeYourBid,
       compact: compact,
@@ -227,7 +243,7 @@ class _PremiumCarCardState extends ConsumerState<PremiumCarCard>
     final model = widget.car['model'] as String? ?? '';
     final engine = widget.car['engine'] as String? ?? '';
     final mileage = widget.car['mileage'] as String? ?? '';
-    final imageUrl = widget.car['imageUrl'] as String? ?? '';
+    final imageUrl = carPrimaryImageUrl(widget.car);
     final isSold =
         widget.car['status']?.toString() == CarDatabaseService.statusSold;
 
@@ -434,11 +450,11 @@ class _ImageContainer extends StatelessWidget {
       fit: StackFit.expand,
       children: [
         AnimatedScale(
-          scale: isZoomed ? 1.08 : 1,
+          scale: isZoomed && !isSold ? 1.08 : 1,
           duration: const Duration(milliseconds: 600),
           curve: Curves.easeOut,
-          child: Image.network(
-            imageUrl,
+          child: CarNetworkImage(
+            imageUrl: imageUrl,
             fit: BoxFit.cover,
             errorBuilder: (_, __, ___) => Container(
               color: const Color(0xFFF5F5F7),
@@ -452,10 +468,19 @@ class _ImageContainer extends StatelessWidget {
           ),
         ),
         if (isSold)
+          Positioned.fill(
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: Colors.black.withValues(alpha: 0.28),
+              ),
+            ),
+          ),
+        if (isSold)
           Positioned(
-            top: wishlistInset,
-            left: wishlistInset,
-            child: _SoldBadge(compact: compact),
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: _SoldBottomBanner(compact: compact),
           ),
         Positioned(
           top: wishlistInset,
@@ -473,51 +498,61 @@ class _ImageContainer extends StatelessWidget {
   }
 }
 
-class _SoldBadge extends StatelessWidget {
-  const _SoldBadge({required this.compact});
+class _SoldBottomBanner extends StatelessWidget {
+  const _SoldBottomBanner({required this.compact});
 
   final bool compact;
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final horizontal = compact ? 10.0 : 14.0;
-    final vertical = compact ? 5.0 : 7.0;
-    final fontSize = compact ? 9.0 : 12.0;
+    final fontSize = compact ? 11.0 : 14.0;
+    final vertical = compact ? 8.0 : 12.0;
 
     return ClipRRect(
-      borderRadius: BorderRadius.circular(compact ? 10 : 14),
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
         child: Container(
-          padding: EdgeInsets.symmetric(
-            horizontal: horizontal,
-            vertical: vertical,
-          ),
+          width: double.infinity,
+          padding: EdgeInsets.symmetric(vertical: vertical),
           decoration: BoxDecoration(
-            color: const Color(0xFF1C1C1E).withValues(alpha: 0.72),
-            borderRadius: BorderRadius.circular(compact ? 10 : 14),
-            border: Border.all(
-              color: Colors.white.withValues(alpha: 0.18),
-              width: 0.8,
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                const Color(0xFF1B5E20).withValues(alpha: 0.72),
+                const Color(0xFF1B5E20).withValues(alpha: 0.92),
+              ],
             ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.22),
-                blurRadius: 12,
-                offset: const Offset(0, 4),
+            border: Border(
+              top: BorderSide(
+                color: Colors.white.withValues(alpha: 0.22),
+                width: 0.8,
+              ),
+            ),
+          ),
+          alignment: Alignment.center,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.check_circle_rounded,
+                size: compact ? 14 : 18,
+                color: Colors.white.withValues(alpha: 0.95),
+              ),
+              SizedBox(width: compact ? 6 : 8),
+              Text(
+                l10n.soldBadgeLabel,
+                style: TextStyle(
+                  fontSize: fontSize,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: compact ? 0.8 : 1.2,
+                  color: Colors.white,
+                  height: 1.1,
+                ),
               ),
             ],
-          ),
-          child: Text(
-            l10n.soldBadgeLabel,
-            style: TextStyle(
-              fontSize: fontSize,
-              fontWeight: FontWeight.w700,
-              letterSpacing: compact ? 0.4 : 0.6,
-              color: Colors.white,
-              height: 1.1,
-            ),
           ),
         ),
       ),
@@ -586,11 +621,13 @@ class _BidButton extends StatefulWidget {
     required this.label,
     this.compact = false,
     this.onTap,
+    this.enabled = true,
   });
 
   final String label;
   final bool compact;
   final VoidCallback? onTap;
+  final bool enabled;
 
   @override
   State<_BidButton> createState() => _BidButtonState();
@@ -610,16 +647,24 @@ class _BidButtonState extends State<_BidButton> {
     final borderRadius = compact ? 10.0 : 16.0;
     final iconGap = compact ? 4.0 : 8.0;
 
+    final backgroundColor = !widget.enabled
+        ? const Color(0xFFE5E5EA)
+        : _hovered
+            ? const Color(0xFF000000)
+            : PremiumCarCard.textPrimary;
+    final foregroundColor =
+        widget.enabled ? Colors.white : const Color(0xFF86868B);
+
     return MouseRegion(
-      onEnter: (_) => setState(() => _hovered = true),
-      onExit: (_) => setState(() => _hovered = false),
+      onEnter: widget.enabled ? (_) => setState(() => _hovered = true) : null,
+      onExit: widget.enabled ? (_) => setState(() => _hovered = false) : null,
       child: GestureDetector(
-        onTapDown: (_) => setState(() => _pressed = true),
-        onTapUp: (_) => setState(() => _pressed = false),
-        onTapCancel: () => setState(() => _pressed = false),
-        onTap: widget.onTap,
+        onTapDown: widget.enabled ? (_) => setState(() => _pressed = true) : null,
+        onTapUp: widget.enabled ? (_) => setState(() => _pressed = false) : null,
+        onTapCancel: widget.enabled ? () => setState(() => _pressed = false) : null,
+        onTap: widget.enabled ? widget.onTap : null,
         child: AnimatedScale(
-          scale: _pressed ? 0.98 : 1,
+          scale: _pressed && widget.enabled ? 0.98 : 1,
           duration: const Duration(milliseconds: 120),
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
@@ -629,25 +674,26 @@ class _BidButtonState extends State<_BidButton> {
               horizontal: horizontalPadding,
             ),
             decoration: BoxDecoration(
-              color: _hovered
-                  ? const Color(0xFF000000)
-                  : PremiumCarCard.textPrimary,
+              color: backgroundColor,
               borderRadius: BorderRadius.circular(borderRadius),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: _hovered ? 0.14 : 0.08),
-                  blurRadius: _hovered ? 12 : 8,
-                  offset: const Offset(0, 3),
-                ),
-              ],
+              boxShadow: widget.enabled
+                  ? [
+                      BoxShadow(
+                        color: Colors.black
+                            .withValues(alpha: _hovered ? 0.14 : 0.08),
+                        blurRadius: _hovered ? 12 : 8,
+                        offset: const Offset(0, 3),
+                      ),
+                    ]
+                  : null,
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
-                  Icons.gavel_rounded,
+                  widget.enabled ? Icons.gavel_rounded : Icons.block_rounded,
                   size: iconSize,
-                  color: Colors.white,
+                  color: foregroundColor,
                 ),
                 SizedBox(width: iconGap),
                 Flexible(
@@ -659,7 +705,7 @@ class _BidButtonState extends State<_BidButton> {
                       fontSize: fontSize,
                       fontWeight: FontWeight.w600,
                       letterSpacing: -0.2,
-                      color: Colors.white,
+                      color: foregroundColor,
                       height: 1.2,
                     ),
                   ),

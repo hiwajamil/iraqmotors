@@ -1,25 +1,17 @@
-import 'dart:ui';
-
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../data/car_models_by_brand.dart';
-import '../../data/dummy_brands.dart';
-import '../../models/advanced_filter_state.dart';
-import '../../models/car_brand.dart';
 import '../../core/l10n_extensions.dart';
-import '../../core/post_auth_navigation.dart';
-import '../../data/localized_dummy_data.dart';
-import '../../providers/auth_providers.dart';
 import '../../providers/favorites_provider.dart';
-import '../../providers/storage_providers.dart';
+import '../../providers/filter_providers.dart';
 import '../../services/car_database_service.dart';
 import '../../widgets/brand_search_sheet.dart';
-import '../../widgets/home_filter_section.dart';
-import '../../widgets/language_switcher.dart';
+import '../../widgets/home/home_feed_empty_state.dart';
+import '../../widgets/home/home_footer.dart';
+import '../../widgets/home/home_glass_nav_bar.dart';
+import '../../widgets/home/home_hero_section.dart';
+import '../../widgets/home/home_theme.dart';
 import '../../widgets/premium_car_card.dart';
-import '../add_car/add_car_flow_screen.dart';
 import '../auth/auth_screen.dart';
 import '../filters/advanced_filter_screen.dart';
 import '../listings/car_details_screen.dart';
@@ -34,21 +26,8 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 class _HomeScreenState extends ConsumerState<HomeScreen>
     with SingleTickerProviderStateMixin {
-  static const Color _background = Color(0xFFF5F5F7);
-  static const Color _textPrimary = Color(0xFF1D1D1F);
-  static const Color _textSecondary = Color(0xFF86868B);
-
-  /// Dummy listings — matches the HTML prototype exactly.
-  static final List<Map<String, dynamic>> _fallbackCars =
-      LocalizedDummyData.homeListings();
-
-  CarBrand? _selectedBrand;
-  AdvancedFilterState _advancedFilters = AdvancedFilterState.empty;
-  bool _advancedFilterExpanded = false;
+  bool _immersiveNav = true;
   late final AnimationController _heroController;
-
-  bool get _showAdvancedFilter =>
-      _selectedBrand != null || _advancedFilterExpanded;
   late final Animation<double> _heroFade;
   late final Animation<Offset> _heroSlide;
 
@@ -67,13 +46,108 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     _heroController.forward();
   }
 
-  List<Map<String, dynamic>> _carsFromStream(
-    AsyncValue<List<Map<String, dynamic>>> activeAds,
-  ) {
+  List<Widget> _listingSlivers({
+    required BuildContext context,
+    required AsyncValue<List<Map<String, dynamic>>> activeAds,
+    required Set<String> favoriteIds,
+    required double width,
+    required bool isWide,
+    required double hPadding,
+    required int crossAxisCount,
+  }) {
+    final l10n = context.l10n;
+
     return activeAds.when(
-      data: (ads) => ads.isNotEmpty ? ads : _fallbackCars,
-      loading: () => _fallbackCars,
-      error: (_, __) => _fallbackCars,
+      loading: () => [
+        const SliverToBoxAdapter(
+          child: Padding(
+            padding: EdgeInsets.symmetric(vertical: 72),
+            child: Center(
+              child: SizedBox(
+                width: 28,
+                height: 28,
+                child: CircularProgressIndicator(strokeWidth: 2.5),
+              ),
+            ),
+          ),
+        ),
+      ],
+      error: (_, __) => [
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 72),
+            child: Center(
+              child: Text(
+                l10n.homeFeedLoadError,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 15,
+                  color: HomeScreenColors.textSecondary,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+      data: (cars) {
+        if (cars.isEmpty) {
+          return [
+            SliverToBoxAdapter(
+              child: HomeFeedEmptyState(message: l10n.homeFeedEmpty),
+            ),
+          ];
+        }
+
+        return [
+          SliverPadding(
+            padding: EdgeInsetsDirectional.fromSTEB(
+              isWide ? hPadding : 10,
+              0,
+              isWide ? hPadding : 10,
+              0,
+            ),
+            sliver: SliverGrid(
+              gridDelegate: _gridDelegate(width, crossAxisCount),
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  final car = cars[index];
+                  final carId = car['id']?.toString();
+
+                  return PremiumCarCard(
+                    key: ValueKey(carId ?? 'car-$index'),
+                    car: car,
+                    compact: !isWide,
+                    animationDelay: Duration(
+                      milliseconds: 100 * (index + 1),
+                    ),
+                    isWishlisted:
+                        carId != null && favoriteIds.contains(carId),
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (_) => CarDetailsScreen(
+                            car: car,
+                          ),
+                        ),
+                      );
+                    },
+                    onWishlistTap: () => _onWishlistTap(car),
+                  );
+                },
+                childCount: cars.length,
+                findChildIndexCallback: (Key key) {
+                  if (key is! ValueKey<String>) return null;
+                  final id = key.value;
+                  final index = cars.indexWhere(
+                    (car) => (car['id']?.toString() ?? '') == id,
+                  );
+                  return index >= 0 ? index : null;
+                },
+              ),
+            ),
+          ),
+        ];
+      },
     );
   }
 
@@ -83,37 +157,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     super.dispose();
   }
 
-  /// Drops the model filter when the brand changes or the model is invalid.
-  AdvancedFilterState _filtersAfterBrandChange(CarBrand? brand) {
-    final modelKey = _advancedFilters.modelKey;
-    if (modelKey == null) return _advancedFilters;
-    if (brand == null) {
-      return _advancedFilters.copyWith(clearModel: true);
-    }
-    if (!CarModelsByBrand.isValidModelSelection(brand, modelKey)) {
-      return _advancedFilters.copyWith(clearModel: true);
-    }
-    return _advancedFilters;
-  }
-
   Future<void> _openAdvancedFilter(
     BuildContext context,
-    List<Map<String, dynamic>> cars,
+    int resultCount,
   ) async {
+    final filterState = ref.read(filterStateProvider);
     final result = await AdvancedFilterScreen.show(
       context,
-      initialFilters: _advancedFilters,
-      initialBrand: _selectedBrand,
-      resultCount: cars.length,
+      initialFilters: filterState.filters,
+      initialBrand: filterState.brand,
+      resultCount: resultCount,
     );
     if (result == null || !mounted) return;
-    setState(() {
-      _selectedBrand = result.brand;
-      _advancedFilters = result.filters;
-      if (result.brand != null) {
-        _advancedFilterExpanded = true;
-      }
-    });
+    ref.read(filterStateProvider.notifier).applyAdvancedFilterResult(result);
   }
 
   double _horizontalPadding(double width) => width * 0.08;
@@ -181,1003 +237,89 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     final l10n = context.l10n;
     final navLinks = [l10n.navAllModels, l10n.navTuning, l10n.navShowrooms];
     final favoriteIds = ref.watch(favoritesProvider);
-    final activeAds = ref.watch(activeAdsProvider);
-    final cars = _carsFromStream(activeAds);
+    final filterState = ref.watch(filterStateProvider);
+    final filterNotifier = ref.read(filterStateProvider.notifier);
+    final homeCars = ref.watch(homeCarsProvider);
+    final cars = homeCars.value ?? const <Map<String, dynamic>>[];
 
     return Scaffold(
-      backgroundColor: _background,
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          final width = constraints.maxWidth;
-          final isWide = width >= 768;
-          final hPadding = _horizontalPadding(width);
-          final crossAxisCount = _gridCrossAxisCount(width, hPadding);
+      backgroundColor: HomeScreenColors.background,
+      extendBodyBehindAppBar: true,
+      appBar: HomeGlassNavBar(
+        height: HomeGlassNavBar.heightOf(context),
+        isWide: MediaQuery.sizeOf(context).width >= 768,
+        immersive: _immersiveNav,
+        navLinks: navLinks,
+        horizontalPadding: _horizontalPadding(MediaQuery.sizeOf(context).width),
+      ),
+      body: NotificationListener<ScrollNotification>(
+        onNotification: (notification) {
+          final isWide = MediaQuery.sizeOf(context).width >= 768;
+          if (isWide) return false;
 
-          return CustomScrollView(
-            slivers: [
-              _GlassNavBar(
-                isWide: isWide,
-                navLinks: navLinks,
-                horizontalPadding: hPadding,
-              ),
+          final screenHeight = MediaQuery.sizeOf(context).height;
+          final heroHeight =
+              (screenHeight * 0.5).clamp(450.0, screenHeight * 0.55);
+          final offset = notification.metrics.pixels;
+          final immersive =
+              offset < heroHeight - HomeGlassNavBar.heightOf(context);
+          if (immersive != _immersiveNav) {
+            setState(() => _immersiveNav = immersive);
+          }
+          return false;
+        },
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final width = constraints.maxWidth;
+            final isWide = width >= 768;
+            final hPadding = _horizontalPadding(width);
+            final crossAxisCount = _gridCrossAxisCount(width, hPadding);
+
+            return CustomScrollView(
+              slivers: [
                 SliverToBoxAdapter(
                   child: FadeTransition(
                     opacity: _heroFade,
                     child: SlideTransition(
                       position: _heroSlide,
-                      child: _HeroSection(
+                      child: HomeHeroSection(
                         isWide: isWide,
-                        selectedBrand: _selectedBrand,
-                        filterValues: _advancedFilters,
-                        showAdvancedFilter: _showAdvancedFilter,
+                        selectedBrand: filterState.brand,
+                        filterValues: filterState.filters,
+                        showAdvancedFilter: filterState.showAdvancedFilter,
                         onAdvancedSearchToggle: () =>
-                            _openAdvancedFilter(context, cars),
-                        onBrandSelected: (brand) {
-                          setState(() {
-                            _selectedBrand = brand;
-                            if (brand != null) {
-                              _advancedFilterExpanded = true;
-                            }
-                            _advancedFilters = _filtersAfterBrandChange(brand);
-                          });
-                        },
-                        onFilterChanged: (values) {
-                          setState(() => _advancedFilters = values);
-                        },
-                        onClearFilters: () {
-                          setState(() {
-                            _advancedFilters = _advancedFilters.cleared();
-                          });
-                        },
+                            _openAdvancedFilter(context, cars.length),
+                        onBrandSelected: filterNotifier.setBrand,
+                        onFilterChanged: filterNotifier.setFilters,
+                        onClearFilters: filterNotifier.clearFilters,
                         onShowResults: () {},
+                        resultCount: cars.length,
                         onViewAllBrands: () async {
                           final brand =
                               await BrandSearchSheet.show(context);
                           if (brand != null) {
-                            setState(() {
-                              _selectedBrand = brand;
-                              _advancedFilterExpanded = true;
-                              _advancedFilters = _filtersAfterBrandChange(brand);
-                            });
+                            filterNotifier.setBrand(brand);
                           }
                         },
                       ),
                     ),
                   ),
                 ),
-                SliverPadding(
-                  padding: EdgeInsetsDirectional.fromSTEB(
-                    isWide ? hPadding : 10,
-                    0,
-                    isWide ? hPadding : 10,
-                    0,
-                  ),
-                  sliver: SliverGrid(
-                    gridDelegate: _gridDelegate(width, crossAxisCount),
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        final car = cars[index];
-                        final carId = car['id']?.toString();
-
-                        return PremiumCarCard(
-                          key: ValueKey(carId ?? 'car-$index'),
-                          car: car,
-                          compact: !isWide,
-                          animationDelay: Duration(
-                            milliseconds: 100 * (index + 1),
-                          ),
-                          isWishlisted: carId != null && favoriteIds.contains(carId),
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute<void>(
-                                builder: (_) => CarDetailsScreen(
-                                  car: car,
-                                ),
-                              ),
-                            );
-                          },
-                          onWishlistTap: () => _onWishlistTap(car),
-                        );
-                      },
-                      childCount: cars.length,
-                      findChildIndexCallback: (Key key) {
-                        if (key is! ValueKey<String>) return null;
-                        final id = key.value;
-                        final index = cars.indexWhere(
-                          (car) => (car['id']?.toString() ?? '') == id,
-                        );
-                        return index >= 0 ? index : null;
-                      },
-                    ),
-                  ),
+                ..._listingSlivers(
+                  context: context,
+                  activeAds: homeCars,
+                  favoriteIds: favoriteIds,
+                  width: width,
+                  isWide: isWide,
+                  hPadding: hPadding,
+                  crossAxisCount: crossAxisCount,
                 ),
                 const SliverToBoxAdapter(
-                  child: _Footer(),
+                  child: HomeFooter(),
                 ),
               ],
             );
           },
-        ),
-    );
-  }
-}
-
-class _GlassNavBar extends StatelessWidget {
-  const _GlassNavBar({
-    required this.isWide,
-    required this.navLinks,
-    required this.horizontalPadding,
-  });
-
-  final bool isWide;
-  final List<String> navLinks;
-  final double horizontalPadding;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    const verticalPadding = 20.0;
-    const contentHeight = 44.0;
-    final topInset = MediaQuery.paddingOf(context).top;
-    final toolbarHeight =
-        topInset + verticalPadding * 2 + contentHeight;
-
-    return SliverAppBar(
-      pinned: true,
-      elevation: 0,
-      scrolledUnderElevation: 0,
-      toolbarHeight: toolbarHeight,
-      backgroundColor: Colors.transparent,
-      surfaceTintColor: Colors.transparent,
-      automaticallyImplyLeading: false,
-      flexibleSpace: ClipRect(
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.8),
-              border: Border(
-                bottom: BorderSide(
-                  color: Colors.black.withValues(alpha: 0.05),
-                ),
-              ),
-            ),
-            child: SafeArea(
-              bottom: false,
-              child: Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(
-                  horizontalPadding,
-                  verticalPadding,
-                  horizontalPadding,
-                  verticalPadding,
-                ),
-                child: SizedBox(
-                  height: contentHeight,
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          l10n.appTitle,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontSize: isWide ? 24 : 18,
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: -0.5,
-                            height: 1.0,
-                            color: const Color(0xFF1D1D1F),
-                          ),
-                        ),
-                      ),
-                    if (isWide) ...[
-                      const Spacer(),
-                      ...navLinks.map(
-                        (link) => Padding(
-                          padding: const EdgeInsetsDirectional.only(
-                            start: 32,
-                          ),
-                          child: _NavLink(label: link),
-                        ),
-                      ),
-                      const Spacer(),
-                    ] else
-                      const SizedBox(width: 8),
-                    const LanguageSwitcherButton(),
-                    SizedBox(width: isWide ? 12 : 6),
-                    Consumer(
-                      builder: (context, ref, _) {
-                        final isSignedIn =
-                            ref.watch(authStateProvider).value != null;
-
-                        return _SellButton(
-                          compact: !isWide,
-                          onTap: () {
-                            if (isSignedIn) {
-                              Navigator.of(context).push(
-                                MaterialPageRoute<void>(
-                                  builder: (_) => const AddCarFlowScreen(),
-                                ),
-                              );
-                              return;
-                            }
-                            Navigator.of(context).push(
-                              MaterialPageRoute<void>(
-                                builder: (_) => const AuthScreen(
-                                  postAuthRoute: PostAuthRoute.sellCar,
-                                ),
-                              ),
-                            );
-                          },
-                        );
-                      },
-                    ),
-                    SizedBox(width: isWide ? 12 : 6),
-                    Consumer(
-                      builder: (context, ref, _) {
-                        final user = ref.watch(authStateProvider).value;
-                        final profile = ref.watch(userProfileProvider).value;
-                        final isSignedIn = user != null;
-                        final label = isSignedIn && profile != null
-                            ? profile.displayName
-                            : l10n.myAccount;
-
-                        return _AccountButton(
-                          label: label,
-                          compact: !isWide,
-                          onTap: () {
-                            if (isSignedIn) {
-                              Navigator.of(context).push(
-                                MaterialPageRoute<void>(
-                                  builder: (_) =>
-                                      dashboardForAuthenticatedUser(
-                                    email: user.email,
-                                    phone: profile?.phone,
-                                    accountType: profile?.accountType,
-                                  ),
-                                ),
-                              );
-                              return;
-                            }
-                            Navigator.of(context).push(
-                              MaterialPageRoute<void>(
-                                builder: (_) => const AuthScreen(),
-                              ),
-                            );
-                          },
-                        );
-                      },
-                    ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _NavLink extends StatefulWidget {
-  const _NavLink({required this.label});
-
-  final String label;
-
-  @override
-  State<_NavLink> createState() => _NavLinkState();
-}
-
-class _NavLinkState extends State<_NavLink> {
-  bool _hovered = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return MouseRegion(
-      onEnter: (_) => setState(() => _hovered = true),
-      onExit: (_) => setState(() => _hovered = false),
-      child: GestureDetector(
-        onTap: () {},
-        child: AnimatedOpacity(
-          duration: const Duration(milliseconds: 200),
-          opacity: _hovered ? 1 : 0.7,
-          child: Text(
-            widget.label,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: _HomeScreenState._textPrimary,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _SellButton extends StatefulWidget {
-  const _SellButton({
-    required this.onTap,
-    this.compact = false,
-  });
-
-  final VoidCallback onTap;
-  final bool compact;
-
-  @override
-  State<_SellButton> createState() => _SellButtonState();
-}
-
-class _SellButtonState extends State<_SellButton> {
-  bool _hovered = false;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = context.l10n;
-
-    return MouseRegion(
-      onEnter: (_) => setState(() => _hovered = true),
-      onExit: (_) => setState(() => _hovered = false),
-      child: GestureDetector(
-        onTap: widget.onTap,
-        child: AnimatedScale(
-          scale: _hovered ? 1.04 : 1,
-          duration: const Duration(milliseconds: 200),
-          curve: Curves.easeOut,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            padding: EdgeInsetsDirectional.symmetric(
-              horizontal: widget.compact ? 12 : 20,
-              vertical: widget.compact ? 8 : 9,
-            ),
-            decoration: BoxDecoration(
-              color: _hovered
-                  ? const Color(0xFF000000)
-                  : const Color(0xFF1D1D1F),
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: _hovered ? 0.18 : 0.12),
-                  blurRadius: _hovered ? 16 : 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Text(
-              l10n.sell,
-              style: TextStyle(
-                fontSize: widget.compact ? 13 : 14,
-                fontWeight: FontWeight.w600,
-                letterSpacing: -0.2,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _AccountButton extends StatefulWidget {
-  const _AccountButton({
-    required this.label,
-    required this.onTap,
-    this.compact = false,
-  });
-
-  final String label;
-  final VoidCallback onTap;
-  final bool compact;
-
-  @override
-  State<_AccountButton> createState() => _AccountButtonState();
-}
-
-class _AccountButtonState extends State<_AccountButton> {
-  bool _hovered = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return MouseRegion(
-      onEnter: (_) => setState(() => _hovered = true),
-      onExit: (_) => setState(() => _hovered = false),
-      child: GestureDetector(
-        onTap: widget.onTap,
-        child: AnimatedScale(
-          scale: _hovered ? 1.05 : 1,
-          duration: const Duration(milliseconds: 200),
-          curve: Curves.easeOut,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            padding: EdgeInsetsDirectional.symmetric(
-              horizontal: widget.compact ? 10 : 24,
-              vertical: 8,
-            ),
-            decoration: BoxDecoration(
-              color: _hovered ? Colors.black : _HomeScreenState._textPrimary,
-              borderRadius: BorderRadius.circular(30),
-            ),
-            child: widget.compact
-                ? const Icon(Icons.person_outline_rounded,
-                    size: 20, color: Colors.white)
-                : Text(
-                    widget.label,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.white,
-                    ),
-                  ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _HeroSection extends StatelessWidget {
-  const _HeroSection({
-    required this.isWide,
-    required this.selectedBrand,
-    required this.filterValues,
-    required this.showAdvancedFilter,
-    required this.onBrandSelected,
-    required this.onFilterChanged,
-    required this.onClearFilters,
-    required this.onShowResults,
-    required this.onViewAllBrands,
-    required this.onAdvancedSearchToggle,
-  });
-
-  final bool isWide;
-  final CarBrand? selectedBrand;
-  final AdvancedFilterState filterValues;
-  final bool showAdvancedFilter;
-  final ValueChanged<CarBrand?> onBrandSelected;
-  final ValueChanged<AdvancedFilterState> onFilterChanged;
-  final VoidCallback onClearFilters;
-  final VoidCallback onShowResults;
-  final VoidCallback onViewAllBrands;
-  final VoidCallback onAdvancedSearchToggle;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = context.l10n;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Padding(
-          padding: EdgeInsetsDirectional.fromSTEB(
-            20,
-            isWide ? 100 : 72,
-            20,
-            0,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(
-                l10n.heroTitle,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: isWide ? 64 : 44.8,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: -1.5,
-                  color: _HomeScreenState._textPrimary,
-                  height: 1.1,
-                ),
-              ),
-              const SizedBox(height: 15),
-              ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 600),
-                child: Text(
-                  l10n.heroSubtitle,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: isWide ? 22.4 : 19.2,
-                    fontWeight: FontWeight.w400,
-                    color: _HomeScreenState._textSecondary,
-                    height: 1.5,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 36),
-              Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 850),
-                  child: HomeFilterSection(
-                    selectedBrand: selectedBrand,
-                    filterValues: filterValues,
-                    showAdvancedFilter: showAdvancedFilter,
-                    onFilterChanged: onFilterChanged,
-                    onClearFilters: onClearFilters,
-                    onShowResults: onShowResults,
-                    onAdvancedSearchToggle: onAdvancedSearchToggle,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 20),
-        _BrandHorizontalStrip(
-          isWide: isWide,
-          selectedBrandId: selectedBrand?.id,
-          onBrandSelected: onBrandSelected,
-          onViewAllTap: onViewAllBrands,
-        ),
-        const SizedBox(height: 48),
-      ],
-    );
-  }
-}
-
-/// Horizontally scrollable brand logos — logo above name.
-class _BrandHorizontalStrip extends StatelessWidget {
-  const _BrandHorizontalStrip({
-    required this.isWide,
-    required this.selectedBrandId,
-    required this.onBrandSelected,
-    required this.onViewAllTap,
-  });
-
-  final bool isWide;
-  final String? selectedBrandId;
-  final ValueChanged<CarBrand?> onBrandSelected;
-  final VoidCallback onViewAllTap;
-
-  static const Color _brandTextPrimary = Color(0xFF1D1D1F);
-  static const Color _brandFill = Color(0xFFE8E8ED);
-  static const Color _brandSelectedRing = Color(0xFF1D1D1F);
-
-  double get _circleSize => isWide ? 88 : 70;
-  double get _logoPadding => isWide ? 6 : 5;
-  double get _stripHeight => isWide ? 160 : 118;
-  double get _itemWidth => isWide ? 104 : 70;
-  double get _itemSpacing => isWide ? 18 : 16;
-
-  /// Clearbit Logo API — current high-quality marks from official domains.
-  static String clearbitLogoUrl(CarBrand brand) {
-    final host = _clearbitHosts[brand.id] ??
-        '${brand.id.replaceAll('_', '-')}.com';
-    return 'https://logo.clearbit.com/$host';
-  }
-
-  static const Map<String, String> _clearbitHosts = {
-    'mercedes_benz': 'mercedes-benz.com',
-    'land_rover': 'landrover.com',
-    'gac_motor': 'gacgroup.com',
-    'rolls_royce': 'rolls-roycemotorcars.com',
-    'aston_martin': 'astonmartin.com',
-    'alfa_romeo': 'alfaromeo.com',
-    'great_wall': 'gwm-global.com',
-    'li_auto': 'lixiang.com',
-    'nio': 'nio.com',
-    'xpeng': 'xiaopeng.com',
-    'genesis': 'genesis.com',
-    'mini': 'mini.com',
-    'bentley': 'bentleymotors.com',
-    'lamborghini': 'lamborghini.com',
-    'maserati': 'maserati.com',
-    'porsche': 'porsche.com',
-  };
-
-  @override
-  Widget build(BuildContext context) {
-    final brands = homeStripBrands;
-
-    if (isWide) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Wrap(
-          alignment: WrapAlignment.center,
-          spacing: 20,
-          runSpacing: 12,
-          children: [
-            for (final brand in brands)
-              _BrandItem(
-                brand: brand,
-                circleSize: _circleSize,
-                logoPadding: _logoPadding,
-                itemWidth: _itemWidth,
-                isSelected: selectedBrandId == brand.id,
-                onTap: () {
-                  final isSelected = selectedBrandId == brand.id;
-                  onBrandSelected(isSelected ? null : brand);
-                },
-              ),
-            _BrandMoreChip(
-              circleSize: _circleSize,
-              itemWidth: _itemWidth,
-              onTap: onViewAllTap,
-            ),
-          ],
-        ),
-      );
-    }
-
-    return SizedBox(
-      height: _stripHeight,
-      width: double.infinity,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        primary: false,
-        physics: const BouncingScrollPhysics(),
-        clipBehavior: Clip.none,
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        itemCount: brands.length + 1,
-        itemBuilder: (context, index) {
-          if (index == brands.length) {
-            return Padding(
-              padding: EdgeInsets.only(
-                left: index == 0 ? 0 : _itemSpacing,
-              ),
-              child: SizedBox(
-                height: _stripHeight,
-                child: _BrandMoreChip(
-                  circleSize: _circleSize,
-                  itemWidth: _itemWidth,
-                  onTap: onViewAllTap,
-                ),
-              ),
-            );
-          }
-
-          final brand = brands[index];
-          final isSelected = selectedBrandId == brand.id;
-          return Padding(
-            padding: EdgeInsets.only(
-              left: index == 0 ? 0 : _itemSpacing,
-            ),
-            child: SizedBox(
-              height: _stripHeight,
-              child: _BrandItem(
-                brand: brand,
-                circleSize: _circleSize,
-                logoPadding: _logoPadding,
-                itemWidth: _itemWidth,
-                isSelected: isSelected,
-                onTap: () => onBrandSelected(isSelected ? null : brand),
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
-}
-
-/// Circular brand mark — white disc, soft shadow, edge-to-edge logo.
-class _BrandLogoCircle extends StatelessWidget {
-  const _BrandLogoCircle({
-    required this.brand,
-    required this.fallbackLetter,
-    required this.isSelected,
-    required this.circleSize,
-    required this.logoPadding,
-  });
-
-  final CarBrand brand;
-  final String fallbackLetter;
-  final bool isSelected;
-  final double circleSize;
-  final double logoPadding;
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 280),
-      curve: Curves.easeOutCubic,
-      clipBehavior: Clip.antiAlias,
-      width: circleSize,
-      height: circleSize,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        shape: BoxShape.circle,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: isSelected ? 0.1 : 0.05),
-            blurRadius: isSelected ? 14 : 8,
-            offset: const Offset(0, 4),
-          ),
-        ],
-        border: Border.all(
-          color: isSelected
-              ? _BrandHorizontalStrip._brandSelectedRing
-              : _BrandHorizontalStrip._brandFill,
-          width: isSelected ? 2 : 1,
-        ),
-      ),
-      child: Padding(
-        padding: EdgeInsets.all(logoPadding),
-        child: ClipOval(
-          child: SizedBox.expand(
-            child: _BrandLogoImage(
-              brand: brand,
-              fallbackLetter: fallbackLetter,
-              circleSize: circleSize,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// Clearbit first, then CDN [CarBrand.logoUrl], then letter fallback.
-class _BrandLogoImage extends StatefulWidget {
-  const _BrandLogoImage({
-    required this.brand,
-    required this.fallbackLetter,
-    required this.circleSize,
-  });
-
-  final CarBrand brand;
-  final String fallbackLetter;
-  final double circleSize;
-
-  @override
-  State<_BrandLogoImage> createState() => _BrandLogoImageState();
-}
-
-class _BrandLogoImageState extends State<_BrandLogoImage> {
-  int _sourceIndex = 0;
-
-  List<String> get _urls => [
-        _BrandHorizontalStrip.clearbitLogoUrl(widget.brand),
-        widget.brand.logoUrl,
-      ];
-
-  @override
-  Widget build(BuildContext context) {
-    final cacheExtent =
-        (widget.circleSize * MediaQuery.devicePixelRatioOf(context)).round();
-
-    return CachedNetworkImage(
-      imageUrl: _urls[_sourceIndex],
-      fit: BoxFit.contain,
-      width: double.infinity,
-      height: double.infinity,
-      filterQuality: FilterQuality.high,
-      memCacheWidth: cacheExtent,
-      memCacheHeight: cacheExtent,
-      placeholder: (_, __) => Center(
-        child: SizedBox(
-          width: widget.circleSize * 0.28,
-          height: widget.circleSize * 0.28,
-          child: const CircularProgressIndicator(strokeWidth: 2),
-        ),
-      ),
-      errorWidget: (_, __, ___) {
-        if (_sourceIndex < _urls.length - 1) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (mounted && _sourceIndex < _urls.length - 1) {
-              setState(() => _sourceIndex++);
-            }
-          });
-        }
-        return _BrandLogoLetterFallback(
-          letter: widget.fallbackLetter,
-          circleSize: widget.circleSize,
-        );
-      },
-    );
-  }
-}
-
-class _BrandLogoLetterFallback extends StatelessWidget {
-  const _BrandLogoLetterFallback({
-    required this.letter,
-    required this.circleSize,
-  });
-
-  final String letter;
-  final double circleSize;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text(
-        letter,
-        style: TextStyle(
-          fontSize: circleSize * 0.36,
-          fontWeight: FontWeight.w600,
-          color: Colors.grey[700],
-        ),
-      ),
-    );
-  }
-}
-
-class _BrandItem extends StatefulWidget {
-  const _BrandItem({
-    required this.brand,
-    required this.circleSize,
-    required this.logoPadding,
-    required this.itemWidth,
-    required this.isSelected,
-    required this.onTap,
-  });
-
-  final CarBrand brand;
-  final double circleSize;
-  final double logoPadding;
-  final double itemWidth;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  @override
-  State<_BrandItem> createState() => _BrandItemState();
-}
-
-class _BrandItemState extends State<_BrandItem> {
-  bool _pressed = false;
-
-  @override
-  Widget build(BuildContext context) {
-    final lang = Localizations.localeOf(context).languageCode;
-
-    return GestureDetector(
-      onTapDown: (_) => setState(() => _pressed = true),
-      onTapUp: (_) => setState(() => _pressed = false),
-      onTapCancel: () => setState(() => _pressed = false),
-      onTap: widget.onTap,
-      child: AnimatedScale(
-        scale: _pressed ? 0.94 : 1,
-        duration: const Duration(milliseconds: 120),
-        child: SizedBox(
-          width: widget.itemWidth,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              _BrandLogoCircle(
-                brand: widget.brand,
-                fallbackLetter: widget.brand.nameEnglish[0].toUpperCase(),
-                isSelected: widget.isSelected,
-                circleSize: widget.circleSize,
-                logoPadding: widget.logoPadding,
-              ),
-              const SizedBox(height: 8),
-              SizedBox(
-                width: widget.itemWidth,
-                child: Text(
-                  widget.brand.displayName(lang),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight:
-                        widget.isSelected ? FontWeight.w600 : FontWeight.w500,
-                    color: widget.isSelected
-                        ? _BrandHorizontalStrip._brandTextPrimary
-                        : Colors.grey[700],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _BrandMoreChip extends StatefulWidget {
-  const _BrandMoreChip({
-    required this.circleSize,
-    required this.itemWidth,
-    required this.onTap,
-  });
-
-  final double circleSize;
-  final double itemWidth;
-  final VoidCallback onTap;
-
-  @override
-  State<_BrandMoreChip> createState() => _BrandMoreChipState();
-}
-
-class _BrandMoreChipState extends State<_BrandMoreChip> {
-  bool _pressed = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTapDown: (_) => setState(() => _pressed = true),
-      onTapUp: (_) => setState(() => _pressed = false),
-      onTapCancel: () => setState(() => _pressed = false),
-      onTap: widget.onTap,
-      child: AnimatedScale(
-        scale: _pressed ? 0.94 : 1,
-        duration: const Duration(milliseconds: 120),
-        child: SizedBox(
-          width: widget.itemWidth,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Container(
-                clipBehavior: Clip.antiAlias,
-                width: widget.circleSize,
-                height: widget.circleSize,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.05),
-                      blurRadius: 8,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                  border: Border.all(
-                    color: _BrandHorizontalStrip._brandFill,
-                    width: 1,
-                  ),
-                ),
-                child: Center(
-                  child: Icon(
-                    Icons.grid_view_rounded,
-                    size: widget.circleSize * 0.4,
-                    color: const Color(0xFF1D1D1F),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 8),
-              SizedBox(
-                width: widget.itemWidth,
-                child: Text(
-                  'زیاتر',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.grey[700],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _Footer extends StatelessWidget {
-  const _Footer();
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = context.l10n;
-
-    return Container(
-      width: double.infinity,
-      margin: const EdgeInsets.only(top: 40),
-      padding: const EdgeInsetsDirectional.symmetric(
-        horizontal: 20,
-        vertical: 40,
-      ),
-      decoration: const BoxDecoration(
-        border: Border(
-          top: BorderSide(color: Color(0xFFE5E5EA)),
-        ),
-      ),
-      child: Text(
-        l10n.footerCopyright,
-        textAlign: TextAlign.center,
-        style: TextStyle(
-          fontSize: 14,
-          color: _HomeScreenState._textSecondary,
         ),
       ),
     );

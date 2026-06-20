@@ -812,6 +812,13 @@ class AppLocalizationsKu extends AppLocalizations {
   String get favoritesSectionTitle => 'دڵخوازەکانم (سەیڤکراو)';
 
   @override
+  String get homeFeedEmpty => 'لە ئێستادا هیچ ئۆتۆمبێلێک بەردەست نییە';
+
+  @override
+  String get homeFeedLoadError =>
+      'نەتوانرا ڕیکلامەکان بار بکرێن. تکایە دووبارە هەوڵ بدەرەوە.';
+
+  @override
   String get favoritesEmpty => 'هیچ ئۆتۆمبێلێکی سەیڤکراو نییە';
 
   @override
@@ -876,6 +883,30 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get soldBadgeLabel => 'فرۆشرا';
+
+  @override
+  String get carSoldNoBids => 'ئەم ئۆتۆمبێلە فرۆشراوە';
+
+  @override
+  String get offersAction => 'نرخەکان';
+
+  @override
+  String get bidHistoryTitle => 'مێژووی نرخەکان';
+
+  @override
+  String get bidHistoryEmpty => 'تا ئێستا هیچ نرخێک دانەنراوە';
+
+  @override
+  String get bidHistoryBidderName => 'ناوی کەس';
+
+  @override
+  String get bidHistoryBidderPhone => 'ژمارەی مۆبایل';
+
+  @override
+  String get bidHistoryAmount => 'بڕی نرخ';
+
+  @override
+  String get bidHistoryDate => 'کات و بەروار';
 
   @override
   String get carFallbackTitle => 'ئۆتۆمبێل';

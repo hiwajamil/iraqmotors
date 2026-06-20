@@ -804,6 +804,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get favoritesSectionTitle => 'مفضلتي (محفوظة)';
 
   @override
+  String get homeFeedEmpty => 'لا توجد سيارات متاحة في الوقت الحالي';
+
+  @override
+  String get homeFeedLoadError =>
+      'تعذر تحميل الإعلانات. يرجى المحاولة مرة أخرى.';
+
+  @override
   String get favoritesEmpty => 'لا توجد سيارات محفوظة';
 
   @override
@@ -868,6 +875,30 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get soldBadgeLabel => 'مباع';
+
+  @override
+  String get carSoldNoBids => 'تم بيع هذه السيارة';
+
+  @override
+  String get offersAction => 'العروض';
+
+  @override
+  String get bidHistoryTitle => 'سجل العروض';
+
+  @override
+  String get bidHistoryEmpty => 'لم يتم تقديم أي عروض بعد';
+
+  @override
+  String get bidHistoryBidderName => 'اسم المزايد';
+
+  @override
+  String get bidHistoryBidderPhone => 'رقم الهاتف';
+
+  @override
+  String get bidHistoryAmount => 'مبلغ العرض';
+
+  @override
+  String get bidHistoryDate => 'التاريخ والوقت';
 
   @override
   String get carFallbackTitle => 'مركبة';
