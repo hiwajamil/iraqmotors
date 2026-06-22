@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/iraq_location_l10n.dart';
 import '../../core/l10n_extensions.dart';
 import '../../providers/admin_settings_provider.dart';
 import '../../providers/storage_providers.dart';
@@ -114,7 +115,7 @@ class _AdminShowroomsByCityViewState
                       final showroomCount = counts[city] ?? 0;
 
                       return _ShowroomCityCard(
-                        cityName: city,
+                        cityKey: city,
                         showroomCount: showroomCount,
                         showroomCountLabel: l10n.adminShowroomCountLabel,
                         onTap: () => _openCityShowrooms(city),
@@ -132,13 +133,13 @@ class _AdminShowroomsByCityViewState
 
 class _ShowroomCityCard extends StatelessWidget {
   const _ShowroomCityCard({
-    required this.cityName,
+    required this.cityKey,
     required this.showroomCount,
     required this.showroomCountLabel,
     required this.onTap,
   });
 
-  final String cityName;
+  final String cityKey;
   final int showroomCount;
   final String showroomCountLabel;
   final VoidCallback onTap;
@@ -150,6 +151,9 @@ class _ShowroomCityCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cityLabel =
+        IraqLocationL10n.provinceLabel(context.l10n, cityKey);
+
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -185,7 +189,7 @@ class _ShowroomCityCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      cityName,
+                      cityLabel,
                       style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w700,

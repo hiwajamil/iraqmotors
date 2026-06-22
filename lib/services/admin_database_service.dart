@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../core/activity_actions.dart';
 import '../data/add_car_option_keys.dart';
+import '../data/iraq_locations.dart';
 import '../models/activity_log.dart';
 import '../models/admin_dashboard_analytics.dart';
 import '../models/admin_system_config.dart';
@@ -49,8 +50,7 @@ class AdminDatabaseService {
   /// Each city map contains `active`, `pending`, and `expired` totals.
   Future<Map<String, Map<String, int>>> fetchAdStatsByCity() async {
     try {
-      final config = await fetchSystemConfig();
-      final cities = config.activeCities;
+      final cities = IraqLocations.provinceOrder;
       // Single collection read; group by province and status locally.
       final snapshot = await _firestore.collection('cars').get();
 

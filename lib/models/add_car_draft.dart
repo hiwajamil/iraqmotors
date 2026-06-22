@@ -141,6 +141,16 @@ class AddCarDraft {
   bool get isPaymentComplete =>
       paymentMethodKey != null && paymentMethodKey!.isNotEmpty;
 
+  /// Whether the wizard has enough data worth auto-saving as a draft.
+  bool get hasDraftContent =>
+      filledPhotoCount > 0 ||
+      (province != null && province!.isNotEmpty) ||
+      (city != null && city!.isNotEmpty) ||
+      (brandId != null && brandId!.isNotEmpty) ||
+      (modelKey != null && modelKey!.isNotEmpty) ||
+      (priceValue != null && priceValue!.trim().isNotEmpty) ||
+      (description != null && description!.trim().isNotEmpty);
+
   AddCarDraft copyWith({
     String? province,
     String? city,

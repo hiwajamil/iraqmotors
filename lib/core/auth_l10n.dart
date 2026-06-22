@@ -9,6 +9,7 @@ extension AuthMessagesL10n on AppLocalizations {
   String messageForAuthError(AuthErrorCode code) {
     return switch (code) {
       AuthErrorCode.invalidPhone => authInvalidPhone,
+      AuthErrorCode.phoneAlreadyRegistered => authEmailAlreadyInUse,
       AuthErrorCode.registrationFailed => authRegistrationFailed,
       AuthErrorCode.sendCodeFirst => authSendCodeFirst,
       AuthErrorCode.userNotFound => authAccountNotFoundPrompt,
@@ -16,7 +17,7 @@ extension AuthMessagesL10n on AppLocalizations {
   }
 
   String messageForFirebaseAuthException(FirebaseAuthException e) {
-    final code = e.code.replaceFirst('auth/', '');
+    final code = e.code.replaceAll(RegExp(r'^(firebase_auth|auth)/'), '');
     final message = e.message?.trim();
 
     final mapped = switch (code) {
@@ -62,6 +63,10 @@ extension AuthMessagesL10n on AppLocalizations {
         return authDeviceBlocked;
       }
       return message;
+    }
+
+    if (code.isNotEmpty) {
+      return '$authGenericError ($code)';
     }
 
     return authGenericError;

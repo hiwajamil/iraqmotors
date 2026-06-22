@@ -41,6 +41,7 @@ class CarDatabaseService {
   static const String statusRejected = 'rejected';
   static const String statusExpired = 'expired';
   static const String statusSold = 'sold';
+  static const String statusDraft = 'draft';
 
   /// Statuses shown on the public home feed (live listings + sold).
   static const List<String> publicFeedStatuses = [statusActive, statusSold];
@@ -151,6 +152,81 @@ class CarDatabaseService {
       );
     } catch (e) {
       throw CarDatabaseException('Failed to remove favorite: $e');
+    }
+  }
+
+  /// Saves or updates an in-progress listing draft (`status == draft`).
+  Future<String> saveCarDraft({
+    String? draftId,
+    required String sellerId,
+    required Map<String, dynamic> carData,
+    required List<String> imageUrls,
+    required int lastStep,
+  }) async {
+    try {
+      final data = <String, dynamic>{
+        ...carData,
+        sellerIdField: sellerId,
+        statusField: statusDraft,
+        'draftLastStep': lastStep,
+        'updatedAt': FieldValue.serverTimestamp(),
+        if (imageUrls.isNotEmpty) ...{
+          'imageUrls': imageUrls,
+          'imageUrl': imageUrls.first,
+        },
+      };
+
+      if (draftId != null && draftId.isNotEmpty) {
+        await _firestore.collection('cars').doc(draftId).set(
+              data,
+              SetOptions(merge: true),
+            );
+        return draftId;
+      }
+
+      final doc = _firestore.collection('cars').doc();
+      await doc.set({
+        ...data,
+        CarBidService.highestBidField: 0,
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+      return doc.id;
+    } on FirebaseException catch (e) {
+      throw CarDatabaseException(
+        e.message ?? 'Failed to save listing draft.',
+      );
+    } catch (e) {
+      throw CarDatabaseException('Failed to save listing draft: $e');
+    }
+  }
+
+  /// Publishes a saved draft by promoting it to `pending` review.
+  Future<void> publishDraftCarAd({
+    required String draftId,
+    required Map<String, dynamic> carData,
+    required List<String> imageUrls,
+  }) async {
+    if (imageUrls.isEmpty) {
+      throw CarDatabaseException(
+        'Cannot publish car listing without image URLs.',
+      );
+    }
+
+    try {
+      await _firestore.collection('cars').doc(draftId).update({
+        ...carData,
+        statusField: statusPending,
+        'imageUrls': imageUrls,
+        'imageUrl': imageUrls.first,
+        'draftLastStep': FieldValue.delete(),
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+    } on FirebaseException catch (e) {
+      throw CarDatabaseException(
+        e.message ?? 'Failed to publish listing draft.',
+      );
+    } catch (e) {
+      throw CarDatabaseException('Failed to publish listing draft: $e');
     }
   }
 

@@ -2,9 +2,11 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth_platform_interface/firebase_auth_platform_interface.dart';
 import 'package:flutter/foundation.dart';
 
 import '../core/phone_auth_email.dart';
+import '../core/recaptcha_enterprise_config.dart';
 import '../core/super_admin_config.dart';
 import '../models/account_type.dart';
 import '../models/phone_verification_result.dart';
@@ -12,6 +14,7 @@ import '../models/user_profile.dart';
 
 enum AuthErrorCode {
   invalidPhone,
+  phoneAlreadyRegistered,
   registrationFailed,
   sendCodeFirst,
   userNotFound,
@@ -35,6 +38,9 @@ class AuthService {
 
   final FirebaseAuth _auth;
   final FirebaseFirestore _firestore;
+
+  /// Web-only reCAPTCHA Enterprise verifier bound to `#recaptcha-container`.
+  RecaptchaVerifier? _webRecaptchaVerifier;
 
   Stream<User?> get authStateChanges => _auth.authStateChanges();
 
@@ -76,7 +82,7 @@ class AuthService {
   }
 
   /// Sends an OTP via Firebase Phone Auth. On mobile, [onCodeSent] / [onError]
-  /// fire from Firebase callbacks; on web, reCAPTCHA + [signInWithPhoneNumber] runs first.
+  /// fire from Firebase callbacks; on web, reCAPTCHA Enterprise + phone verification.
   Future<void> sendOtp({
     required String phoneNumber,
     required void Function(String verificationId) onCodeSent,
@@ -105,21 +111,23 @@ class AuthService {
           return;
         }
 
-        final result = await _verifyPhoneOnWeb(e164);
-        final verificationId = result.verificationId;
-        if (verificationId == null || verificationId.isEmpty) {
-          onError(
-            FirebaseAuthException(
-              code: 'missing-verification-id',
-              message: 'Phone verification did not return a verification ID.',
-            ),
-          );
-          return;
-        }
-        onCodeSent(verificationId);
+        await _verifyPhoneNumberOnWeb(
+          e164: e164,
+          verificationCompleted: (credential) {
+            debugPrint('[Auth] sendOtp verificationCompleted (auto-verify)');
+            onAutoVerified?.call(credential);
+          },
+          verificationFailed: onError,
+          codeSent: (verificationId, _) {
+            debugPrint('[Auth] sendOtp codeSent: verificationId=$verificationId');
+            onCodeSent(verificationId);
+          },
+          codeAutoRetrievalTimeout: onCodeAutoRetrievalTimeout,
+        );
         return;
       }
 
+      await _ensureRecaptchaEnterpriseReady();
       await _auth.verifyPhoneNumber(
         phoneNumber: e164,
         timeout: const Duration(seconds: 120),
@@ -140,10 +148,12 @@ class AuthService {
         },
       );
     } on FirebaseAuthException catch (e) {
+      print('Phone Auth Exception: $e');
       onError(e);
     } on AuthException catch (e) {
       final code = switch (e.code) {
         AuthErrorCode.invalidPhone => 'invalid-phone-number',
+        AuthErrorCode.phoneAlreadyRegistered => 'email-already-in-use',
         AuthErrorCode.sendCodeFirst => 'invalid-verification-id',
         AuthErrorCode.registrationFailed => 'internal-error',
         AuthErrorCode.userNotFound => 'user-not-found',
@@ -155,6 +165,7 @@ class AuthService {
         ),
       );
     } catch (e, stack) {
+      print('Phone Auth Exception: $e');
       debugPrint('[Auth] sendOtp unexpected error: $e\n$stack');
       onError(
         FirebaseAuthException(
@@ -208,6 +219,9 @@ class AuthService {
         createdAt: DateTime.now(),
       );
       await _saveProfile(profile);
+      if (kIsWeb) {
+        _disposeWebRecaptchaVerifier();
+      }
     } catch (e) {
       await _auth.signOut();
       rethrow;
@@ -244,6 +258,7 @@ class AuthService {
     } on FirebaseAuthException {
       rethrow;
     } catch (e, stack) {
+      print('Phone Auth Exception: $e');
       debugPrint('[Auth] verifyPhoneNumber unexpected error: $e\n$stack');
       throw FirebaseAuthException(
         code: 'internal-error',
@@ -252,30 +267,156 @@ class AuthService {
     }
   }
 
-  /// Web phone OTP — Firebase manages reCAPTCHA inside [signInWithPhoneNumber].
-  ///
-  /// Do not call [RecaptchaVerifier.render] beforehand; pre-rendering can expire
-  /// the token before SMS is sent and triggers `captcha-check-failed`.
-  Future<PhoneVerificationResult> _verifyPhoneOnWeb(String e164) async {
-    try {
-      await _auth.setLanguageCode('ar');
+  Future<void> _ensureRecaptchaEnterpriseReady() async {
+    await _auth.setLanguageCode('ar');
+    await _auth.initializeRecaptchaConfig();
+    if (kDebugMode) {
       debugPrint(
-        '[Auth] signInWithPhoneNumber e164="$e164" host=${Uri.base.host}',
+        '[Auth] reCAPTCHA Enterprise ready '
+        '(web key ${RecaptchaEnterpriseConfig.webSiteKey.substring(0, 8)}…, '
+        'android ${RecaptchaEnterpriseConfig.androidSiteKey.substring(0, 8)}…, '
+        'ios ${RecaptchaEnterpriseConfig.iosSiteKey.substring(0, 8)}…)',
       );
+    }
+  }
 
-      final confirmation = await _auth.signInWithPhoneNumber(e164);
+  void _disposeWebRecaptchaVerifier() {
+    try {
+      _webRecaptchaVerifier?.clear();
+    } catch (e) {
+      debugPrint('[Auth] dispose web RecaptchaVerifier: $e');
+    }
+    _webRecaptchaVerifier = null;
+  }
+
+  RecaptchaVerifier _createWebRecaptchaVerifier({
+    void Function(FirebaseAuthException error)? onVerifierError,
+  }) {
+    return RecaptchaVerifier(
+      auth: FirebaseAuthPlatform.instanceFor(
+        app: _auth.app,
+        pluginConstants: _auth.pluginConstants,
+      ),
+      container: 'recaptcha-container',
+      size: RecaptchaVerifierSize.compact,
+      onSuccess: () => debugPrint('[Auth] reCAPTCHA Enterprise solved'),
+      onError: (FirebaseAuthException e) {
+        print('Phone Auth Exception: $e');
+        debugPrint(
+          '[Auth] reCAPTCHA Enterprise error: code=${e.code} message=${e.message}',
+        );
+        onVerifierError?.call(e);
+      },
+      onExpired: () => debugPrint('[Auth] reCAPTCHA Enterprise expired'),
+    );
+  }
+
+  /// Web phone OTP via [RecaptchaVerifier] + [FirebaseAuth.verifyPhoneNumber].
+  ///
+  /// Flutter web wires [verifyPhoneNumber] to `PhoneAuthProvider.verifyPhoneNumber`
+  /// with an internal verifier. We pass our own [RecaptchaVerifier] (required for
+  /// reCAPTCHA Enterprise + `#recaptcha-container`) through [signInWithPhoneNumber],
+  /// which calls the same underlying web API.
+  Future<void> _verifyPhoneNumberOnWeb({
+    required String e164,
+    required PhoneVerificationCompleted verificationCompleted,
+    required PhoneVerificationFailed verificationFailed,
+    required void Function(String verificationId, int? resendToken) codeSent,
+    void Function(String verificationId)? codeAutoRetrievalTimeout,
+  }) async {
+    await _ensureRecaptchaEnterpriseReady();
+    _disposeWebRecaptchaVerifier();
+
+    var settled = false;
+    void settle(void Function() action) {
+      if (settled) return;
+      settled = true;
+      action();
+    }
+
+    _webRecaptchaVerifier = _createWebRecaptchaVerifier(
+      onVerifierError: (e) {
+        settle(() {
+          _disposeWebRecaptchaVerifier();
+          verificationFailed(e);
+        });
+      },
+    );
+
+    debugPrint(
+      '[Auth] verifyPhoneNumber (web) e164="$e164" host=${Uri.base.host} '
+      'signInWithPhoneNumber + RecaptchaVerifier',
+    );
+
+    try {
+      final confirmation = await _auth.signInWithPhoneNumber(
+        e164,
+        _webRecaptchaVerifier,
+      );
+      final verificationId = confirmation.verificationId;
       debugPrint(
-        '[Auth] signInWithPhoneNumber succeeded: verificationId=${confirmation.verificationId}',
+        '[Auth] verifyPhoneNumber (web) codeSent: verificationId=$verificationId',
       );
-      return PhoneVerificationResult(
-        verificationId: confirmation.verificationId,
-      );
+      settle(() => codeSent(verificationId, null));
     } on FirebaseAuthException catch (e) {
+      print('Phone Auth Exception: $e');
       debugPrint(
         '[Auth] Web phone verification failed: code=${e.code} message=${e.message?.toString()}',
       );
-      rethrow;
+      settle(() {
+        _disposeWebRecaptchaVerifier();
+        verificationFailed(e);
+      });
+    } catch (e, stack) {
+      print('Phone Auth Exception: $e');
+      debugPrint('[Auth] Web phone verification failed: $e\n$stack');
+      settle(() {
+        _disposeWebRecaptchaVerifier();
+        verificationFailed(
+          FirebaseAuthException(
+            code: 'internal-error',
+            message: e.toString(),
+          ),
+        );
+      });
     }
+  }
+
+  Future<PhoneVerificationResult> _verifyPhoneOnWeb(String e164) async {
+    final completer = Completer<PhoneVerificationResult>();
+
+    await _verifyPhoneNumberOnWeb(
+      e164: e164,
+      verificationCompleted: (credential) {
+        if (!completer.isCompleted) {
+          completer.complete(
+            PhoneVerificationResult(autoVerifiedCredential: credential),
+          );
+        }
+      },
+      verificationFailed: (e) {
+        if (!completer.isCompleted) {
+          completer.completeError(e);
+        }
+      },
+      codeSent: (verificationId, resendToken) {
+        if (!completer.isCompleted) {
+          completer.complete(
+            PhoneVerificationResult(
+              verificationId: verificationId,
+              resendToken: resendToken,
+            ),
+          );
+        }
+      },
+      codeAutoRetrievalTimeout: (verificationId) {
+        debugPrint(
+          '[Auth] codeAutoRetrievalTimeout: verificationId=$verificationId',
+        );
+      },
+    );
+
+    return completer.future;
   }
 
   Future<PhoneVerificationResult> _verifyPhoneOnMobile(
@@ -285,6 +426,7 @@ class AuthService {
     final completer = Completer<PhoneVerificationResult>();
 
     try {
+      await _ensureRecaptchaEnterpriseReady();
       await _auth.verifyPhoneNumber(
         phoneNumber: e164,
         timeout: const Duration(seconds: 120),
@@ -464,7 +606,10 @@ class AuthService {
     };
   }
 
-  Future<void> signOut() => _auth.signOut();
+  Future<void> signOut() async {
+    _disposeWebRecaptchaVerifier();
+    await _auth.signOut();
+  }
 
   Future<User> _signInWithPhoneOtp({
     required String verificationId,

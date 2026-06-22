@@ -247,10 +247,11 @@ class _PremiumCarCardState extends ConsumerState<PremiumCarCard>
     final isSold =
         widget.car['status']?.toString() == CarDatabaseService.statusSold;
 
-    final cardRadius = compact ? 16.0 : 24.0;
-    final outerPadding = compact ? 6.0 : 8.0;
-    final imageGap = compact ? 8.0 : 20.0;
-    final contentGap = compact ? 6.0 : 20.0;
+    const cardRadius = 12.0;
+    final contentPadding = compact ? 6.0 : 12.0;
+    final imageTextGap = compact ? 6.0 : 12.0;
+    const buttonGap = 16.0;
+    const bottomPadding = 2.0;
     final hoverLift = compact ? 4.0 : 8.0;
 
     return FadeTransition(
@@ -260,7 +261,9 @@ class _PremiumCarCardState extends ConsumerState<PremiumCarCard>
         child: MouseRegion(
           onEnter: (_) => setState(() => _hovered = true),
           onExit: (_) => setState(() => _hovered = false),
-          child: AnimatedContainer(
+          child: Align(
+            alignment: Alignment.topCenter,
+            child: AnimatedContainer(
             duration: const Duration(milliseconds: 400),
             curve: _hoverCurve,
             transform: Matrix4.translationValues(0, _isActive ? -hoverLift : 0, 0),
@@ -284,118 +287,108 @@ class _PremiumCarCardState extends ConsumerState<PremiumCarCard>
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Expanded(
-                  child: GestureDetector(
-                    onTapDown: (_) => setState(() => _pressed = true),
-                    onTapUp: (_) => setState(() => _pressed = false),
-                    onTapCancel: () => setState(() => _pressed = false),
-                    onTap: widget.onTap,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
-                            outerPadding,
-                            outerPadding,
-                            outerPadding,
-                            0,
-                          ),
-                          child: _ImageContainer(
-                            imageUrl: imageUrl,
-                            isZoomed: _isActive,
-                            isWishlisted: widget.isWishlisted,
-                            wishlistHovered: _wishlistHovered,
-                            compact: compact,
-                            isSold: isSold,
-                            onWishlistTap: widget.onWishlistTap,
-                            onWishlistHover: (hovered) =>
-                                setState(() => _wishlistHovered = hovered),
-                          ),
+                GestureDetector(
+                  onTapDown: (_) => setState(() => _pressed = true),
+                  onTapUp: (_) => setState(() => _pressed = false),
+                  onTapCancel: () => setState(() => _pressed = false),
+                  onTap: widget.onTap,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      _ImageContainer(
+                        imageUrl: imageUrl,
+                        cardRadius: cardRadius,
+                        isZoomed: _isActive,
+                        isWishlisted: widget.isWishlisted,
+                        wishlistHovered: _wishlistHovered,
+                        compact: compact,
+                        isSold: isSold,
+                        onWishlistTap: widget.onWishlistTap,
+                        onWishlistHover: (hovered) =>
+                            setState(() => _wishlistHovered = hovered),
+                      ),
+                      Padding(
+                        padding: EdgeInsetsDirectional.fromSTEB(
+                          contentPadding,
+                          imageTextGap,
+                          contentPadding,
+                          0,
                         ),
-                        SizedBox(height: imageGap),
-                        Expanded(
-                          child: Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
-                              outerPadding,
-                              0,
-                              outerPadding,
-                              0,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              make.toUpperCase(),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: compact ? 8 : 12,
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: compact ? 0.6 : 1,
+                                color: PremiumCarCard.textSecondary,
+                                height: 1.2,
+                              ),
                             ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  make.toUpperCase(),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    fontSize: compact ? 8 : 12,
-                                    fontWeight: FontWeight.w600,
-                                    letterSpacing: compact ? 0.6 : 1,
-                                    color: PremiumCarCard.textSecondary,
-                                    height: 1.2,
-                                  ),
-                                ),
-                                SizedBox(height: compact ? 2 : 4),
-                                Text(
-                                  model,
-                                  maxLines: compact ? 1 : 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    fontSize: compact ? 12 : 22.4,
-                                    fontWeight: FontWeight.w600,
-                                    color: PremiumCarCard.textPrimary,
-                                    height: 1.2,
-                                  ),
-                                ),
-                                SizedBox(height: compact ? 4 : 8),
-                                _buildPricingSection(l10n, compact: compact),
-                                if (!compact) ...[
-                                  const SizedBox(height: 20),
-                                  Container(
-                                    padding: const EdgeInsets.only(top: 16),
-                                    decoration: const BoxDecoration(
-                                      border: Border(
-                                        top: BorderSide(
-                                          color: PremiumCarCard.specsBorder,
-                                          width: 1,
-                                        ),
-                                      ),
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        _SpecColumn(
-                                          label: l10n.specEngine,
-                                          value: engine,
-                                        ),
-                                        const SizedBox(width: 20),
-                                        _SpecColumn(
-                                          label: l10n.specMileage,
-                                          value: mileage,
-                                        ),
-                                      ],
+                            SizedBox(height: compact ? 2 : 4),
+                            Text(
+                              model,
+                              maxLines: compact ? 1 : 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: compact ? 12 : 22.4,
+                                fontWeight: FontWeight.w600,
+                                color: PremiumCarCard.textPrimary,
+                                height: 1.2,
+                              ),
+                            ),
+                            SizedBox(height: compact ? 4 : 6),
+                            _buildPricingSection(l10n, compact: compact),
+                            if (!compact) ...[
+                              const SizedBox(height: 12),
+                              Container(
+                                padding: const EdgeInsets.only(top: 12),
+                                decoration: const BoxDecoration(
+                                  border: Border(
+                                    top: BorderSide(
+                                      color: PremiumCarCard.specsBorder,
+                                      width: 1,
                                     ),
                                   ),
-                                ],
-                              ],
-                            ),
-                          ),
+                                ),
+                                child: Row(
+                                  children: [
+                                    _SpecColumn(
+                                      label: l10n.specEngine,
+                                      value: engine,
+                                    ),
+                                    const SizedBox(width: 16),
+                                    _SpecColumn(
+                                      label: l10n.specMileage,
+                                      value: mileage,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
-                SizedBox(height: compact ? 6 : contentGap),
+                const SizedBox(height: buttonGap),
                 Padding(
                   padding: EdgeInsetsDirectional.fromSTEB(
-                    outerPadding,
+                    contentPadding,
                     0,
-                    outerPadding,
-                    compact ? 4 : 6,
+                    contentPadding,
+                    bottomPadding,
                   ),
                   child: _buildBidButton(l10n, compact: compact),
                 ),
               ],
+            ),
             ),
           ),
         ),
@@ -407,6 +400,7 @@ class _PremiumCarCardState extends ConsumerState<PremiumCarCard>
 class _ImageContainer extends StatelessWidget {
   const _ImageContainer({
     required this.imageUrl,
+    required this.cardRadius,
     required this.isZoomed,
     required this.isWishlisted,
     required this.wishlistHovered,
@@ -417,6 +411,7 @@ class _ImageContainer extends StatelessWidget {
   });
 
   final String imageUrl;
+  final double cardRadius;
   final bool isZoomed;
   final bool isWishlisted;
   final bool wishlistHovered;
@@ -427,11 +422,13 @@ class _ImageContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final imageRadius = compact ? 12.0 : 16.0;
-    final wishlistInset = compact ? 8.0 : 15.0;
+    final wishlistInset = compact ? 8.0 : 12.0;
 
     return ClipRRect(
-      borderRadius: BorderRadius.circular(imageRadius),
+      borderRadius: BorderRadius.only(
+        topLeft: Radius.circular(cardRadius),
+        topRight: Radius.circular(cardRadius),
+      ),
       child: compact
           ? AspectRatio(
               aspectRatio: 1.35,
@@ -448,21 +445,25 @@ class _ImageContainer extends StatelessWidget {
   Widget _buildImageStack(double wishlistInset) {
     return Stack(
       fit: StackFit.expand,
+      clipBehavior: Clip.hardEdge,
       children: [
-        AnimatedScale(
-          scale: isZoomed && !isSold ? 1.08 : 1,
-          duration: const Duration(milliseconds: 600),
-          curve: Curves.easeOut,
-          child: CarNetworkImage(
-            imageUrl: imageUrl,
-            fit: BoxFit.cover,
-            errorBuilder: (_, __, ___) => Container(
-              color: const Color(0xFFF5F5F7),
-              alignment: Alignment.center,
-              child: Icon(
-                Icons.directions_car_outlined,
-                size: compact ? 28 : 48,
-                color: Colors.black.withValues(alpha: 0.12),
+        Positioned.fill(
+          child: AnimatedScale(
+            scale: isZoomed && !isSold ? 1.08 : 1,
+            duration: const Duration(milliseconds: 600),
+            curve: Curves.easeOut,
+            alignment: Alignment.center,
+            child: CarNetworkImage(
+              imageUrl: imageUrl,
+              fit: BoxFit.cover,
+              errorBuilder: (_, __, ___) => Container(
+                color: const Color(0xFFF5F5F7),
+                alignment: Alignment.center,
+                child: Icon(
+                  Icons.directions_car_outlined,
+                  size: compact ? 28 : 48,
+                  color: Colors.black.withValues(alpha: 0.12),
+                ),
               ),
             ),
           ),

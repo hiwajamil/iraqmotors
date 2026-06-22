@@ -2,6 +2,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/iraq_location_l10n.dart';
 import '../../core/l10n_extensions.dart';
 import '../../l10n/app_localizations.dart';
 import '../../models/admin_dashboard_analytics.dart';
@@ -651,6 +652,7 @@ class _CityPerformanceRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final pending = row.totalAds - row.approvedAds;
     final approvalFraction = row.approvalRate.clamp(0.0, 1.0);
 
@@ -665,7 +667,7 @@ class _CityPerformanceRow extends StatelessWidget {
           Expanded(
             flex: 3,
             child: Text(
-              row.city,
+              IraqLocationL10n.provinceLabel(l10n, row.city),
               style: const TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,

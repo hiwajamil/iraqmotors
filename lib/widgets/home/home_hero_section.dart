@@ -54,10 +54,16 @@ class HomeHeroSection extends StatelessWidget {
   final VoidCallback onViewAllBrands;
   final VoidCallback onAdvancedSearchToggle;
 
+  /// Mobile hero height — must keep min ≤ max or [num.clamp] throws.
+  static double mobileHeroHeight(double screenHeight) {
+    final maxHeight = screenHeight * 0.55;
+    final minHeight = maxHeight < 450.0 ? maxHeight : 450.0;
+    return (screenHeight * 0.5).clamp(minHeight, maxHeight);
+  }
+
   double _heroHeight(BuildContext context) {
     if (isWide) return 600;
-    final screenHeight = MediaQuery.sizeOf(context).height;
-    return (screenHeight * 0.5).clamp(450.0, screenHeight * 0.55);
+    return mobileHeroHeight(MediaQuery.sizeOf(context).height);
   }
 
   Future<void> _pickLocation(BuildContext context) async {

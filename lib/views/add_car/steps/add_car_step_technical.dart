@@ -86,6 +86,7 @@ class AddCarStepTechnical extends StatelessWidget {
             selectedKey: cylindersKey,
             onSelected: onCylindersChanged,
             labelFor: (key) => AddCarFormOptions.cylindersLabel(l10n, key),
+            cardPadding: const EdgeInsetsDirectional.fromSTEB(10, 8, 10, 8),
           ),
           const SizedBox(height: 28),
           AddCarSimpleChipSection(
@@ -98,6 +99,7 @@ class AddCarStepTechnical extends StatelessWidget {
             selectedKey: engineSizeKey,
             onSelected: onEngineSizeChanged,
             labelFor: (key) => AddCarFormOptions.engineSizeLabel(l10n, key),
+            cardPadding: const EdgeInsetsDirectional.fromSTEB(10, 8, 10, 8),
           ),
         ],
       ),

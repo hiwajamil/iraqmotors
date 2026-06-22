@@ -31,9 +31,18 @@
 
   <title>iq_motors</title>
   <link rel="manifest" href="manifest.json">
+  <!-- reCAPTCHA Enterprise (Firebase Console → Authentication → reCAPTCHA → Web key) -->
+  <script
+    src="https://www.google.com/recaptcha/enterprise.js?render=6Lci2CstAAAAAP4dOUHfxeVt2ai057KzVKnJYsQg"
+    async
+    defer></script>
   <style>
     #recaptcha-container {
-      min-height: 0;
+      min-height: 1px;
+      position: fixed;
+      bottom: 16px;
+      right: 16px;
+      z-index: 9999;
     }
   </style>
 </head>

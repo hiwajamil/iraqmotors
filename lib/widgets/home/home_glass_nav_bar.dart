@@ -144,7 +144,9 @@ class HomeGlassNavBar extends StatelessWidget implements PreferredSizeWidget {
                     }
                     Navigator.of(context).push(
                       MaterialPageRoute<void>(
-                        builder: (_) => const AuthScreen(),
+                        builder: (_) => const AuthScreen(
+                          initialLoginMode: false,
+                        ),
                       ),
                     );
                   },

@@ -259,13 +259,13 @@ abstract class AppLocalizations {
   /// No description provided for @phonePlaceholder.
   ///
   /// In ku, this message translates to:
-  /// **'0750 000 0000'**
+  /// **'750 000 0000'**
   String get phonePlaceholder;
 
   /// No description provided for @workPhonePlaceholder.
   ///
   /// In ku, this message translates to:
-  /// **'0770 000 0000'**
+  /// **'770 000 0000'**
   String get workPhonePlaceholder;
 
   /// No description provided for @passwordLabel.
@@ -445,7 +445,7 @@ abstract class AppLocalizations {
   /// No description provided for @authInvalidPhone.
   ///
   /// In ku, this message translates to:
-  /// **'ژمارەی مۆبایل دروست نییە. نموونە: 0750 000 0000'**
+  /// **'ژمارەی مۆبایل دروست نییە. نموونە: 750 000 0000'**
   String get authInvalidPhone;
 
   /// No description provided for @authRegistrationFailed.
@@ -1732,6 +1732,18 @@ abstract class AppLocalizations {
   /// **'فرۆشرا'**
   String get adStatusSold;
 
+  /// No description provided for @adStatusDraft.
+  ///
+  /// In ku, this message translates to:
+  /// **'ڕەشنووس'**
+  String get adStatusDraft;
+
+  /// No description provided for @adCompleteDraft.
+  ///
+  /// In ku, this message translates to:
+  /// **'تەواوی بکە'**
+  String get adCompleteDraft;
+
   /// No description provided for @soldAction.
   ///
   /// In ku, this message translates to:
@@ -2524,6 +2536,12 @@ abstract class AppLocalizations {
   /// **'بڵاوکردنەوە'**
   String get addCarPublish;
 
+  /// No description provided for @addCarExit.
+  ///
+  /// In ku, this message translates to:
+  /// **'دەرچوون'**
+  String get addCarExit;
+
   /// No description provided for @addCarSave.
   ///
   /// In ku, this message translates to:
@@ -2565,6 +2583,18 @@ abstract class AppLocalizations {
   /// In ku, this message translates to:
   /// **'گۆڕانکارییەکان بە سەرکەوتوویی پاشەکەوتکران'**
   String get addCarSaveSuccess;
+
+  /// No description provided for @addCarDraftSavedSuccess.
+  ///
+  /// In ku, this message translates to:
+  /// **'پێشکەوتن پاشەکەوتکرا. لە ڕیکلامەکانمدا دەتوانیت دواتر بەردەوام بیت.'**
+  String get addCarDraftSavedSuccess;
+
+  /// No description provided for @addCarDraftEmpty.
+  ///
+  /// In ku, this message translates to:
+  /// **'تکایە پێش پاشەکەوتکردن هەندێک وردەکاری زیاد بکە.'**
+  String get addCarDraftEmpty;
 
   /// No description provided for @addCarPublishSuccess.
   ///

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/activity_actions.dart';
+import '../../core/iraq_location_l10n.dart';
 import '../../core/l10n_extensions.dart';
 import '../../core/relative_time.dart';
 import '../../l10n/app_localizations.dart';
@@ -249,6 +250,7 @@ class _ActivityLogRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final adminLabel = log.adminDisplayName.isNotEmpty
         ? log.adminDisplayName
         : log.adminId;
@@ -315,7 +317,7 @@ class _ActivityLogRow extends StatelessWidget {
                 if (log.details.isNotEmpty) ...[
                   const SizedBox(height: 6),
                   Text(
-                    log.details,
+                    IraqLocationL10n.localizeActivityDetails(l10n, log.details),
                     style: const TextStyle(
                       fontSize: 13,
                       color: Color(0xFF1D1D1F),

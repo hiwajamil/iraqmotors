@@ -2046,47 +2046,88 @@ class _DetailImageCarousel extends StatelessWidget {
       return _emptyImagePlaceholder();
     }
 
+    const pageAnimationDuration = Duration(milliseconds: 300);
+    final showLeftArrow = urls.length > 1 && currentPage > 0;
+    final showRightArrow = urls.length > 1 && currentPage < urls.length - 1;
+
     return Column(
       children: [
         ClipRRect(
           borderRadius: BorderRadius.circular(14),
           child: AspectRatio(
             aspectRatio: 16 / 10,
-            child: PageView.builder(
-              controller: pageController,
-              itemCount: urls.length,
-              onPageChanged: onPageChanged,
-              itemBuilder: (context, index) {
-                final url = urls[index];
-                return CarNetworkImage(
-                  imageUrl: url,
-                  fit: BoxFit.cover,
-                  loadingBuilder: (context, child, loadingProgress) {
-                    if (loadingProgress == null) return child;
-                    return Container(
-                      color: _PendingAdDetailDialogState._divider,
-                      alignment: Alignment.center,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        value: loadingProgress.expectedTotalBytes != null
-                            ? loadingProgress.cumulativeBytesLoaded /
-                                loadingProgress.expectedTotalBytes!
-                            : null,
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                PageView.builder(
+                  controller: pageController,
+                  itemCount: urls.length,
+                  onPageChanged: onPageChanged,
+                  itemBuilder: (context, index) {
+                    final url = urls[index];
+                    return SizedBox.expand(
+                      child: CarNetworkImage(
+                        imageUrl: url,
+                        fit: BoxFit.cover,
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return Container(
+                            color: _PendingAdDetailDialogState._divider,
+                            alignment: Alignment.center,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              value: loadingProgress.expectedTotalBytes != null
+                                  ? loadingProgress.cumulativeBytesLoaded /
+                                      loadingProgress.expectedTotalBytes!
+                                  : null,
+                            ),
+                          );
+                        },
+                        errorBuilder: (_, __, ___) => Container(
+                          color: _PendingAdDetailDialogState._divider,
+                          alignment: Alignment.center,
+                          child: Icon(
+                            Icons.broken_image_outlined,
+                            size: 40,
+                            color: _PendingAdDetailDialogState._textSecondary
+                                .withValues(alpha: 0.7),
+                          ),
+                        ),
                       ),
                     );
                   },
-                  errorBuilder: (_, __, ___) => Container(
-                    color: _PendingAdDetailDialogState._divider,
-                    alignment: Alignment.center,
-                    child: Icon(
-                      Icons.broken_image_outlined,
-                      size: 40,
-                      color: _PendingAdDetailDialogState._textSecondary
-                          .withValues(alpha: 0.7),
+                ),
+                if (showLeftArrow)
+                  PositionedDirectional(
+                    start: 8,
+                    top: 0,
+                    bottom: 0,
+                    child: Center(
+                      child: _CarouselNavButton(
+                        icon: Icons.chevron_left,
+                        onPressed: () => pageController.previousPage(
+                          duration: pageAnimationDuration,
+                          curve: Curves.easeInOut,
+                        ),
+                      ),
                     ),
                   ),
-                );
-              },
+                if (showRightArrow)
+                  PositionedDirectional(
+                    end: 8,
+                    top: 0,
+                    bottom: 0,
+                    child: Center(
+                      child: _CarouselNavButton(
+                        icon: Icons.chevron_right,
+                        onPressed: () => pageController.nextPage(
+                          duration: pageAnimationDuration,
+                          curve: Curves.easeInOut,
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
             ),
           ),
         ),
@@ -2129,6 +2170,34 @@ class _DetailImageCarousel extends StatelessWidget {
             color: _PendingAdDetailDialogState._textSecondary,
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _CarouselNavButton extends StatelessWidget {
+  const _CarouselNavButton({
+    required this.icon,
+    required this.onPressed,
+  });
+
+  final IconData icon;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: IconButton(
+        onPressed: onPressed,
+        icon: Icon(icon, size: 32, color: Colors.white),
+        style: IconButton.styleFrom(
+          backgroundColor: Colors.black.withValues(alpha: 0.5),
+          shape: const CircleBorder(),
+          padding: const EdgeInsets.all(8),
+          minimumSize: const Size(44, 44),
+        ),
+        tooltip: '',
       ),
     );
   }

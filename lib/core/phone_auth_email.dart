@@ -1,5 +1,7 @@
+import 'package:flutter/services.dart';
+
 /// Iraq country calling code shown before the local number in auth forms.
-const String iraqPhoneCountryCodeDisplay = '+964';
+const String iraqPhoneCountryCodeDisplay = '+964 ';
 
 /// Strips spaces and dashes before digit normalization.
 ///
@@ -16,7 +18,13 @@ String cleanPhoneInput(String input) {
 /// Firebase Email/Password is used so the UI can keep phone + password fields.
 String normalizeIraqPhone(String input) {
   var digits = cleanPhoneInput(input).replaceAll(RegExp(r'\D'), '');
-  if (digits.startsWith('964')) return digits;
+  if (digits.startsWith('964')) {
+    var local = digits.substring(3);
+    if (local.startsWith('0')) {
+      local = local.substring(1);
+    }
+    return '964$local';
+  }
   if (digits.startsWith('0') && digits.length >= 10) {
     return '964${digits.substring(1)}';
   }
@@ -50,3 +58,51 @@ String formatIraqPhoneE164(String input) {
 
 /// E.164 format required by Firebase Phone Auth (e.g. +9647501234567).
 String phoneToE164(String phone) => formatIraqPhoneE164(phone);
+
+/// Formats local Iraqi mobile input (without country code): strips a leading `0`,
+/// limits to 10 digits, groups as `770 144 1516`.
+class IraqPhoneLocalInputFormatter extends TextInputFormatter {
+  static const int _maxDigits = 10;
+
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    var digits = newValue.text.replaceAll(RegExp(r'\D'), '');
+    if (digits.startsWith('0')) {
+      digits = digits.substring(1);
+    }
+    if (digits.length > _maxDigits) {
+      digits = digits.substring(0, _maxDigits);
+    }
+
+    final formatted = _formatDigits(digits);
+    return TextEditingValue(
+      text: formatted,
+      selection: TextSelection.collapsed(
+        offset: _selectionOffset(formatted, digits.length),
+      ),
+    );
+  }
+
+  static String _formatDigits(String digits) {
+    if (digits.isEmpty) return '';
+    final buffer = StringBuffer();
+    for (var i = 0; i < digits.length; i++) {
+      if (i == 3 || i == 6) buffer.write(' ');
+      buffer.write(digits[i]);
+    }
+    return buffer.toString();
+  }
+
+  static int _selectionOffset(String formatted, int digitCount) {
+    if (digitCount == 0) return 0;
+    var digitsSeen = 0;
+    for (var i = 0; i < formatted.length; i++) {
+      if (formatted[i] != ' ') digitsSeen++;
+      if (digitsSeen >= digitCount) return i + 1;
+    }
+    return formatted.length;
+  }
+}

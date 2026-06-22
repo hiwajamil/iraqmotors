@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/filter_l10n.dart';
+import '../../core/iraq_location_l10n.dart';
 import '../../core/l10n_extensions.dart';
 import '../../providers/storage_providers.dart';
 
@@ -57,7 +58,7 @@ class _AdminUserListDetailScreenState
           onPressed: () => Navigator.of(context).maybePop(),
         ),
         title: Text(
-          widget.city,
+          IraqLocationL10n.provinceLabel(l10n, widget.city),
           style: const TextStyle(
             fontSize: 17,
             fontWeight: FontWeight.w600,

@@ -26,8 +26,8 @@
   "invalidEmail": "Invalid email address",
   "phoneLabel": "Phone Number",
   "phoneRequired": "Phone number is required",
-  "phonePlaceholder": "0750 000 0000",
-  "workPhonePlaceholder": "0770 000 0000",
+  "phonePlaceholder": "750 000 0000",
+  "workPhonePlaceholder": "770 000 0000",
   "passwordLabel": "Password",
   "passwordRequired": "Password is required",
   "passwordPlaceholder": "Enter your password",
@@ -62,7 +62,7 @@
       "phone": {"type": "String"}
     }
   },
-  "authInvalidPhone": "Invalid mobile number. Example: 0750 000 0000",
+  "authInvalidPhone": "Invalid mobile number. Example: 750 000 0000",
   "authRegistrationFailed": "Registration failed. Please try again.",
   "authSendCodeFirst": "Send the verification code first",
   "authPhoneAutoVerified": "Phone number verified automatically",
@@ -81,7 +81,7 @@
       "phone": {"type": "String"}
     }
   },
-  "authInvalidPhone": "Invalid mobile number. Example: 0750 000 0000",
+  "authInvalidPhone": "Invalid mobile number. Example: 750 000 0000",
   "authRegistrationFailed": "Registration failed. Please try again.",
   "authSendCodeFirst": "Send the verification code first",
   "authPhoneAutoVerified": "Phone number verified automatically",
@@ -309,6 +309,8 @@
   "editAction": "Edit",
   "adStatusActive": "Active",
   "adStatusSold": "Sold",
+  "adStatusDraft": "Draft",
+  "adCompleteDraft": "Complete it",
   "soldAction": "Sold",
   "markAsSoldTitle": "Mark as Sold",
   "markAsSoldConfirm": "Mark this listing as sold? Buyers will see a sold badge on the listing.",
@@ -476,6 +478,7 @@
     }
   },
   "addCarPublish": "Publish",
+  "addCarExit": "Exit",
   "addCarSave": "Save",
   "addCarPublishing": "Publishing...",
   "addCarSaving": "Saving...",
@@ -483,6 +486,8 @@
   "addCarMinPhotosRequired": "Please select at least 4 photos.",
   "addCarUploadFailed": "Photo upload failed.",
   "addCarSaveSuccess": "Changes saved successfully.",
+  "addCarDraftSavedSuccess": "Progress saved. Continue anytime from My Ads.",
+  "addCarDraftEmpty": "Add some details before saving.",
   "addCarPublishSuccess": "Your listing was published successfully.",
   "addCarSaveFailed": "Save failed. Please try again.",
   "addCarPublishFailed": "Publishing failed. Please try again.",

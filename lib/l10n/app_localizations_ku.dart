@@ -89,10 +89,10 @@ class AppLocalizationsKu extends AppLocalizations {
   String get phoneRequired => 'ژمارەی مۆبایل پێویستە';
 
   @override
-  String get phonePlaceholder => '0750 000 0000';
+  String get phonePlaceholder => '750 000 0000';
 
   @override
-  String get workPhonePlaceholder => '0770 000 0000';
+  String get workPhonePlaceholder => '770 000 0000';
 
   @override
   String get passwordLabel => 'وشەی نهێنی (Password)';
@@ -185,7 +185,7 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get authInvalidPhone =>
-      'ژمارەی مۆبایل دروست نییە. نموونە: 0750 000 0000';
+      'ژمارەی مۆبایل دروست نییە. نموونە: 750 000 0000';
 
   @override
   String get authRegistrationFailed =>
@@ -859,6 +859,12 @@ class AppLocalizationsKu extends AppLocalizations {
   String get adStatusSold => 'فرۆشرا';
 
   @override
+  String get adStatusDraft => 'ڕەشنووس';
+
+  @override
+  String get adCompleteDraft => 'تەواوی بکە';
+
+  @override
   String get soldAction => 'فرۆشرا';
 
   @override
@@ -1275,6 +1281,9 @@ class AppLocalizationsKu extends AppLocalizations {
   String get addCarPublish => 'بڵاوکردنەوە';
 
   @override
+  String get addCarExit => 'دەرچوون';
+
+  @override
   String get addCarSave => 'پاشەکەوتکردن';
 
   @override
@@ -1294,6 +1303,14 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get addCarSaveSuccess => 'گۆڕانکارییەکان بە سەرکەوتوویی پاشەکەوتکران';
+
+  @override
+  String get addCarDraftSavedSuccess =>
+      'پێشکەوتن پاشەکەوتکرا. لە ڕیکلامەکانمدا دەتوانیت دواتر بەردەوام بیت.';
+
+  @override
+  String get addCarDraftEmpty =>
+      'تکایە پێش پاشەکەوتکردن هەندێک وردەکاری زیاد بکە.';
 
   @override
   String get addCarPublishSuccess => 'ڕاگەیاندنەکەت بە سەرکەوتوویی بڵاوکرایەوە';

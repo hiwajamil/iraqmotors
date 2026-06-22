@@ -87,10 +87,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get phoneRequired => 'رقم الهاتف مطلوب';
 
   @override
-  String get phonePlaceholder => '0750 000 0000';
+  String get phonePlaceholder => '750 000 0000';
 
   @override
-  String get workPhonePlaceholder => '0770 000 0000';
+  String get workPhonePlaceholder => '770 000 0000';
 
   @override
   String get passwordLabel => 'كلمة المرور (Password)';
@@ -182,7 +182,7 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get authInvalidPhone => 'رقم الهاتف غير صالح. مثال: 0750 000 0000';
+  String get authInvalidPhone => 'رقم الهاتف غير صالح. مثال: 750 000 0000';
 
   @override
   String get authRegistrationFailed => 'فشل التسجيل. يرجى المحاولة مرة أخرى.';
@@ -851,6 +851,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get adStatusSold => 'مباع';
 
   @override
+  String get adStatusDraft => 'مسودة';
+
+  @override
+  String get adCompleteDraft => 'أكمله';
+
+  @override
   String get soldAction => 'مباع';
 
   @override
@@ -1264,6 +1270,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get addCarPublish => 'نشر';
 
   @override
+  String get addCarExit => 'خروج';
+
+  @override
   String get addCarSave => 'حفظ';
 
   @override
@@ -1283,6 +1292,13 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get addCarSaveSuccess => 'تم حفظ التغييرات بنجاح';
+
+  @override
+  String get addCarDraftSavedSuccess =>
+      'تم حفظ التقدم. يمكنك المتابعة لاحقاً من إعلاناتي.';
+
+  @override
+  String get addCarDraftEmpty => 'يرجى إضافة بعض التفاصيل قبل الحفظ.';
 
   @override
   String get addCarPublishSuccess => 'تم نشر إعلانك بنجاح';

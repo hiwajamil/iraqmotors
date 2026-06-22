@@ -34,6 +34,14 @@ abstract final class IraqLocationL10n {
     return storageKey;
   }
 
+  /// Localizes stored audit lines such as `City: هەولێر`.
+  static String localizeActivityDetails(AppLocalizations l10n, String details) {
+    const englishPrefix = 'City: ';
+    if (!details.startsWith(englishPrefix)) return details;
+    final storageKey = details.substring(englishPrefix.length).trim();
+    return '${l10n.adminCityColumn}: ${provinceLabel(l10n, storageKey)}';
+  }
+
   static String cityLabel(AppLocalizations l10n, String storageKey) {
     final locale = l10n.localeName.split('_').first;
     return switch (locale) {

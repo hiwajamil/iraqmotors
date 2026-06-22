@@ -10,6 +10,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../core/l10n_extensions.dart';
+import '../../core/post_auth_navigation.dart';
 import '../../core/web_debug_log.dart';
 import '../../l10n/app_localizations.dart';
 import '../../models/account_type.dart';
@@ -23,7 +24,9 @@ import '../../providers/r2_storage_provider.dart';
 import '../../providers/storage_providers.dart';
 import '../../services/car_database_service.dart';
 import '../../services/car_vision_service.dart';
+import '../../services/cloudflare_upload_service.dart';
 import '../../services/r2_storage_service.dart';
+import '../../widgets/moderation_error_dialog.dart';
 import 'package:http/http.dart' as http;
 import 'add_car_theme.dart';
 import 'steps/add_car_step_basic_info.dart';
@@ -45,46 +48,85 @@ class AddCarFlowScreen extends ConsumerStatefulWidget {
     super.key,
     this.existingAdId,
     this.existingCarData,
+    this.initialStep = 0,
+    this.isDraft = false,
   });
 
   final String? existingAdId;
   final Map<String, dynamic>? existingCarData;
+  final int initialStep;
+  final bool isDraft;
 
   @override
   ConsumerState<AddCarFlowScreen> createState() => _AddCarFlowScreenState();
 }
 
-class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
+class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen>
+    with WidgetsBindingObserver {
   static const int _stepCount = 12;
 
   final PageController _pageController = PageController();
   final ImagePicker _imagePicker = ImagePicker();
   int _currentStep = 0;
   bool _isPublishing = false;
+  bool _isSavingDraft = false;
   bool _isAnalyzingAi = false;
   final Set<int> _uploadingPhotoSlots = {};
   final Map<int, Uint8List> _slotPreviewBytes = {};
   final Set<String> _aiFilledFields = {};
   late AddCarDraft _draft;
   late List<XFile?> _selectedImages;
+  String? _draftAdId;
 
-  bool get _isEditMode => widget.existingAdId != null;
+  bool get _isEditMode =>
+      widget.existingAdId != null && !widget.isDraft && !_isDraftMode;
+
+  bool get _isDraftMode => widget.isDraft;
 
   bool get _isAnyPhotoUploading => _uploadingPhotoSlots.isNotEmpty;
+
+  bool get _shouldAutoSaveDraft =>
+      !_isPublishing &&
+      !_isSavingDraft &&
+      !_isEditMode &&
+      !_isAnyPhotoUploading &&
+      _draft.hasDraftContent;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _draft = widget.existingCarData != null
         ? AddCarDraft.fromFirestoreMap(widget.existingCarData!)
         : const AddCarDraft();
     _selectedImages = List<XFile?>.filled(AddCarDraft.photoSlotCount, null);
+    if (_isDraftMode && widget.existingAdId != null) {
+      _draftAdId = widget.existingAdId;
+    }
+
+    final resumeStep = widget.initialStep.clamp(0, _stepCount - 1);
+    if (resumeStep > 0) {
+      _currentStep = resumeStep;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        _pageController.jumpToPage(resumeStep);
+      });
+    }
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _pageController.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.inactive) {
+      _saveDraftIfNeeded();
+    }
   }
 
   bool get _canProceed {
@@ -118,13 +160,153 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
     }
   }
 
-  void _goBack() {
+  Future<void> _goBack() async {
     if (_isPublishing || _isAnyPhotoUploading) return;
     if (_currentStep == 0) {
+      await _saveDraftIfNeeded();
+      if (!mounted) return;
       Navigator.of(context).maybePop();
       return;
     }
     _goToStep(_currentStep - 1);
+  }
+
+  Future<void> _exitToDashboard() async {
+    if (_isPublishing || _isAnyPhotoUploading) return;
+
+    await _saveDraftIfNeeded();
+    if (!mounted) return;
+
+    final user = FirebaseAuth.instance.currentUser;
+    final profile = ref.read(userProfileProvider).value;
+
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute<void>(
+        builder: (_) => dashboardForAuthenticatedUser(
+          email: user?.email,
+          phone: profile?.phone,
+          accountType: profile?.accountType,
+        ),
+      ),
+      (route) => route.isFirst,
+    );
+  }
+
+  Future<void> _persistDraft() async {
+    final sellerId = FirebaseAuth.instance.currentUser?.uid;
+    if (sellerId == null) {
+      throw CarDatabaseException('Sign in required to save a draft.');
+    }
+
+    final r2 = await readR2StorageServiceForUpload(ref);
+    final carDb = ref.read(carDatabaseServiceProvider);
+
+    final imageUrls = await _uploadCarImagesSequentially(
+      r2,
+      _draft.normalizedPhotos(),
+      xFiles: _selectedImages,
+      previewBytesBySlot: _slotPreviewBytes,
+    );
+
+    final carData = _draft.toFirestoreMap(sellerId: sellerId);
+    if (_draft.damagePhotos.isNotEmpty) {
+      final damageUrls = await _uploadCarImagesSequentially(
+        r2,
+        _draft.damagePhotos.cast<String?>(),
+      );
+      if (damageUrls.isNotEmpty) {
+        carData['damageImageUrls'] = damageUrls;
+      }
+    }
+
+    final draftId = await carDb.saveCarDraft(
+      draftId: _draftAdId ?? widget.existingAdId,
+      sellerId: sellerId,
+      carData: carData,
+      imageUrls: imageUrls,
+      lastStep: _currentStep,
+    );
+    _draftAdId = draftId;
+  }
+
+  Future<void> _saveDraftIfNeeded() async {
+    if (!_shouldAutoSaveDraft) return;
+
+    final sellerId = FirebaseAuth.instance.currentUser?.uid;
+    if (sellerId == null) return;
+
+    _isSavingDraft = true;
+
+    try {
+      await _persistDraft();
+    } catch (e) {
+      webDebugLog('Draft auto-save failed: $e');
+    } finally {
+      _isSavingDraft = false;
+    }
+  }
+
+  Future<void> _saveDraftManually() async {
+    if (_isPublishing || _isSavingDraft || _isAnyPhotoUploading || _isEditMode) {
+      return;
+    }
+
+    final l10n = context.l10n;
+    final sellerId = FirebaseAuth.instance.currentUser?.uid;
+    if (sellerId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(l10n.addCarSaveFailed),
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: const Color(0xFFFF3B30),
+        ),
+      );
+      return;
+    }
+
+    if (!_draft.hasDraftContent) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(l10n.addCarDraftEmpty),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
+
+    HapticFeedback.mediumImpact();
+    setState(() => _isSavingDraft = true);
+
+    try {
+      await _persistDraft();
+      if (!mounted) return;
+      setState(() => _isSavingDraft = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(l10n.addCarDraftSavedSuccess),
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: const Color(0xFF34C759),
+        ),
+      );
+    } on R2StorageException catch (e) {
+      _showDraftSaveError(e.message);
+    } on CarDatabaseException catch (e) {
+      _showDraftSaveError(e.message);
+    } catch (e) {
+      _showDraftSaveError(l10n.addCarSaveFailed);
+    }
+  }
+
+  void _showDraftSaveError(String message) {
+    if (!mounted) return;
+    setState(() => _isSavingDraft = false);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: const Color(0xFFFF3B30),
+      ),
+    );
   }
 
   void _goNext() {
@@ -258,6 +440,8 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
           backgroundColor: const Color(0xFF34C759),
         ),
       );
+    } on ImageModerationException catch (e) {
+      _showModerationError(e.reason);
     } on R2StorageException catch (e) {
       _showPublishError(e.message);
     } on CarDatabaseException catch (e) {
@@ -300,9 +484,23 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
         carData['damageImageUrls'] = damageUrls;
       }
 
-      // ignore: avoid_print
-      print('Publishing car with ${imageUrls.length} imageUrls to Firestore');
-      await carDb.publishCarAd(carData, imageUrls);
+      if (_isDraftMode && widget.existingAdId != null) {
+        await carDb.publishDraftCarAd(
+          draftId: widget.existingAdId!,
+          carData: carData,
+          imageUrls: imageUrls,
+        );
+      } else if (_draftAdId != null) {
+        await carDb.publishDraftCarAd(
+          draftId: _draftAdId!,
+          carData: carData,
+          imageUrls: imageUrls,
+        );
+      } else {
+        // ignore: avoid_print
+        print('Publishing car with ${imageUrls.length} imageUrls to Firestore');
+        await carDb.publishCarAd(carData, imageUrls);
+      }
 
       if (!mounted) return;
       setState(() => _isPublishing = false);
@@ -315,6 +513,8 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
           backgroundColor: const Color(0xFF34C759),
         ),
       );
+    } on ImageModerationException catch (e) {
+      _showModerationError(e.reason);
     } on R2StorageException catch (e) {
       _showPublishError(e.message);
     } on CarDatabaseException catch (e) {
@@ -324,6 +524,12 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
       print('Error during image upload: $e');
       _showPublishError(l10n.addCarPublishFailed);
     }
+  }
+
+  void _showModerationError(String reason) {
+    if (!mounted) return;
+    setState(() => _isPublishing = false);
+    showModerationErrorDialog(context, reason);
   }
 
   void _showPublishError(String message) {
@@ -360,25 +566,16 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
   void _showPhotoFlowError(Object error) {
     final message = error.toString();
     webDebugLog('Photo flow error: $message');
+    if (error is ImageModerationException) {
+      showModerationErrorDialog(context, error.reason);
+      return;
+    }
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
         behavior: SnackBarBehavior.floating,
         backgroundColor: const Color(0xFFFF3B30),
         duration: const Duration(seconds: 10),
-      ),
-    );
-    showDialog<void>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: const Text('Photo error'),
-        content: SingleChildScrollView(child: Text(message)),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(),
-            child: const Text('OK'),
-          ),
-        ],
       ),
     );
   }
@@ -491,6 +688,20 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
   void _onPhotoSlotTapped(int index) {
     if (_uploadingPhotoSlots.contains(index) || _isPublishing) return;
     _handlePhotoSlotTap(index);
+  }
+
+  void _onPhotoRemoved(int index) {
+    if (_uploadingPhotoSlots.contains(index) || _isPublishing) return;
+
+    final slots = List<String?>.from(_draft.normalizedPhotos());
+    slots[index] = null;
+
+    setState(() {
+      _selectedImages[index] = null;
+      _slotPreviewBytes.remove(index);
+      _draft = _draft.copyWith(photos: slots);
+    });
+    HapticFeedback.lightImpact();
   }
 
   /// Pick + upload for all platforms (spinner shown before picker opens).
@@ -844,7 +1055,13 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
     final progress = (_currentStep + 1) / _stepCount;
     final config = ref.watch(systemConfigProvider).value;
 
-    return Stack(
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+        await _goBack();
+      },
+      child: Stack(
       children: [
         Scaffold(
       backgroundColor: AddCarTheme.scaffoldBg,
@@ -902,6 +1119,24 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
                 ),
               ),
             ),
+          Padding(
+            padding: const EdgeInsetsDirectional.only(end: 8),
+            child: TextButton(
+              onPressed: (_isPublishing || _isAnyPhotoUploading)
+                  ? null
+                  : _exitToDashboard,
+              child: Text(
+                l10n.addCarExit,
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  color: (_isPublishing || _isAnyPhotoUploading)
+                      ? AddCarTheme.textSecondary
+                      : AddCarTheme.textPrimary,
+                ),
+              ),
+            ),
+          ),
         ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(8),
@@ -932,6 +1167,7 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
           AddCarStepPhotos(
             photos: _draft.normalizedPhotos(),
             onPhotoSlotTapped: _onPhotoSlotTapped,
+            onPhotoRemoved: _onPhotoRemoved,
             uploadingSlots: _uploadingPhotoSlots,
             previewBytesBySlot: _slotPreviewBytes,
           ),
@@ -1020,20 +1256,24 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
         onNext: _goNext,
         backLabel: l10n.back,
         nextLabel: _nextLabel(l10n, _currentStep),
-        saveLabel: _isEditMode && _currentStep < _stepCount - 1
-            ? l10n.addCarSave
-            : null,
-        onSave: _isEditMode && _currentStep < _stepCount - 1
-            ? _saveChanges
-            : null,
-        canSave: !_isPublishing && !_isAnyPhotoUploading,
+        saveLabel: _isEditMode
+            ? (_currentStep < _stepCount - 1 ? l10n.addCarSave : null)
+            : l10n.addCarSave,
+        onSave: _isEditMode
+            ? (_currentStep < _stepCount - 1 ? _saveChanges : null)
+            : _saveDraftManually,
+        canSave: !_isPublishing &&
+            !_isAnyPhotoUploading &&
+            !_isSavingDraft &&
+            (_isEditMode || _draft.hasDraftContent),
       ),
     ),
-        if (_isPublishing)
-          _PublishingOverlay(isEditMode: _isEditMode, l10n: l10n),
+        if (_isPublishing || _isSavingDraft)
+          _PublishingOverlay(isEditMode: true, l10n: l10n),
         if (_isAnalyzingAi)
           const _AiAnalyzingChipOverlay(),
       ],
+    ),
     );
   }
 }

@@ -100,19 +100,14 @@ class _AdvancedFilterScreenState extends ConsumerState<AdvancedFilterScreen> {
     FilterOptionKeys.plateTypeCommercial,
   ];
 
-  static const List<String> _engineSizeKeys = [
+  static final List<String> _engineSizeKeys = [
     FilterOptionKeys.all,
-    FilterOptionKeys.engineSize1_0,
-    FilterOptionKeys.engineSize1_5,
-    FilterOptionKeys.engineSize2_0,
-    FilterOptionKeys.engineSize3_0,
+    ...FilterOptionKeys.engineSizePickerKeys,
   ];
 
-  static const List<String> _cylinderKeys = [
+  static final List<String> _cylinderKeys = [
     FilterOptionKeys.all,
-    FilterOptionKeys.cylinders4,
-    FilterOptionKeys.cylinders6,
-    FilterOptionKeys.cylinders8,
+    ...FilterOptionKeys.cylinderPickerKeys,
   ];
 
   static const List<String> _importCountryKeys = [

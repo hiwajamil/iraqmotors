@@ -58,9 +58,14 @@ class _LocationPickerSheetState extends State<_LocationPickerSheet> {
     );
   }
 
+  bool _isAllSelected() => LocationKeys.isAllCountry(_draft);
+
   bool _isChecked(String key) {
     if (key == LocationKeys.allCities) {
-      return _draft.contains(LocationKeys.allCities);
+      return _isAllSelected();
+    }
+    if (_isAllSelected()) {
+      return true;
     }
     return _draft.contains(key);
   }
@@ -68,7 +73,7 @@ class _LocationPickerSheetState extends State<_LocationPickerSheet> {
   void _toggle(String key) {
     setState(() {
       if (key == LocationKeys.allCities) {
-        if (_draft.contains(LocationKeys.allCities)) {
+        if (_isAllSelected()) {
           _draft = {};
         } else {
           _draft = {LocationKeys.allCities};
@@ -76,7 +81,12 @@ class _LocationPickerSheetState extends State<_LocationPickerSheet> {
         return;
       }
 
-      final next = Set<String>.from(_draft)..remove(LocationKeys.allCities);
+      if (_draft.contains(LocationKeys.allCities)) {
+        _draft = Set<String>.from(LocationKeys.governorateKeys)..remove(key);
+        return;
+      }
+
+      final next = Set<String>.from(_draft);
 
       if (next.contains(key)) {
         next.remove(key);

@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:mime/mime.dart';
 import 'package:minio/minio.dart';
 
+import '../core/image_upload_bytes.dart';
 import '../models/r2_config.dart';
 import 'cloudflare_upload_service.dart';
 
@@ -80,19 +81,28 @@ class R2StorageService {
       );
     }
 
-    final safeName = _sanitizeFileName(fileName);
+    final prepared = await prepareImageBytesForUpload(bytes);
+    if (prepared.isEmpty) {
+      throw R2StorageException(
+        'Image byte array is empty! Cannot upload 0 bytes.',
+      );
+    }
+
+    final safeName = _jpegFileName(_sanitizeFileName(fileName));
     final objectKey = '$_objectPrefix/$safeName';
-    final mime = contentType ?? lookupMimeType(safeName) ?? 'image/jpeg';
+    const mime = 'image/jpeg';
 
     // ignore: avoid_print
-    print('Uploading image of size: ${bytes.lengthInBytes} bytes');
+    print('Uploading image of size: ${prepared.lengthInBytes} bytes');
 
     if (kIsWeb) {
       try {
-        final url = await _webUpload.uploadImageToCloudflare(bytes, safeName);
+        final url = await _webUpload.uploadImageToCloudflare(prepared, safeName);
         // ignore: avoid_print
         print('Successfully uploaded via worker: $url');
         return url;
+      } on ImageModerationException {
+        rethrow;
       } catch (e) {
         // ignore: avoid_print
         print('Error during web image upload: $e');
@@ -104,8 +114,8 @@ class R2StorageService {
       await _minio.putObject(
         _bucket,
         objectKey,
-        Stream<Uint8List>.value(bytes),
-        size: bytes.length,
+        Stream<Uint8List>.value(prepared),
+        size: prepared.length,
         metadata: {'Content-Type': mime},
       );
       final url = '$_publicBaseUrl/$objectKey';
@@ -263,6 +273,12 @@ class R2StorageService {
     }
     if (path.startsWith('simulated://')) return false;
     return true;
+  }
+
+  static String _jpegFileName(String fileName) {
+    final dot = fileName.lastIndexOf('.');
+    final stem = dot > 0 ? fileName.substring(0, dot) : fileName;
+    return '$stem.jpg';
   }
 
   static String _sanitizeFileName(String fileName) {

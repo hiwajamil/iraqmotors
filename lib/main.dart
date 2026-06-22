@@ -11,6 +11,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/app_localization_delegates.dart';
 import 'core/firebase_web_config.dart';
 import 'core/locale_config.dart';
+import 'core/recaptcha_enterprise_config.dart';
 import 'providers/locale_provider.dart';
 import 'views/coming_soon_screen.dart';
 import 'views/home/home_screen.dart';
@@ -47,15 +48,17 @@ Future<void> main() async {
         options: resolveFirebaseOptions(),
       );
 
-      // Required for Firebase Phone Auth reCAPTCHA on web (v2 + Enterprise).
-      if (kIsWeb) {
-        try {
-          await FirebaseAuth.instance.initializeRecaptchaConfig();
-        } catch (e) {
-          if (kDebugMode) {
-            debugPrint('initializeRecaptchaConfig failed: $e');
-          }
+      // reCAPTCHA Enterprise (web, Android, iOS) — required before phone OTP.
+      try {
+        await FirebaseAuth.instance.initializeRecaptchaConfig();
+        if (kDebugMode) {
+          debugPrint(
+            'reCAPTCHA Enterprise initialized '
+            '(web=${RecaptchaEnterpriseConfig.webSiteKey.substring(0, 8)}…)',
+          );
         }
+      } catch (e, stackTrace) {
+        debugPrint('initializeRecaptchaConfig failed: $e\n$stackTrace');
       }
 
       Locale initialLocale = AppLocaleConfig.defaultLocale;

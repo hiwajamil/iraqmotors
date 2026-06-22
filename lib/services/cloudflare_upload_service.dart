@@ -2,10 +2,19 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 
-import '../core/image_upload_bytes.dart';
 import '../core/web_debug_log.dart';
 import 'cloudflare_upload_http.dart'
     if (dart.library.html) 'cloudflare_upload_http_web.dart' as upload_http;
+
+/// Thrown when the upload worker rejects an image after AI moderation (HTTP 400).
+class ImageModerationException implements Exception {
+  ImageModerationException(this.reason);
+
+  final String reason;
+
+  @override
+  String toString() => reason;
+}
 
 /// Uploads car listing images via the Cloudflare Worker proxy (avoids browser CORS).
 class CloudflareUploadService {
@@ -21,27 +30,22 @@ class CloudflareUploadService {
       throw Exception('Upload Error: empty image bytes');
     }
 
-    final prepared = await prepareImageBytesForUpload(imageBytes);
-    if (prepared.isEmpty) {
-      throw Exception(
-        'Image byte array is empty! Cannot upload 0 bytes.',
-      );
-    }
     const contentType = 'image/jpeg';
 
     // ignore: avoid_print
-    print('Uploading image of size: ${prepared.lengthInBytes} bytes');
-    webDebugLog(
-      'POST ${prepared.length} bytes (${_jpegFileName(fileName)}) to worker…',
-    );
+    print('Uploading image of size: ${imageBytes.lengthInBytes} bytes');
+    webDebugLog('POST ${imageBytes.length} bytes ($fileName) to worker…');
 
     final response = await upload_http.postImageBytes(
       Uri.parse(cloudflareWorkerUrl),
-      prepared,
+      imageBytes,
       contentType,
     );
 
     final body = response.body.trim();
+    if (response.statusCode == 400) {
+      throw _moderationExceptionFromBody(body);
+    }
     if (response.statusCode < 200 ||
         response.statusCode >= 300 ||
         body.isEmpty) {
@@ -57,9 +61,25 @@ class CloudflareUploadService {
     throw Exception('Upload Error: unexpected response — $body');
   }
 
-  static String _jpegFileName(String fileName) {
-    final dot = fileName.lastIndexOf('.');
-    final stem = dot > 0 ? fileName.substring(0, dot) : fileName;
-    return '$stem.jpg';
+  static ImageModerationException _moderationExceptionFromBody(String body) {
+    if (body.isNotEmpty) {
+      try {
+        final json = jsonDecode(body) as Map<String, dynamic>;
+        final reason = json['reason'];
+        if (reason is String && reason.trim().isNotEmpty) {
+          return ImageModerationException(reason.trim());
+        }
+        final error = json['error'];
+        if (error is String && error.trim().isNotEmpty) {
+          return ImageModerationException(error.trim());
+        }
+      } catch (_) {
+        // Fall through to generic message below.
+      }
+    }
+    return ImageModerationException(
+      'وێنەکە قبوڵ نەکرا. تکایە وێنەیەکی تر هەڵبژێرە.',
+    );
   }
+
 }

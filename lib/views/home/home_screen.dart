@@ -187,14 +187,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         crossAxisCount: 2,
         mainAxisSpacing: 10,
         crossAxisSpacing: 10,
-        childAspectRatio: 0.68,
+        childAspectRatio: 0.76,
       );
     }
     return SliverGridDelegateWithFixedCrossAxisCount(
       crossAxisCount: crossAxisCount,
       mainAxisSpacing: 30,
       crossAxisSpacing: 30,
-      mainAxisExtent: 530,
+      mainAxisExtent: 455,
     );
   }
 
@@ -258,8 +258,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           if (isWide) return false;
 
           final screenHeight = MediaQuery.sizeOf(context).height;
-          final heroHeight =
-              (screenHeight * 0.5).clamp(450.0, screenHeight * 0.55);
+          final heroHeight = HomeHeroSection.mobileHeroHeight(screenHeight);
           final offset = notification.metrics.pixels;
           final immersive =
               offset < heroHeight - HomeGlassNavBar.heightOf(context);

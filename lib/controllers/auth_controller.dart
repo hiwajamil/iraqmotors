@@ -49,15 +49,18 @@ class AuthController {
       onSuccess?.call(result);
       return result;
     } on FirebaseAuthException catch (e) {
+      print('Phone Auth Exception: $e');
       debugPrint(
         '[AuthController] FirebaseAuthException: code=${e.code} message=${e.message}',
       );
       onError?.call(formatFirebaseAuthError(e));
       return null;
     } on AuthException catch (e) {
+      print('Phone Auth Exception: $e');
       onError?.call(e.code.name);
       return null;
     } catch (e, stack) {
+      print('Phone Auth Exception: $e');
       debugPrint('[AuthController] sendVerificationCode failed: $e\n$stack');
       onError?.call(e.toString());
       return null;
@@ -73,6 +76,10 @@ class AuthController {
     if (message != null && message.isNotEmpty) {
       return message;
     }
-    return '${e.code}: No additional details from Firebase.';
+    final code = e.code.replaceAll(RegExp(r'^(firebase_auth|auth)/'), '');
+    if (code.isNotEmpty) {
+      return '$code: No additional details from Firebase.';
+    }
+    return 'Unknown Firebase Error';
   }
 }

@@ -88,10 +88,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get phoneRequired => 'Phone number is required';
 
   @override
-  String get phonePlaceholder => '0750 000 0000';
+  String get phonePlaceholder => '750 000 0000';
 
   @override
-  String get workPhonePlaceholder => '0770 000 0000';
+  String get workPhonePlaceholder => '770 000 0000';
 
   @override
   String get passwordLabel => 'Password';
@@ -183,8 +183,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get authInvalidPhone =>
-      'Invalid mobile number. Example: 0750 000 0000';
+  String get authInvalidPhone => 'Invalid mobile number. Example: 750 000 0000';
 
   @override
   String get authRegistrationFailed => 'Registration failed. Please try again.';
@@ -855,6 +854,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get adStatusSold => 'Sold';
 
   @override
+  String get adStatusDraft => 'Draft';
+
+  @override
+  String get adCompleteDraft => 'Complete it';
+
+  @override
   String get soldAction => 'Sold';
 
   @override
@@ -1271,6 +1276,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addCarPublish => 'Publish';
 
   @override
+  String get addCarExit => 'Exit';
+
+  @override
   String get addCarSave => 'Save';
 
   @override
@@ -1290,6 +1298,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get addCarSaveSuccess => 'Changes saved successfully.';
+
+  @override
+  String get addCarDraftSavedSuccess =>
+      'Progress saved. Continue anytime from My Ads.';
+
+  @override
+  String get addCarDraftEmpty => 'Add some details before saving.';
 
   @override
   String get addCarPublishSuccess => 'Your listing was published successfully.';

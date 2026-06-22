@@ -249,6 +249,7 @@ class _UserDashboardScreenState extends ConsumerState<UserDashboardScreen> {
       CarDatabaseService.statusPending => l10n.adminStatPendingReview,
       CarDatabaseService.statusRejected => l10n.adminAdRejectedSuccess,
       CarDatabaseService.statusExpired => l10n.adminStatExpired,
+      CarDatabaseService.statusDraft => l10n.adStatusDraft,
       _ => l10n.adStatusActive,
     };
   }
@@ -257,14 +258,29 @@ class _UserDashboardScreenState extends ConsumerState<UserDashboardScreen> {
     final adId = ad['id']?.toString();
     if (adId == null) return;
 
+    final rawStatus =
+        ad['status']?.toString() ?? CarDatabaseService.statusActive;
+    final isDraft = rawStatus == CarDatabaseService.statusDraft;
+    final initialStep = isDraft
+        ? (ad['draftLastStep'] is int
+            ? ad['draftLastStep'] as int
+            : int.tryParse(ad['draftLastStep']?.toString() ?? '') ?? 0)
+        : 0;
+
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (_) => AddCarFlowScreen(
           existingAdId: adId,
           existingCarData: _carDataForEdit(ad),
+          initialStep: initialStep,
+          isDraft: isDraft,
         ),
       ),
-    );
+    ).then((_) {
+      if (_activeNav == _DashboardNav.myAds) {
+        _loadSectionData(_DashboardNav.myAds);
+      }
+    });
   }
 
   Future<void> _onDeleteAd(Map<String, dynamic> ad) async {
@@ -1347,6 +1363,19 @@ class _MyAdsSection extends StatelessWidget {
   }
 }
 
+String _formatCarTitle(String raw) {
+  if (raw.isEmpty) return raw;
+  return raw
+      .replaceAll('_', ' ')
+      .split(RegExp(r'\s+'))
+      .where((word) => word.isNotEmpty)
+      .map((word) {
+        if (word.length == 1) return word.toUpperCase();
+        return '${word[0].toUpperCase()}${word.substring(1).toLowerCase()}';
+      })
+      .join(' ');
+}
+
 class _AdListItem extends StatelessWidget {
   const _AdListItem({
     required this.ad,
@@ -1380,6 +1409,7 @@ class _AdListItem extends StatelessWidget {
     final rawStatus =
         ad['status']?.toString() ?? CarDatabaseService.statusActive;
     final isSold = rawStatus == CarDatabaseService.statusSold;
+    final isDraft = rawStatus == CarDatabaseService.statusDraft;
     final createdAt = parseCreatedAt(ad['createdAt']);
     final remaining = daysRemaining(createdAt);
     final photoUrls = (ad['photoUrls'] as List?)
@@ -1389,7 +1419,12 @@ class _AdListItem extends StatelessWidget {
             .toList() ??
         const <String>[];
 
-    final statusColors = isSold
+    final statusColors = isDraft
+        ? (
+            bg: const Color(0xFFFF9500).withValues(alpha: 0.14),
+            fg: const Color(0xFFFF9500),
+          )
+        : isSold
         ? (
             bg: const Color(0xFF1B5E20).withValues(alpha: 0.1),
             fg: const Color(0xFF1B5E20),
@@ -1404,20 +1439,43 @@ class _AdListItem extends StatelessWidget {
                 fg: const Color(0xFF86868B),
               );
 
-    final info = Column(
+    final info = GestureDetector(
+      onTap: isDraft ? onEdit : null,
+      behavior: HitTestBehavior.opaque,
+      child: Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _PhotoThumbnailRow(urls: photoUrls),
+            Stack(
+              clipBehavior: Clip.none,
+              children: [
+                _PhotoThumbnailRow(urls: photoUrls),
+                if (isDraft)
+                  Positioned.fill(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: ColoredBox(
+                        color: const Color(0xFFFF9500).withValues(alpha: 0.08),
+                      ),
+                    ),
+                  ),
+                if (isDraft)
+                  PositionedDirectional(
+                    top: -6,
+                    start: -4,
+                    child: _DraftBadge(label: l10n.adCompleteDraft),
+                  ),
+              ],
+            ),
             const SizedBox(width: 15),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    ad['title']?.toString() ?? '',
+                    _formatCarTitle(ad['title']?.toString() ?? ''),
                     style: const TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
@@ -1434,7 +1492,7 @@ class _AdListItem extends StatelessWidget {
                       height: 1.35,
                     ),
                   ),
-                  if (remaining != null) ...[
+                  if (remaining != null && !isDraft) ...[
                     const SizedBox(height: 2),
                     Text(
                       l10n.adDaysRemaining(remaining),
@@ -1456,7 +1514,7 @@ class _AdListItem extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
-                      statusLabel(rawStatus),
+                      isDraft ? l10n.adStatusDraft : statusLabel(rawStatus),
                       style: TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
@@ -1470,28 +1528,39 @@ class _AdListItem extends StatelessWidget {
           ],
         ),
       ],
+    ),
     );
 
     final actionButtons = <Widget>[
-      _ActionButton(label: l10n.editAction, onTap: onEdit),
-      _ActionButton(
-        label: l10n.offersAction,
-        icon: Icons.gavel_rounded,
-        onTap: onViewOffers,
-        isOutlined: true,
-        accentColor: const Color(0xFF007AFF),
+      IconButton(
+        icon: Icon(isDraft ? Icons.play_arrow_rounded : Icons.edit),
+        color: isDraft ? const Color(0xFFFF9500) : const Color(0xFF86868B),
+        tooltip: isDraft ? l10n.adCompleteDraft : l10n.editAction,
+        visualDensity: VisualDensity.compact,
+        onPressed: onEdit,
       ),
-      if (!isSold)
+      if (!isDraft) ...[
         _ActionButton(
-          label: l10n.soldAction,
-          onTap: onMarkAsSold,
+          label: l10n.offersAction,
+          icon: Icons.gavel_rounded,
+          onTap: onViewOffers,
           isOutlined: true,
-          accentColor: const Color(0xFF1B5E20),
+          accentColor: const Color(0xFF007AFF),
         ),
-      _ActionButton(
-        label: l10n.deleteAction,
-        onTap: onDelete,
-        isDestructive: true,
+        if (!isSold)
+          _ActionButton(
+            label: l10n.soldAction,
+            onTap: onMarkAsSold,
+            isOutlined: true,
+            accentColor: const Color(0xFF1B5E20),
+          ),
+      ],
+      IconButton(
+        icon: const Icon(Icons.delete_outline),
+        color: const Color(0xFFFF3B30),
+        tooltip: l10n.deleteAction,
+        visualDensity: VisualDensity.compact,
+        onPressed: onDelete,
       ),
     ];
 
@@ -1543,6 +1612,41 @@ class _AdListItem extends StatelessWidget {
   }
 }
 
+class _DraftBadge extends StatelessWidget {
+  const _DraftBadge({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFFFFB340), Color(0xFFFF9500)],
+        ),
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFFFF9500).withValues(alpha: 0.35),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Text(
+        label,
+        style: const TextStyle(
+          fontSize: 10,
+          fontWeight: FontWeight.w700,
+          color: Colors.white,
+          letterSpacing: -0.1,
+        ),
+      ),
+    );
+  }
+}
+
 class _PhotoThumbnailRow extends StatelessWidget {
   const _PhotoThumbnailRow({required this.urls});
 
@@ -1553,19 +1657,14 @@ class _PhotoThumbnailRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final slots = urls.length >= 4
-        ? urls.take(4).toList()
-        : [
-            ...urls,
-            for (var i = urls.length; i < 4; i++) null,
-          ];
+    if (urls.isEmpty) return const SizedBox.shrink();
 
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        for (var i = 0; i < slots.length; i++) ...[
+        for (var i = 0; i < urls.length; i++) ...[
           if (i > 0) const SizedBox(width: _gap),
-          _PhotoThumb(url: slots[i]),
+          _PhotoThumb(url: urls[i]),
         ],
       ],
     );
@@ -1575,7 +1674,7 @@ class _PhotoThumbnailRow extends StatelessWidget {
 class _PhotoThumb extends StatelessWidget {
   const _PhotoThumb({required this.url});
 
-  final String? url;
+  final String url;
 
   @override
   Widget build(BuildContext context) {
@@ -1584,13 +1683,11 @@ class _PhotoThumb extends StatelessWidget {
       child: SizedBox(
         width: _PhotoThumbnailRow._size,
         height: _PhotoThumbnailRow._size,
-        child: url != null && url!.isNotEmpty
-            ? Image.network(
-                url!,
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => _placeholder(),
-              )
-            : _placeholder(),
+        child: Image.network(
+          url,
+          fit: BoxFit.cover,
+          errorBuilder: (_, __, ___) => _placeholder(),
+        ),
       ),
     );
   }
@@ -1613,7 +1710,6 @@ class _ActionButton extends StatefulWidget {
     required this.label,
     required this.onTap,
     this.icon,
-    this.isDestructive = false,
     this.isOutlined = false,
     this.accentColor,
   });
@@ -1621,7 +1717,6 @@ class _ActionButton extends StatefulWidget {
   final String label;
   final VoidCallback onTap;
   final IconData? icon;
-  final bool isDestructive;
   final bool isOutlined;
   final Color? accentColor;
 
@@ -1635,11 +1730,9 @@ class _ActionButtonState extends State<_ActionButton> {
   @override
   Widget build(BuildContext context) {
     final accent = widget.accentColor ?? const Color(0xFF1D1D1F);
-    final color = widget.isDestructive
-        ? const Color(0xFFFF3B30)
-        : widget.isOutlined
-            ? accent
-            : const Color(0xFF1D1D1F);
+    final color = widget.isOutlined
+        ? accent
+        : const Color(0xFF1D1D1F);
 
     return MouseRegion(
       onEnter: (_) => setState(() => _hovered = true),

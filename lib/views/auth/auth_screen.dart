@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../controllers/auth_controller.dart';
 import '../../core/auth_l10n.dart';
 import '../../core/l10n_extensions.dart';
 import '../../core/phone_auth_email.dart';
@@ -399,7 +400,8 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
       onError: (error) {
         if (!mounted) return;
         setState(() => _isSendingCode = false);
-        _showErrorSnackBar(l10n.messageForFirebaseAuthException(error));
+        print('Phone Auth Exception: $error');
+        _showErrorSnackBar(AuthController.formatFirebaseAuthError(error));
       },
       onAutoVerified: (credential) {
         if (!mounted) return;
@@ -1110,6 +1112,49 @@ class _PremiumFormFieldState extends State<_PremiumFormField> {
     setState(() => _focused = _focusNode.hasFocus);
   }
 
+  Widget _buildTextFormField({TextAlign? textAlign}) {
+    return TextFormField(
+      controller: widget.controller,
+      focusNode: _focusNode,
+      keyboardType: widget.keyboardType,
+      textDirection: widget.showIraqCountryCode
+          ? TextDirection.ltr
+          : widget.textDirection,
+      textAlign: textAlign ?? TextAlign.start,
+      obscureText: widget.obscureText,
+      validator: widget.validator,
+      inputFormatters: widget.showIraqCountryCode
+          ? [IraqPhoneLocalInputFormatter()]
+          : null,
+      style: const TextStyle(
+        fontSize: 15,
+        color: _AuthScreenState._textPrimary,
+      ),
+      decoration: InputDecoration(
+        hintText: widget.placeholder,
+        hintStyle: TextStyle(
+          fontSize: 15,
+          color: _AuthScreenState._textSecondary.withValues(alpha: 0.8),
+        ),
+        border: InputBorder.none,
+        prefixText: widget.showIraqCountryCode
+            ? iraqPhoneCountryCodeDisplay
+            : null,
+        prefixStyle: widget.showIraqCountryCode
+            ? const TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w500,
+                color: _AuthScreenState._textPrimary,
+              )
+            : null,
+        contentPadding: EdgeInsets.symmetric(
+          horizontal: widget.showIraqCountryCode ? 12 : 16,
+          vertical: 14,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -1150,43 +1195,12 @@ class _PremiumFormFieldState extends State<_PremiumFormField> {
                   ? _AuthScreenState._cardWhite
                   : _fillIdle,
             ),
-            child: TextFormField(
-              controller: widget.controller,
-              focusNode: _focusNode,
-              keyboardType: widget.keyboardType,
-              textDirection: widget.textDirection,
-              obscureText: widget.obscureText,
-              validator: widget.validator,
-              style: const TextStyle(
-                fontSize: 15,
-                color: _AuthScreenState._textPrimary,
-              ),
-              decoration: InputDecoration(
-                hintText: widget.placeholder,
-                hintStyle: TextStyle(
-                  fontSize: 15,
-                  color: _AuthScreenState._textSecondary.withValues(alpha: 0.8),
-                ),
-                border: InputBorder.none,
-                prefix: widget.showIraqCountryCode
-                    ? Padding(
-                        padding: const EdgeInsetsDirectional.only(end: 6),
-                        child: Text(
-                          iraqPhoneCountryCodeDisplay,
-                          style: const TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w500,
-                            color: _AuthScreenState._textPrimary,
-                          ),
-                        ),
-                      )
-                    : null,
-                contentPadding: EdgeInsetsDirectional.symmetric(
-                  horizontal: widget.showIraqCountryCode ? 8 : 16,
-                  vertical: 14,
-                ),
-              ),
-            ),
+            child: widget.showIraqCountryCode
+                ? Directionality(
+                    textDirection: TextDirection.ltr,
+                    child: _buildTextFormField(textAlign: TextAlign.left),
+                  )
+                : _buildTextFormField(),
           ),
         ],
       ),

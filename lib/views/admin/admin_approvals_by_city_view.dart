@@ -2,10 +2,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/iraq_location_l10n.dart';
 import '../../core/l10n_extensions.dart';
-import '../../providers/admin_settings_provider.dart';
+import '../../data/iraq_locations.dart';
 import '../../providers/storage_providers.dart';
-import '../../services/admin_database_service.dart';
 
 /// City overview grid for the admin approvals sidebar section.
 class AdminApprovalsByCityView extends ConsumerStatefulWidget {
@@ -64,8 +64,7 @@ class _AdminApprovalsByCityViewState
             final isLoading =
                 snapshot.connectionState == ConnectionState.waiting;
             final cityStats = snapshot.data ?? {};
-            final cities = ref.watch(systemConfigProvider).value?.activeCities ??
-                AdminDatabaseService.trackedCities;
+            final cities = IraqLocations.provinceOrder;
 
             return Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -109,7 +108,7 @@ class _AdminApprovalsByCityViewState
                           const {'active': 0, 'pending': 0, 'expired': 0};
 
                       return _CityStatsCard(
-                        cityName: city,
+                        cityKey: city,
                         stats: stats,
                         approvedLabel: l10n.adminStatApproved,
                         pendingLabel: l10n.adminStatPendingReview,
@@ -133,7 +132,7 @@ class _AdminApprovalsByCityViewState
 
 class _CityStatsCard extends StatelessWidget {
   const _CityStatsCard({
-    required this.cityName,
+    required this.cityKey,
     required this.stats,
     required this.approvedLabel,
     required this.pendingLabel,
@@ -141,7 +140,7 @@ class _CityStatsCard extends StatelessWidget {
     required this.onTap,
   });
 
-  final String cityName;
+  final String cityKey;
   final Map<String, int> stats;
   final String approvedLabel;
   final String pendingLabel;
@@ -154,6 +153,9 @@ class _CityStatsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final cityLabel = IraqLocationL10n.provinceLabel(l10n, cityKey);
+
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -189,7 +191,7 @@ class _CityStatsCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Text(
-                      cityName,
+                      cityLabel,
                       style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w700,
@@ -313,7 +315,7 @@ class _CityStatsSkeletonGrid extends StatelessWidget {
         mainAxisSpacing: 16,
         mainAxisExtent: 196,
       ),
-      itemCount: AdminDatabaseService.trackedCities.length,
+      itemCount: IraqLocations.provinceOrder.length,
       itemBuilder: (_, __) => Container(
         decoration: BoxDecoration(
           color: const Color(0xFFFFFFFF),

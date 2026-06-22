@@ -6,7 +6,7 @@ import 'package:image/image.dart' as img;
 import 'web_debug_log.dart';
 
 const _maxDimension = 1920;
-const _jpegQuality = 70;
+const _jpegQuality = 80;
 
 /// Resizes and re-encodes as JPEG (~200KB target) before upload.
 Future<Uint8List> prepareImageBytesForUpload(Uint8List raw) async {

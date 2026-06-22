@@ -119,18 +119,10 @@ abstract final class AddCarFormOptions {
     FilterOptionKeys.transmissionManual,
   ];
 
-  static const List<String> cylinderChipKeys = [
-    FilterOptionKeys.cylinders6,
-    FilterOptionKeys.cylinders4,
-  ];
+  static const List<String> cylinderChipKeys = FilterOptionKeys.cylinderPickerKeys;
 
-  static const List<String> engineSizeChipKeys = [
-    AddCarOptionKeys.engineSize20T,
-    AddCarOptionKeys.engineSize25,
-    AddCarOptionKeys.engineSize20,
-    AddCarOptionKeys.engineSize35,
-    AddCarOptionKeys.engineSize24,
-  ];
+  static const List<String> engineSizeChipKeys =
+      FilterOptionKeys.engineSizePickerKeys;
 
   static const List<String> seatMaterialKeys = [
     FilterOptionKeys.seatFabric,
@@ -357,17 +349,7 @@ abstract final class AddCarFormOptions {
   }
 
   static String engineSizeLabel(AppLocalizations l10n, String key) {
-    return switch (key) {
-      AddCarOptionKeys.engineSize20T => '2.0T',
-      AddCarOptionKeys.engineSize25 => '2.5',
-      AddCarOptionKeys.engineSize20 => '2.0',
-      AddCarOptionKeys.engineSize35 => '3.5',
-      AddCarOptionKeys.engineSize24 => '2.4',
-      FilterOptionKeys.engineSize1_0 => '1.0',
-      FilterOptionKeys.engineSize1_5 => '1.5',
-      FilterOptionKeys.engineSize3_0 => '3.0+',
-      _ => key,
-    };
+    return FilterL10n.engineSizeLabel(l10n, key);
   }
 
   static String seatMaterialLabel(AppLocalizations l10n, String key) {

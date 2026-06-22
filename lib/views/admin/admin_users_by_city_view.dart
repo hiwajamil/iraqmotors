@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/iraq_location_l10n.dart';
 import '../../core/l10n_extensions.dart';
 import '../../providers/admin_settings_provider.dart';
 import '../../providers/storage_providers.dart';
@@ -113,7 +114,7 @@ class _AdminUsersByCityViewState extends ConsumerState<AdminUsersByCityView> {
                       final userCount = counts[city] ?? 0;
 
                       return _UserCityCard(
-                        cityName: city,
+                        cityKey: city,
                         userCount: userCount,
                         userCountLabel: l10n.adminUserCountLabel,
                         onTap: () => _openCityUsers(city),
@@ -131,13 +132,13 @@ class _AdminUsersByCityViewState extends ConsumerState<AdminUsersByCityView> {
 
 class _UserCityCard extends StatelessWidget {
   const _UserCityCard({
-    required this.cityName,
+    required this.cityKey,
     required this.userCount,
     required this.userCountLabel,
     required this.onTap,
   });
 
-  final String cityName;
+  final String cityKey;
   final int userCount;
   final String userCountLabel;
   final VoidCallback onTap;
@@ -149,6 +150,9 @@ class _UserCityCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cityLabel =
+        IraqLocationL10n.provinceLabel(context.l10n, cityKey);
+
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -184,7 +188,7 @@ class _UserCityCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      cityName,
+                      cityLabel,
                       style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w700,

@@ -73,11 +73,10 @@ service cloud.firestore {
       }
     }
 
-    // Platform settings (package prices, cities, R2 upload config).
-    // Authenticated users need read access to publish car listings with photos.
+    // Platform settings (package prices, cities, R2 credentials).
+    // Contains secrets — super admins only.
     match /system_config/{docId} {
-      allow read: if request.auth != null;
-      allow write: if isSuperAdmin();
+      allow read, write: if isSuperAdmin();
     }
   }
 }

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/activity_actions.dart';
 import '../../core/admin_audit_helper.dart';
+import '../../core/iraq_location_l10n.dart';
 import '../../core/l10n_extensions.dart';
 import '../../data/add_car_option_keys.dart';
 import '../../l10n/app_localizations.dart';
@@ -40,7 +41,8 @@ class _AdminSettingsViewState extends ConsumerState<AdminSettingsView> {
   late TextEditingController _r2SecretKeyCtrl;
   late TextEditingController _r2BucketCtrl;
   late TextEditingController _r2PublicBaseUrlCtrl;
-  bool _obscureSecret = true;
+  bool _obscureAccessKey = true;
+  bool _obscureSecretKey = true;
 
   @override
   void initState() {
@@ -444,9 +446,12 @@ class _AdminSettingsViewState extends ConsumerState<AdminSettingsView> {
                   secretKeyController: _r2SecretKeyCtrl,
                   bucketController: _r2BucketCtrl,
                   publicBaseUrlController: _r2PublicBaseUrlCtrl,
-                  obscureSecret: _obscureSecret,
-                  onToggleSecret: () =>
-                      setState(() => _obscureSecret = !_obscureSecret),
+                  obscureAccessKey: _obscureAccessKey,
+                  obscureSecretKey: _obscureSecretKey,
+                  onToggleAccessKey: () =>
+                      setState(() => _obscureAccessKey = !_obscureAccessKey),
+                  onToggleSecretKey: () =>
+                      setState(() => _obscureSecretKey = !_obscureSecretKey),
                   isSaving: _isSaving,
                   onSave: _saveCredentials,
                   onAddAdmin: _addAdmin,
@@ -657,7 +662,7 @@ class _CitiesSection extends StatelessWidget {
         for (var i = 0; i < cities.length; i++) ...[
           if (i > 0) const SizedBox(height: 8),
           _ListItemRow(
-            title: cities[i],
+            title: IraqLocationL10n.provinceLabel(l10n, cities[i]),
             trailing: cities.length > 1
                 ? IconButton(
                     icon: const Icon(Icons.close, size: 18),
@@ -696,8 +701,10 @@ class _SecuritySection extends StatelessWidget {
     required this.secretKeyController,
     required this.bucketController,
     required this.publicBaseUrlController,
-    required this.obscureSecret,
-    required this.onToggleSecret,
+    required this.obscureAccessKey,
+    required this.obscureSecretKey,
+    required this.onToggleAccessKey,
+    required this.onToggleSecretKey,
     required this.isSaving,
     required this.onSave,
     required this.onAddAdmin,
@@ -711,8 +718,10 @@ class _SecuritySection extends StatelessWidget {
   final TextEditingController secretKeyController;
   final TextEditingController bucketController;
   final TextEditingController publicBaseUrlController;
-  final bool obscureSecret;
-  final VoidCallback onToggleSecret;
+  final bool obscureAccessKey;
+  final bool obscureSecretKey;
+  final VoidCallback onToggleAccessKey;
+  final VoidCallback onToggleSecretKey;
   final bool isSaving;
   final VoidCallback onSave;
   final VoidCallback onAddAdmin;
@@ -774,19 +783,32 @@ class _SecuritySection extends StatelessWidget {
         _SettingsField(
           label: l10n.adminSettingsR2AccessKey,
           controller: accessKeyController,
+          obscureText: obscureAccessKey,
+          suffix: IconButton(
+            icon: Icon(
+              obscureAccessKey
+                  ? Icons.visibility_outlined
+                  : Icons.visibility_off_outlined,
+              size: 20,
+              color: AddCarTheme.textSecondary,
+            ),
+            onPressed: onToggleAccessKey,
+          ),
         ),
         const SizedBox(height: 14),
         _SettingsField(
           label: l10n.adminSettingsR2SecretKey,
           controller: secretKeyController,
-          obscureText: obscureSecret,
+          obscureText: obscureSecretKey,
           suffix: IconButton(
             icon: Icon(
-              obscureSecret ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+              obscureSecretKey
+                  ? Icons.visibility_outlined
+                  : Icons.visibility_off_outlined,
               size: 20,
               color: AddCarTheme.textSecondary,
             ),
-            onPressed: onToggleSecret,
+            onPressed: onToggleSecretKey,
           ),
         ),
         const SizedBox(height: 14),

@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
@@ -12,18 +13,39 @@ import '../widgets/add_car_step_header.dart';
 bool _isFilledPhotoSlot(String? path) =>
     path != null && path.trim().isNotEmpty;
 
+const double _photoGridSpacing = 10;
+const double _photoTileMinSize = 96;
+const double _photoTileMaxSize = 120;
+
+int _photoGridCrossAxisCount(double maxWidth) {
+  for (var cols = 5; cols >= 3; cols--) {
+    final tile =
+        (maxWidth - _photoGridSpacing * (cols - 1)) / cols;
+    if (tile <= _photoTileMaxSize) return cols;
+  }
+  return 3;
+}
+
+double _photoTileSize(double maxWidth, int crossAxisCount) {
+  final tile = (maxWidth - _photoGridSpacing * (crossAxisCount - 1)) /
+      crossAxisCount;
+  return tile.clamp(_photoTileMinSize, _photoTileMaxSize);
+}
+
 /// Step 2 — photo grid.
 class AddCarStepPhotos extends StatelessWidget {
   const AddCarStepPhotos({
     super.key,
     required this.photos,
     required this.onPhotoSlotTapped,
+    this.onPhotoRemoved,
     this.uploadingSlots = const {},
     this.previewBytesBySlot = const {},
   });
 
   final List<String?> photos;
   final ValueChanged<int> onPhotoSlotTapped;
+  final ValueChanged<int>? onPhotoRemoved;
   final Set<int> uploadingSlots;
   final Map<int, Uint8List> previewBytesBySlot;
 
@@ -64,26 +86,38 @@ class AddCarStepPhotos extends StatelessWidget {
           const SizedBox(height: 24),
           AddCarFormCard(
             padding: const EdgeInsetsDirectional.all(16),
-            child: GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: AddCarDraft.photoSlotCount,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                mainAxisSpacing: 12,
-                crossAxisSpacing: 12,
-              ),
-              itemBuilder: (context, index) {
-                final photoPath = slots[index];
-                final hasPhoto = _isFilledPhotoSlot(photoPath);
-                return _PhotoSlot(
-                  index: index,
-                  photoPath: photoPath,
-                  previewBytes: previewBytesBySlot[index],
-                  hasPhoto: hasPhoto,
-                  isUploading: uploadingSlots.contains(index),
-                  enabled: !uploadingSlots.contains(index),
-                  onTap: () => onPhotoSlotTapped(index),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final crossAxisCount =
+                    _photoGridCrossAxisCount(constraints.maxWidth);
+                final tileSize =
+                    _photoTileSize(constraints.maxWidth, crossAxisCount);
+
+                return Wrap(
+                  spacing: _photoGridSpacing,
+                  runSpacing: _photoGridSpacing,
+                  children: [
+                    for (var index = 0;
+                        index < AddCarDraft.photoSlotCount;
+                        index++)
+                      SizedBox(
+                        width: tileSize,
+                        height: tileSize,
+                        child: _PhotoSlot(
+                          index: index,
+                          photoPath: slots[index],
+                          previewBytes: previewBytesBySlot[index],
+                          hasPhoto: _isFilledPhotoSlot(slots[index]),
+                          isUploading: uploadingSlots.contains(index),
+                          enabled: !uploadingSlots.contains(index),
+                          onTap: () => onPhotoSlotTapped(index),
+                          onRemove: _isFilledPhotoSlot(slots[index]) &&
+                                  onPhotoRemoved != null
+                              ? () => onPhotoRemoved!(index)
+                              : null,
+                        ),
+                      ),
+                  ],
                 );
               },
             ),
@@ -103,6 +137,7 @@ class _PhotoSlot extends StatefulWidget {
     required this.isUploading,
     required this.enabled,
     required this.onTap,
+    this.onRemove,
   });
 
   final int index;
@@ -112,6 +147,7 @@ class _PhotoSlot extends StatefulWidget {
   final bool isUploading;
   final bool enabled;
   final VoidCallback onTap;
+  final VoidCallback? onRemove;
 
   @override
   State<_PhotoSlot> createState() => _PhotoSlotState();
@@ -120,7 +156,7 @@ class _PhotoSlot extends StatefulWidget {
 class _PhotoSlotState extends State<_PhotoSlot> {
   bool _pressed = false;
 
-  static const double _radius = AddCarTheme.inputRadius;
+  static const double _radius = 12;
 
   bool get _isRemoteUrl =>
       widget.photoPath != null &&
@@ -140,20 +176,16 @@ class _PhotoSlotState extends State<_PhotoSlot> {
           scale: _pressed ? 0.97 : 1,
           duration: const Duration(milliseconds: 120),
           curve: Curves.easeOut,
-          child: AspectRatio(
-            aspectRatio: 1,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(_radius),
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  _buildSlotBackground(),
-                  if (widget.isUploading) _buildUploadingOverlay(),
-                  if (widget.hasPhoto && !widget.isUploading)
-                    _buildSuccessCheckmark(),
-                  _buildBorderOverlay(),
-                ],
-              ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(_radius),
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                _buildSlotBackground(),
+                if (widget.isUploading) _buildUploadingOverlay(),
+                if (widget.hasPhoto && !widget.isUploading) _buildDeleteButton(),
+                _buildBorderOverlay(),
+              ],
             ),
           ),
         ),
@@ -174,17 +206,17 @@ class _PhotoSlotState extends State<_PhotoSlot> {
           children: [
             Icon(
               Icons.photo_camera_outlined,
-              size: 28,
+              size: 24,
               color: AddCarTheme.textSecondary.withValues(
                 alpha: _pressed ? 1 : 0.85,
               ),
             ),
             if (widget.index == 0) ...[
-              const SizedBox(height: 6),
+              const SizedBox(height: 4),
               Text(
                 context.l10n.addCarPhotoPrimary,
                 style: TextStyle(
-                  fontSize: 11,
+                  fontSize: 10,
                   fontWeight: FontWeight.w500,
                   color: AddCarTheme.textSecondary.withValues(alpha: 0.9),
                 ),
@@ -284,28 +316,44 @@ class _PhotoSlotState extends State<_PhotoSlot> {
     );
   }
 
-  Widget _buildSuccessCheckmark() {
+  Widget _buildDeleteButton() {
+    final onRemove = widget.onRemove;
+    if (onRemove == null) return const SizedBox.shrink();
+
     return PositionedDirectional(
       top: 8,
       end: 8,
-      child: Container(
-        width: 22,
-        height: 22,
-        decoration: const BoxDecoration(
-          color: AddCarTheme.successGreen,
-          shape: BoxShape.circle,
-          boxShadow: [
-            BoxShadow(
-              color: Color(0x33000000),
-              blurRadius: 4,
-              offset: Offset(0, 1),
+      child: GestureDetector(
+        onTap: onRemove,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+            child: Container(
+              width: 30,
+              height: 30,
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.28),
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: Colors.white.withValues(alpha: 0.45),
+                  width: 0.8,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.18),
+                    blurRadius: 6,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: const Icon(
+                Icons.close_rounded,
+                size: 16,
+                color: Color(0xFFFF3B30),
+              ),
             ),
-          ],
-        ),
-        child: const Icon(
-          Icons.check_rounded,
-          size: 14,
-          color: Colors.white,
+          ),
         ),
       ),
     );

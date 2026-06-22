@@ -223,6 +223,7 @@ class AddCarSimpleChipSection extends StatelessWidget {
     required this.labelFor,
     this.fullWidth = false,
     this.squareChips = false,
+    this.cardPadding = const EdgeInsetsDirectional.all(16),
   });
 
   final String label;
@@ -232,6 +233,7 @@ class AddCarSimpleChipSection extends StatelessWidget {
   final String Function(String key) labelFor;
   final bool fullWidth;
   final bool squareChips;
+  final EdgeInsetsGeometry cardPadding;
 
   @override
   Widget build(BuildContext context) {
@@ -253,8 +255,8 @@ class AddCarSimpleChipSection extends StatelessWidget {
             ],
           )
         : Wrap(
-            spacing: 8,
-            runSpacing: 8,
+            spacing: 8.0,
+            runSpacing: 8.0,
             children: [
               for (final key in chipKeys)
                 AddCarSelectChip(
@@ -272,7 +274,7 @@ class AddCarSimpleChipSection extends StatelessWidget {
         Text(label, style: AddCarTheme.sectionLabel),
         const SizedBox(height: 12),
         AddCarFormCard(
-          padding: const EdgeInsetsDirectional.all(16),
+          padding: cardPadding,
           child: chips,
         ),
       ],
