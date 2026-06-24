@@ -110,6 +110,13 @@
       "city2": {"type": "String"}
     }
   },
+  "locationCityPlusMore": "{city} +{count}",
+  "@locationCityPlusMore": {
+    "placeholders": {
+      "city": {"type": "String"},
+      "count": {"type": "String"}
+    }
+  },
   "locationCitiesAndMore": "{city1}، {city2} و {count} شاری تر",
   "@locationCitiesAndMore": {
     "placeholders": {
@@ -214,12 +221,19 @@
   "specEngine": "بزوێنەر",
   "specMileage": "ڕۆیشتوو",
   "sellerPriceLabel": "نرخی فرۆشیار:",
-  "latestBidLabel": "دوایین نرخ:",
+  "latestBidLabel": "بەرزترین نرخ:",
   "placeYourBid": "نرخی خۆت دابنێ",
   "enterBidAmount": "نرخی پێشنیارکراوت داخڵ بکە",
   "submitBid": "ناردن",
   "bidTooLowError": "تکایە نرخێکی بەرزتر لە دوایین نرخ داخڵ بکە",
   "bidSuccessMessage": "نرخەکەت بە سەرکەوتوویی دانرا!",
+  "bidOwnerNotification": "نرخێکی نوێی {amount} بۆ {carName} پێشنیار کرا",
+  "@bidOwnerNotification": {
+    "placeholders": {
+      "amount": {"type": "String"},
+      "carName": {"type": "String"}
+    }
+  },
   "specTransmission": "گێڕ",
   "specLocation": "شوێن",
   "carDetailsTitle": "زانیاری ئۆتۆمبێل",
@@ -297,6 +311,8 @@
   "favoritesSectionTitle": "دڵخوازەکانم (سەیڤکراو)",
   "homeFeedEmpty": "لە ئێستادا هیچ ئۆتۆمبێلێک بەردەست نییە",
   "homeFeedLoadError": "نەتوانرا ڕیکلامەکان بار بکرێن. تکایە دووبارە هەوڵ بدەرەوە.",
+  "homeBrowseBrands": "گەڕان بەپێی براند",
+  "homeAvailableListings": "ئۆتۆمبێلە بەردەستەکان",
   "favoritesEmpty": "هیچ ئۆتۆمبێلێکی سەیڤکراو نییە",
   "myAdsEmpty": "هیچ ڕیکلامێکت نییە",
   "viewAllListings": "بینینی هەمووی",

@@ -110,6 +110,13 @@
       "city2": {"type": "String"}
     }
   },
+  "locationCityPlusMore": "{city} +{count}",
+  "@locationCityPlusMore": {
+    "placeholders": {
+      "city": {"type": "String"},
+      "count": {"type": "String"}
+    }
+  },
   "locationCitiesAndMore": "{city1}، {city2} و{count} مدن أخرى",
   "@locationCitiesAndMore": {
     "placeholders": {
@@ -204,12 +211,19 @@
   "specEngine": "المحرك",
   "specMileage": "المسافة",
   "sellerPriceLabel": "سعر البائع:",
-  "latestBidLabel": "آخر عرض:",
+  "latestBidLabel": "أعلى عرض:",
   "placeYourBid": "قدّم عرضك",
   "enterBidAmount": "أدخل مبلغ عرضك",
   "submitBid": "إرسال",
   "bidTooLowError": "يرجى إدخال مبلغ أعلى من آخر عرض",
   "bidSuccessMessage": "تم تقديم عرضك بنجاح!",
+  "bidOwnerNotification": "تم تقديم سعر جديد بقيمة {amount} على {carName}",
+  "@bidOwnerNotification": {
+    "placeholders": {
+      "amount": {"type": "String"},
+      "carName": {"type": "String"}
+    }
+  },
   "specTransmission": "ناقل الحركة",
   "specLocation": "الموقع",
   "carDetailsTitle": "تفاصيل السيارة",
@@ -277,6 +291,8 @@
   "favoritesSectionTitle": "مفضلتي (محفوظة)",
   "homeFeedEmpty": "لا توجد سيارات متاحة في الوقت الحالي",
   "homeFeedLoadError": "تعذر تحميل الإعلانات. يرجى المحاولة مرة أخرى.",
+  "homeBrowseBrands": "تصفح حسب العلامة التجارية",
+  "homeAvailableListings": "السيارات المتاحة",
   "favoritesEmpty": "لا توجد سيارات محفوظة",
   "myAdsEmpty": "ليس لديك إعلانات",
   "viewAllListings": "عرض الكل",

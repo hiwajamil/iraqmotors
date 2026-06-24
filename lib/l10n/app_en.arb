@@ -129,6 +129,13 @@
       "city2": {"type": "String"}
     }
   },
+  "locationCityPlusMore": "{city} +{count}",
+  "@locationCityPlusMore": {
+    "placeholders": {
+      "city": {"type": "String"},
+      "count": {"type": "String"}
+    }
+  },
   "locationCitiesAndMore": "{city1}, {city2} and {count} other cities",
   "@locationCitiesAndMore": {
     "placeholders": {
@@ -223,12 +230,19 @@
   "specEngine": "Engine",
   "specMileage": "Mileage",
   "sellerPriceLabel": "Seller price:",
-  "latestBidLabel": "Latest bid:",
+  "latestBidLabel": "Highest bid:",
   "placeYourBid": "Place your bid",
   "enterBidAmount": "Enter your bid amount",
   "submitBid": "Submit",
   "bidTooLowError": "Please enter an amount higher than the latest bid",
   "bidSuccessMessage": "Your bid was placed successfully!",
+  "bidOwnerNotification": "A new price of {amount} has been offered on your {carName}",
+  "@bidOwnerNotification": {
+    "placeholders": {
+      "amount": {"type": "String"},
+      "carName": {"type": "String"}
+    }
+  },
   "specTransmission": "Transmission",
   "specLocation": "Location",
   "carDetailsTitle": "Car Details",
@@ -296,6 +310,8 @@
   "favoritesSectionTitle": "My Favorites (Saved)",
   "homeFeedEmpty": "No cars available at the moment",
   "homeFeedLoadError": "Could not load listings. Please try again.",
+  "homeBrowseBrands": "Browse by brand",
+  "homeAvailableListings": "Available cars",
   "favoritesEmpty": "No saved cars yet",
   "myAdsEmpty": "You have no listings yet",
   "viewAllListings": "View All",

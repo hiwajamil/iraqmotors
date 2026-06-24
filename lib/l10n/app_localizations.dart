@@ -694,6 +694,12 @@ abstract class AppLocalizations {
   /// **'{city1}، {city2}'**
   String locationTwoCities(String city1, String city2);
 
+  /// No description provided for @locationCityPlusMore.
+  ///
+  /// In ku, this message translates to:
+  /// **'{city} +{count}'**
+  String locationCityPlusMore(String city, String count);
+
   /// No description provided for @locationCitiesAndMore.
   ///
   /// In ku, this message translates to:
@@ -1219,7 +1225,7 @@ abstract class AppLocalizations {
   /// No description provided for @latestBidLabel.
   ///
   /// In ku, this message translates to:
-  /// **'دوایین نرخ:'**
+  /// **'بەرزترین نرخ:'**
   String get latestBidLabel;
 
   /// No description provided for @placeYourBid.
@@ -1251,6 +1257,12 @@ abstract class AppLocalizations {
   /// In ku, this message translates to:
   /// **'نرخەکەت بە سەرکەوتوویی دانرا!'**
   String get bidSuccessMessage;
+
+  /// No description provided for @bidOwnerNotification.
+  ///
+  /// In ku, this message translates to:
+  /// **'نرخێکی نوێی {amount} بۆ {carName} پێشنیار کرا'**
+  String bidOwnerNotification(String amount, String carName);
 
   /// No description provided for @specTransmission.
   ///
@@ -1653,6 +1665,18 @@ abstract class AppLocalizations {
   /// In ku, this message translates to:
   /// **'نەتوانرا ڕیکلامەکان بار بکرێن. تکایە دووبارە هەوڵ بدەرەوە.'**
   String get homeFeedLoadError;
+
+  /// No description provided for @homeBrowseBrands.
+  ///
+  /// In ku, this message translates to:
+  /// **'گەڕان بەپێی براند'**
+  String get homeBrowseBrands;
+
+  /// No description provided for @homeAvailableListings.
+  ///
+  /// In ku, this message translates to:
+  /// **'ئۆتۆمبێلە بەردەستەکان'**
+  String get homeAvailableListings;
 
   /// No description provided for @favoritesEmpty.
   ///

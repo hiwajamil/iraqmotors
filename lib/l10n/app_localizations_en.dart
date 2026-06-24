@@ -321,6 +321,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String locationCityPlusMore(String city, String count) {
+    return '$city +$count';
+  }
+
+  @override
   String locationCitiesAndMore(String city1, String city2, String count) {
     return '$city1, $city2 and $count other cities';
   }
@@ -588,7 +593,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sellerPriceLabel => 'Seller price:';
 
   @override
-  String get latestBidLabel => 'Latest bid:';
+  String get latestBidLabel => 'Highest bid:';
 
   @override
   String get placeYourBid => 'Place your bid';
@@ -605,6 +610,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get bidSuccessMessage => 'Your bid was placed successfully!';
+
+  @override
+  String bidOwnerNotification(String amount, String carName) {
+    return 'A new price of $amount has been offered on your $carName';
+  }
 
   @override
   String get specTransmission => 'Transmission';
@@ -812,6 +822,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get homeFeedLoadError => 'Could not load listings. Please try again.';
+
+  @override
+  String get homeBrowseBrands => 'Browse by brand';
+
+  @override
+  String get homeAvailableListings => 'Available cars';
 
   @override
   String get favoritesEmpty => 'No saved cars yet';

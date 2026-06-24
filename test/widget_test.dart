@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:iq_motors/core/locale_config.dart';
+import 'package:iq_motors/core/localization/locale_config.dart';
 
 void main() {
   test('default app locale is Kurdish', () {

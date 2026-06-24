@@ -78,5 +78,12 @@ service cloud.firestore {
     match /system_config/{docId} {
       allow read, write: if isSuperAdmin();
     }
+
+    // Bid notifications for car owners.
+    match /messages/{messageId} {
+      allow create: if request.auth != null;
+      allow read, update: if request.auth != null
+        && request.auth.uid == resource.data.recipientId;
+    }
   }
 }

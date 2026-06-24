@@ -319,6 +319,11 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
+  String locationCityPlusMore(String city, String count) {
+    return '$city +$count';
+  }
+
+  @override
   String locationCitiesAndMore(String city1, String city2, String count) {
     return '$city1، $city2 و$count مدن أخرى';
   }
@@ -586,7 +591,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get sellerPriceLabel => 'سعر البائع:';
 
   @override
-  String get latestBidLabel => 'آخر عرض:';
+  String get latestBidLabel => 'أعلى عرض:';
 
   @override
   String get placeYourBid => 'قدّم عرضك';
@@ -602,6 +607,11 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get bidSuccessMessage => 'تم تقديم عرضك بنجاح!';
+
+  @override
+  String bidOwnerNotification(String amount, String carName) {
+    return 'تم تقديم سعر جديد بقيمة $amount على $carName';
+  }
 
   @override
   String get specTransmission => 'ناقل الحركة';
@@ -809,6 +819,12 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get homeFeedLoadError =>
       'تعذر تحميل الإعلانات. يرجى المحاولة مرة أخرى.';
+
+  @override
+  String get homeBrowseBrands => 'تصفح حسب العلامة التجارية';
+
+  @override
+  String get homeAvailableListings => 'السيارات المتاحة';
 
   @override
   String get favoritesEmpty => 'لا توجد سيارات محفوظة';

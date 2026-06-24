@@ -325,6 +325,11 @@ class AppLocalizationsKu extends AppLocalizations {
   }
 
   @override
+  String locationCityPlusMore(String city, String count) {
+    return '$city +$count';
+  }
+
+  @override
   String locationCitiesAndMore(String city1, String city2, String count) {
     return '$city1، $city2 و $count شاری تر';
   }
@@ -592,7 +597,7 @@ class AppLocalizationsKu extends AppLocalizations {
   String get sellerPriceLabel => 'نرخی فرۆشیار:';
 
   @override
-  String get latestBidLabel => 'دوایین نرخ:';
+  String get latestBidLabel => 'بەرزترین نرخ:';
 
   @override
   String get placeYourBid => 'نرخی خۆت دابنێ';
@@ -608,6 +613,11 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get bidSuccessMessage => 'نرخەکەت بە سەرکەوتوویی دانرا!';
+
+  @override
+  String bidOwnerNotification(String amount, String carName) {
+    return 'نرخێکی نوێی $amount بۆ $carName پێشنیار کرا';
+  }
 
   @override
   String get specTransmission => 'گێڕ';
@@ -817,6 +827,12 @@ class AppLocalizationsKu extends AppLocalizations {
   @override
   String get homeFeedLoadError =>
       'نەتوانرا ڕیکلامەکان بار بکرێن. تکایە دووبارە هەوڵ بدەرەوە.';
+
+  @override
+  String get homeBrowseBrands => 'گەڕان بەپێی براند';
+
+  @override
+  String get homeAvailableListings => 'ئۆتۆمبێلە بەردەستەکان';
 
   @override
   String get favoritesEmpty => 'هیچ ئۆتۆمبێلێکی سەیڤکراو نییە';

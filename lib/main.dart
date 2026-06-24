@@ -8,14 +8,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'core/app_localization_delegates.dart';
-import 'core/firebase_web_config.dart';
-import 'core/locale_config.dart';
-import 'core/recaptcha_enterprise_config.dart';
-import 'providers/locale_provider.dart';
-import 'views/coming_soon_screen.dart';
-import 'views/home/home_screen.dart';
-import 'views/startup_error_screen.dart';
+import 'package:iq_motors/core/localization/app_localization_delegates.dart';
+import 'package:iq_motors/core/config/firebase_web_config.dart';
+import 'package:iq_motors/core/localization/locale_config.dart';
+import 'package:iq_motors/core/config/recaptcha_enterprise_config.dart';
+import 'package:iq_motors/app/providers/locale_provider.dart';
+import 'package:iq_motors/app/screens/coming_soon_screen.dart';
+import 'package:iq_motors/features/marketplace/presentation/screens/home_screen.dart';
+import 'package:iq_motors/app/screens/startup_error_screen.dart';
 
 /// True on web when the app is served from the public production domain.
 bool get isProductionWebDomain {
