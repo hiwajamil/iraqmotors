@@ -175,15 +175,26 @@ class CarVisionService {
   /// Sends [imageFile] to Gemini and returns brand/model/color strings.
   /// Internal — prefer [autoFillAfterValidation] for quota-aware calls.
   Future<Map<String, String>> analyzeCarImage(File imageFile) async {
+    final bytes = await imageFile.readAsBytes();
+    return analyzeCarImageBytes(
+      bytes,
+      mimeType: _mimeTypeForPath(imageFile.path),
+    );
+  }
+
+  /// Sends raw image [bytes] to Gemini (camera crops, in-memory frames).
+  Future<Map<String, String>> analyzeCarImageBytes(
+    Uint8List bytes, {
+    String mimeType = 'image/jpeg',
+  }) async {
     try {
       final model = _generativeModel;
       if (model == null) return const {};
 
-      final bytes = await imageFile.readAsBytes();
       final response = await model.generateContent([
         Content.multi([
           TextPart(_analyzePrompt),
-          DataPart(_mimeTypeForPath(imageFile.path), bytes),
+          DataPart(mimeType, bytes),
         ]),
       ]);
 

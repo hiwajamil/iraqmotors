@@ -1750,6 +1750,12 @@ abstract class AppLocalizations {
   /// **'چالاک'**
   String get adStatusActive;
 
+  /// No description provided for @adStatusInactive.
+  ///
+  /// In ku, this message translates to:
+  /// **'ناچالاک'**
+  String get adStatusInactive;
+
   /// No description provided for @adStatusSold.
   ///
   /// In ku, this message translates to:

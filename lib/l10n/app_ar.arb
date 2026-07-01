@@ -305,6 +305,7 @@
   "sellCarButton": "بيع سيارة",
   "editAction": "تعديل",
   "adStatusActive": "نشط",
+  "adStatusInactive": "غير نشط",
   "adStatusSold": "مباع",
   "adStatusDraft": "مسودة",
   "adCompleteDraft": "أكمله",

@@ -9,8 +9,10 @@ import 'package:iq_motors/features/auth/presentation/navigation/post_auth_naviga
 import 'package:iq_motors/features/auth/presentation/providers/auth_providers.dart';
 import 'package:iq_motors/shared/widgets/language_switcher.dart';
 import 'package:iq_motors/features/listings/presentation/add_car_flow_screen.dart';
+import 'package:iq_motors/features/detection/presentation/screens/car_detection_screen.dart';
 import 'package:iq_motors/features/auth/presentation/screens/auth_screen.dart';
 import 'package:iq_motors/features/marketplace/presentation/widgets/home/home_theme.dart';
+import 'package:iq_motors/shared/widgets/iq_motors_logo.dart';
 
 /// Glass / immersive app bar for the home hero layout.
 class HomeGlassNavBar extends StatelessWidget implements PreferredSizeWidget {
@@ -45,8 +47,6 @@ class HomeGlassNavBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final titleColor =
-        _useImmersiveStyle ? Colors.white : HomeScreenColors.textPrimary;
     final iconColor =
         _useImmersiveStyle ? Colors.white : HomeScreenColors.textPrimary;
 
@@ -63,16 +63,17 @@ class HomeGlassNavBar extends StatelessWidget implements PreferredSizeWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Expanded(
-              child: Text(
-                l10n.appTitle,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontSize: isWide ? 24 : 18,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: -0.5,
-                  height: 1.0,
-                  color: titleColor,
+              child: Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: IqMotorsLogo(
+                  height: isWide ? 40 : 32,
+                  light: _useImmersiveStyle,
+                  onTap: () {
+                    final navigator = Navigator.of(context);
+                    if (navigator.canPop()) {
+                      navigator.popUntil((route) => route.isFirst);
+                    }
+                  },
                 ),
               ),
             ),
@@ -89,6 +90,22 @@ class HomeGlassNavBar extends StatelessWidget implements PreferredSizeWidget {
               const SizedBox(width: 8),
             LanguageSwitcherButton(iconColor: iconColor),
             SizedBox(width: isWide ? 12 : 6),
+            IconButton(
+              tooltip: 'Scan car',
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => const CarDetectionScreen(),
+                  ),
+                );
+              },
+              icon: Icon(
+                Icons.document_scanner_outlined,
+                color: iconColor,
+                size: isWide ? 24 : 22,
+              ),
+            ),
+            SizedBox(width: isWide ? 4 : 2),
             Consumer(
               builder: (context, ref, _) {
                 final isSignedIn = ref.watch(authStateProvider).value != null;

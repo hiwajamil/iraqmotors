@@ -324,6 +324,7 @@
   "sellCarButton": "Sell Car",
   "editAction": "Edit",
   "adStatusActive": "Active",
+  "adStatusInactive": "Inactive",
   "adStatusSold": "Sold",
   "adStatusDraft": "Draft",
   "adCompleteDraft": "Complete it",

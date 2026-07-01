@@ -589,7 +589,7 @@ class _CarActions extends StatelessWidget {
       ],
       _IconActionButton(
         icon: isDraft ? Icons.play_arrow_rounded : Icons.edit_outlined,
-        tooltip: isDraft ? context.l10n.adCompleteDraft : 'دەستکاری',
+        tooltip: isDraft ? context.l10n.adCompleteDraft : context.l10n.editAction,
         onTap: onEdit,
         accentColor: isDraft ? UserCarListItem._draftOrange : null,
       ),
@@ -597,7 +597,7 @@ class _CarActions extends StatelessWidget {
         const SizedBox(width: 8),
         _IconActionButton(
           icon: Icons.gavel_rounded,
-          tooltip: 'نرخەکان',
+          tooltip: context.l10n.offersAction,
           onTap: onPrices,
           accentColor: UserCarListItem._primaryBlue,
         ),
@@ -605,7 +605,7 @@ class _CarActions extends StatelessWidget {
           const SizedBox(width: 8),
           _IconActionButton(
             icon: Icons.sell_outlined,
-            tooltip: 'فرۆشرا',
+            tooltip: context.l10n.soldAction,
             onTap: onMarkAsSold,
           ),
         ],
@@ -613,7 +613,7 @@ class _CarActions extends StatelessWidget {
       const SizedBox(width: 8),
       _IconActionButton(
         icon: Icons.delete_outline,
-        tooltip: 'سڕینەوە',
+        tooltip: context.l10n.deleteAction,
         onTap: onDelete,
         accentColor: UserCarListItem._deleteRed,
       ),
@@ -685,7 +685,7 @@ class _ActiveToggleButtonState extends State<_ActiveToggleButton> {
       onEnter: (_) => setState(() => _hovered = true),
       onExit: (_) => setState(() => _hovered = false),
       child: Tooltip(
-        message: active ? 'چالاک' : 'ناچالاک',
+        message: active ? context.l10n.adStatusActive : context.l10n.adStatusInactive,
         child: GestureDetector(
           onTap: widget.onTap,
           child: AnimatedContainer(

@@ -7,7 +7,7 @@
 	<key>CFBundleDisplayName</key>
 	<string>IQ Motors</string>
 	<key>NSCameraUsageDescription</key>
-	<string>IQ Motors needs camera access to photograph cars for your listings.</string>
+	<string>IQ Motors uses the camera to photograph cars for listings and to scan vehicles to identify make and model.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>IQ Motors needs photo library access to upload car images for your listings.</string>
 	<key>CFBundleURLTypes</key>

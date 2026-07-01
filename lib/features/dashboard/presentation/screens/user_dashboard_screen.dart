@@ -620,8 +620,16 @@ class _UserDashboardScreenState extends ConsumerState<UserDashboardScreen> {
   }
 
   Widget _buildMobileTabBody() {
+    if (_activeNav == _DashboardNav.messages) {
+      return Padding(
+        padding: const EdgeInsetsDirectional.fromSTEB(20, 24, 20, 24),
+        child: _buildActiveSection(isMobile: true),
+      );
+    }
+
     return SingleChildScrollView(
       controller: _scrollController,
+      primary: false,
       padding: const EdgeInsetsDirectional.fromSTEB(20, 24, 20, 24),
       child: _buildActiveSection(isMobile: true),
     );
@@ -630,6 +638,7 @@ class _UserDashboardScreenState extends ConsumerState<UserDashboardScreen> {
   Widget _buildMainContent({required bool isMobile}) {
     return SingleChildScrollView(
       controller: _scrollController,
+      primary: false,
       padding: EdgeInsetsDirectional.fromSTEB(
         constraintsPadding(context),
         40,
@@ -637,6 +646,7 @@ class _UserDashboardScreenState extends ConsumerState<UserDashboardScreen> {
         40,
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           _DashboardHeader(isMobile: isMobile),
@@ -747,7 +757,9 @@ class _UserDashboardScreenState extends ConsumerState<UserDashboardScreen> {
           daysRemaining: _daysRemaining,
           parseCreatedAt: _parseCreatedAt,
         ),
-      _DashboardNav.messages => const UserInboxSection(),
+      _DashboardNav.messages => UserInboxSection(
+          nestedInScrollView: !isMobile,
+        ),
       _DashboardNav.settings =>
         _EmptyPlaceholder(message: context.l10n.settingsComingSoon),
     };
@@ -1124,6 +1136,7 @@ class _DashboardOverview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _DashboardHeader(isMobile: isMobile),
@@ -1262,6 +1275,7 @@ class _WishlistSection extends StatelessWidget {
     return KeyedSubtree(
       key: sectionKey,
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
@@ -1350,6 +1364,7 @@ class _MyAdsSection extends StatelessWidget {
     return KeyedSubtree(
       key: sectionKey,
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Row(
@@ -1392,64 +1407,61 @@ class _MyAdsSection extends StatelessWidget {
             ),
             child: ads.isEmpty
                 ? _EmptyPlaceholder(message: l10n.myAdsEmpty)
-                : Column(
-                    children: [
-                      for (var i = 0; i < ads.length; i++) ...[
-                        Builder(
-                          builder: (context) {
-                            final ad = ads[i];
-                            final rawStatus = ad['status']?.toString() ??
-                                CarDatabaseService.statusActive;
-                            final isDraft =
-                                rawStatus == CarDatabaseService.statusDraft;
-                            final isSold =
-                                rawStatus == CarDatabaseService.statusSold;
-                            final isActive =
-                                rawStatus == CarDatabaseService.statusActive;
-                            final canToggleActive =
-                                rawStatus == CarDatabaseService.statusActive ||
-                                    rawStatus == CarDatabaseService.statusExpired;
-                            final createdAt = parseCreatedAt(ad['createdAt']);
-                            final remaining = daysRemaining(createdAt);
-                            final latestBid = BidDisplay.highestBidLabel(
-                              car: ad,
-                              firestoreData: ad,
-                            );
+                : ListView.separated(
+                    shrinkWrap: true,
+                    primary: false,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: ads.length,
+                    separatorBuilder: (_, __) => const Divider(
+                      height: 1,
+                      thickness: 1,
+                      color: Color(0xFFE5E5EA),
+                    ),
+                    itemBuilder: (context, index) {
+                      final ad = ads[index];
+                      final rawStatus = ad['status']?.toString() ??
+                          CarDatabaseService.statusActive;
+                      final isDraft =
+                          rawStatus == CarDatabaseService.statusDraft;
+                      final isSold =
+                          rawStatus == CarDatabaseService.statusSold;
+                      final isActive =
+                          rawStatus == CarDatabaseService.statusActive;
+                      final canToggleActive =
+                          rawStatus == CarDatabaseService.statusActive ||
+                              rawStatus == CarDatabaseService.statusExpired;
+                      final createdAt = parseCreatedAt(ad['createdAt']);
+                      final remaining = daysRemaining(createdAt);
+                      final latestBid = BidDisplay.highestBidLabel(
+                        car: ad,
+                        firestoreData: ad,
+                      );
 
-                            return UserCarListItem(
-                              title: _formatCarTitle(
-                                ad['title']?.toString() ?? '',
-                              ),
-                              price: ad['price']?.toString() ?? '—',
-                              imageUrl: ad['imageUrl']?.toString() ?? '',
-                              isMobile: isMobile,
-                              isDraft: isDraft,
-                              isSold: isSold,
-                              isActive: isActive,
-                              canToggleActive: canToggleActive,
-                              latestBidLabel: latestBid,
-                              postedLabel:
-                                  l10n.adPostedAt(formatPostedDate(createdAt)),
-                              daysRemainingLabel: remaining != null && !isDraft
-                                  ? l10n.adDaysRemaining(remaining)
-                                  : null,
-                              draftLabel: l10n.adCompleteDraft,
-                              onEdit: () => onEdit(ad),
-                              onPrices: () => onViewOffers(ad),
-                              onMarkAsSold: () => onMarkAsSold(ad),
-                              onDelete: () => onDelete(ad),
-                              onToggleActive: () => onToggleActive(ad),
-                            );
-                          },
+                      return UserCarListItem(
+                        title: _formatCarTitle(
+                          ad['title']?.toString() ?? '',
                         ),
-                        if (i < ads.length - 1)
-                          const Divider(
-                            height: 1,
-                            thickness: 1,
-                            color: Color(0xFFE5E5EA),
-                          ),
-                      ],
-                    ],
+                        price: ad['price']?.toString() ?? '—',
+                        imageUrl: ad['imageUrl']?.toString() ?? '',
+                        isMobile: isMobile,
+                        isDraft: isDraft,
+                        isSold: isSold,
+                        isActive: isActive,
+                        canToggleActive: canToggleActive,
+                        latestBidLabel: latestBid,
+                        postedLabel:
+                            l10n.adPostedAt(formatPostedDate(createdAt)),
+                        daysRemainingLabel: remaining != null && !isDraft
+                            ? l10n.adDaysRemaining(remaining)
+                            : null,
+                        draftLabel: l10n.adCompleteDraft,
+                        onEdit: () => onEdit(ad),
+                        onPrices: () => onViewOffers(ad),
+                        onMarkAsSold: () => onMarkAsSold(ad),
+                        onDelete: () => onDelete(ad),
+                        onToggleActive: () => onToggleActive(ad),
+                      );
+                    },
                   ),
           ),
         ],

@@ -864,6 +864,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get adStatusActive => 'نشط';
 
   @override
+  String get adStatusInactive => 'غير نشط';
+
+  @override
   String get adStatusSold => 'مباع';
 
   @override

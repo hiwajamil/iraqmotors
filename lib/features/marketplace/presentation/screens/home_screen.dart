@@ -11,6 +11,7 @@ import 'package:iq_motors/features/marketplace/presentation/widgets/home/home_fe
 import 'package:iq_motors/features/marketplace/presentation/widgets/home/home_footer.dart';
 import 'package:iq_motors/features/marketplace/presentation/widgets/home/home_glass_nav_bar.dart';
 import 'package:iq_motors/features/marketplace/presentation/widgets/home/home_hero_section.dart';
+import 'package:iq_motors/features/marketplace/presentation/widgets/home/home_pagination.dart';
 import 'package:iq_motors/features/marketplace/presentation/widgets/home/home_theme.dart';
 import 'package:iq_motors/features/marketplace/presentation/widgets/premium_car_card.dart';
 import 'package:iq_motors/features/auth/presentation/screens/auth_screen.dart';
@@ -27,7 +28,11 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 class _HomeScreenState extends ConsumerState<HomeScreen>
     with SingleTickerProviderStateMixin {
+  static const int _rowsPerPage = 6;
+
   final ValueNotifier<bool> _immersiveNav = ValueNotifier(true);
+  final GlobalKey _listingsAnchorKey = GlobalKey();
+  int _currentPage = 1;
   late final AnimationController _heroController;
   late final Animation<double> _heroFade;
   late final Animation<Offset> _heroSlide;
@@ -45,6 +50,23 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
       end: Offset.zero,
     ).animate(CurvedAnimation(parent: _heroController, curve: Curves.easeOut));
     _heroController.forward();
+  }
+
+  int _pageSize(int crossAxisCount) => crossAxisCount * _rowsPerPage;
+
+  void _selectPage(int page) {
+    if (page == _currentPage) return;
+    setState(() => _currentPage = page);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final context = _listingsAnchorKey.currentContext;
+      if (context != null && mounted) {
+        Scrollable.ensureVisible(
+          context,
+          duration: const Duration(milliseconds: 350),
+          curve: Curves.easeOut,
+        );
+      }
+    });
   }
 
   List<Widget> _listingSlivers({
@@ -99,7 +121,24 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           ];
         }
 
+        final pageSize = _pageSize(crossAxisCount);
+        final totalPages = (cars.length / pageSize).ceil();
+        final currentPage = _currentPage.clamp(1, totalPages);
+        if (currentPage != _currentPage) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) setState(() => _currentPage = currentPage);
+          });
+        }
+
+        final startIndex = (currentPage - 1) * pageSize;
+        final endIndex = (startIndex + pageSize).clamp(0, cars.length);
+        final pageCars = cars.sublist(startIndex, endIndex);
+
         return [
+          SliverToBoxAdapter(
+            key: _listingsAnchorKey,
+            child: const SizedBox.shrink(),
+          ),
           if (!isWide)
             SliverToBoxAdapter(
               child: HomeSectionTitle(
@@ -125,7 +164,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               gridDelegate: _gridDelegate(width, crossAxisCount),
               delegate: SliverChildBuilderDelegate(
                 (context, index) {
-                  final car = cars[index];
+                  final car = pageCars[index];
                   final carId = car['id']?.toString();
 
                   return PremiumCarCard(
@@ -149,16 +188,23 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                     onWishlistTap: () => _onWishlistTap(car),
                   );
                 },
-                childCount: cars.length,
+                childCount: pageCars.length,
                 findChildIndexCallback: (Key key) {
                   if (key is! ValueKey<String>) return null;
                   final id = key.value;
-                  final index = cars.indexWhere(
+                  final index = pageCars.indexWhere(
                     (car) => (car['id']?.toString() ?? '') == id,
                   );
                   return index >= 0 ? index : null;
                 },
               ),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: HomePagination(
+              currentPage: currentPage,
+              totalPages: totalPages,
+              onPageSelected: _selectPage,
             ),
           ),
         ];
@@ -255,6 +301,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     final navLinks = [l10n.navAllModels, l10n.navTuning, l10n.navShowrooms];
     final favoriteIds = ref.watch(favoritesProvider);
     final filterState = ref.watch(filterStateProvider);
+    ref.listen(filterStateProvider, (_, __) {
+      if (_currentPage != 1 && mounted) {
+        setState(() => _currentPage = 1);
+      }
+    });
     final filterNotifier = ref.read(filterStateProvider.notifier);
     final homeCars = ref.watch(homeCarsProvider);
     final cars = homeCars.value ?? const <Map<String, dynamic>>[];

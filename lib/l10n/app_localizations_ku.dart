@@ -872,6 +872,9 @@ class AppLocalizationsKu extends AppLocalizations {
   String get adStatusActive => 'چالاک';
 
   @override
+  String get adStatusInactive => 'ناچالاک';
+
+  @override
   String get adStatusSold => 'فرۆشرا';
 
   @override

@@ -867,6 +867,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get adStatusActive => 'Active';
 
   @override
+  String get adStatusInactive => 'Inactive';
+
+  @override
   String get adStatusSold => 'Sold';
 
   @override

@@ -16,19 +16,18 @@ import 'package:iq_motors/l10n/app_localizations.dart';
 import 'package:iq_motors/shared/models/account_type.dart';
 import 'package:iq_motors/features/listings/domain/models/add_car_draft.dart';
 import 'package:iq_motors/shared/data/add_car_form_options.dart';
-import 'package:iq_motors/shared/models/car_brand.dart';
 import 'package:iq_motors/shared/data/add_car_option_keys.dart';
 import 'package:iq_motors/features/admin/presentation/providers/admin_settings_provider.dart';
 import 'package:iq_motors/features/auth/presentation/providers/auth_providers.dart';
-import 'package:iq_motors/features/storage/presentation/providers/r2_storage_provider.dart';
-import 'package:iq_motors/features/storage/presentation/providers/storage_providers.dart';
+import 'package:iq_motors/features/listings/presentation/providers/add_car_flow_provider.dart';
+import 'package:iq_motors/features/listings/presentation/add_car_theme.dart';
 import 'package:iq_motors/features/marketplace/data/services/car_database_service.dart';
 import 'package:iq_motors/features/listings/data/services/car_vision_service.dart';
 import 'package:iq_motors/features/storage/data/services/cloudflare_upload_service.dart';
 import 'package:iq_motors/features/storage/data/services/r2_storage_service.dart';
+import 'package:iq_motors/features/storage/presentation/providers/storage_providers.dart';
 import 'package:iq_motors/shared/widgets/moderation_error_dialog.dart';
 import 'package:http/http.dart' as http;
-import 'package:iq_motors/features/listings/presentation/add_car_theme.dart';
 import 'package:iq_motors/features/listings/presentation/steps/add_car_step_basic_info.dart';
 import 'package:iq_motors/features/listings/presentation/steps/add_car_step_condition_features.dart';
 import 'package:iq_motors/features/listings/presentation/steps/add_car_step_interior.dart';
@@ -61,121 +60,53 @@ class AddCarFlowScreen extends ConsumerStatefulWidget {
   ConsumerState<AddCarFlowScreen> createState() => _AddCarFlowScreenState();
 }
 
-class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen>
-    with WidgetsBindingObserver {
-  static const int _stepCount = 12;
-
+class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
   final PageController _pageController = PageController();
   final ImagePicker _imagePicker = ImagePicker();
-  int _currentStep = 0;
-  bool _isPublishing = false;
-  bool _isSavingDraft = false;
-  bool _isAnalyzingAi = false;
-  final Set<int> _uploadingPhotoSlots = {};
-  final Map<int, Uint8List> _slotPreviewBytes = {};
-  final Set<String> _aiFilledFields = {};
-  late AddCarDraft _draft;
-  late List<XFile?> _selectedImages;
-  String? _draftAdId;
 
-  bool get _isEditMode =>
-      widget.existingAdId != null && !widget.isDraft && !_isDraftMode;
+  late final AddCarFlowSession _session = AddCarFlowSession(
+    existingAdId: widget.existingAdId,
+    existingCarData: widget.existingCarData,
+    initialStep: widget.initialStep,
+    isDraft: widget.isDraft,
+  );
 
-  bool get _isDraftMode => widget.isDraft;
+  AddCarFlowNotifier get _flow => ref.read(_flowProvider.notifier);
 
-  bool get _isAnyPhotoUploading => _uploadingPhotoSlots.isNotEmpty;
-
-  bool get _shouldAutoSaveDraft =>
-      !_isPublishing &&
-      !_isSavingDraft &&
-      !_isEditMode &&
-      !_isAnyPhotoUploading &&
-      _draft.hasDraftContent;
+  get _flowProvider => addCarFlowProvider(_session);
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
-    _draft = widget.existingCarData != null
-        ? AddCarDraft.fromFirestoreMap(widget.existingCarData!)
-        : const AddCarDraft();
-    _selectedImages = List<XFile?>.filled(AddCarDraft.photoSlotCount, null);
-    if (_isDraftMode && widget.existingAdId != null) {
-      _draftAdId = widget.existingAdId;
-    }
-
-    final resumeStep = widget.initialStep.clamp(0, _stepCount - 1);
-    if (resumeStep > 0) {
-      _currentStep = resumeStep;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!mounted) return;
-        _pageController.jumpToPage(resumeStep);
-      });
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final step = ref.read(_flowProvider).currentStep;
+      if (step > 0 && _pageController.hasClients) {
+        _pageController.jumpToPage(step);
+      }
+    });
   }
 
   @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
     _pageController.dispose();
     super.dispose();
   }
 
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.paused ||
-        state == AppLifecycleState.inactive) {
-      _saveDraftIfNeeded();
-    }
-  }
+  void _goBack() {
+    final flowState = ref.read(_flowProvider);
+    if (flowState.isPublishing || flowState.isAnyPhotoUploading) return;
 
-  bool get _canProceed {
-    switch (_currentStep) {
-      case 0:
-        return _draft.isLocationComplete;
-      case 1:
-        return _draft.hasMinimumPhotos;
-      case 2:
-        return _draft.isBasicInfoComplete;
-      case 3:
-        return _draft.isPlateInfoComplete;
-      case 4:
-        return _draft.isMileageFuelComplete;
-      case 5:
-        return _draft.isTechnicalComplete;
-      case 6:
-        return _draft.isInteriorComplete;
-      case 7:
-        return _draft.isConditionFeaturesComplete;
-      case 8:
-        return _draft.isPriceDescriptionComplete;
-      case 9:
-        return _draft.isReviewComplete;
-      case 10:
-        return _draft.isPackageComplete;
-      case 11:
-        return _draft.isPaymentComplete;
-      default:
-        return false;
-    }
-  }
-
-  Future<void> _goBack() async {
-    if (_isPublishing || _isAnyPhotoUploading) return;
-    if (_currentStep == 0) {
-      await _saveDraftIfNeeded();
-      if (!mounted) return;
+    if (flowState.currentStep == 0) {
       Navigator.of(context).maybePop();
       return;
     }
-    _goToStep(_currentStep - 1);
+    _flow.goToStep(flowState.currentStep - 1);
   }
 
-  Future<void> _exitToDashboard() async {
-    if (_isPublishing || _isAnyPhotoUploading) return;
-
-    await _saveDraftIfNeeded();
-    if (!mounted) return;
+  void _exitToDashboard() {
+    final flowState = ref.read(_flowProvider);
+    if (flowState.isPublishing || flowState.isAnyPhotoUploading) return;
 
     final user = FirebaseAuth.instance.currentUser;
     final profile = ref.read(userProfileProvider).value;
@@ -192,62 +123,12 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen>
     );
   }
 
-  Future<void> _persistDraft() async {
-    final sellerId = FirebaseAuth.instance.currentUser?.uid;
-    if (sellerId == null) {
-      throw CarDatabaseException('Sign in required to save a draft.');
-    }
-
-    final r2 = await readR2StorageServiceForUpload(ref);
-    final carDb = ref.read(carDatabaseServiceProvider);
-
-    final imageUrls = await _uploadCarImagesSequentially(
-      r2,
-      _draft.normalizedPhotos(),
-      xFiles: _selectedImages,
-      previewBytesBySlot: _slotPreviewBytes,
-    );
-
-    final carData = _draft.toFirestoreMap(sellerId: sellerId);
-    if (_draft.damagePhotos.isNotEmpty) {
-      final damageUrls = await _uploadCarImagesSequentially(
-        r2,
-        _draft.damagePhotos.cast<String?>(),
-      );
-      if (damageUrls.isNotEmpty) {
-        carData['damageImageUrls'] = damageUrls;
-      }
-    }
-
-    final draftId = await carDb.saveCarDraft(
-      draftId: _draftAdId ?? widget.existingAdId,
-      sellerId: sellerId,
-      carData: carData,
-      imageUrls: imageUrls,
-      lastStep: _currentStep,
-    );
-    _draftAdId = draftId;
-  }
-
-  Future<void> _saveDraftIfNeeded() async {
-    if (!_shouldAutoSaveDraft) return;
-
-    final sellerId = FirebaseAuth.instance.currentUser?.uid;
-    if (sellerId == null) return;
-
-    _isSavingDraft = true;
-
-    try {
-      await _persistDraft();
-    } catch (e) {
-      webDebugLog('Draft auto-save failed: $e');
-    } finally {
-      _isSavingDraft = false;
-    }
-  }
-
   Future<void> _saveDraftManually() async {
-    if (_isPublishing || _isSavingDraft || _isAnyPhotoUploading || _isEditMode) {
+    final flowState = ref.read(_flowProvider);
+    if (flowState.isPublishing ||
+        flowState.isSavingDraft ||
+        flowState.isAnyPhotoUploading ||
+        flowState.isEditMode) {
       return;
     }
 
@@ -264,28 +145,23 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen>
       return;
     }
 
-    if (!_draft.hasDraftContent) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.addCarDraftEmpty),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-      return;
-    }
-
     HapticFeedback.mediumImpact();
-    setState(() => _isSavingDraft = true);
 
     try {
-      await _persistDraft();
+      await _flow.saveDraftManually();
       if (!mounted) return;
-      setState(() => _isSavingDraft = false);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(l10n.addCarDraftSavedSuccess),
           behavior: SnackBarBehavior.floating,
           backgroundColor: const Color(0xFF34C759),
+        ),
+      );
+    } on AddCarDraftEmptyException {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(l10n.addCarDraftEmpty),
+          behavior: SnackBarBehavior.floating,
         ),
       );
     } on R2StorageException catch (e) {
@@ -299,7 +175,6 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen>
 
   void _showDraftSaveError(String message) {
     if (!mounted) return;
-    setState(() => _isSavingDraft = false);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
@@ -310,10 +185,15 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen>
   }
 
   void _goNext() {
-    if (!_canProceed || _isPublishing || _isAnyPhotoUploading) return;
+    final flowState = ref.read(_flowProvider);
+    if (!flowState.canProceed ||
+        flowState.isPublishing ||
+        flowState.isAnyPhotoUploading) {
+      return;
+    }
 
-    if (_currentStep >= _stepCount - 1) {
-      if (_isEditMode) {
+    if (flowState.currentStep >= AddCarFlowState.stepCount - 1) {
+      if (flowState.isEditMode) {
         _saveChanges();
       } else {
         _publishListing();
@@ -321,116 +201,17 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen>
       return;
     }
 
-    _goToStep(_currentStep + 1);
-  }
-
-  /// Uploads each filled photo slot to R2 in order before Firestore save.
-  /// Existing remote URLs (edit mode) are reused without re-uploading.
-  Future<List<String>> _uploadCarImagesSequentially(
-    R2StorageService r2,
-    List<String?> slots, {
-    List<XFile?>? xFiles,
-    Map<int, Uint8List>? previewBytesBySlot,
-  }) async {
-    final images = slots
-        .whereType<String>()
-        .where((path) => path.trim().isNotEmpty)
-        .toList();
-    // ignore: avoid_print
-    print('Starting upload for ${images.length} images...');
-
-    final urls = <String>[];
-    var uploadIndex = 0;
-
-    for (var slotIndex = 0; slotIndex < slots.length; slotIndex++) {
-      final slot = slots[slotIndex]?.trim();
-      if (slot == null || slot.isEmpty) continue;
-
-      if (AddCarDraft.isRemoteImageUrl(slot) && !slot.startsWith('blob:')) {
-        urls.add(slot);
-        continue;
-      }
-
-      final dotIndex = slot.lastIndexOf('.');
-      final ext =
-          dotIndex > 0 ? slot.substring(dotIndex).toLowerCase() : '.jpg';
-      final uniqueName =
-          '${DateTime.now().millisecondsSinceEpoch}_$uploadIndex$ext';
-      uploadIndex++;
-
-      try {
-        final url = await r2.uploadPickedImage(
-          path: slot,
-          xFile: xFiles?[slotIndex],
-          fileName: uniqueName,
-          bytes: previewBytesBySlot?[slotIndex],
-        );
-        // ignore: avoid_print
-        print('Successfully uploaded to R2: $url');
-        urls.add(url);
-      } catch (e) {
-        // ignore: avoid_print
-        print('Error during image upload: $e');
-        rethrow;
-      }
-    }
-
-    return urls;
+    _flow.goNext();
   }
 
   Future<void> _saveChanges() async {
     HapticFeedback.mediumImpact();
-    setState(() => _isPublishing = true);
 
     final l10n = context.l10n;
-    final r2 = await readR2StorageServiceForUpload(ref);
-    final carDb = ref.read(carDatabaseServiceProvider);
-    final sellerId = FirebaseAuth.instance.currentUser?.uid;
 
     try {
-      final hasNewLocalPhotos = _draft.newLocalPhotoPaths.isNotEmpty;
-      final List<String> existingImageUrls;
-      final List<File> newImagesToUpload;
-
-      if (hasNewLocalPhotos) {
-        existingImageUrls = await _uploadCarImagesSequentially(
-          r2,
-          _draft.normalizedPhotos(),
-          xFiles: _selectedImages,
-          previewBytesBySlot: _slotPreviewBytes,
-        );
-        newImagesToUpload = const [];
-      } else {
-        existingImageUrls = _draft.existingImageUrls;
-        newImagesToUpload = const [];
-      }
-
-      if (existingImageUrls.isEmpty && newImagesToUpload.isEmpty) {
-        throw R2StorageException(l10n.addCarMinPhotosRequired);
-      }
-
-      List<String> damageUrls = _draft.existingDamageImageUrls;
-      if (_draft.newLocalDamagePhotoPaths.isNotEmpty) {
-        damageUrls = await _uploadCarImagesSequentially(
-          r2,
-          _draft.damagePhotos.cast<String?>(),
-        );
-      }
-
-      final carData = _draft.toFirestoreMap(sellerId: sellerId);
-      if (damageUrls.isNotEmpty) {
-        carData['damageImageUrls'] = damageUrls;
-      }
-
-      await carDb.updateCarAd(
-        adId: widget.existingAdId!,
-        updatedData: carData,
-        existingImageUrls: existingImageUrls,
-        newImagesToUpload: newImagesToUpload,
-      );
-
+      await _flow.saveChanges();
       if (!mounted) return;
-      setState(() => _isPublishing = false);
 
       Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(
@@ -453,57 +234,12 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen>
 
   Future<void> _publishListing() async {
     HapticFeedback.mediumImpact();
-    setState(() => _isPublishing = true);
 
     final l10n = context.l10n;
-    final r2 = await readR2StorageServiceForUpload(ref);
-    final carDb = ref.read(carDatabaseServiceProvider);
-    final sellerId = FirebaseAuth.instance.currentUser?.uid;
 
     try {
-      final imageUrls = await _uploadCarImagesSequentially(
-        r2,
-        _draft.normalizedPhotos(),
-        xFiles: _selectedImages,
-        previewBytesBySlot: _slotPreviewBytes,
-      );
-      if (imageUrls.isEmpty) {
-        throw R2StorageException(l10n.addCarMinPhotosRequired);
-      }
-
-      final damageUrls = _draft.damagePhotos.isNotEmpty
-          ? await _uploadCarImagesSequentially(
-              r2,
-              _draft.damagePhotos.cast<String?>(),
-            )
-          : <String>[];
-
-      final carData = _draft.toFirestoreMap(sellerId: sellerId);
-      carData['imageUrls'] = imageUrls;
-      if (damageUrls.isNotEmpty) {
-        carData['damageImageUrls'] = damageUrls;
-      }
-
-      if (_isDraftMode && widget.existingAdId != null) {
-        await carDb.publishDraftCarAd(
-          draftId: widget.existingAdId!,
-          carData: carData,
-          imageUrls: imageUrls,
-        );
-      } else if (_draftAdId != null) {
-        await carDb.publishDraftCarAd(
-          draftId: _draftAdId!,
-          carData: carData,
-          imageUrls: imageUrls,
-        );
-      } else {
-        // ignore: avoid_print
-        print('Publishing car with ${imageUrls.length} imageUrls to Firestore');
-        await carDb.publishCarAd(carData, imageUrls);
-      }
-
+      await _flow.publishListing();
       if (!mounted) return;
-      setState(() => _isPublishing = false);
 
       Navigator.of(context).popUntil((route) => route.isFirst);
       ScaffoldMessenger.of(context).showSnackBar(
@@ -520,21 +256,17 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen>
     } on CarDatabaseException catch (e) {
       _showPublishError(e.message);
     } catch (e) {
-      // ignore: avoid_print
-      print('Error during image upload: $e');
       _showPublishError(l10n.addCarPublishFailed);
     }
   }
 
   void _showModerationError(String reason) {
     if (!mounted) return;
-    setState(() => _isPublishing = false);
     showModerationErrorDialog(context, reason);
   }
 
   void _showPublishError(String message) {
     if (!mounted) return;
-    setState(() => _isPublishing = false);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
@@ -544,23 +276,15 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen>
     );
   }
 
-  void _goToStep(int step) {
-    setState(() => _currentStep = step);
+  void _syncPageToStep(int step) {
+    if (!_pageController.hasClients) return;
+    final currentPage = _pageController.page?.round() ?? 0;
+    if (currentPage == step) return;
     _pageController.animateToPage(
       step,
       duration: const Duration(milliseconds: 320),
       curve: Curves.easeOutCubic,
     );
-  }
-
-  void _onProvinceChanged(String province) {
-    setState(() {
-      _draft = _draft.copyWith(province: province, clearCity: true);
-    });
-  }
-
-  void _onCityChanged(String city) {
-    setState(() => _draft = _draft.copyWith(city: city));
   }
 
   void _showPhotoFlowError(Object error) {
@@ -686,34 +410,35 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen>
   }
 
   void _onPhotoSlotTapped(int index) {
-    if (_uploadingPhotoSlots.contains(index) || _isPublishing) return;
+    final flowState = ref.read(_flowProvider);
+    if (flowState.uploadingPhotoSlots.contains(index) ||
+        flowState.isPublishing) {
+      return;
+    }
     _handlePhotoSlotTap(index);
   }
 
   void _onPhotoRemoved(int index) {
-    if (_uploadingPhotoSlots.contains(index) || _isPublishing) return;
+    final flowState = ref.read(_flowProvider);
+    if (flowState.uploadingPhotoSlots.contains(index) ||
+        flowState.isPublishing) {
+      return;
+    }
 
-    final slots = List<String?>.from(_draft.normalizedPhotos());
-    slots[index] = null;
-
-    setState(() {
-      _selectedImages[index] = null;
-      _slotPreviewBytes.remove(index);
-      _draft = _draft.copyWith(photos: slots);
-    });
+    _flow.removePhotoSlot(index);
     HapticFeedback.lightImpact();
   }
 
-  /// Pick + upload for all platforms (spinner shown before picker opens).
+  /// Pick image locally; upload is deferred until publish.
   Future<void> _handlePhotoSlotTap(int index) async {
-    setState(() => _uploadingPhotoSlots.add(index));
+    _flow.addUploadingSlot(index);
 
     try {
       final picked = await _pickPhotos();
       if (!mounted) return;
 
       if (picked.isEmpty) {
-        setState(() => _uploadingPhotoSlots.remove(index));
+        _flow.removeUploadingSlot(index);
         return;
       }
 
@@ -737,7 +462,7 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen>
       }
     } catch (e, stackTrace) {
       if (!mounted) return;
-      setState(() => _uploadingPhotoSlots.remove(index));
+      _flow.removeUploadingSlot(index);
       webDebugLog('Photo slot tap failed: $e');
       webDebugLog('$stackTrace');
       _showPhotoFlowError(e);
@@ -790,20 +515,13 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen>
     if (imageBytes.isEmpty) {
       throw StateError('Image bytes are empty');
     }
-    webDebugLog('Photo ready (${imageBytes.length} bytes) — upload deferred to publish');
+    webDebugLog(
+      'Photo ready (${imageBytes.length} bytes) — upload deferred to publish',
+    );
 
     if (!mounted) return;
     HapticFeedback.lightImpact();
-
-    final slots = _draft.normalizedPhotos();
-    setState(() {
-      _uploadingPhotoSlots.remove(index);
-      _selectedImages[index] = picked;
-      _slotPreviewBytes[index] = imageBytes;
-      _draft = _draft.copyWith(
-        photos: List<String?>.from(slots)..[index] = picked.path,
-      );
-    });
+    _flow.assignPhotoToSlot(index, picked, imageBytes);
 
     if (_enableAiAutoFill && index == 0 && !kIsWeb) {
       _runAiAutoFill(File(picked.path));
@@ -816,7 +534,7 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen>
     final userId = FirebaseAuth.instance.currentUser?.uid;
     if (userId == null) return;
 
-    setState(() => _isAnalyzingAi = true);
+    _flow.setAnalyzingAi(true);
 
     AccountType accountType = AccountType.individual;
     try {
@@ -834,7 +552,7 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen>
     );
 
     if (!mounted) return;
-    setState(() => _isAnalyzingAi = false);
+    _flow.setAnalyzingAi(false);
 
     if (outcome.status == CarVisionAutoFillStatus.quotaExceeded ||
         outcome.status == CarVisionAutoFillStatus.unavailable ||
@@ -845,7 +563,9 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen>
     final suggestion = outcome.suggestion;
     if (suggestion == null || !suggestion.hasAny) return;
 
-    setState(() => _draft = _applyAiSuggestion(_draft, suggestion));
+    final flowState = ref.read(_flowProvider);
+    final applied = _applyAiSuggestion(flowState.draft, suggestion, flowState.aiFilledFields);
+    _flow.applyAiSuggestion(applied.draft, applied.aiFilled);
 
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
@@ -857,145 +577,46 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen>
     );
   }
 
-  AddCarDraft _applyAiSuggestion(
+  ({AddCarDraft draft, Set<String> aiFilled}) _applyAiSuggestion(
     AddCarDraft draft,
     CarVisionFormSuggestion suggestion,
+    Set<String> aiFilledFields,
   ) {
     var next = draft;
+    final aiFilled = Set<String>.from(aiFilledFields);
 
     if (suggestion.brandId != null &&
         (draft.brandId == null || draft.brandId!.isEmpty)) {
       next = next.copyWith(brandId: suggestion.brandId, clearModel: true);
-      _aiFilledFields.add('brandId');
+      aiFilled.add('brandId');
     }
 
     if (suggestion.modelKey != null &&
         next.brandId != null &&
         (draft.modelKey == null || draft.modelKey!.isEmpty)) {
       next = next.copyWith(modelKey: suggestion.modelKey);
-      _aiFilledFields.add('modelKey');
+      aiFilled.add('modelKey');
     }
 
     if (suggestion.colorKey != null &&
         (draft.colorKey == null || draft.colorKey!.isEmpty)) {
       next = next.copyWith(colorKey: suggestion.colorKey);
-      _aiFilledFields.add('colorKey');
+      aiFilled.add('colorKey');
     }
 
-    return next;
-  }
-
-  void _onBrandChanged(CarBrand brand) {
-    setState(() {
-      _aiFilledFields.remove('brandId');
-      _aiFilledFields.remove('modelKey');
-      _draft = _draft.copyWith(brandId: brand.id, clearModel: true);
-    });
-  }
-
-  void _onModelChanged(String modelKey) {
-    setState(() {
-      _aiFilledFields.remove('modelKey');
-      _draft = _draft.copyWith(modelKey: modelKey);
-    });
-  }
-
-  void _onColorChanged(String colorKey) {
-    setState(() {
-      _aiFilledFields.remove('colorKey');
-      _draft = _draft.copyWith(colorKey: colorKey);
-    });
-  }
-
-  void _onYearChanged(String year) {
-    setState(() => _draft = _draft.copyWith(year: year));
-  }
-
-  void _onTrimChanged(String trim) {
-    setState(() => _draft = _draft.copyWith(trim: trim));
-  }
-
-  void _onPlateTypeChanged(String plateTypeKey) {
-    setState(() => _draft = _draft.copyWith(plateTypeKey: plateTypeKey));
-  }
-
-  void _onPlateCityChanged(String plateCityKey) {
-    setState(() => _draft = _draft.copyWith(plateCityKey: plateCityKey));
-  }
-
-  void _onMileageChanged(String mileageValue) {
-    setState(() => _draft = _draft.copyWith(mileageValue: mileageValue));
-  }
-
-  void _onMileageUnitChanged(String mileageUnit) {
-    setState(() => _draft = _draft.copyWith(mileageUnit: mileageUnit));
-  }
-
-  void _onFuelChanged(String fuelKey) {
-    setState(() => _draft = _draft.copyWith(fuelKey: fuelKey));
-  }
-
-  void _onImportCountryChanged(String importCountryKey) {
-    setState(() => _draft = _draft.copyWith(importCountryKey: importCountryKey));
-  }
-
-  void _onTransmissionChanged(String transmissionKey) {
-    setState(() => _draft = _draft.copyWith(transmissionKey: transmissionKey));
-  }
-
-  void _onCylindersChanged(String cylindersKey) {
-    setState(() => _draft = _draft.copyWith(cylindersKey: cylindersKey));
-  }
-
-  void _onEngineSizeChanged(String engineSizeKey) {
-    setState(() => _draft = _draft.copyWith(engineSizeKey: engineSizeKey));
-  }
-
-  void _onSeatMaterialChanged(String seatMaterialKey) {
-    setState(() => _draft = _draft.copyWith(seatMaterialKey: seatMaterialKey));
-  }
-
-  void _onSeatCountChanged(String seatCountKey) {
-    setState(() => _draft = _draft.copyWith(seatCountKey: seatCountKey));
-  }
-
-  void _onConditionChanged(String conditionKey) {
-    setState(() => _draft = _draft.copyWith(conditionKey: conditionKey));
-  }
-
-  void _onFeatureToggled(String featureKey) {
-    final next = Set<String>.from(_draft.selectedFeatures);
-    if (next.contains(featureKey)) {
-      next.remove(featureKey);
-    } else {
-      next.add(featureKey);
-    }
-    setState(() => _draft = _draft.copyWith(selectedFeatures: next));
-  }
-
-  void _onSelectAllFeatures(bool selectAll) {
-    setState(() {
-      _draft = _draft.copyWith(
-        selectedFeatures: selectAll
-            ? Set<String>.from(AddCarFormOptions.featureKeys)
-            : {},
-      );
-    });
+    return (draft: next, aiFilled: aiFilled);
   }
 
   Future<void> _onDamagePhotoAdded() async {
-    if (_isAnyPhotoUploading || _isPublishing) return;
+    final flowState = ref.read(_flowProvider);
+    if (flowState.isAnyPhotoUploading || flowState.isPublishing) return;
 
     try {
       final picked = await _pickPhotos();
       if (picked.isEmpty || !mounted) return;
 
       HapticFeedback.lightImpact();
-      setState(() {
-        _draft = _draft.copyWith(
-          damagePhotos: [..._draft.damagePhotos, picked.first.file.path],
-        );
-      });
+      _flow.addDamagePhoto(picked.first.file.path);
     } catch (e, stackTrace) {
       if (!mounted) return;
       webDebugLog('Damage photo pick failed: $e');
@@ -1004,29 +625,9 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen>
     }
   }
 
-  void _onDescriptionChanged(String description) {
-    setState(() => _draft = _draft.copyWith(description: description));
-  }
-
-  void _onPriceChanged(String priceValue) {
-    setState(() => _draft = _draft.copyWith(priceValue: priceValue));
-  }
-
-  void _onCurrencyChanged(String currencyKey) {
-    setState(() => _draft = _draft.copyWith(currencyKey: currencyKey));
-  }
-
-  void _onPackageChanged(String packageKey) {
-    setState(() => _draft = _draft.copyWith(packageKey: packageKey));
-  }
-
-  void _onPaymentMethodChanged(String paymentMethodKey) {
-    setState(() => _draft = _draft.copyWith(paymentMethodKey: paymentMethodKey));
-  }
-
-  String _nextLabel(AppLocalizations l10n, int step) {
-    if (step >= _stepCount - 1) {
-      return _isEditMode ? l10n.addCarSave : l10n.addCarPublish;
+  String _nextLabel(AppLocalizations l10n, AddCarFlowState flowState) {
+    if (flowState.currentStep >= AddCarFlowState.stepCount - 1) {
+      return flowState.isEditMode ? l10n.addCarSave : l10n.addCarPublish;
     }
     return l10n.next;
   }
@@ -1049,17 +650,28 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen>
     };
   }
 
+  void _goToStep(int step) => _flow.goToStep(step);
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final progress = (_currentStep + 1) / _stepCount;
+    final flowState = ref.watch(_flowProvider);
+    final draft = flowState.draft;
+
+    ref.listen<AddCarFlowState>(_flowProvider, (previous, next) {
+      if (previous?.currentStep != next.currentStep) {
+        _syncPageToStep(next.currentStep);
+      }
+    });
+
+    final progress = (flowState.currentStep + 1) / AddCarFlowState.stepCount;
     final config = ref.watch(systemConfigProvider).value;
 
     return PopScope(
       canPop: false,
-      onPopInvokedWithResult: (didPop, result) async {
+      onPopInvokedWithResult: (didPop, result) {
         if (didPop) return;
-        await _goBack();
+        _goBack();
       },
       child: Stack(
       children: [
@@ -1078,7 +690,7 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen>
         title: Column(
           children: [
             Text(
-              _stepTitle(l10n, _currentStep),
+              _stepTitle(l10n, flowState.currentStep),
               style: const TextStyle(
                 fontSize: 17,
                 fontWeight: FontWeight.w600,
@@ -1100,11 +712,11 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen>
         ),
         centerTitle: true,
         actions: [
-          if (_isEditMode)
+          if (flowState.isEditMode)
             Padding(
               padding: const EdgeInsetsDirectional.only(end: 4),
               child: TextButton(
-                onPressed: (_isPublishing || _isAnyPhotoUploading)
+                onPressed: (flowState.isPublishing || flowState.isAnyPhotoUploading)
                     ? null
                     : _saveChanges,
                 child: Text(
@@ -1112,7 +724,7 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen>
                   style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
-                    color: (_isPublishing || _isAnyPhotoUploading)
+                    color: (flowState.isPublishing || flowState.isAnyPhotoUploading)
                         ? AddCarTheme.textSecondary
                         : AddCarTheme.focusBlue,
                   ),
@@ -1122,7 +734,7 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen>
           Padding(
             padding: const EdgeInsetsDirectional.only(end: 8),
             child: TextButton(
-              onPressed: (_isPublishing || _isAnyPhotoUploading)
+              onPressed: (flowState.isPublishing || flowState.isAnyPhotoUploading)
                   ? null
                   : _exitToDashboard,
               child: Text(
@@ -1130,7 +742,7 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen>
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
-                  color: (_isPublishing || _isAnyPhotoUploading)
+                  color: (flowState.isPublishing || flowState.isAnyPhotoUploading)
                       ? AddCarTheme.textSecondary
                       : AddCarTheme.textPrimary,
                 ),
@@ -1143,7 +755,10 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen>
           child: Padding(
             padding: const EdgeInsets.only(bottom: 4),
             child: Text(
-              l10n.addCarStepProgress(_currentStep + 1, _stepCount),
+              l10n.addCarStepProgress(
+                flowState.currentStep + 1,
+                AddCarFlowState.stepCount,
+              ),
               style: const TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
@@ -1156,121 +771,134 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen>
       body: PageView(
         controller: _pageController,
         physics: const NeverScrollableScrollPhysics(),
-        onPageChanged: (index) => setState(() => _currentStep = index),
         children: [
           AddCarStepLocation(
-            province: _draft.province,
-            city: _draft.city,
-            onProvinceChanged: _onProvinceChanged,
-            onCityChanged: _onCityChanged,
+            province: draft.province,
+            city: draft.city,
+            onProvinceChanged: _flow.onProvinceChanged,
+            onCityChanged: _flow.onCityChanged,
           ),
           AddCarStepPhotos(
-            photos: _draft.normalizedPhotos(),
+            photos: draft.normalizedPhotos(),
             onPhotoSlotTapped: _onPhotoSlotTapped,
             onPhotoRemoved: _onPhotoRemoved,
-            uploadingSlots: _uploadingPhotoSlots,
-            previewBytesBySlot: _slotPreviewBytes,
+            uploadingSlots: flowState.uploadingPhotoSlots,
+            previewBytesBySlot: flowState.slotPreviewBytes,
           ),
           AddCarStepBasicInfo(
-            brandId: _draft.brandId,
-            modelKey: _draft.modelKey,
-            colorKey: _draft.colorKey,
-            year: _draft.year,
-            trim: _draft.trim,
-            isAnalyzingAi: _isAnalyzingAi,
-            aiFilledFields: _aiFilledFields,
-            onBrandChanged: _onBrandChanged,
-            onModelChanged: _onModelChanged,
-            onColorChanged: _onColorChanged,
-            onYearChanged: _onYearChanged,
-            onTrimChanged: _onTrimChanged,
+            brandId: draft.brandId,
+            modelKey: draft.modelKey,
+            colorKey: draft.colorKey,
+            year: draft.year,
+            trim: draft.trim,
+            isAnalyzingAi: flowState.isAnalyzingAi,
+            aiFilledFields: flowState.aiFilledFields,
+            onBrandChanged: _flow.onBrandChanged,
+            onModelChanged: _flow.onModelChanged,
+            onColorChanged: _flow.onColorChanged,
+            onYearChanged: _flow.onYearChanged,
+            onTrimChanged: _flow.onTrimChanged,
           ),
           AddCarStepPlateInfo(
-            plateTypeKey: _draft.plateTypeKey,
-            plateCityKey: _draft.plateCityKey,
-            onPlateTypeChanged: _onPlateTypeChanged,
-            onPlateCityChanged: _onPlateCityChanged,
+            plateTypeKey: draft.plateTypeKey,
+            plateCityKey: draft.plateCityKey,
+            onPlateTypeChanged: _flow.onPlateTypeChanged,
+            onPlateCityChanged: _flow.onPlateCityChanged,
           ),
           AddCarStepMileageFuel(
-            mileageValue: _draft.mileageValue,
-            mileageUnit: _draft.mileageUnit,
-            fuelKey: _draft.fuelKey,
-            onMileageChanged: _onMileageChanged,
-            onMileageUnitChanged: _onMileageUnitChanged,
-            onFuelChanged: _onFuelChanged,
+            mileageValue: draft.mileageValue,
+            mileageUnit: draft.mileageUnit,
+            fuelKey: draft.fuelKey,
+            onMileageChanged: _flow.onMileageChanged,
+            onMileageUnitChanged: _flow.onMileageUnitChanged,
+            onFuelChanged: _flow.onFuelChanged,
           ),
           AddCarStepTechnical(
-            importCountryKey: _draft.importCountryKey,
-            transmissionKey: _draft.transmissionKey,
-            cylindersKey: _draft.cylindersKey,
-            engineSizeKey: _draft.engineSizeKey,
-            onImportCountryChanged: _onImportCountryChanged,
-            onTransmissionChanged: _onTransmissionChanged,
-            onCylindersChanged: _onCylindersChanged,
-            onEngineSizeChanged: _onEngineSizeChanged,
+            importCountryKey: draft.importCountryKey,
+            transmissionKey: draft.transmissionKey,
+            cylindersKey: draft.cylindersKey,
+            engineSizeKey: draft.engineSizeKey,
+            onImportCountryChanged: _flow.onImportCountryChanged,
+            onTransmissionChanged: _flow.onTransmissionChanged,
+            onCylindersChanged: _flow.onCylindersChanged,
+            onEngineSizeChanged: _flow.onEngineSizeChanged,
           ),
           AddCarStepInterior(
-            seatMaterialKey: _draft.seatMaterialKey,
-            seatCountKey: _draft.seatCountKey,
-            onSeatMaterialChanged: _onSeatMaterialChanged,
-            onSeatCountChanged: _onSeatCountChanged,
+            seatMaterialKey: draft.seatMaterialKey,
+            seatCountKey: draft.seatCountKey,
+            onSeatMaterialChanged: _flow.onSeatMaterialChanged,
+            onSeatCountChanged: _flow.onSeatCountChanged,
           ),
           AddCarStepConditionFeatures(
-            conditionKey: _draft.conditionKey,
-            selectedFeatures: _draft.selectedFeatures,
-            damagePhotoCount: _draft.damagePhotos.length,
-            onConditionChanged: _onConditionChanged,
-            onFeatureToggled: _onFeatureToggled,
-            onSelectAllFeatures: _onSelectAllFeatures,
+            conditionKey: draft.conditionKey,
+            selectedFeatures: draft.selectedFeatures,
+            damagePhotoCount: draft.damagePhotos.length,
+            onConditionChanged: _flow.onConditionChanged,
+            onFeatureToggled: _flow.onFeatureToggled,
+            onSelectAllFeatures: (selectAll) => _flow.onSelectAllFeatures(
+              selectAll
+                  ? Set<String>.from(AddCarFormOptions.featureKeys)
+                  : {},
+            ),
             onDamagePhotoAdded: _onDamagePhotoAdded,
           ),
           AddCarStepPriceDescription(
-            description: _draft.description,
-            priceValue: _draft.priceValue,
-            currencyKey: _draft.currencyKey,
-            onDescriptionChanged: _onDescriptionChanged,
-            onPriceChanged: _onPriceChanged,
-            onCurrencyChanged: _onCurrencyChanged,
+            description: draft.description,
+            priceValue: draft.priceValue,
+            currencyKey: draft.currencyKey,
+            onDescriptionChanged: _flow.onDescriptionChanged,
+            onPriceChanged: _flow.onPriceChanged,
+            onCurrencyChanged: _flow.onCurrencyChanged,
           ),
           AddCarStepReview(
-            draft: _draft,
+            draft: draft,
             onEditStep: _goToStep,
           ),
           AddCarStepPackages(
-            selectedPackageKey: _draft.packageKey,
-            onPackageChanged: _onPackageChanged,
+            selectedPackageKey: draft.packageKey,
+            onPackageChanged: _flow.onPackageChanged,
             boostPriceIqd:
                 config?.priceForPackage(AddCarOptionKeys.packageBoost),
             superBoostPriceIqd:
                 config?.priceForPackage(AddCarOptionKeys.packageSuperBoost),
           ),
           AddCarStepPayment(
-            paymentMethodKey: _draft.paymentMethodKey,
-            onPaymentMethodChanged: _onPaymentMethodChanged,
+            paymentMethodKey: draft.paymentMethodKey,
+            onPaymentMethodChanged: _flow.onPaymentMethodChanged,
           ),
         ],
       ),
       bottomNavigationBar: _BottomActionBar(
-        canProceed: _canProceed && !_isPublishing && !_isAnyPhotoUploading,
+        canProceed: flowState.canProceed &&
+            !flowState.isPublishing &&
+            !flowState.isAnyPhotoUploading,
         onBack: _goBack,
         onNext: _goNext,
         backLabel: l10n.back,
-        nextLabel: _nextLabel(l10n, _currentStep),
-        saveLabel: _isEditMode
-            ? (_currentStep < _stepCount - 1 ? l10n.addCarSave : null)
+        nextLabel: _nextLabel(l10n, flowState),
+        saveLabel: flowState.isEditMode
+            ? (flowState.currentStep < AddCarFlowState.stepCount - 1
+                ? l10n.addCarSave
+                : null)
             : l10n.addCarSave,
-        onSave: _isEditMode
-            ? (_currentStep < _stepCount - 1 ? _saveChanges : null)
+        onSave: flowState.isEditMode
+            ? (flowState.currentStep < AddCarFlowState.stepCount - 1
+                ? _saveChanges
+                : null)
             : _saveDraftManually,
-        canSave: !_isPublishing &&
-            !_isAnyPhotoUploading &&
-            !_isSavingDraft &&
-            (_isEditMode || _draft.hasDraftContent),
+        canSave: !flowState.isPublishing &&
+            !flowState.isAnyPhotoUploading &&
+            !flowState.isSavingDraft &&
+            (flowState.isEditMode || draft.hasDraftContent),
+        isSaving: flowState.isSavingDraft,
       ),
     ),
-        if (_isPublishing || _isSavingDraft)
-          _PublishingOverlay(isEditMode: true, l10n: l10n),
-        if (_isAnalyzingAi)
+        if (flowState.isPublishing)
+          _PublishingOverlay(
+            isEditMode: flowState.isEditMode,
+            l10n: l10n,
+          ),
+        if (flowState.isAnalyzingAi)
           const _AiAnalyzingChipOverlay(),
       ],
     ),
@@ -1400,6 +1028,7 @@ class _BottomActionBar extends StatelessWidget {
     this.saveLabel,
     this.onSave,
     this.canSave = true,
+    this.isSaving = false,
   });
 
   final bool canProceed;
@@ -1410,6 +1039,7 @@ class _BottomActionBar extends StatelessWidget {
   final String? saveLabel;
   final VoidCallback? onSave;
   final bool canSave;
+  final bool isSaving;
 
   @override
   Widget build(BuildContext context) {
@@ -1430,7 +1060,8 @@ class _BottomActionBar extends StatelessWidget {
           if (saveLabel != null && onSave != null) ...[
             _SaveBarButton(
               label: saveLabel!,
-              enabled: canSave,
+              enabled: canSave && !isSaving,
+              isLoading: isSaving,
               onTap: onSave!,
             ),
             const SizedBox(height: 10),
@@ -1464,11 +1095,13 @@ class _SaveBarButton extends StatefulWidget {
     required this.label,
     required this.enabled,
     required this.onTap,
+    this.isLoading = false,
   });
 
   final String label;
   final bool enabled;
   final VoidCallback onTap;
+  final bool isLoading;
 
   @override
   State<_SaveBarButton> createState() => _SaveBarButtonState();
@@ -1506,15 +1139,24 @@ class _SaveBarButtonState extends State<_SaveBarButton> {
                 ),
               ],
             ),
-            child: Text(
-              widget.label,
-              style: const TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-                color: Colors.white,
-                letterSpacing: -0.2,
-              ),
-            ),
+            child: widget.isLoading
+                ? const SizedBox(
+                    width: 22,
+                    height: 22,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2.5,
+                      color: Colors.white,
+                    ),
+                  )
+                : Text(
+                    widget.label,
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                      letterSpacing: -0.2,
+                    ),
+                  ),
           ),
         ),
       ),

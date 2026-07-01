@@ -9,7 +9,14 @@ import 'package:iq_motors/features/storage/presentation/providers/storage_provid
 
 /// Live bid-notification inbox for car owners.
 class UserInboxSection extends ConsumerWidget {
-  const UserInboxSection({super.key});
+  const UserInboxSection({
+    super.key,
+    this.nestedInScrollView = true,
+  });
+
+  /// When `true`, sizes the list to its children for embedding in a parent
+  /// [SingleChildScrollView]. When `false`, the list fills the available height.
+  final bool nestedInScrollView;
 
   static const Color _textPrimary = Color(0xFF1D1D1F);
   static const Color _textSecondary = Color(0xFF86868B);
@@ -54,8 +61,11 @@ class UserInboxSection extends ConsumerWidget {
         }
 
         return ListView.separated(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
+          shrinkWrap: nestedInScrollView,
+          primary: false,
+          physics: nestedInScrollView
+              ? const NeverScrollableScrollPhysics()
+              : null,
           itemCount: messages.length,
           separatorBuilder: (_, __) => const SizedBox(height: 10),
           itemBuilder: (context, index) {

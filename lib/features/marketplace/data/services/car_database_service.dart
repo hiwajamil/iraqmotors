@@ -457,6 +457,32 @@ class CarDatabaseService {
     return watchFilteredActiveCars(const CarFirestoreFilterQuery());
   }
 
+  /// Finds active/sold listings matching detected brand, model, and optional year.
+  Future<List<Car>> findListingsByDetection({
+    required String brandId,
+    String? modelKey,
+    String? year,
+    int limit = 12,
+  }) async {
+    try {
+      final query = CarFirestoreFilterQuery(
+        brandId: brandId,
+        modelKey: modelKey,
+        year: year,
+      );
+      final snapshot = await _filteredActiveCarsQuery(query).get();
+      final cars = _carsFromSnapshot(snapshot);
+      if (cars.length <= limit) return cars;
+      return cars.sublist(0, limit);
+    } on FirebaseException catch (e) {
+      throw CarDatabaseException(
+        e.message ?? 'Failed to search listings by detection.',
+      );
+    } catch (e) {
+      throw CarDatabaseException('Failed to search listings by detection: $e');
+    }
+  }
+
   /// Real-time stream of active listings with equality filters on Firestore.
   ///
   /// Range filters (price, mileage, year range) are applied client-side.

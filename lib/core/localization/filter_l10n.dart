@@ -69,14 +69,8 @@ abstract final class LocationKeys {
     dhiQar,
   ];
 
-  /// Default home filter — Erbil, Sulaymaniyah, and three more cities.
-  static const defaultSelection = {
-    erbil,
-    sulaymaniyah,
-    dohuk,
-    kirkuk,
-    baghdad,
-  };
+  /// Default home filter — all cities selected.
+  static const defaultSelection = {allCities};
 
   static bool isAllCountry(Set<String> keys) =>
       keys.contains(allCities) ||

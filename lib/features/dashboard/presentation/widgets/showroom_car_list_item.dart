@@ -361,13 +361,13 @@ class _CarActions extends StatelessWidget {
         if (!isSold) const SizedBox(width: 6),
         _IconActionButton(
           icon: Icons.edit_outlined,
-          tooltip: 'دەستکاری',
+          tooltip: context.l10n.editAction,
           onTap: onEdit,
         ),
         const SizedBox(width: 6),
         _IconActionButton(
           icon: Icons.gavel_rounded,
-          tooltip: 'نرخەکان',
+          tooltip: context.l10n.offersAction,
           onTap: onPrices,
           accentColor: ShowroomCarListItem._primaryBlue,
         ),
@@ -375,14 +375,14 @@ class _CarActions extends StatelessWidget {
           const SizedBox(width: 6),
           _IconActionButton(
             icon: Icons.sell_outlined,
-            tooltip: 'فرۆشرا',
+            tooltip: context.l10n.soldAction,
             onTap: onMarkAsSold,
           ),
         ],
         const SizedBox(width: 6),
         _IconActionButton(
           icon: Icons.delete_outline,
-          tooltip: 'سڕینەوە',
+          tooltip: context.l10n.deleteAction,
           onTap: onDelete,
           accentColor: ShowroomCarListItem._deleteRed,
         ),
@@ -425,7 +425,7 @@ class _ActiveToggleButtonState extends State<_ActiveToggleButton> {
       onEnter: (_) => setState(() => _hovered = true),
       onExit: (_) => setState(() => _hovered = false),
       child: Tooltip(
-        message: active ? 'چالاک' : 'ناچالاک',
+        message: active ? context.l10n.adStatusActive : context.l10n.adStatusInactive,
         child: GestureDetector(
           onTap: widget.onTap,
           child: AnimatedContainer(

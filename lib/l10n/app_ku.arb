@@ -325,6 +325,7 @@
   "sellCarButton": "فرۆشتنی ئۆتۆمبێل",
   "editAction": "دەستکاری",
   "adStatusActive": "چالاک",
+  "adStatusInactive": "ناچالاک",
   "adStatusSold": "فرۆشرا",
   "adStatusDraft": "ڕەشنووس",
   "adCompleteDraft": "تەواوی بکە",
