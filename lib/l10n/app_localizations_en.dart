@@ -830,6 +830,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeAvailableListings => 'Available cars';
 
   @override
+  String get homeRecommendedForYou => 'Recommended for You';
+
+  @override
+  String get homeTrendingCars => 'Trending Cars';
+
+  @override
   String get favoritesEmpty => 'No saved cars yet';
 
   @override
@@ -1036,6 +1042,31 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get adminApprovedAdsColumn => 'Approved';
+
+  @override
+  String get adminDateRangeLabel => 'Date range';
+
+  @override
+  String get adminTodaysActiveUsers => 'Today\'s Active Users';
+
+  @override
+  String get adminTotalAppDownloads => 'Total App Downloads';
+
+  @override
+  String get adminVisitorTraffic => 'Visitor Traffic';
+
+  @override
+  String get adminCityMetricAds => 'Ads';
+
+  @override
+  String get adminCityMetricVisitors => 'Visitors';
+
+  @override
+  String get adminGenerateReport => 'Generate Report';
+
+  @override
+  String get adminReportsEmptyHint =>
+      'Select a date range and tap Generate Report to view analytics.';
 
   @override
   String get adminSettingsSubtitle =>

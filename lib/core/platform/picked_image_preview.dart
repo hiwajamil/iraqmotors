@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+import 'package:iq_motors/core/config/app_image_cache.dart';
+
 import 'package:iq_motors/features/listings/domain/models/add_car_draft.dart';
 import 'package:iq_motors/features/listings/presentation/add_car_theme.dart';
 
@@ -28,11 +30,14 @@ class PickedImagePreview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (useNetworkDecoder(path)) {
+      final cacheExtent = networkImageMemCacheExtent(context, 400);
       return Image.network(
         path,
         fit: fit,
         width: double.infinity,
         height: double.infinity,
+        cacheWidth: cacheExtent,
+        cacheHeight: cacheExtent,
         gaplessPlayback: true,
         loadingBuilder: (context, child, loadingProgress) {
           if (loadingProgress == null) return child;

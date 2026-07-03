@@ -1,4 +1,4 @@
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:iq_motors/shared/widgets/app_cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -8,6 +8,7 @@ import 'package:iq_motors/core/localization/l10n_extensions.dart';
 import 'package:iq_motors/shared/data/localized_dummy_data.dart';
 import 'package:iq_motors/l10n/app_localizations.dart';
 import 'package:iq_motors/features/marketplace/presentation/providers/favorites_provider.dart';
+import 'package:iq_motors/features/marketplace/presentation/providers/user_interest_provider.dart';
 import 'package:iq_motors/features/marketplace/data/services/car_database_service.dart';
 import 'package:iq_motors/shared/widgets/car_network_image.dart';
 import 'package:iq_motors/features/auth/presentation/screens/auth_screen.dart';
@@ -38,6 +39,17 @@ class _CarDetailsScreenState extends ConsumerState<CarDetailsScreen> {
   static const double _desktopBreakpoint = 992;
 
   bool _prototypeSaved = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final car = widget.car;
+      if (car != null) {
+        ref.read(userInterestRevisionProvider.notifier).recordFromCar(car);
+      }
+    });
+  }
 
   Map<String, dynamic> _data(AppLocalizations l10n) {
     final prototype = LocalizedDummyData.prototypeCar(l10n);
@@ -520,6 +532,8 @@ class _GalleryImage extends StatelessWidget {
         fit: BoxFit.cover,
         width: double.infinity,
         height: double.infinity,
+        cacheLogicalWidth:
+            (MediaQuery.sizeOf(context).width * 0.5).clamp(180, 400),
         loadingBuilder: (context, child, loadingProgress) {
           if (loadingProgress == null) return child;
           return Container(
@@ -876,11 +890,13 @@ class _SellerContactCard extends StatelessWidget {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(16),
-                child: CachedNetworkImage(
+                child: AppCachedNetworkImage(
                   imageUrl: avatarUrl,
                   width: 56,
                   height: 56,
                   fit: BoxFit.cover,
+                  memCacheLogicalWidth: 56,
+                  memCacheLogicalHeight: 56,
                   errorWidget: (_, __, ___) => Container(
                     width: 56,
                     height: 56,

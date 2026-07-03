@@ -827,6 +827,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get homeAvailableListings => 'السيارات المتاحة';
 
   @override
+  String get homeRecommendedForYou => 'موصى به لك';
+
+  @override
+  String get homeTrendingCars => 'السيارات الرائجة';
+
+  @override
   String get favoritesEmpty => 'لا توجد سيارات محفوظة';
 
   @override
@@ -1033,6 +1039,31 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get adminApprovedAdsColumn => 'موافق عليه';
+
+  @override
+  String get adminDateRangeLabel => 'نطاق التاريخ';
+
+  @override
+  String get adminTodaysActiveUsers => 'المستخدمون النشطون اليوم';
+
+  @override
+  String get adminTotalAppDownloads => 'إجمالي تنزيلات التطبيق';
+
+  @override
+  String get adminVisitorTraffic => 'حركة الزوار';
+
+  @override
+  String get adminCityMetricAds => 'إعلانات';
+
+  @override
+  String get adminCityMetricVisitors => 'زوار';
+
+  @override
+  String get adminGenerateReport => 'إنشاء التقرير';
+
+  @override
+  String get adminReportsEmptyHint =>
+      'حدد نطاق التاريخ واضغط على إنشاء التقرير لعرض التحليلات.';
 
   @override
   String get adminSettingsSubtitle => 'إدارة إعدادات المنصة والوصول';

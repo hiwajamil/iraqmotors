@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:iq_motors/core/localization/l10n_extensions.dart';
 import 'package:iq_motors/shared/data/add_car_form_options.dart';
 import 'package:iq_motors/shared/data/car_models_by_brand.dart';
+import 'package:iq_motors/shared/data/car_trims_by_model.dart';
 import 'package:iq_motors/shared/data/dummy_brands.dart';
 import 'package:iq_motors/shared/models/car_brand.dart';
 import 'package:iq_motors/features/marketplace/presentation/widgets/brand_search_sheet.dart';
@@ -24,7 +25,6 @@ class AddCarStepBasicInfo extends StatelessWidget {
     required this.onColorChanged,
     required this.onYearChanged,
     required this.onTrimChanged,
-    this.isAnalyzingAi = false,
     this.aiFilledFields = const {},
   });
 
@@ -33,7 +33,6 @@ class AddCarStepBasicInfo extends StatelessWidget {
   final String? colorKey;
   final String? year;
   final String? trim;
-  final bool isAnalyzingAi;
   final Set<String> aiFilledFields;
   final ValueChanged<CarBrand> onBrandChanged;
   final ValueChanged<String> onModelChanged;
@@ -155,10 +154,13 @@ class AddCarStepBasicInfo extends StatelessWidget {
   }
 
   Future<void> _openTrimPicker(BuildContext context) async {
+    final trims = CarTrimsByModel.trimsFor(brandId, modelKey);
+    if (trims.isEmpty) return;
+
     final result = await _openStringSheet(
       context,
       title: context.l10n.addCarTrimLabel,
-      options: AddCarFormOptions.trims,
+      options: trims,
       selected: trim,
     );
     if (result != null) onTrimChanged(result);
@@ -302,6 +304,11 @@ class AddCarStepBasicInfo extends StatelessWidget {
     final colorSwatch = colorKey != null
         ? AddCarFormOptions.swatchForKey(colorKey!)
         : null;
+    final catalogTrims = CarTrimsByModel.trimsFor(brandId, modelKey);
+    final showTrimDropdown =
+        brandId != null && modelKey != null && catalogTrims.isNotEmpty;
+    final showTrimTextField =
+        brandId != null && modelKey != null && catalogTrims.isEmpty;
 
     return SingleChildScrollView(
       padding: const EdgeInsetsDirectional.fromSTEB(24, 8, 24, 24),
@@ -312,10 +319,6 @@ class AddCarStepBasicInfo extends StatelessWidget {
             title: l10n.addCarBasicInfoHeading,
             subtitle: l10n.addCarBasicInfoSubtitle,
           ),
-          if (isAnalyzingAi) ...[
-            const SizedBox(height: 12),
-            const _AiAnalyzingInlineChip(),
-          ],
           const SizedBox(height: 28),
           AddCarFormCard(
             child: Column(
@@ -360,13 +363,28 @@ class AddCarStepBasicInfo extends StatelessWidget {
                   placeholder: l10n.addCarYearPlaceholder,
                   onTap: () => _openYearPicker(context),
                 ),
-                const SizedBox(height: 14),
-                _AddCarSelectorField(
-                  label: l10n.addCarTrimLabel,
-                  value: trim,
-                  placeholder: l10n.addCarTrimPlaceholder,
-                  onTap: () => _openTrimPicker(context),
-                ),
+                if (showTrimDropdown) ...[
+                  const SizedBox(height: 14),
+                  _AddCarSelectorField(
+                    label: l10n.addCarTrimLabel,
+                    value: trim,
+                    placeholder: l10n.addCarTrimPlaceholder,
+                    onTap: () => _openTrimPicker(context),
+                  ),
+                ],
+                if (showTrimTextField) ...[
+                  const SizedBox(height: 14),
+                  _AddCarTrimTextField(
+                    label: l10n.addCarTrimLabel,
+                    value: trim,
+                    placeholder: switch (languageCode) {
+                      'en' => 'Trim (optional)',
+                      'ar' => 'الفئة (اختياري)',
+                      _ => 'خاسڵەت (ئارەزوومەندانە)',
+                    },
+                    onChanged: onTrimChanged,
+                  ),
+                ],
               ],
             ),
           ),
@@ -491,46 +509,6 @@ class _AddCarSelectorFieldState extends State<_AddCarSelectorField> {
   }
 }
 
-class _AiAnalyzingInlineChip extends StatelessWidget {
-  const _AiAnalyzingInlineChip();
-
-  @override
-  Widget build(BuildContext context) {
-    return Align(
-      alignment: AlignmentDirectional.centerStart,
-      child: Container(
-        padding: const EdgeInsetsDirectional.symmetric(horizontal: 12, vertical: 7),
-        decoration: BoxDecoration(
-          color: AddCarFormOptions.aiAccentFill,
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SizedBox(
-              width: 12,
-              height: 12,
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-                color: AddCarFormOptions.aiAccentText.withValues(alpha: 0.85),
-              ),
-            ),
-            const SizedBox(width: 8),
-            const Text(
-              'AI analyzing...',
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: AddCarFormOptions.aiAccentText,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 class _AiBadge extends StatelessWidget {
   const _AiBadge();
 
@@ -561,6 +539,70 @@ class _AiBadge extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _AddCarTrimTextField extends StatefulWidget {
+  const _AddCarTrimTextField({
+    required this.label,
+    required this.placeholder,
+    required this.onChanged,
+    this.value,
+  });
+
+  final String label;
+  final String? value;
+  final String placeholder;
+  final ValueChanged<String> onChanged;
+
+  @override
+  State<_AddCarTrimTextField> createState() => _AddCarTrimTextFieldState();
+}
+
+class _AddCarTrimTextFieldState extends State<_AddCarTrimTextField> {
+  late final TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.value ?? '');
+  }
+
+  @override
+  void didUpdateWidget(_AddCarTrimTextField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.value != oldWidget.value && widget.value != _controller.text) {
+      _controller.text = widget.value ?? '';
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(widget.label, style: AddCarTheme.sectionLabel),
+        const SizedBox(height: 8),
+        TextField(
+          controller: _controller,
+          onChanged: widget.onChanged,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: AddCarTheme.textPrimary,
+          ),
+          decoration: AddCarTheme.textFieldDecoration(
+            hintText: widget.placeholder,
+          ),
+        ),
+      ],
     );
   }
 }

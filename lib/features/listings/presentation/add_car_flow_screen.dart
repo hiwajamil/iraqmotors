@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -16,30 +15,18 @@ import 'package:iq_motors/l10n/app_localizations.dart';
 import 'package:iq_motors/shared/models/account_type.dart';
 import 'package:iq_motors/features/listings/domain/models/add_car_draft.dart';
 import 'package:iq_motors/shared/data/add_car_form_options.dart';
-import 'package:iq_motors/shared/data/add_car_option_keys.dart';
-import 'package:iq_motors/features/admin/presentation/providers/admin_settings_provider.dart';
 import 'package:iq_motors/features/auth/presentation/providers/auth_providers.dart';
 import 'package:iq_motors/features/listings/presentation/providers/add_car_flow_provider.dart';
 import 'package:iq_motors/features/listings/presentation/add_car_theme.dart';
 import 'package:iq_motors/features/marketplace/data/services/car_database_service.dart';
+import 'package:iq_motors/features/listings/data/services/add_car_image_processor.dart';
 import 'package:iq_motors/features/listings/data/services/car_vision_service.dart';
 import 'package:iq_motors/features/storage/data/services/cloudflare_upload_service.dart';
 import 'package:iq_motors/features/storage/data/services/r2_storage_service.dart';
 import 'package:iq_motors/features/storage/presentation/providers/storage_providers.dart';
 import 'package:iq_motors/shared/widgets/moderation_error_dialog.dart';
 import 'package:http/http.dart' as http;
-import 'package:iq_motors/features/listings/presentation/steps/add_car_step_basic_info.dart';
-import 'package:iq_motors/features/listings/presentation/steps/add_car_step_condition_features.dart';
-import 'package:iq_motors/features/listings/presentation/steps/add_car_step_interior.dart';
-import 'package:iq_motors/features/listings/presentation/steps/add_car_step_location.dart';
-import 'package:iq_motors/features/listings/presentation/steps/add_car_step_mileage_fuel.dart';
-import 'package:iq_motors/features/listings/presentation/steps/add_car_step_packages.dart';
-import 'package:iq_motors/features/listings/presentation/steps/add_car_step_payment.dart';
-import 'package:iq_motors/features/listings/presentation/steps/add_car_step_photos.dart';
-import 'package:iq_motors/features/listings/presentation/steps/add_car_step_plate_info.dart';
-import 'package:iq_motors/features/listings/presentation/steps/add_car_step_price_description.dart';
-import 'package:iq_motors/features/listings/presentation/steps/add_car_step_review.dart';
-import 'package:iq_motors/features/listings/presentation/steps/add_car_step_technical.dart';
+import 'package:iq_motors/features/listings/presentation/widgets/add_car_wizard_step_hosts.dart';
 
 /// Multi-step wizard for listing a car for sale.
 class AddCarFlowScreen extends ConsumerStatefulWidget {
@@ -89,15 +76,17 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
 
   @override
   void dispose() {
+    _flow.releaseMemory();
     _pageController.dispose();
     super.dispose();
   }
 
   void _goBack() {
     final flowState = ref.read(_flowProvider);
-    if (flowState.isPublishing || flowState.isAnyPhotoUploading) return;
+    if (flowState.isPublishing || flowState.isAnyPhotoUploading || flowState.isAnalyzingAi) return;
 
     if (flowState.currentStep == 0) {
+      _flow.releaseMemory();
       Navigator.of(context).maybePop();
       return;
     }
@@ -106,7 +95,9 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
 
   void _exitToDashboard() {
     final flowState = ref.read(_flowProvider);
-    if (flowState.isPublishing || flowState.isAnyPhotoUploading) return;
+    if (flowState.isPublishing || flowState.isAnyPhotoUploading || flowState.isAnalyzingAi) return;
+
+    _flow.releaseMemory();
 
     final user = FirebaseAuth.instance.currentUser;
     final profile = ref.read(userProfileProvider).value;
@@ -185,10 +176,12 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
   }
 
   void _goNext() {
+    _flow.flushPendingTextUpdates();
     final flowState = ref.read(_flowProvider);
     if (!flowState.canProceed ||
         flowState.isPublishing ||
-        flowState.isAnyPhotoUploading) {
+        flowState.isAnyPhotoUploading ||
+        flowState.isAnalyzingAi) {
       return;
     }
 
@@ -201,7 +194,126 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
       return;
     }
 
+    if (flowState.currentStep == 1 && !flowState.aiPhotoAnalysisDone) {
+      _runWizardPhotoAnalysisThenAdvance();
+      return;
+    }
+
     _flow.goNext();
+  }
+
+  Future<void> _runWizardPhotoAnalysisThenAdvance() async {
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+    if (userId == null) {
+      _flow.markAiPhotoAnalysisDone();
+      _flow.goNext();
+      return;
+    }
+
+    final flowState = ref.read(_flowProvider);
+    final images = <CarVisionImageInput>[];
+    for (var i = 0; i < AddCarDraft.photoSlotCount; i++) {
+      final bytes = flowState.slotPreviewBytes[i];
+      if (bytes == null || bytes.isEmpty) continue;
+      images.add(CarVisionImageInput(bytes: bytes));
+    }
+
+    if (images.isEmpty) {
+      _flow.markAiPhotoAnalysisDone();
+      _flow.goNext();
+      return;
+    }
+
+    if (!mounted) return;
+    _flow.setAnalyzingAi(true);
+
+    try {
+      AccountType accountType = AccountType.individual;
+      try {
+        final profile = await ref.read(authServiceProvider).fetchProfile(userId);
+        accountType = profile?.accountType ?? AccountType.individual;
+      } catch (_) {
+        // Default to individual quota if profile lookup fails.
+      }
+
+      final vision = ref.read(carVisionServiceProvider);
+      final outcome = await vision.analyzeWizardPhotos(
+        images: images,
+        userId: userId,
+        accountType: accountType,
+      );
+
+      if (!mounted) return;
+
+      if (outcome.shouldBlockNavigation) {
+        final message = outcome.failure == CarVisionFailure.notAVehicle
+            ? CarVisionMessages.notAVehicle
+            : CarVisionMessages.inconsistentPhotos;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(message),
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: const Color(0xFFFF3B30),
+          ),
+        );
+        return;
+      }
+
+      final suggestion = outcome.suggestion;
+      if (suggestion != null && suggestion.hasAny) {
+        final current = ref.read(_flowProvider);
+        final applied = _applyAiSuggestion(
+          current.draft,
+          suggestion,
+          current.aiFilledFields,
+        );
+        _flow.applyAiSuggestion(applied.draft, applied.aiFilled);
+      }
+
+      _flow.markAiPhotoAnalysisDone();
+      _flow.goNext();
+
+      if (!mounted) return;
+      if (suggestion != null && suggestion.hasAny) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(CarVisionMessages.aiAutoFillSuccess),
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Color(0xFF34C759),
+          ),
+        );
+      } else {
+        _showAiGracefulFallback(outcome);
+      }
+    } catch (e, stackTrace) {
+      webDebugLog('Wizard AI analysis failed: $e\n$stackTrace');
+      if (!mounted) return;
+      _flow.markAiPhotoAnalysisDone();
+      _flow.goNext();
+      _showAiGracefulFallbackMessage(CarVisionMessages.aiGracefulFallback);
+    } finally {
+      if (mounted) {
+        _flow.setAnalyzingAi(false);
+      }
+    }
+  }
+
+  void _showAiGracefulFallback(CarVisionWizardAnalysis outcome) {
+    final message = switch (outcome.status) {
+      CarVisionAutoFillStatus.timedOut => CarVisionMessages.aiTimedOut,
+      _ => CarVisionMessages.aiGracefulFallback,
+    };
+    _showAiGracefulFallbackMessage(message);
+  }
+
+  void _showAiGracefulFallbackMessage(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
   }
 
   Future<void> _saveChanges() async {
@@ -241,7 +353,19 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
       await _flow.publishListing();
       if (!mounted) return;
 
-      Navigator.of(context).popUntil((route) => route.isFirst);
+      final user = FirebaseAuth.instance.currentUser;
+      final profile = ref.read(userProfileProvider).value;
+
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute<void>(
+          builder: (_) => dashboardForAuthenticatedUser(
+            email: user?.email,
+            phone: profile?.phone,
+            accountType: profile?.accountType,
+          ),
+        ),
+        (route) => route.isFirst,
+      );
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(l10n.addCarPublishSuccess),
@@ -504,8 +628,6 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
     throw StateError('Could not read image bytes');
   }
 
-  static const bool _enableAiAutoFill = false;
-
   Future<void> _assignPhotoToSlot(
     int index,
     XFile picked, {
@@ -515,66 +637,15 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
     if (imageBytes.isEmpty) {
       throw StateError('Image bytes are empty');
     }
+
+    final processedBytes = await prepareAddCarPreviewBytes(imageBytes);
     webDebugLog(
-      'Photo ready (${imageBytes.length} bytes) — upload deferred to publish',
+      'Photo ready (${processedBytes.length} bytes) — upload deferred to publish',
     );
 
     if (!mounted) return;
     HapticFeedback.lightImpact();
-    _flow.assignPhotoToSlot(index, picked, imageBytes);
-
-    if (_enableAiAutoFill && index == 0 && !kIsWeb) {
-      _runAiAutoFill(File(picked.path));
-    }
-  }
-
-  Future<void> _runAiAutoFill(File imageFile) async {
-    if (!mounted) return;
-
-    final userId = FirebaseAuth.instance.currentUser?.uid;
-    if (userId == null) return;
-
-    _flow.setAnalyzingAi(true);
-
-    AccountType accountType = AccountType.individual;
-    try {
-      final profile = await ref.read(authServiceProvider).fetchProfile(userId);
-      accountType = profile?.accountType ?? AccountType.individual;
-    } catch (_) {
-      // Default to individual quota if profile lookup fails.
-    }
-
-    final vision = ref.read(carVisionServiceProvider);
-    final outcome = await vision.autoFillAfterValidation(
-      imageFile: imageFile,
-      userId: userId,
-      accountType: accountType,
-    );
-
-    if (!mounted) return;
-    _flow.setAnalyzingAi(false);
-
-    if (outcome.status == CarVisionAutoFillStatus.quotaExceeded ||
-        outcome.status == CarVisionAutoFillStatus.unavailable ||
-        outcome.status == CarVisionAutoFillStatus.noResults) {
-      return;
-    }
-
-    final suggestion = outcome.suggestion;
-    if (suggestion == null || !suggestion.hasAny) return;
-
-    final flowState = ref.read(_flowProvider);
-    final applied = _applyAiSuggestion(flowState.draft, suggestion, flowState.aiFilledFields);
-    _flow.applyAiSuggestion(applied.draft, applied.aiFilled);
-
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text(CarVisionMessages.aiAutoFillSuccess),
-        behavior: SnackBarBehavior.floating,
-        backgroundColor: Color(0xFF34C759),
-      ),
-    );
+    _flow.assignPhotoToSlot(index, picked, processedBytes);
   }
 
   ({AddCarDraft draft, Set<String> aiFilled}) _applyAiSuggestion(
@@ -625,9 +696,9 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
     }
   }
 
-  String _nextLabel(AppLocalizations l10n, AddCarFlowState flowState) {
-    if (flowState.currentStep >= AddCarFlowState.stepCount - 1) {
-      return flowState.isEditMode ? l10n.addCarSave : l10n.addCarPublish;
+  String _nextLabel(AppLocalizations l10n, AddCarWizardShellState shell) {
+    if (shell.currentStep >= AddCarFlowState.stepCount - 1) {
+      return shell.isEditMode ? l10n.addCarSave : l10n.addCarPublish;
     }
     return l10n.next;
   }
@@ -644,8 +715,6 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
       7 => l10n.addCarStepConditionTitle,
       8 => l10n.addCarStepPriceTitle,
       9 => l10n.addCarStepReviewTitle,
-      10 => l10n.addCarStepListingTitle,
-      11 => l10n.addCarStepPaymentTitle,
       _ => '',
     };
   }
@@ -655,17 +724,18 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final flowState = ref.watch(_flowProvider);
-    final draft = flowState.draft;
+    final shell = ref.watch(
+      _flowProvider.select(selectAddCarWizardShell),
+    );
 
-    ref.listen<AddCarFlowState>(_flowProvider, (previous, next) {
-      if (previous?.currentStep != next.currentStep) {
-        _syncPageToStep(next.currentStep);
+    ref.listen<int>(_flowProvider.select((s) => s.currentStep), (previous, next) {
+      if (previous != next) {
+        _syncPageToStep(next);
       }
     });
 
-    final progress = (flowState.currentStep + 1) / AddCarFlowState.stepCount;
-    final config = ref.watch(systemConfigProvider).value;
+    final progress = (shell.currentStep + 1) / AddCarFlowState.stepCount;
+    final isEditMode = shell.isEditMode;
 
     return PopScope(
       canPop: false,
@@ -690,7 +760,7 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
         title: Column(
           children: [
             Text(
-              _stepTitle(l10n, flowState.currentStep),
+              _stepTitle(l10n, shell.currentStep),
               style: const TextStyle(
                 fontSize: 17,
                 fontWeight: FontWeight.w600,
@@ -712,11 +782,11 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
         ),
         centerTitle: true,
         actions: [
-          if (flowState.isEditMode)
+          if (isEditMode)
             Padding(
               padding: const EdgeInsetsDirectional.only(end: 4),
               child: TextButton(
-                onPressed: (flowState.isPublishing || flowState.isAnyPhotoUploading)
+                onPressed: (shell.isPublishing || shell.isAnyPhotoUploading)
                     ? null
                     : _saveChanges,
                 child: Text(
@@ -724,7 +794,7 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
                   style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
-                    color: (flowState.isPublishing || flowState.isAnyPhotoUploading)
+                    color: (shell.isPublishing || shell.isAnyPhotoUploading)
                         ? AddCarTheme.textSecondary
                         : AddCarTheme.focusBlue,
                   ),
@@ -734,7 +804,7 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
           Padding(
             padding: const EdgeInsetsDirectional.only(end: 8),
             child: TextButton(
-              onPressed: (flowState.isPublishing || flowState.isAnyPhotoUploading)
+              onPressed: (shell.isPublishing || shell.isAnyPhotoUploading)
                   ? null
                   : _exitToDashboard,
               child: Text(
@@ -742,7 +812,7 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
-                  color: (flowState.isPublishing || flowState.isAnyPhotoUploading)
+                  color: (shell.isPublishing || shell.isAnyPhotoUploading)
                       ? AddCarTheme.textSecondary
                       : AddCarTheme.textPrimary,
                 ),
@@ -756,7 +826,7 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
             padding: const EdgeInsets.only(bottom: 4),
             child: Text(
               l10n.addCarStepProgress(
-                flowState.currentStep + 1,
+                shell.currentStep + 1,
                 AddCarFlowState.stepCount,
               ),
               style: const TextStyle(
@@ -768,138 +838,47 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
           ),
         ),
       ),
-      body: PageView(
-        controller: _pageController,
-        physics: const NeverScrollableScrollPhysics(),
-        children: [
-          AddCarStepLocation(
-            province: draft.province,
-            city: draft.city,
-            onProvinceChanged: _flow.onProvinceChanged,
-            onCityChanged: _flow.onCityChanged,
-          ),
-          AddCarStepPhotos(
-            photos: draft.normalizedPhotos(),
-            onPhotoSlotTapped: _onPhotoSlotTapped,
-            onPhotoRemoved: _onPhotoRemoved,
-            uploadingSlots: flowState.uploadingPhotoSlots,
-            previewBytesBySlot: flowState.slotPreviewBytes,
-          ),
-          AddCarStepBasicInfo(
-            brandId: draft.brandId,
-            modelKey: draft.modelKey,
-            colorKey: draft.colorKey,
-            year: draft.year,
-            trim: draft.trim,
-            isAnalyzingAi: flowState.isAnalyzingAi,
-            aiFilledFields: flowState.aiFilledFields,
-            onBrandChanged: _flow.onBrandChanged,
-            onModelChanged: _flow.onModelChanged,
-            onColorChanged: _flow.onColorChanged,
-            onYearChanged: _flow.onYearChanged,
-            onTrimChanged: _flow.onTrimChanged,
-          ),
-          AddCarStepPlateInfo(
-            plateTypeKey: draft.plateTypeKey,
-            plateCityKey: draft.plateCityKey,
-            onPlateTypeChanged: _flow.onPlateTypeChanged,
-            onPlateCityChanged: _flow.onPlateCityChanged,
-          ),
-          AddCarStepMileageFuel(
-            mileageValue: draft.mileageValue,
-            mileageUnit: draft.mileageUnit,
-            fuelKey: draft.fuelKey,
-            onMileageChanged: _flow.onMileageChanged,
-            onMileageUnitChanged: _flow.onMileageUnitChanged,
-            onFuelChanged: _flow.onFuelChanged,
-          ),
-          AddCarStepTechnical(
-            importCountryKey: draft.importCountryKey,
-            transmissionKey: draft.transmissionKey,
-            cylindersKey: draft.cylindersKey,
-            engineSizeKey: draft.engineSizeKey,
-            onImportCountryChanged: _flow.onImportCountryChanged,
-            onTransmissionChanged: _flow.onTransmissionChanged,
-            onCylindersChanged: _flow.onCylindersChanged,
-            onEngineSizeChanged: _flow.onEngineSizeChanged,
-          ),
-          AddCarStepInterior(
-            seatMaterialKey: draft.seatMaterialKey,
-            seatCountKey: draft.seatCountKey,
-            onSeatMaterialChanged: _flow.onSeatMaterialChanged,
-            onSeatCountChanged: _flow.onSeatCountChanged,
-          ),
-          AddCarStepConditionFeatures(
-            conditionKey: draft.conditionKey,
-            selectedFeatures: draft.selectedFeatures,
-            damagePhotoCount: draft.damagePhotos.length,
-            onConditionChanged: _flow.onConditionChanged,
-            onFeatureToggled: _flow.onFeatureToggled,
-            onSelectAllFeatures: (selectAll) => _flow.onSelectAllFeatures(
-              selectAll
-                  ? Set<String>.from(AddCarFormOptions.featureKeys)
-                  : {},
-            ),
-            onDamagePhotoAdded: _onDamagePhotoAdded,
-          ),
-          AddCarStepPriceDescription(
-            description: draft.description,
-            priceValue: draft.priceValue,
-            currencyKey: draft.currencyKey,
-            onDescriptionChanged: _flow.onDescriptionChanged,
-            onPriceChanged: _flow.onPriceChanged,
-            onCurrencyChanged: _flow.onCurrencyChanged,
-          ),
-          AddCarStepReview(
-            draft: draft,
-            onEditStep: _goToStep,
-          ),
-          AddCarStepPackages(
-            selectedPackageKey: draft.packageKey,
-            onPackageChanged: _flow.onPackageChanged,
-            boostPriceIqd:
-                config?.priceForPackage(AddCarOptionKeys.packageBoost),
-            superBoostPriceIqd:
-                config?.priceForPackage(AddCarOptionKeys.packageSuperBoost),
-          ),
-          AddCarStepPayment(
-            paymentMethodKey: draft.paymentMethodKey,
-            onPaymentMethodChanged: _flow.onPaymentMethodChanged,
-          ),
-        ],
+      body: AddCarWizardPageView(
+        session: _session,
+        pageController: _pageController,
+        onPhotoSlotTapped: _onPhotoSlotTapped,
+        onPhotoRemoved: _onPhotoRemoved,
+        onDamagePhotoAdded: _onDamagePhotoAdded,
+        onEditStep: _goToStep,
       ),
       bottomNavigationBar: _BottomActionBar(
-        canProceed: flowState.canProceed &&
-            !flowState.isPublishing &&
-            !flowState.isAnyPhotoUploading,
+        canProceed: shell.canProceed &&
+            !shell.isPublishing &&
+            !shell.isAnyPhotoUploading &&
+            !shell.isAnalyzingAi,
         onBack: _goBack,
         onNext: _goNext,
         backLabel: l10n.back,
-        nextLabel: _nextLabel(l10n, flowState),
-        saveLabel: flowState.isEditMode
-            ? (flowState.currentStep < AddCarFlowState.stepCount - 1
+        nextLabel: _nextLabel(l10n, shell),
+        saveLabel: isEditMode
+            ? (shell.currentStep < AddCarFlowState.stepCount - 1
                 ? l10n.addCarSave
                 : null)
             : l10n.addCarSave,
-        onSave: flowState.isEditMode
-            ? (flowState.currentStep < AddCarFlowState.stepCount - 1
+        onSave: isEditMode
+            ? (shell.currentStep < AddCarFlowState.stepCount - 1
                 ? _saveChanges
                 : null)
             : _saveDraftManually,
-        canSave: !flowState.isPublishing &&
-            !flowState.isAnyPhotoUploading &&
-            !flowState.isSavingDraft &&
-            (flowState.isEditMode || draft.hasDraftContent),
-        isSaving: flowState.isSavingDraft,
+        canSave: !shell.isPublishing &&
+            !shell.isAnyPhotoUploading &&
+            !shell.isSavingDraft &&
+            (isEditMode || shell.hasDraftContent),
+        isSaving: shell.isSavingDraft,
       ),
     ),
-        if (flowState.isPublishing)
+        if (shell.isPublishing)
           _PublishingOverlay(
-            isEditMode: flowState.isEditMode,
+            isEditMode: isEditMode,
             l10n: l10n,
           ),
-        if (flowState.isAnalyzingAi)
-          const _AiAnalyzingChipOverlay(),
+        if (shell.isAnalyzingAi)
+          _AiAnalyzingOverlay(l10n: l10n),
       ],
     ),
     );
@@ -958,61 +937,68 @@ class _PickedPhoto {
   final Uint8List? bytes;
 }
 
-class _AiAnalyzingChipOverlay extends StatelessWidget {
-  const _AiAnalyzingChipOverlay();
+class _AiAnalyzingOverlay extends StatelessWidget {
+  const _AiAnalyzingOverlay({required this.l10n});
+
+  final AppLocalizations l10n;
 
   @override
   Widget build(BuildContext context) {
-    final bottomInset = MediaQuery.paddingOf(context).bottom;
+    final locale = l10n.localeName.split('_').first;
+    final message = switch (locale) {
+      'en' => 'AI analyzing your photos…',
+      'ar' => 'الذكاء الاصطناعي يحلل صورك…',
+      _ => 'AI خەریکی شیکردنەوەی وێنەکانتە…',
+    };
+    final subtitle = switch (locale) {
+      'en' => 'Verifying photos and detecting brand, model & color',
+      'ar' => 'التحقق من الصور واكتشاف الماركة والطراز واللون',
+      _ => 'پشتڕاستکردنەوەی وێنەکان و دۆزینەوەی براند، مۆدێل و ڕەنگ',
+    };
 
-    return IgnorePointer(
-      child: Align(
-        alignment: Alignment.bottomCenter,
-        child: Padding(
-          padding: EdgeInsets.only(bottom: 88 + bottomInset),
-          child: const _AiAnalyzingChip(),
-        ),
-      ),
-    );
-  }
-}
-
-class _AiAnalyzingChip extends StatelessWidget {
-  const _AiAnalyzingChip();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsetsDirectional.symmetric(horizontal: 14, vertical: 8),
-      decoration: BoxDecoration(
-        color: AddCarTheme.cardBg.withValues(alpha: 0.96),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: AddCarFormOptions.aiAccentText.withValues(alpha: 0.2),
-        ),
-        boxShadow: AddCarTheme.cardShadow,
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          SizedBox(
-            width: 14,
-            height: 14,
-            child: CircularProgressIndicator(
-              strokeWidth: 2,
-              color: AddCarFormOptions.aiAccentText.withValues(alpha: 0.85),
-            ),
+    return AbsorbPointer(
+      child: Container(
+        color: Colors.black.withValues(alpha: 0.45),
+        alignment: Alignment.center,
+        child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 40),
+          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 32),
+          decoration: AddCarTheme.cardDecoration(),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(
+                width: 36,
+                height: 36,
+                child: CircularProgressIndicator(
+                  strokeWidth: 3,
+                  color: AddCarFormOptions.aiAccentText.withValues(alpha: 0.9),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                message,
+                style: const TextStyle(
+                  fontSize: 17,
+                  fontWeight: FontWeight.w600,
+                  color: AddCarTheme.textPrimary,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                subtitle,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: AddCarTheme.textSecondary,
+                  height: 1.35,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
           ),
-          const SizedBox(width: 10),
-          Text(
-            'AI analyzing...',
-            style: TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-              color: AddCarFormOptions.aiAccentText.withValues(alpha: 0.9),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

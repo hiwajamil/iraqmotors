@@ -5,6 +5,7 @@ import 'package:iq_motors/shared/data/add_car_option_keys.dart';
 import 'package:iq_motors/shared/data/iraq_locations.dart';
 import 'package:iq_motors/features/admin/domain/models/activity_log.dart';
 import 'package:iq_motors/features/admin/domain/models/admin_dashboard_analytics.dart';
+import 'package:iq_motors/features/admin/domain/models/analytics_date_range.dart';
 import 'package:iq_motors/features/admin/domain/models/admin_system_config.dart';
 import 'package:iq_motors/features/admin/data/services/activity_log_service.dart';
 import 'package:iq_motors/features/marketplace/data/services/car_database_service.dart';
@@ -296,36 +297,54 @@ class AdminDatabaseService {
     return counts;
   }
 
-  static const int _analyticsDays = 30;
 
   static const String _configCollection = 'system_config';
   static const String _configDocId = 'platform';
 
-  /// Aggregates revenue, activity, and city performance for admin reports.
-  Future<AdminDashboardAnalytics> fetchDashboardAnalytics() async {
+  /// Aggregates revenue, new ads, and city performance for admin reports.
+  ///
+  /// [range] filters `cars.createdAt` for new ads, revenue (boost packages),
+  /// and per-city ad totals. DAU / visitor metrics come from the GA Cloud
+  /// Function via [AnalyticsService].
+  Future<AdminDashboardAnalytics> fetchDashboardAnalytics(
+    AnalyticsDateRange range,
+  ) async {
     try {
-      final now = DateTime.now();
-      final start = DateTime(now.year, now.month, now.day)
-          .subtract(const Duration(days: _analyticsDays - 1));
+      final start = DateTime(
+        range.start.year,
+        range.start.month,
+        range.start.day,
+      );
+      final end = DateTime(
+        range.end.year,
+        range.end.month,
+        range.end.day,
+        23,
+        59,
+        59,
+        999,
+      );
+      final dayCount = range.dayCount;
 
-      final dayLabels = List.generate(_analyticsDays, (i) {
-        final day = start.add(Duration(days: i));
-        return '${day.month}/${day.day}';
-      });
+      final dayLabels = range.days
+          .map(
+            (d) =>
+                '${d.day.toString().padLeft(2, '0')}/${d.month.toString().padLeft(2, '0')}',
+          )
+          .toList();
 
-      final usersSnap = await _firestore.collection('users').get();
-      final carsSnap = await _firestore.collection('cars').get();
+      final startTs = Timestamp.fromDate(start);
+      final endTs = Timestamp.fromDate(end);
+
+      final carsSnap = await _firestore
+          .collection('cars')
+          .where('createdAt', isGreaterThanOrEqualTo: startTs)
+          .where('createdAt', isLessThanOrEqualTo: endTs)
+          .get();
       final config = await fetchSystemConfig();
       final packagePrices = config.packagePrices;
 
-      final dailyUsers = List<int>.filled(_analyticsDays, 0);
-      final dailyAds = List<int>.filled(_analyticsDays, 0);
-
-      for (final doc in usersSnap.docs) {
-        final createdAt = _timestampToDate(doc.data()['createdAt']);
-        if (createdAt == null) continue;
-        _incrementDayBucket(dailyUsers, start, createdAt);
-      }
+      final dailyAds = List<int>.filled(dayCount, 0);
 
       var totalRevenue = 0;
       var revenueCard = 0;
@@ -377,15 +396,19 @@ class AdminDatabaseService {
               city: city,
               totalAds: cityTotals[city] ?? 0,
               approvedAds: cityApproved[city] ?? 0,
+              visitorCount: 0,
             ),
           )
           .toList()
         ..sort((a, b) => b.totalAds.compareTo(a.totalAds));
 
       return AdminDashboardAnalytics(
+        range: range,
         dayLabels: dayLabels,
-        dailyActiveUsers: dailyUsers,
+        dailyActiveUsers: List<int>.filled(dayCount, 0),
         dailyNewAds: dailyAds,
+        todaysActiveUsers: 0,
+        totalAppDownloads: 0,
         totalRevenue: totalRevenue,
         revenueCard: revenueCard,
         revenueEWallet: revenueEWallet,

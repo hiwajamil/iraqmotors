@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:ui' as ui;
@@ -17,6 +18,7 @@ import 'package:iq_motors/shared/data/dummy_brands.dart';
 import 'package:iq_motors/shared/models/account_type.dart';
 import 'package:iq_motors/shared/models/car_brand.dart';
 import 'package:iq_motors/features/admin/data/services/user_usage_service.dart';
+import 'package:iq_motors/features/listings/data/services/add_car_image_processor.dart';
 
 /// Kurdish messages for the add-car photo validation flow.
 abstract final class CarVisionMessages {
@@ -24,6 +26,10 @@ abstract final class CarVisionMessages {
   static const inconsistentPhotos =
       'تکایە دڵنیابەرەوە لە وێنەکان هی هەمان ئۆتۆمبێل بن.';
   static const aiAutoFillSuccess = 'AI-یەکە زانیارییەکانی دۆزییەوە';
+  static const aiGracefulFallback =
+      'شیکردنەوەی AI سەرکەوتوو نەبوو. دەتوانیت زانیارییەکان بە دەست بنووسیت.';
+  static const aiTimedOut =
+      'شیکردنەوەی AI کاتی تەواو بوو. دەتوانیت زانیارییەکان بە دەست بنووسیت.';
 }
 
 enum CarVisionFailure {
@@ -66,8 +72,44 @@ class CarVisionFormSuggestion {
 enum CarVisionAutoFillStatus {
   quotaExceeded,
   unavailable,
+  timedOut,
   noResults,
   success,
+}
+
+/// One uploaded photo for multi-image wizard analysis.
+class CarVisionImageInput {
+  const CarVisionImageInput({
+    required this.bytes,
+    this.mimeType = 'image/jpeg',
+  });
+
+  final Uint8List bytes;
+  final String mimeType;
+}
+
+/// Result of analyzing all wizard photos before the basic-info step.
+class CarVisionWizardAnalysis {
+  const CarVisionWizardAnalysis({
+    required this.status,
+    this.sameCar = true,
+    this.allVehicles = true,
+    this.suggestion,
+    this.failure,
+  });
+
+  final CarVisionAutoFillStatus status;
+  final bool sameCar;
+  final bool allVehicles;
+  final CarVisionFormSuggestion? suggestion;
+  final CarVisionFailure? failure;
+
+  bool get shouldBlockNavigation =>
+      failure == CarVisionFailure.notAVehicle ||
+      failure == CarVisionFailure.inconsistentPhotos;
+
+  /// True when the wizard may advance even though AI did not auto-fill.
+  bool get allowsManualContinue => !shouldBlockNavigation;
 }
 
 /// Result of a quota-gated Gemini auto-fill attempt (after on-device validation).
@@ -107,9 +149,19 @@ class CarVisionService {
   GenerativeModel? _cachedGenerativeModel;
 
   static const _geminiModel = 'gemini-2.0-flash';
+  static const Duration geminiRequestTimeout = Duration(seconds: 10);
   static const _analyzePrompt =
       "Identify the brand, model, and color of the car in this image. "
       "Return the result in JSON format: {'brand': '', 'model': '', 'color': ''}.";
+
+  static const _wizardMultiImagePrompt =
+      'You are helping a car listing app. The user uploaded multiple photos '
+      'for one listing.\n'
+      '1. Confirm every image shows a motor vehicle.\n'
+      '2. Confirm ALL images show the exact same car (same vehicle).\n'
+      '3. If they match, identify brand, model, and exterior color.\n\n'
+      'Return JSON only:\n'
+      '{"all_vehicles": true, "same_car": true, "brand": "", "model": "", "color": ""}';
 
   static const _vehicleLabels = {
     'car',
@@ -191,12 +243,14 @@ class CarVisionService {
       final model = _generativeModel;
       if (model == null) return const {};
 
-      final response = await model.generateContent([
-        Content.multi([
-          TextPart(_analyzePrompt),
-          DataPart(mimeType, bytes),
-        ]),
-      ]);
+      final response = await model
+          .generateContent([
+            Content.multi([
+              TextPart(_analyzePrompt),
+              DataPart(mimeType, bytes),
+            ]),
+          ])
+          .timeout(geminiRequestTimeout);
 
       final text = response.text?.trim();
       if (text == null || text.isEmpty) return const {};
@@ -232,6 +286,109 @@ class CarVisionService {
       modelKey: modelKey,
       colorKey: colorKey,
     );
+  }
+
+  /// Analyzes every uploaded wizard photo with Gemini before basic-info step.
+  Future<CarVisionWizardAnalysis> analyzeWizardPhotos({
+    required List<CarVisionImageInput> images,
+    required String userId,
+    AccountType accountType = AccountType.individual,
+  }) async {
+    if (images.isEmpty) {
+      return const CarVisionWizardAnalysis(
+        status: CarVisionAutoFillStatus.noResults,
+      );
+    }
+
+    final canUse = await _usageService.canUseAiAutoFill(
+      userId: userId,
+      accountType: accountType,
+    );
+    if (!canUse) {
+      return const CarVisionWizardAnalysis(
+        status: CarVisionAutoFillStatus.quotaExceeded,
+      );
+    }
+
+    final model = _generativeModel;
+    if (model == null) {
+      return const CarVisionWizardAnalysis(
+        status: CarVisionAutoFillStatus.unavailable,
+      );
+    }
+
+    try {
+      final preparedBytes = await prepareAddCarAiVisionBatch(
+        images.map((image) => image.bytes).toList(),
+      );
+
+      final parts = <Part>[
+        TextPart(_wizardMultiImagePrompt),
+        for (var i = 0; i < preparedBytes.length; i++)
+          DataPart('image/jpeg', preparedBytes[i]),
+      ];
+
+      final response = await model
+          .generateContent([Content.multi(parts)])
+          .timeout(geminiRequestTimeout);
+      final text = response.text?.trim();
+      if (text == null || text.isEmpty) {
+        return const CarVisionWizardAnalysis(
+          status: CarVisionAutoFillStatus.noResults,
+        );
+      }
+
+      final parsed = _parseJsonResponse(text);
+      if (parsed == null) {
+        return const CarVisionWizardAnalysis(
+          status: CarVisionAutoFillStatus.noResults,
+        );
+      }
+
+      final allVehicles = _readBool(parsed['all_vehicles'], defaultValue: true);
+      final sameCar = _readBool(parsed['same_car'], defaultValue: true);
+
+      if (!allVehicles) {
+        return CarVisionWizardAnalysis(
+          status: CarVisionAutoFillStatus.success,
+          allVehicles: false,
+          sameCar: false,
+          failure: CarVisionFailure.notAVehicle,
+        );
+      }
+
+      if (!sameCar) {
+        return CarVisionWizardAnalysis(
+          status: CarVisionAutoFillStatus.success,
+          allVehicles: true,
+          sameCar: false,
+          failure: CarVisionFailure.inconsistentPhotos,
+        );
+      }
+
+      final suggestion = mapAnalysisToFormKeys({
+        'brand': _stringOrEmpty(parsed['brand']),
+        'model': _stringOrEmpty(parsed['model']),
+        'color': _stringOrEmpty(parsed['color']),
+      });
+
+      await _usageService.recordAiAutoFillUsage(userId);
+
+      return CarVisionWizardAnalysis(
+        status: CarVisionAutoFillStatus.success,
+        allVehicles: true,
+        sameCar: true,
+        suggestion: suggestion.hasAny ? suggestion : null,
+      );
+    } on TimeoutException {
+      return const CarVisionWizardAnalysis(
+        status: CarVisionAutoFillStatus.timedOut,
+      );
+    } catch (_) {
+      return const CarVisionWizardAnalysis(
+        status: CarVisionAutoFillStatus.unavailable,
+      );
+    }
   }
 
   /// Runs Gemini auto-fill only after on-device validation and quota checks.
@@ -579,4 +736,14 @@ class CarVisionService {
 
   String _normalize(String value) =>
       value.toLowerCase().replaceAll(RegExp(r'[^a-z0-9\u0600-\u06FF]+'), '');
+
+  bool _readBool(dynamic value, {required bool defaultValue}) {
+    if (value is bool) return value;
+    if (value is String) {
+      final normalized = value.trim().toLowerCase();
+      if (normalized == 'true' || normalized == 'yes') return true;
+      if (normalized == 'false' || normalized == 'no') return false;
+    }
+    return defaultValue;
+  }
 }

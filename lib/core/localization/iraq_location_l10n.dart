@@ -11,8 +11,11 @@ abstract final class IraqLocationL10n {
     'دهۆک': LocationKeys.dohuk,
     'هەڵەبجە': LocationKeys.halabja,
     'موسڵ': LocationKeys.mosul,
+    'نەینەوا': LocationKeys.mosul,
     'کەرکووک': LocationKeys.kirkuk,
+    'کەرکوک': LocationKeys.kirkuk,
     'بەسڕە': LocationKeys.basra,
+    'بەسرە': LocationKeys.basra,
     'نەجەف': LocationKeys.najaf,
     'کەربەلا': LocationKeys.karbala,
     'ئەنبار': LocationKeys.anbar,
@@ -22,8 +25,10 @@ abstract final class IraqLocationL10n {
     'میسان': LocationKeys.maysan,
     'موسەنا': LocationKeys.muthanna,
     'قادسیە (دیوانیە)': LocationKeys.qadisiyyah,
+    'قادسیە': LocationKeys.qadisiyyah,
     'زیقار': LocationKeys.dhiQar,
     'سەلاحەدین': LocationKeys.salahuddin,
+    'سەڵاحەدین': LocationKeys.salahuddin,
   };
 
   static String provinceLabel(AppLocalizations l10n, String storageKey) {

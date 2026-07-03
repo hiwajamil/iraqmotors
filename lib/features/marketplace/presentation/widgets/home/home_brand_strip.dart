@@ -1,6 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
+import 'package:iq_motors/core/config/app_image_cache.dart';
+
 import 'package:iq_motors/shared/data/dummy_brands.dart';
 import 'package:iq_motors/shared/models/car_brand.dart';
 import 'package:iq_motors/features/marketplace/presentation/widgets/home/home_theme.dart';
@@ -226,9 +228,12 @@ class _HomeBrandLogoImageState extends State<_HomeBrandLogoImage> {
       fit: BoxFit.contain,
       width: double.infinity,
       height: double.infinity,
-      filterQuality: FilterQuality.high,
+      filterQuality: FilterQuality.medium,
       memCacheWidth: cacheExtent,
       memCacheHeight: cacheExtent,
+      maxWidthDiskCache: cacheExtent,
+      maxHeightDiskCache: cacheExtent,
+      cacheManager: AppImageCacheManager.instance,
       placeholder: (_, __) => Center(
         child: SizedBox(
           width: widget.circleSize * 0.28,

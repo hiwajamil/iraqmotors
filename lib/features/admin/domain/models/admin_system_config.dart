@@ -26,12 +26,29 @@ class AdminSystemConfig {
       List<String>.from(defaultTrackedCities);
 
   /// Default governorates used before Firestore config exists.
+  ///
+  /// Full 19 Iraqi governorates in Kurdish; must stay in sync with the
+  /// admin city grids (users + showrooms) and [IraqLocationL10n] mappings.
   static const List<String> defaultTrackedCities = [
     'سلێمانی',
     'هەولێر',
     'دهۆک',
-    'کەرکووک',
+    'هەڵەبجە',
+    'کەرکوک',
     'بەغداد',
+    'بەسرە',
+    'نەینەوا',
+    'کەربەلا',
+    'نەجەف',
+    'ئەنبار',
+    'بابل',
+    'دیالە',
+    'زیقار',
+    'قادسیە',
+    'میسان',
+    'موسەنا',
+    'واست',
+    'سەڵاحەدین',
   ];
 
   final Map<String, int> packagePrices;

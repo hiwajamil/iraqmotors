@@ -11,7 +11,9 @@ import 'package:iq_motors/features/marketplace/presentation/widgets/home/home_fe
 import 'package:iq_motors/features/marketplace/presentation/widgets/home/home_footer.dart';
 import 'package:iq_motors/features/marketplace/presentation/widgets/home/home_glass_nav_bar.dart';
 import 'package:iq_motors/features/marketplace/presentation/widgets/home/home_hero_section.dart';
+import 'package:iq_motors/features/marketplace/presentation/providers/user_interest_provider.dart';
 import 'package:iq_motors/features/marketplace/presentation/widgets/home/home_pagination.dart';
+import 'package:iq_motors/features/marketplace/presentation/widgets/home/home_recommended_section.dart';
 import 'package:iq_motors/features/marketplace/presentation/widgets/home/home_theme.dart';
 import 'package:iq_motors/features/marketplace/presentation/widgets/premium_car_card.dart';
 import 'package:iq_motors/features/auth/presentation/screens/auth_screen.dart';
@@ -28,7 +30,8 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 class _HomeScreenState extends ConsumerState<HomeScreen>
     with SingleTickerProviderStateMixin {
-  static const int _rowsPerPage = 6;
+  static const int _rowsPerPageDesktop = 6;
+  static const int _rowsPerPageMobileWeb = 4;
 
   final ValueNotifier<bool> _immersiveNav = ValueNotifier(true);
   final GlobalKey _listingsAnchorKey = GlobalKey();
@@ -52,7 +55,28 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     _heroController.forward();
   }
 
-  int _pageSize(int crossAxisCount) => crossAxisCount * _rowsPerPage;
+  int _rowsPerPage(double width) {
+    if (kIsWeb && width < 768) return _rowsPerPageMobileWeb;
+    return _rowsPerPageDesktop;
+  }
+
+  int _pageSize(int crossAxisCount, double width) =>
+      crossAxisCount * _rowsPerPage(width);
+
+  int? _pendingPageSync;
+
+  void _schedulePageSync(int page) {
+    if (page == _currentPage || page == _pendingPageSync) return;
+    _pendingPageSync = page;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final nextPage = _pendingPageSync;
+      _pendingPageSync = null;
+      if (nextPage != null && nextPage != _currentPage) {
+        setState(() => _currentPage = nextPage);
+      }
+    });
+  }
 
   void _selectPage(int page) {
     if (page == _currentPage) return;
@@ -121,14 +145,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           ];
         }
 
-        final pageSize = _pageSize(crossAxisCount);
-        final totalPages = (cars.length / pageSize).ceil();
+        final pageSize = _pageSize(crossAxisCount, width);
+        final totalPages = (cars.length / pageSize).ceil().clamp(1, 999999);
         final currentPage = _currentPage.clamp(1, totalPages);
-        if (currentPage != _currentPage) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (mounted) setState(() => _currentPage = currentPage);
-          });
-        }
+        _schedulePageSync(currentPage);
 
         final startIndex = (currentPage - 1) * pageSize;
         final endIndex = (startIndex + pageSize).clamp(0, cars.length);
@@ -171,7 +191,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                     key: ValueKey(carId ?? 'car-$index'),
                     car: car,
                     compact: !isWide,
-                    animationDelay: kIsWeb
+                    animationDelay: kIsWeb && isWide
                         ? Duration(milliseconds: 100 * (index + 1))
                         : Duration.zero,
                     isWishlisted:
@@ -232,6 +252,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     );
     if (result == null || !mounted) return;
     ref.read(filterStateProvider.notifier).applyAdvancedFilterResult(result);
+    _recordFilterInterest(result.brand?.id, result.filters.modelKey);
+  }
+
+  void _recordFilterInterest(String? brandId, String? modelKey) {
+    if (brandId == null || brandId.isEmpty) return;
+    ref.read(userInterestRevisionProvider.notifier).record(
+          brandId: brandId,
+          modelKey: modelKey,
+        );
   }
 
   double _horizontalPadding(double width) =>
@@ -365,8 +394,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                         showAdvancedFilter: filterState.showAdvancedFilter,
                         onAdvancedSearchToggle: () =>
                             _openAdvancedFilter(context, cars.length),
-                        onBrandSelected: filterNotifier.setBrand,
-                        onFilterChanged: filterNotifier.setFilters,
+                        onBrandSelected: (brand) {
+                          filterNotifier.setBrand(brand);
+                          if (brand != null) {
+                            _recordFilterInterest(
+                              brand.id,
+                              ref.read(filterStateProvider).filters.modelKey,
+                            );
+                          }
+                        },
+                        onFilterChanged: (filters) {
+                          filterNotifier.setFilters(filters);
+                          final brand = ref.read(filterStateProvider).brand;
+                          if (brand != null && filters.modelKey != null) {
+                            _recordFilterInterest(brand.id, filters.modelKey);
+                          }
+                        },
                         onClearFilters: filterNotifier.clearFilters,
                         onShowResults: () {},
                         resultCount: cars.length,
@@ -380,6 +423,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                       ),
                     ),
                   ),
+                ),
+                HomeRecommendedSection(
+                  favoriteIds: favoriteIds,
+                  onWishlistTap: _onWishlistTap,
                 ),
                 ..._listingSlivers(
                   context: context,

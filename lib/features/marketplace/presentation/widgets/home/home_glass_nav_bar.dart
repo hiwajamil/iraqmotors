@@ -31,8 +31,8 @@ class HomeGlassNavBar extends StatelessWidget implements PreferredSizeWidget {
   final List<String> navLinks;
   final double horizontalPadding;
 
-  static const double _verticalPadding = 20;
-  static const double _contentHeight = 44;
+  static const double _verticalPadding = 8;
+  static const double _contentHeight = 114;
 
   static double heightOf(BuildContext context) {
     final topInset = MediaQuery.paddingOf(context).top;
@@ -66,7 +66,8 @@ class HomeGlassNavBar extends StatelessWidget implements PreferredSizeWidget {
               child: Align(
                 alignment: AlignmentDirectional.centerStart,
                 child: IqMotorsLogo(
-                  height: isWide ? 40 : 32,
+                  height: isWide ? 110 : 88,
+                  width: isWide ? 240 : 190,
                   light: _useImmersiveStyle,
                   onTap: () {
                     final navigator = Navigator.of(context);

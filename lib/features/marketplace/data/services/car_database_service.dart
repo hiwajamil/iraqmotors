@@ -6,8 +6,9 @@ import 'package:flutter/foundation.dart';
 import 'package:iq_motors/features/admin/domain/models/activity_log.dart';
 import 'package:iq_motors/features/marketplace/domain/models/car.dart';
 import 'package:iq_motors/features/admin/data/services/activity_log_service.dart';
-import 'package:iq_motors/features/marketplace/data/services/car_filter_service.dart';
 import 'package:iq_motors/features/marketplace/data/services/car_bid_service.dart';
+import 'package:iq_motors/features/marketplace/data/services/car_filter_service.dart';
+import 'package:iq_motors/features/marketplace/domain/models/user_car_interest.dart';
 import 'package:iq_motors/features/storage/data/services/r2_storage_service.dart';
 
 class CarDatabaseException implements Exception {
@@ -574,6 +575,78 @@ class CarDatabaseService {
       return bTime.compareTo(aTime);
     }
     return 0;
+  }
+
+  /// Recently added active/sold listings for the trending fallback row.
+  Future<List<Map<String, dynamic>>> fetchTrendingCars({int limit = 10}) async {
+    try {
+      QuerySnapshot<Map<String, dynamic>> snapshot;
+      try {
+        snapshot = await _activeAdsQuery().limit(limit).get();
+      } on FirebaseException catch (e) {
+        if (e.code != 'failed-precondition') rethrow;
+        snapshot = await _firestore
+            .collection('cars')
+            .where(statusField, whereIn: publicFeedStatuses)
+            .limit(limit)
+            .get();
+      }
+      final ads = _mapsFromQuery(snapshot);
+      ads.sort(_compareByCreatedAtDesc);
+      if (ads.length <= limit) return ads;
+      return ads.sublist(0, limit);
+    } on FirebaseException catch (e) {
+      throw CarDatabaseException(
+        e.message ?? 'Failed to fetch trending cars.',
+      );
+    } catch (e) {
+      throw CarDatabaseException('Failed to fetch trending cars: $e');
+    }
+  }
+
+  /// Matches saved brand/model interests — one equality query per interest.
+  Future<List<Map<String, dynamic>>> fetchRecommendedCars(
+    List<UserCarInterest> interests, {
+    int limit = 10,
+  }) async {
+    if (interests.isEmpty) {
+      return fetchTrendingCars(limit: limit);
+    }
+
+    try {
+      final seenIds = <String>{};
+      final results = <Map<String, dynamic>>[];
+
+      for (final interest in interests) {
+        if (results.length >= limit) break;
+
+        final query = CarFirestoreFilterQuery(
+          brandId: interest.brandId,
+          modelKey: interest.modelKey,
+        );
+        final snapshot = await _filteredActiveCarsQuery(query).get();
+        final cars = _mapsFromQuery(snapshot);
+        cars.sort(_compareByCreatedAtDesc);
+
+        for (final car in cars) {
+          final id = car['id']?.toString();
+          if (id == null || id.isEmpty || !seenIds.add(id)) continue;
+          results.add(car);
+          if (results.length >= limit) break;
+        }
+      }
+
+      if (results.isEmpty) {
+        return fetchTrendingCars(limit: limit);
+      }
+      return results;
+    } on FirebaseException catch (e) {
+      throw CarDatabaseException(
+        e.message ?? 'Failed to fetch recommended cars.',
+      );
+    } catch (e) {
+      throw CarDatabaseException('Failed to fetch recommended cars: $e');
+    }
   }
 
   /// Lists publicly visible car ads (`status == active`).

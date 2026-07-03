@@ -1678,6 +1678,18 @@ abstract class AppLocalizations {
   /// **'ئۆتۆمبێلە بەردەستەکان'**
   String get homeAvailableListings;
 
+  /// No description provided for @homeRecommendedForYou.
+  ///
+  /// In ku, this message translates to:
+  /// **'پێشنیارکراو بۆ تۆ'**
+  String get homeRecommendedForYou;
+
+  /// No description provided for @homeTrendingCars.
+  ///
+  /// In ku, this message translates to:
+  /// **'ئۆتۆمبێلە بەناوبانگەکان'**
+  String get homeTrendingCars;
+
   /// No description provided for @favoritesEmpty.
   ///
   /// In ku, this message translates to:
@@ -2079,6 +2091,54 @@ abstract class AppLocalizations {
   /// In ku, this message translates to:
   /// **'پەسەندکراو'**
   String get adminApprovedAdsColumn;
+
+  /// No description provided for @adminDateRangeLabel.
+  ///
+  /// In ku, this message translates to:
+  /// **'مەودای بەروار'**
+  String get adminDateRangeLabel;
+
+  /// No description provided for @adminTodaysActiveUsers.
+  ///
+  /// In ku, this message translates to:
+  /// **'بەکارهێنەری چالاکی ئەمڕۆ'**
+  String get adminTodaysActiveUsers;
+
+  /// No description provided for @adminTotalAppDownloads.
+  ///
+  /// In ku, this message translates to:
+  /// **'کۆی داگرتنی ئەپ'**
+  String get adminTotalAppDownloads;
+
+  /// No description provided for @adminVisitorTraffic.
+  ///
+  /// In ku, this message translates to:
+  /// **'ڕێژەی سەردانیکەران'**
+  String get adminVisitorTraffic;
+
+  /// No description provided for @adminCityMetricAds.
+  ///
+  /// In ku, this message translates to:
+  /// **'ڕیکلام'**
+  String get adminCityMetricAds;
+
+  /// No description provided for @adminCityMetricVisitors.
+  ///
+  /// In ku, this message translates to:
+  /// **'سەردانیکەر'**
+  String get adminCityMetricVisitors;
+
+  /// No description provided for @adminGenerateReport.
+  ///
+  /// In ku, this message translates to:
+  /// **'دروستکردنی ڕاپۆرت'**
+  String get adminGenerateReport;
+
+  /// No description provided for @adminReportsEmptyHint.
+  ///
+  /// In ku, this message translates to:
+  /// **'مەودای بەروار هەڵبژێرە و دوگمەی دروستکردنی ڕاپۆرت بگرە بۆ بینینی ئامارەکان.'**
+  String get adminReportsEmptyHint;
 
   /// No description provided for @adminSettingsSubtitle.
   ///

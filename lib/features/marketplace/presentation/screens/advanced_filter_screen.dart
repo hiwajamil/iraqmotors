@@ -1,4 +1,4 @@
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:iq_motors/shared/widgets/app_cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -901,9 +901,10 @@ class _BrandSquareCard extends StatelessWidget {
         child: ClipOval(
           child: Padding(
             padding: const EdgeInsets.all(10),
-            child: CachedNetworkImage(
+            child: AppCachedNetworkImage(
               imageUrl: brand.logoUrl,
               fit: BoxFit.contain,
+              memCacheLogicalWidth: 52,
               errorWidget: (_, __, ___) => Center(
                 child: Text(
                   brand.nameEnglish[0],

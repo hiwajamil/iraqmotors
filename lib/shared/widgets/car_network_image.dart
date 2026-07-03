@@ -2,14 +2,13 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import 'package:iq_motors/shared/widgets/car_network_image_stub.dart'
-    if (dart.library.html) 'package:iq_motors/shared/widgets/car_network_image_web.dart' as platform;
+import 'package:iq_motors/core/config/app_image_cache.dart';
 
-/// Network car photo that loads on Flutter web without R2 CORS headers.
+/// Network car photo with memory-cache sizing on all platforms.
 ///
-/// On web, renders a plain HTML `<img>` with CSS `object-fit` so photos keep
-/// their aspect ratio inside card and detail layouts.
-/// On mobile/desktop, uses [CachedNetworkImage] with memory-cache sizing.
+/// On web, uses [Image.network] with [WebHtmlElementStrategy.fallback]: resized
+/// decode when CORS allows, otherwise a native HTML `<img>` (no CORS required).
+/// On mobile/desktop, uses [CachedNetworkImage].
 class CarNetworkImage extends StatelessWidget {
   const CarNetworkImage({
     super.key,
@@ -39,29 +38,36 @@ class CarNetworkImage extends StatelessWidget {
           const SizedBox.shrink();
     }
 
+    final cacheWidth = networkImageMemCacheExtent(
+      context,
+      width ?? cacheLogicalWidth,
+    );
+    final cacheHeight = networkImageMemCacheHeight(context, height);
+
     if (kIsWeb) {
-      return platform.buildWebCarNetworkImage(
-        imageUrl: url,
+      return Image.network(
+        url,
         width: width,
         height: height,
         fit: fit,
+        cacheWidth: cacheWidth,
+        cacheHeight: cacheHeight,
+        webHtmlElementStrategy: WebHtmlElementStrategy.fallback,
+        loadingBuilder: loadingBuilder,
         errorBuilder: errorBuilder,
       );
     }
-
-    final dpr = MediaQuery.devicePixelRatioOf(context);
-    final memCacheWidth =
-        ((width ?? cacheLogicalWidth) * dpr).round().clamp(1, 1200);
-    final memCacheHeight =
-        height != null ? (height! * dpr).round().clamp(1, 1200) : null;
 
     return CachedNetworkImage(
       imageUrl: url,
       width: width,
       height: height,
       fit: fit,
-      memCacheWidth: memCacheWidth,
-      memCacheHeight: memCacheHeight,
+      memCacheWidth: cacheWidth,
+      memCacheHeight: cacheHeight,
+      maxWidthDiskCache: cacheWidth,
+      maxHeightDiskCache: cacheHeight,
+      cacheManager: AppImageCacheManager.instance,
       fadeInDuration: const Duration(milliseconds: 120),
       placeholder: (context, _) {
         if (loadingBuilder != null) {

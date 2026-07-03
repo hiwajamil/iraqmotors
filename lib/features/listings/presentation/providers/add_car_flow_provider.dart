@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -58,12 +60,13 @@ class AddCarFlowState {
     this.selectedImages = const [],
     this.aiFilledFields = const {},
     this.isAnalyzingAi = false,
+    this.aiPhotoAnalysisDone = false,
     this.draftAdId,
     this.existingAdId,
     this.isDraftMode = false,
   });
 
-  static const int stepCount = 12;
+  static const int stepCount = 10;
 
   final AddCarDraft draft;
   final int currentStep;
@@ -74,6 +77,7 @@ class AddCarFlowState {
   final List<XFile?> selectedImages;
   final Set<String> aiFilledFields;
   final bool isAnalyzingAi;
+  final bool aiPhotoAnalysisDone;
   final String? draftAdId;
   final String? existingAdId;
   final bool isDraftMode;
@@ -104,10 +108,6 @@ class AddCarFlowState {
         return draft.isPriceDescriptionComplete;
       case 9:
         return draft.isReviewComplete;
-      case 10:
-        return draft.isPackageComplete;
-      case 11:
-        return draft.isPaymentComplete;
       default:
         return false;
     }
@@ -123,6 +123,7 @@ class AddCarFlowState {
     List<XFile?>? selectedImages,
     Set<String>? aiFilledFields,
     bool? isAnalyzingAi,
+    bool? aiPhotoAnalysisDone,
     String? draftAdId,
   }) {
     return AddCarFlowState(
@@ -135,6 +136,7 @@ class AddCarFlowState {
       selectedImages: selectedImages ?? this.selectedImages,
       aiFilledFields: aiFilledFields ?? this.aiFilledFields,
       isAnalyzingAi: isAnalyzingAi ?? this.isAnalyzingAi,
+      aiPhotoAnalysisDone: aiPhotoAnalysisDone ?? this.aiPhotoAnalysisDone,
       draftAdId: draftAdId ?? this.draftAdId,
       existingAdId: existingAdId,
       isDraftMode: isDraftMode,
@@ -170,10 +172,86 @@ class AddCarFlowNotifier extends Notifier<AddCarFlowState> {
   final AddCarFlowSession _session;
 
   @override
-  AddCarFlowState build() => AddCarFlowState.initial(_session);
+  AddCarFlowState build() {
+    ref.onDispose(_disposeResources);
+    return AddCarFlowState.initial(_session);
+  }
+
+  static const Duration _textFieldDebounce = Duration(milliseconds: 280);
+
+  Timer? _descriptionDebounce;
+  Timer? _priceDebounce;
+  Timer? _mileageDebounce;
+  Timer? _trimDebounce;
+  String? _pendingDescription;
+  String? _pendingPrice;
+  String? _pendingMileage;
+  String? _pendingTrim;
+
+  void _disposeResources() {
+    _cancelTextDebounceTimers();
+  }
+
+  void _cancelTextDebounceTimers() {
+    _descriptionDebounce?.cancel();
+    _priceDebounce?.cancel();
+    _mileageDebounce?.cancel();
+    _trimDebounce?.cancel();
+    _descriptionDebounce = null;
+    _priceDebounce = null;
+    _mileageDebounce = null;
+    _trimDebounce = null;
+  }
+
+  /// Commits any debounced text-field edits before validation / navigation.
+  void flushPendingTextUpdates() {
+    var draft = state.draft;
+
+    _descriptionDebounce?.cancel();
+    if (_pendingDescription != null) {
+      draft = draft.copyWith(description: _pendingDescription);
+      _pendingDescription = null;
+    }
+
+    _priceDebounce?.cancel();
+    if (_pendingPrice != null) {
+      draft = draft.copyWith(priceValue: _pendingPrice);
+      _pendingPrice = null;
+    }
+
+    _mileageDebounce?.cancel();
+    if (_pendingMileage != null) {
+      draft = draft.copyWith(mileageValue: _pendingMileage);
+      _pendingMileage = null;
+    }
+
+    _trimDebounce?.cancel();
+    if (_pendingTrim != null) {
+      draft = draft.copyWith(trim: _pendingTrim);
+      _pendingTrim = null;
+    }
+
+    if (draft != state.draft) {
+      state = state.copyWith(draft: draft);
+    }
+  }
+
+  /// Drops in-memory photo bytes to reduce OOM risk when leaving the wizard.
+  void releaseMemory() {
+    _cancelTextDebounceTimers();
+    _pendingDescription = null;
+    _pendingPrice = null;
+    _pendingMileage = null;
+    _pendingTrim = null;
+    state = state.copyWith(
+      slotPreviewBytes: const {},
+      selectedImages: List<XFile?>.filled(AddCarDraft.photoSlotCount, null),
+    );
+  }
 
   /// Advances one step synchronously (no network I/O).
   void goNext() {
+    flushPendingTextUpdates();
     if (!state.canProceed || state.isPublishing || state.isAnyPhotoUploading) {
       return;
     }
@@ -201,6 +279,17 @@ class AddCarFlowNotifier extends Notifier<AddCarFlowState> {
 
   void setAnalyzingAi(bool value) {
     state = state.copyWith(isAnalyzingAi: value);
+  }
+
+  void markAiPhotoAnalysisDone() {
+    state = state.copyWith(aiPhotoAnalysisDone: true);
+  }
+
+  void resetAiPhotoAnalysis() {
+    state = state.copyWith(
+      aiPhotoAnalysisDone: false,
+      aiFilledFields: const {},
+    );
   }
 
   void addUploadingSlot(int index) {
@@ -231,6 +320,8 @@ class AddCarFlowNotifier extends Notifier<AddCarFlowState> {
       uploadingPhotoSlots: uploading,
       selectedImages: selectedImages,
       slotPreviewBytes: previewBytes,
+      aiPhotoAnalysisDone: false,
+      aiFilledFields: const {},
       draft: state.draft.copyWith(
         photos: List<String?>.from(slots)..[index] = picked.path,
       ),
@@ -250,6 +341,8 @@ class AddCarFlowNotifier extends Notifier<AddCarFlowState> {
     state = state.copyWith(
       selectedImages: selectedImages,
       slotPreviewBytes: previewBytes,
+      aiPhotoAnalysisDone: false,
+      aiFilledFields: const {},
       draft: state.draft.copyWith(photos: slots),
     );
   }
@@ -276,7 +369,11 @@ class AddCarFlowNotifier extends Notifier<AddCarFlowState> {
       ..remove('modelKey');
     state = state.copyWith(
       aiFilledFields: ai,
-      draft: state.draft.copyWith(brandId: brand.id, clearModel: true),
+      draft: state.draft.copyWith(
+        brandId: brand.id,
+        clearModel: true,
+        clearTrim: true,
+      ),
     );
   }
 
@@ -284,7 +381,7 @@ class AddCarFlowNotifier extends Notifier<AddCarFlowState> {
     final ai = Set<String>.from(state.aiFilledFields)..remove('modelKey');
     state = state.copyWith(
       aiFilledFields: ai,
-      draft: state.draft.copyWith(modelKey: modelKey),
+      draft: state.draft.copyWith(modelKey: modelKey, clearTrim: true),
     );
   }
 
@@ -303,8 +400,15 @@ class AddCarFlowNotifier extends Notifier<AddCarFlowState> {
   void onYearChanged(String year) =>
       updateDraft(state.draft.copyWith(year: year));
 
-  void onTrimChanged(String trim) =>
-      updateDraft(state.draft.copyWith(trim: trim));
+  void onTrimChanged(String trim) {
+    _pendingTrim = trim;
+    _trimDebounce?.cancel();
+    _trimDebounce = Timer(_textFieldDebounce, () {
+      if (_pendingTrim == null) return;
+      updateDraft(state.draft.copyWith(trim: _pendingTrim));
+      _pendingTrim = null;
+    });
+  }
 
   void onPlateTypeChanged(String plateTypeKey) =>
       updateDraft(state.draft.copyWith(plateTypeKey: plateTypeKey));
@@ -312,8 +416,15 @@ class AddCarFlowNotifier extends Notifier<AddCarFlowState> {
   void onPlateCityChanged(String plateCityKey) =>
       updateDraft(state.draft.copyWith(plateCityKey: plateCityKey));
 
-  void onMileageChanged(String mileageValue) =>
-      updateDraft(state.draft.copyWith(mileageValue: mileageValue));
+  void onMileageChanged(String mileageValue) {
+    _pendingMileage = mileageValue;
+    _mileageDebounce?.cancel();
+    _mileageDebounce = Timer(_textFieldDebounce, () {
+      if (_pendingMileage == null) return;
+      updateDraft(state.draft.copyWith(mileageValue: _pendingMileage));
+      _pendingMileage = null;
+    });
+  }
 
   void onMileageUnitChanged(String mileageUnit) =>
       updateDraft(state.draft.copyWith(mileageUnit: mileageUnit));
@@ -356,11 +467,25 @@ class AddCarFlowNotifier extends Notifier<AddCarFlowState> {
     updateDraft(state.draft.copyWith(selectedFeatures: features));
   }
 
-  void onDescriptionChanged(String description) =>
-      updateDraft(state.draft.copyWith(description: description));
+  void onDescriptionChanged(String description) {
+    _pendingDescription = description;
+    _descriptionDebounce?.cancel();
+    _descriptionDebounce = Timer(_textFieldDebounce, () {
+      if (_pendingDescription == null) return;
+      updateDraft(state.draft.copyWith(description: _pendingDescription));
+      _pendingDescription = null;
+    });
+  }
 
-  void onPriceChanged(String priceValue) =>
-      updateDraft(state.draft.copyWith(priceValue: priceValue));
+  void onPriceChanged(String priceValue) {
+    _pendingPrice = priceValue;
+    _priceDebounce?.cancel();
+    _priceDebounce = Timer(_textFieldDebounce, () {
+      if (_pendingPrice == null) return;
+      updateDraft(state.draft.copyWith(priceValue: _pendingPrice));
+      _pendingPrice = null;
+    });
+  }
 
   void onCurrencyChanged(String currencyKey) =>
       updateDraft(state.draft.copyWith(currencyKey: currencyKey));
@@ -372,6 +497,7 @@ class AddCarFlowNotifier extends Notifier<AddCarFlowState> {
       updateDraft(state.draft.copyWith(paymentMethodKey: paymentMethodKey));
 
   Future<void> saveDraftManually() async {
+    flushPendingTextUpdates();
     if (state.isPublishing ||
         state.isSavingDraft ||
         state.isAnyPhotoUploading ||
@@ -438,6 +564,7 @@ class AddCarFlowNotifier extends Notifier<AddCarFlowState> {
   }
 
   Future<void> saveChanges() async {
+    flushPendingTextUpdates();
     setPublishing(true);
 
     final r2 = await readR2StorageServiceForUpload(ref);
@@ -500,15 +627,15 @@ class AddCarFlowNotifier extends Notifier<AddCarFlowState> {
         existingImageUrls: existingImageUrls,
         newImagesToUpload: const [],
       );
-
-      setPublishing(false);
     } catch (e) {
-      setPublishing(false);
       rethrow;
+    } finally {
+      setPublishing(false);
     }
   }
 
   Future<void> publishListing() async {
+    flushPendingTextUpdates();
     setPublishing(true);
 
     final r2 = await readR2StorageServiceForUpload(ref);
@@ -560,11 +687,12 @@ class AddCarFlowNotifier extends Notifier<AddCarFlowState> {
         await carDb.publishCarAd(carData, imageUrls);
       }
 
-      setPublishing(false);
+      releaseMemory();
     } catch (e, stackTrace) {
       webDebugLog('Publish failed: $e\n$stackTrace');
-      setPublishing(false);
       rethrow;
+    } finally {
+      setPublishing(false);
     }
   }
 }

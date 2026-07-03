@@ -1,4 +1,4 @@
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:iq_motors/shared/widgets/app_cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import 'package:iq_motors/shared/data/dummy_brands.dart';
@@ -115,9 +115,10 @@ class _BrandChipState extends State<_BrandChip> {
                 child: ClipOval(
                   child: Padding(
                     padding: const EdgeInsets.all(8),
-                    child: CachedNetworkImage(
+                    child: AppCachedNetworkImage(
                       imageUrl: widget.brand.logoUrl,
                       fit: BoxFit.contain,
+                      memCacheLogicalWidth: 56,
                       placeholder: (_, __) => const Center(
                         child: SizedBox(
                           width: 18,

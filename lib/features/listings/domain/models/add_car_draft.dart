@@ -1,5 +1,6 @@
 import 'package:iq_motors/shared/data/add_car_form_options.dart';
 import 'package:iq_motors/shared/data/add_car_option_keys.dart';
+import 'package:iq_motors/shared/data/car_trims_by_model.dart';
 
 /// In-progress listing data collected across the add-car wizard.
 class AddCarDraft {
@@ -74,17 +75,21 @@ class AddCarDraft {
 
   bool get hasMinimumPhotos => filledPhotoCount >= minPhotoCount;
 
-  bool get isBasicInfoComplete =>
-      brandId != null &&
-      brandId!.isNotEmpty &&
-      modelKey != null &&
-      modelKey!.isNotEmpty &&
-      colorKey != null &&
-      colorKey!.isNotEmpty &&
-      year != null &&
-      year!.isNotEmpty &&
-      trim != null &&
-      trim!.isNotEmpty;
+  bool get isBasicInfoComplete {
+    final trimRequired =
+        CarTrimsByModel.hasTrims(brandId, modelKey);
+    final trimOk = !trimRequired ||
+        (trim != null && trim!.isNotEmpty);
+    return brandId != null &&
+        brandId!.isNotEmpty &&
+        modelKey != null &&
+        modelKey!.isNotEmpty &&
+        colorKey != null &&
+        colorKey!.isNotEmpty &&
+        year != null &&
+        year!.isNotEmpty &&
+        trimOk;
+  }
 
   bool get isPlateInfoComplete =>
       plateTypeKey != null &&
@@ -162,6 +167,7 @@ class AddCarDraft {
     String? colorKey,
     String? year,
     String? trim,
+    bool clearTrim = false,
     String? plateTypeKey,
     String? plateCityKey,
     String? mileageValue,
@@ -190,7 +196,7 @@ class AddCarDraft {
       modelKey: clearModel ? null : (modelKey ?? this.modelKey),
       colorKey: colorKey ?? this.colorKey,
       year: year ?? this.year,
-      trim: trim ?? this.trim,
+      trim: clearTrim ? null : (trim ?? this.trim),
       plateTypeKey: plateTypeKey ?? this.plateTypeKey,
       plateCityKey: plateCityKey ?? this.plateCityKey,
       mileageValue: mileageValue ?? this.mileageValue,

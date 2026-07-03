@@ -1,4 +1,4 @@
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:iq_motors/shared/widgets/app_cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -469,9 +469,13 @@ class _AdThumbnail extends StatelessWidget {
         color: const Color(0xFFF2F2F7),
         child: imageUrl.isEmpty
             ? const Icon(Icons.directions_car_outlined, color: Color(0xFF86868B))
-            : CachedNetworkImage(
+            : AppCachedNetworkImage(
                 imageUrl: imageUrl,
                 fit: BoxFit.cover,
+                width: 88,
+                height: 88,
+                memCacheLogicalWidth: 88,
+                memCacheLogicalHeight: 88,
                 errorWidget: (_, __, ___) => const Icon(
                   Icons.broken_image_outlined,
                   color: Color(0xFF86868B),

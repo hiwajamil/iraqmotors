@@ -1,4 +1,4 @@
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:iq_motors/shared/widgets/app_cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -323,11 +323,13 @@ class _ImageGallery extends StatelessWidget {
         itemBuilder: (context, index) {
           return ClipRRect(
             borderRadius: BorderRadius.circular(14),
-            child: CachedNetworkImage(
+            child: AppCachedNetworkImage(
               imageUrl: urls[index],
               width: 300,
               height: 220,
               fit: BoxFit.cover,
+              memCacheLogicalWidth: 300,
+              memCacheLogicalHeight: 220,
               placeholder: (_, __) => Container(
                 color: _AdminAdDetailScreenState._divider,
                 alignment: Alignment.center,

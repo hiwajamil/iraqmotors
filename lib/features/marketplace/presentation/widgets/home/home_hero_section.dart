@@ -3,6 +3,8 @@ import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+import 'package:iq_motors/core/config/app_image_cache.dart';
+
 import 'package:iq_motors/core/localization/l10n_extensions.dart';
 import 'package:iq_motors/features/marketplace/domain/models/advanced_filter_state.dart';
 import 'package:iq_motors/shared/models/car_brand.dart';
@@ -115,9 +117,11 @@ class HomeHeroSection extends StatelessWidget {
                 heroBackgroundAsset,
                 fit: BoxFit.cover,
                 width: double.infinity,
-                cacheWidth: (MediaQuery.sizeOf(context).width *
-                        MediaQuery.devicePixelRatioOf(context))
-                    .round(),
+                cacheWidth: networkImageMemCacheExtent(
+                  context,
+                  MediaQuery.sizeOf(context).width,
+                  max: isWide ? 1200 : 800,
+                ),
               ),
               Container(
                 decoration: const BoxDecoration(
@@ -204,9 +208,11 @@ class HomeHeroSection extends StatelessWidget {
                 heroBackgroundAsset,
                 fit: BoxFit.cover,
                 width: double.infinity,
-                cacheWidth: (MediaQuery.sizeOf(context).width *
-                        MediaQuery.devicePixelRatioOf(context))
-                    .round(),
+                cacheWidth: networkImageMemCacheExtent(
+                  context,
+                  MediaQuery.sizeOf(context).width,
+                  max: isWide ? 1200 : 800,
+                ),
               ),
               Container(
                 decoration: const BoxDecoration(

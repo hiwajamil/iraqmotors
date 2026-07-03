@@ -3,6 +3,8 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
+import 'package:iq_motors/core/config/app_image_cache.dart';
+
 import 'package:iq_motors/core/localization/l10n_extensions.dart';
 import 'package:iq_motors/core/platform/picked_image_preview.dart';
 import 'package:iq_motors/features/listings/domain/models/add_car_draft.dart';
@@ -246,6 +248,8 @@ class _PhotoSlotState extends State<_PhotoSlot> {
             fit: BoxFit.cover,
             width: double.infinity,
             height: double.infinity,
+            cacheWidth: networkImageMemCacheExtent(context, _photoTileMaxSize),
+            cacheHeight: networkImageMemCacheExtent(context, _photoTileMaxSize),
             gaplessPlayback: true,
             loadingBuilder: (context, child, loadingProgress) {
               if (loadingProgress == null) return child;

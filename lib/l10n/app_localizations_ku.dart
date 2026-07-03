@@ -835,6 +835,12 @@ class AppLocalizationsKu extends AppLocalizations {
   String get homeAvailableListings => 'ئۆتۆمبێلە بەردەستەکان';
 
   @override
+  String get homeRecommendedForYou => 'پێشنیارکراو بۆ تۆ';
+
+  @override
+  String get homeTrendingCars => 'ئۆتۆمبێلە بەناوبانگەکان';
+
+  @override
   String get favoritesEmpty => 'هیچ ئۆتۆمبێلێکی سەیڤکراو نییە';
 
   @override
@@ -1041,6 +1047,31 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get adminApprovedAdsColumn => 'پەسەندکراو';
+
+  @override
+  String get adminDateRangeLabel => 'مەودای بەروار';
+
+  @override
+  String get adminTodaysActiveUsers => 'بەکارهێنەری چالاکی ئەمڕۆ';
+
+  @override
+  String get adminTotalAppDownloads => 'کۆی داگرتنی ئەپ';
+
+  @override
+  String get adminVisitorTraffic => 'ڕێژەی سەردانیکەران';
+
+  @override
+  String get adminCityMetricAds => 'ڕیکلام';
+
+  @override
+  String get adminCityMetricVisitors => 'سەردانیکەر';
+
+  @override
+  String get adminGenerateReport => 'دروستکردنی ڕاپۆرت';
+
+  @override
+  String get adminReportsEmptyHint =>
+      'مەودای بەروار هەڵبژێرە و دوگمەی دروستکردنی ڕاپۆرت بگرە بۆ بینینی ئامارەکان.';
 
   @override
   String get adminSettingsSubtitle => 'ڕێکخستنی پلاتفۆرم و دەسەڵاتەکان';
