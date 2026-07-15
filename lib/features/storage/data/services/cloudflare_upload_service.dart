@@ -36,29 +36,36 @@ class CloudflareUploadService {
     print('Uploading image of size: ${imageBytes.lengthInBytes} bytes');
     webDebugLog('POST ${imageBytes.length} bytes ($fileName) to worker…');
 
-    final response = await upload_http.postImageBytes(
-      Uri.parse(cloudflareWorkerUrl),
-      imageBytes,
-      contentType,
-    );
+    try {
+      final response = await upload_http.postImageBytes(
+        Uri.parse(cloudflareWorkerUrl),
+        imageBytes,
+        contentType,
+      );
 
-    final body = response.body.trim();
-    if (response.statusCode == 400) {
-      throw _moderationExceptionFromBody(body);
-    }
-    if (response.statusCode < 200 ||
-        response.statusCode >= 300 ||
-        body.isEmpty) {
-      throw Exception('Upload Error: HTTP ${response.statusCode} — $body');
-    }
+      final body = response.body.trim();
+      if (response.statusCode == 400) {
+        throw _moderationExceptionFromBody(body);
+      }
+      if (response.statusCode < 200 ||
+          response.statusCode >= 300 ||
+          body.isEmpty) {
+        throw Exception('Upload Error: HTTP ${response.statusCode} — $body');
+      }
 
-    final json = jsonDecode(body) as Map<String, dynamic>;
-    if (json['success'] == true && json['url'] is String) {
-      final url = (json['url'] as String).trim();
-      if (url.isNotEmpty) return url;
-    }
+      final json = jsonDecode(body) as Map<String, dynamic>;
+      if (json['success'] == true && json['url'] is String) {
+        final url = (json['url'] as String).trim();
+        if (url.isNotEmpty) return url;
+      }
 
-    throw Exception('Upload Error: unexpected response — $body');
+      throw Exception('Upload Error: unexpected response — $body');
+    } on ImageModerationException {
+      rethrow;
+    } catch (e) {
+      webDebugLog('Cloudflare upload failed: $e');
+      rethrow;
+    }
   }
 
   static ImageModerationException _moderationExceptionFromBody(String body) {

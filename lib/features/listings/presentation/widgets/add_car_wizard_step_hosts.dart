@@ -1,5 +1,8 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:iq_motors/features/listings/domain/models/add_car_draft.dart';
 import 'package:iq_motors/features/listings/presentation/providers/add_car_flow_provider.dart';
 import 'package:iq_motors/features/listings/presentation/steps/add_car_step_basic_info.dart';
 import 'package:iq_motors/features/listings/presentation/steps/add_car_step_condition_features.dart';
@@ -60,12 +63,11 @@ class _AddCarKeepAlivePageState extends State<AddCarKeepAlivePage>
   }
 }
 
-/// PageView body where each step subscribes only to its own slice of wizard state.
+/// Page body where each step subscribes only to its own slice of wizard state.
 class AddCarWizardPageView extends ConsumerWidget {
   const AddCarWizardPageView({
     super.key,
     required this.session,
-    required this.pageController,
     required this.onPhotoSlotTapped,
     required this.onPhotoRemoved,
     required this.onDamagePhotoAdded,
@@ -73,7 +75,6 @@ class AddCarWizardPageView extends ConsumerWidget {
   });
 
   final AddCarFlowSession session;
-  final PageController pageController;
   final ValueChanged<int> onPhotoSlotTapped;
   final ValueChanged<int> onPhotoRemoved;
   final VoidCallback onDamagePhotoAdded;
@@ -81,9 +82,12 @@ class AddCarWizardPageView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return PageView(
-      controller: pageController,
-      physics: const NeverScrollableScrollPhysics(),
+    final currentStep = ref.watch(
+      addCarFlowProvider(session).select((s) => s.currentStep),
+    );
+
+    return IndexedStack(
+      index: currentStep,
       children: [
         AddCarKeepAlivePage(child: _LocationStepHost(session: session)),
         AddCarKeepAlivePage(
@@ -137,7 +141,7 @@ class _LocationStepHost extends ConsumerWidget {
   }
 }
 
-class _PhotosStepHost extends ConsumerWidget {
+class _PhotosStepHost extends ConsumerStatefulWidget {
   const _PhotosStepHost({
     required this.session,
     required this.onPhotoSlotTapped,
@@ -149,24 +153,52 @@ class _PhotosStepHost extends ConsumerWidget {
   final ValueChanged<int> onPhotoRemoved;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final provider = addCarFlowProvider(session);
-    final photos = ref.watch(
-      provider.select((s) => s.draft.normalizedPhotos()),
-    );
-    final uploadingSlots = ref.watch(
-      provider.select((s) => s.uploadingPhotoSlots),
-    );
-    final previewBytes = ref.watch(
-      provider.select((s) => s.slotPreviewBytes),
+  ConsumerState<_PhotosStepHost> createState() => _PhotosStepHostState();
+}
+
+class _PhotosStepHostState extends ConsumerState<_PhotosStepHost>
+    with AutomaticKeepAliveClientMixin {
+  static const int _stepIndex = 1;
+
+  List<String?> _photos = const [];
+  Set<int> _uploadingSlots = const {};
+  Set<int> _failedSlots = const {};
+  Map<int, Uint8List> _previewBytes = const {};
+
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+
+    final provider = addCarFlowProvider(widget.session);
+    final isActive = ref.watch(
+      provider.select((s) => s.currentStep == _stepIndex),
     );
 
+    if (isActive) {
+      _photos = ref.watch(
+        provider.select((s) => s.draft.normalizedPhotos()),
+      );
+      _uploadingSlots = ref.watch(
+        provider.select((s) => s.uploadingPhotoSlots),
+      );
+      _failedSlots = ref.watch(
+        provider.select((s) => s.failedPhotoSlots),
+      );
+      _previewBytes = ref.watch(
+        provider.select((s) => s.slotPreviewBytes),
+      );
+    }
+
     return AddCarStepPhotos(
-      photos: photos,
-      onPhotoSlotTapped: onPhotoSlotTapped,
-      onPhotoRemoved: onPhotoRemoved,
-      uploadingSlots: uploadingSlots,
-      previewBytesBySlot: previewBytes,
+      photos: _photos,
+      onPhotoSlotTapped: widget.onPhotoSlotTapped,
+      onPhotoRemoved: widget.onPhotoRemoved,
+      uploadingSlots: _uploadingSlots,
+      failedSlots: _failedSlots,
+      previewBytesBySlot: _previewBytes,
     );
   }
 }
@@ -385,7 +417,7 @@ class _PriceStepHost extends ConsumerWidget {
   }
 }
 
-class _ReviewStepHost extends ConsumerWidget {
+class _ReviewStepHost extends ConsumerStatefulWidget {
   const _ReviewStepHost({
     required this.session,
     required this.onEditStep,
@@ -395,13 +427,34 @@ class _ReviewStepHost extends ConsumerWidget {
   final ValueChanged<int> onEditStep;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final provider = addCarFlowProvider(session);
-    final draft = ref.watch(provider.select((s) => s.draft));
+  ConsumerState<_ReviewStepHost> createState() => _ReviewStepHostState();
+}
+
+class _ReviewStepHostState extends ConsumerState<_ReviewStepHost>
+    with AutomaticKeepAliveClientMixin {
+  static const int _stepIndex = 9;
+
+  AddCarDraft _draft = const AddCarDraft();
+
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+
+    final provider = addCarFlowProvider(widget.session);
+    final isActive = ref.watch(
+      provider.select((s) => s.currentStep == _stepIndex),
+    );
+
+    if (isActive) {
+      _draft = ref.watch(provider.select((s) => s.draft));
+    }
 
     return AddCarStepReview(
-      draft: draft,
-      onEditStep: onEditStep,
+      draft: _draft,
+      onEditStep: widget.onEditStep,
     );
   }
 }

@@ -19,7 +19,7 @@ class HomeRecommendedSection extends ConsumerWidget {
   final Future<void> Function(Map<String, dynamic> car) onWishlistTap;
 
   static const double _cardWidth = 272;
-  static const double _listHeight = 340;
+  static const double _listHeight = 315;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

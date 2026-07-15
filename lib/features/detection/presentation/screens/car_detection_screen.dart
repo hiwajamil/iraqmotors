@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 
 import 'package:iq_motors/features/detection/data/services/car_detection_service.dart';
 import 'package:iq_motors/features/detection/domain/models/car_bounding_box.dart';
@@ -11,6 +12,9 @@ import 'package:iq_motors/features/detection/presentation/widgets/camera_view.da
 import 'package:iq_motors/features/marketplace/domain/models/car.dart';
 import 'package:iq_motors/features/marketplace/presentation/screens/car_details_screen.dart';
 import 'package:iq_motors/shared/widgets/car_network_image.dart';
+import 'package:iq_motors/shared/data/dummy_brands.dart';
+import 'package:iq_motors/shared/data/car_models_by_brand.dart';
+import 'package:iq_motors/features/storage/presentation/providers/storage_providers.dart';
 
 /// Point the camera at a car to detect it and find matching marketplace listings.
 class CarDetectionScreen extends ConsumerStatefulWidget {
@@ -22,6 +26,7 @@ class CarDetectionScreen extends ConsumerStatefulWidget {
 
 class _CarDetectionScreenState extends ConsumerState<CarDetectionScreen> {
   final _cameraKey = GlobalKey<CameraViewState>();
+  final _imagePicker = ImagePicker();
 
   CarDetectionLookupResult? _lookupResult;
   bool _identifying = false;
@@ -60,18 +65,172 @@ class _CarDetectionScreenState extends ConsumerState<CarDetectionScreen> {
   }
 
   Widget _buildUnsupported() {
-    return const Center(
-      child: Padding(
-        padding: EdgeInsets.all(24),
-        child: Text(
-          'Car model detection requires a mobile device with a camera. '
-          'Open IQ Motors on Android or iOS to use this feature.',
-          textAlign: TextAlign.center,
-          style: TextStyle(color: Colors.white70, fontSize: 15),
+    return Column(
+      children: [
+        Expanded(
+          child: Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(24),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 480),
+                child: Card(
+                  color: const Color(0xFF1C1C1E),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(32),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.cloud_upload_outlined,
+                          size: 64,
+                          color: Color(0xFF34C759),
+                        ),
+                        const SizedBox(height: 16),
+                        const Text(
+                          'Car Model Detection',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        const Text(
+                          'Upload a photo of a vehicle to identify its make/model and search matching marketplace listings.',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: 13,
+                            height: 1.4,
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                        ElevatedButton.icon(
+                          onPressed: _identifying ? null : _onUploadImage,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF34C759),
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 12,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          icon: const Icon(Icons.photo_library),
+                          label: const Text(
+                            'Select Image',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
         ),
-      ),
+        _buildStatusPanel(),
+        if (_lookupResult != null) _buildResultsPanel(_lookupResult!),
+      ],
     );
   }
+
+  Future<void> _onUploadImage() async {
+    if (_identifying) return;
+
+    final image = await _imagePicker.pickImage(
+      source: ImageSource.gallery,
+      maxWidth: 1024,
+      maxHeight: 1024,
+      imageQuality: 85,
+    );
+    if (image == null) return;
+
+    setState(() {
+      _identifying = true;
+      _statusMessage = 'Identifying make and model from image…';
+      _lookupResult = null;
+    });
+
+    try {
+      final bytes = await image.readAsBytes();
+      final visionService = ref.read(carVisionServiceProvider);
+      
+      // Analyze image using Gemini Vision API
+      final analysis = await visionService.analyzeCarImageBytes(
+        bytes,
+        mimeType: image.mimeType ?? 'image/jpeg',
+      );
+
+      final suggestion = visionService.mapAnalysisToFormKeys(analysis);
+      if (suggestion.brandId == null) {
+        setState(() {
+          _identifying = false;
+          _statusMessage = 'No vehicle identified. Please upload a clear photo of a car.';
+        });
+        return;
+      }
+
+      // Map brand & model labels from catalogs
+      final brand = dummyBrands.firstWhere(
+        (b) => b.id == suggestion.brandId,
+        orElse: () => dummyBrands.first,
+      );
+      final modelLabel = suggestion.modelKey != null
+          ? CarModelsByBrand.labelForModel(brand, suggestion.modelKey!, 'en')
+          : null;
+
+      final identification = CarIdentificationResult(
+        brandId: suggestion.brandId!,
+        modelKey: suggestion.modelKey,
+        year: _nullableYear(analysis['year']),
+        brandLabel: brand.displayName('en'),
+        modelLabel: modelLabel,
+        confidence: 0.95, // High confidence for file upload
+      );
+
+      // Search Firestore
+      final database = ref.read(carDatabaseServiceProvider);
+      final listings = await database.findListingsByDetection(
+        brandId: identification.brandId,
+        modelKey: identification.modelKey,
+        year: identification.year,
+      );
+
+      if (!mounted) return;
+
+      setState(() {
+        _identifying = false;
+        _lookupResult = CarDetectionLookupResult(
+          identification: identification,
+          listings: listings,
+        );
+        _statusMessage = 'Match found in marketplace listings.';
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _identifying = false;
+        _statusMessage = 'Identification failed. Check your network and retry.';
+      });
+    }
+  }
+
+  String? _nullableYear(String? raw) {
+    if (raw == null) return null;
+    final match = RegExp(r'\d{4}').firstMatch(raw.trim());
+    return match?.group(0);
+  }
+
 
   Widget _buildStatusPanel() {
     return Container(

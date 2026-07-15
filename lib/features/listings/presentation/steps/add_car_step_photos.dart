@@ -42,6 +42,7 @@ class AddCarStepPhotos extends StatelessWidget {
     required this.onPhotoSlotTapped,
     this.onPhotoRemoved,
     this.uploadingSlots = const {},
+    this.failedSlots = const {},
     this.previewBytesBySlot = const {},
   });
 
@@ -49,6 +50,7 @@ class AddCarStepPhotos extends StatelessWidget {
   final ValueChanged<int> onPhotoSlotTapped;
   final ValueChanged<int>? onPhotoRemoved;
   final Set<int> uploadingSlots;
+  final Set<int> failedSlots;
   final Map<int, Uint8List> previewBytesBySlot;
 
   @override
@@ -111,6 +113,7 @@ class AddCarStepPhotos extends StatelessWidget {
                           previewBytes: previewBytesBySlot[index],
                           hasPhoto: _isFilledPhotoSlot(slots[index]),
                           isUploading: uploadingSlots.contains(index),
+                          hasFailed: failedSlots.contains(index),
                           enabled: !uploadingSlots.contains(index),
                           onTap: () => onPhotoSlotTapped(index),
                           onRemove: _isFilledPhotoSlot(slots[index]) &&
@@ -137,6 +140,7 @@ class _PhotoSlot extends StatefulWidget {
     this.previewBytes,
     required this.hasPhoto,
     required this.isUploading,
+    required this.hasFailed,
     required this.enabled,
     required this.onTap,
     this.onRemove,
@@ -147,6 +151,7 @@ class _PhotoSlot extends StatefulWidget {
   final Uint8List? previewBytes;
   final bool hasPhoto;
   final bool isUploading;
+  final bool hasFailed;
   final bool enabled;
   final VoidCallback onTap;
   final VoidCallback? onRemove;
@@ -185,7 +190,12 @@ class _PhotoSlotState extends State<_PhotoSlot> {
               children: [
                 _buildSlotBackground(),
                 if (widget.isUploading) _buildUploadingOverlay(),
-                if (widget.hasPhoto && !widget.isUploading) _buildDeleteButton(),
+                if (widget.hasFailed && !widget.isUploading)
+                  _buildFailedOverlay(),
+                if (widget.hasPhoto &&
+                    !widget.isUploading &&
+                    !widget.hasFailed)
+                  _buildDeleteButton(),
                 _buildBorderOverlay(),
               ],
             ),
@@ -196,7 +206,7 @@ class _PhotoSlotState extends State<_PhotoSlot> {
   }
 
   Widget _buildSlotBackground() {
-    if (widget.isUploading) {
+    if (widget.isUploading || widget.hasFailed) {
       return const ColoredBox(color: AddCarTheme.inputFill);
     }
 
@@ -320,6 +330,31 @@ class _PhotoSlotState extends State<_PhotoSlot> {
     );
   }
 
+  Widget _buildFailedOverlay() {
+    return ColoredBox(
+      color: AddCarTheme.cardBg.withValues(alpha: 0.82),
+      child: const Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.refresh_rounded,
+            size: 26,
+            color: Color(0xFFFF3B30),
+          ),
+          SizedBox(height: 4),
+          Text(
+            'Retry',
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.w600,
+              color: Color(0xFFFF3B30),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildDeleteButton() {
     final onRemove = widget.onRemove;
     if (onRemove == null) return const SizedBox.shrink();
@@ -364,11 +399,13 @@ class _PhotoSlotState extends State<_PhotoSlot> {
   }
 
   Widget _buildBorderOverlay() {
-    final borderColor = _pressed
-      ? AddCarTheme.focusBlue
-      : (widget.hasPhoto
-          ? AddCarTheme.textPrimary.withValues(alpha: 0.15)
-          : AddCarTheme.border);
+    final borderColor = widget.hasFailed && !widget.isUploading
+        ? const Color(0xFFFF3B30).withValues(alpha: 0.7)
+        : _pressed
+            ? AddCarTheme.focusBlue
+            : (widget.hasPhoto
+                ? AddCarTheme.textPrimary.withValues(alpha: 0.15)
+                : AddCarTheme.border);
 
     return Positioned.fill(
       child: IgnorePointer(

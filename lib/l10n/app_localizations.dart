@@ -1252,6 +1252,12 @@ abstract class AppLocalizations {
   /// **'تکایە نرخێکی بەرزتر لە دوایین نرخ داخڵ بکە'**
   String get bidTooLowError;
 
+  /// No description provided for @bidMustBeBelowSellerPrice.
+  ///
+  /// In ku, this message translates to:
+  /// **'پێویستە نرخەکەت کەمتر بێت لە نرخی فرۆشیار'**
+  String get bidMustBeBelowSellerPrice;
+
   /// No description provided for @bidSuccessMessage.
   ///
   /// In ku, this message translates to:
@@ -1492,6 +1498,150 @@ abstract class AppLocalizations {
   /// **'ڕێکخستن'**
   String get navSettings;
 
+  /// No description provided for @navCarManagement.
+  ///
+  /// In ku, this message translates to:
+  /// **'بەڕێوەبردنی ئۆتۆمبێلەکان'**
+  String get navCarManagement;
+
+  /// No description provided for @adminCarMetaSubtitle.
+  ///
+  /// In ku, this message translates to:
+  /// **'بەڕێوەبردنی براند، مۆدێل، و خاسڵەتەکانی کەتالۆگی ئۆتۆمبێل.'**
+  String get adminCarMetaSubtitle;
+
+  /// No description provided for @adminCarMetaAddBrand.
+  ///
+  /// In ku, this message translates to:
+  /// **'زیادکردنی براند'**
+  String get adminCarMetaAddBrand;
+
+  /// No description provided for @adminCarMetaEditBrand.
+  ///
+  /// In ku, this message translates to:
+  /// **'دەستکاری براند'**
+  String get adminCarMetaEditBrand;
+
+  /// No description provided for @adminCarMetaAddModel.
+  ///
+  /// In ku, this message translates to:
+  /// **'زیادکردنی مۆدێل'**
+  String get adminCarMetaAddModel;
+
+  /// No description provided for @adminCarMetaEditModel.
+  ///
+  /// In ku, this message translates to:
+  /// **'دەستکاری مۆدێل'**
+  String get adminCarMetaEditModel;
+
+  /// No description provided for @adminCarMetaAddTrim.
+  ///
+  /// In ku, this message translates to:
+  /// **'زیادکردنی خاسڵەت'**
+  String get adminCarMetaAddTrim;
+
+  /// No description provided for @adminCarMetaEditTrim.
+  ///
+  /// In ku, this message translates to:
+  /// **'دەستکاری خاسڵەت'**
+  String get adminCarMetaEditTrim;
+
+  /// No description provided for @adminCarMetaAdd.
+  ///
+  /// In ku, this message translates to:
+  /// **'زیادکردن'**
+  String get adminCarMetaAdd;
+
+  /// No description provided for @adminCarMetaSave.
+  ///
+  /// In ku, this message translates to:
+  /// **'پاشەکەوت'**
+  String get adminCarMetaSave;
+
+  /// No description provided for @adminCarMetaSaved.
+  ///
+  /// In ku, this message translates to:
+  /// **'کەتالۆگی ئۆتۆمبێل نوێکرایەوە.'**
+  String get adminCarMetaSaved;
+
+  /// No description provided for @adminCarMetaBrandIdHint.
+  ///
+  /// In ku, this message translates to:
+  /// **'ناسنامەی براند (وەک toyota)'**
+  String get adminCarMetaBrandIdHint;
+
+  /// No description provided for @adminCarMetaModelNameHint.
+  ///
+  /// In ku, this message translates to:
+  /// **'ناوی مۆدێل (وەک Land Cruiser)'**
+  String get adminCarMetaModelNameHint;
+
+  /// No description provided for @adminCarMetaTrimNameHint.
+  ///
+  /// In ku, this message translates to:
+  /// **'ناوی خاسڵەت (وەک GX.R)'**
+  String get adminCarMetaTrimNameHint;
+
+  /// No description provided for @adminCarMetaSearchBrands.
+  ///
+  /// In ku, this message translates to:
+  /// **'گەڕان بەدوای براند...'**
+  String get adminCarMetaSearchBrands;
+
+  /// No description provided for @adminCarMetaNoBrands.
+  ///
+  /// In ku, this message translates to:
+  /// **'هیچ براندێک نییە. یەکەم براند زیاد بکە.'**
+  String get adminCarMetaNoBrands;
+
+  /// No description provided for @adminCarMetaNoModels.
+  ///
+  /// In ku, this message translates to:
+  /// **'هیچ مۆدێلێک بۆ ئەم براندە نییە.'**
+  String get adminCarMetaNoModels;
+
+  /// No description provided for @adminCarMetaNoTrims.
+  ///
+  /// In ku, this message translates to:
+  /// **'هیچ خاسڵەتێک بۆ ئەم مۆدێلە نییە.'**
+  String get adminCarMetaNoTrims;
+
+  /// No description provided for @adminCarMetaSelectBrand.
+  ///
+  /// In ku, this message translates to:
+  /// **'براندێک هەڵبژێرە بۆ بینینی مۆدێلەکان.'**
+  String get adminCarMetaSelectBrand;
+
+  /// No description provided for @adminCarMetaSelectModel.
+  ///
+  /// In ku, this message translates to:
+  /// **'مۆدێلێک هەڵبژێرە بۆ بینینی خاسڵەتەکان.'**
+  String get adminCarMetaSelectModel;
+
+  /// No description provided for @adminCarMetaModelsCount.
+  ///
+  /// In ku, this message translates to:
+  /// **'{count} مۆدێل'**
+  String adminCarMetaModelsCount(int count);
+
+  /// No description provided for @adminCarMetaDeleteBrandConfirm.
+  ///
+  /// In ku, this message translates to:
+  /// **'براندی \"{name}\" و هەموو مۆدێل و خاسڵەتەکانی بسڕدرێتەوە؟'**
+  String adminCarMetaDeleteBrandConfirm(String name);
+
+  /// No description provided for @adminCarMetaDeleteModelConfirm.
+  ///
+  /// In ku, this message translates to:
+  /// **'مۆدێلی \"{name}\" و هەموو خاسڵەتەکانی بسڕدرێتەوە؟'**
+  String adminCarMetaDeleteModelConfirm(String name);
+
+  /// No description provided for @adminCarMetaDeleteTrimConfirm.
+  ///
+  /// In ku, this message translates to:
+  /// **'خاسڵەتی \"{name}\" بسڕدرێتەوە؟'**
+  String adminCarMetaDeleteTrimConfirm(String name);
+
   /// No description provided for @statPendingApproval.
   ///
   /// In ku, this message translates to:
@@ -1677,6 +1827,12 @@ abstract class AppLocalizations {
   /// In ku, this message translates to:
   /// **'ئۆتۆمبێلە بەردەستەکان'**
   String get homeAvailableListings;
+
+  /// No description provided for @homeCarsAvailableCount.
+  ///
+  /// In ku, this message translates to:
+  /// **'{count} ئۆتۆمبێل بەردەستە'**
+  String homeCarsAvailableCount(String count);
 
   /// No description provided for @homeRecommendedForYou.
   ///

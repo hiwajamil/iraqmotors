@@ -447,6 +447,9 @@ class _ImageContainer extends StatelessWidget {
   final VoidCallback? onWishlistTap;
   final ValueChanged<bool>? onWishlistHover;
 
+  static const double _compactImageAspectRatio = 16 / 10;
+  static const double _desktopImageHeight = 220;
+
   @override
   Widget build(BuildContext context) {
     final wishlistInset = compact ? 8.0 : 12.0;
@@ -458,11 +461,11 @@ class _ImageContainer extends StatelessWidget {
       ),
       child: compact
           ? AspectRatio(
-              aspectRatio: 1.35,
+              aspectRatio: _compactImageAspectRatio,
               child: _buildImageStack(wishlistInset),
             )
           : SizedBox(
-              height: 220,
+              height: _desktopImageHeight,
               width: double.infinity,
               child: _buildImageStack(wishlistInset),
             ),
@@ -475,22 +478,25 @@ class _ImageContainer extends StatelessWidget {
       clipBehavior: Clip.hardEdge,
       children: [
         Positioned.fill(
-          child: AnimatedScale(
-            scale: isZoomed && !isSold ? 1.08 : 1,
-            duration: const Duration(milliseconds: 600),
-            curve: Curves.easeOut,
-            alignment: Alignment.center,
-            child: CarNetworkImage(
-              imageUrl: imageUrl,
-              fit: BoxFit.cover,
-              cacheLogicalWidth: compact ? 180 : 360,
-              errorBuilder: (_, __, ___) => Container(
-                color: const Color(0xFFF5F5F7),
-                alignment: Alignment.center,
-                child: Icon(
-                  Icons.directions_car_outlined,
-                  size: compact ? 28 : 48,
-                  color: Colors.black.withValues(alpha: 0.12),
+          child: ClipRect(
+            child: AnimatedScale(
+              scale: isZoomed && !isSold ? 1.08 : 1,
+              duration: const Duration(milliseconds: 600),
+              curve: Curves.easeOut,
+              alignment: Alignment.center,
+              child: CarNetworkImage(
+                imageUrl: imageUrl,
+                fit: BoxFit.cover,
+                alignment: const Alignment(0, 0.1),
+                cacheLogicalWidth: compact ? 220 : 420,
+                errorBuilder: (_, __, ___) => Container(
+                  color: const Color(0xFFF5F5F7),
+                  alignment: Alignment.center,
+                  child: Icon(
+                    Icons.directions_car_outlined,
+                    size: compact ? 28 : 48,
+                    color: Colors.black.withValues(alpha: 0.12),
+                  ),
                 ),
               ),
             ),

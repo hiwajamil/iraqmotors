@@ -73,6 +73,12 @@ service cloud.firestore {
       }
     }
 
+    // Brand → model → trim catalog for filters and listing forms.
+    match /car_metadata/{brandId} {
+      allow read: if true;
+      allow write: if isSuperAdmin();
+    }
+
     // Platform settings (package prices, cities, R2 credentials).
     // Contains secrets — super admins only.
     match /system_config/{docId} {

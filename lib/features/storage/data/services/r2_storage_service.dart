@@ -162,23 +162,33 @@ class R2StorageService {
     String? fileName,
     Uint8List? bytes,
   }) async {
-    final picked = xFile ?? XFile(path);
-    final resolvedName = fileName ?? picked.name;
-    final imageBytes =
-        bytes ?? await _readPickedImageBytes(picked, path: path);
+    try {
+      final picked = xFile ?? XFile(path);
+      final resolvedName = fileName ?? picked.name;
+      final imageBytes =
+          bytes ?? await _readPickedImageBytes(picked, path: path);
 
-    if (imageBytes.isEmpty) {
-      throw R2StorageException(
-        'Image byte array is empty! Cannot upload 0 bytes.',
+      if (imageBytes.isEmpty) {
+        throw R2StorageException(
+          'Image byte array is empty! Cannot upload 0 bytes.',
+        );
+      }
+
+      final mime = lookupMimeType(resolvedName) ?? 'image/jpeg';
+      return await uploadImageBytes(
+        imageBytes,
+        fileName: resolvedName,
+        contentType: mime,
       );
+    } on ImageModerationException {
+      rethrow;
+    } on R2StorageException {
+      rethrow;
+    } catch (e) {
+      // ignore: avoid_print
+      print('Error during picked image upload: $e');
+      throw R2StorageException('Upload failed: $e');
     }
-
-    final mime = lookupMimeType(resolvedName) ?? 'image/jpeg';
-    return uploadImageBytes(
-      imageBytes,
-      fileName: resolvedName,
-      contentType: mime,
-    );
   }
 
   /// Reads image bytes from [file] without relying on filesystem paths for upload.

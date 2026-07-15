@@ -21,6 +21,7 @@ import 'package:iq_motors/features/marketplace/data/services/car_database_servic
 import 'package:iq_motors/features/marketplace/presentation/screens/home_screen.dart';
 import 'package:iq_motors/features/admin/presentation/screens/admin_activity_logs_view.dart';
 import 'package:iq_motors/features/admin/presentation/screens/admin_approvals_by_city_view.dart';
+import 'package:iq_motors/features/admin/presentation/screens/admin_car_management_view.dart';
 import 'package:iq_motors/features/admin/presentation/screens/admin_flagged_ads_view.dart';
 import 'package:iq_motors/features/admin/presentation/screens/admin_messages_view.dart';
 import 'package:iq_motors/features/admin/presentation/screens/admin_reports_view.dart';
@@ -46,6 +47,7 @@ enum _SuperAdminNav {
   reports,
   messages,
   activity,
+  carManagement,
   settings,
 }
 
@@ -455,13 +457,16 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen> {
     );
 
     if (_activeNav == _SuperAdminNav.activity ||
-        _activeNav == _SuperAdminNav.messages) {
+        _activeNav == _SuperAdminNav.messages ||
+        _activeNav == _SuperAdminNav.carManagement) {
       return Padding(
         padding: padding,
         child: switch (_activeNav) {
           _SuperAdminNav.activity =>
             AdminActivityLogsView(isMobile: isMobile),
           _SuperAdminNav.messages => AdminMessagesView(isMobile: isMobile),
+          _SuperAdminNav.carManagement =>
+            AdminCarManagementView(isMobile: isMobile),
           _ => const SizedBox.shrink(),
         },
       );
@@ -483,6 +488,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen> {
         _SuperAdminNav.settings => AdminSettingsView(isMobile: isMobile),
         _SuperAdminNav.messages => const SizedBox.shrink(),
         _SuperAdminNav.activity => const SizedBox.shrink(),
+        _SuperAdminNav.carManagement => const SizedBox.shrink(),
       },
     );
   }
@@ -780,6 +786,10 @@ class _SuperAdminNavMenu extends StatelessWidget {
       icon: Icons.history_outlined,
     ),
     _SuperAdminNavItemConfig(
+      nav: _SuperAdminNav.carManagement,
+      icon: Icons.directions_car_outlined,
+    ),
+    _SuperAdminNavItemConfig(
       nav: _SuperAdminNav.settings,
       icon: Icons.settings_outlined,
     ),
@@ -795,6 +805,7 @@ class _SuperAdminNavMenu extends StatelessWidget {
       _SuperAdminNav.reports => l10n.navReports,
       _SuperAdminNav.messages => l10n.adminMessagesTitle,
       _SuperAdminNav.activity => l10n.navActivity,
+      _SuperAdminNav.carManagement => l10n.navCarManagement,
       _SuperAdminNav.settings => l10n.navSettings,
     };
   }
@@ -1560,12 +1571,15 @@ class _CarThumbnailRow extends StatelessWidget {
           if (i > 0) const SizedBox(width: 6),
           ClipRRect(
             borderRadius: BorderRadius.circular(_radius),
-            child: CarNetworkImage(
-              imageUrl: previews[i],
+            child: SizedBox(
               width: _size,
               height: _size,
-              fit: BoxFit.cover,
-              errorBuilder: (_, __, ___) => _placeholder(),
+              child: CarNetworkImage(
+                imageUrl: previews[i],
+                fit: BoxFit.cover,
+                cacheLogicalWidth: _size,
+                errorBuilder: (_, __, ___) => _placeholder(),
+              ),
             ),
           ),
         ],

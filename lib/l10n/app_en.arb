@@ -235,6 +235,7 @@
   "enterBidAmount": "Enter your bid amount",
   "submitBid": "Submit",
   "bidTooLowError": "Please enter an amount higher than the latest bid",
+  "bidMustBeBelowSellerPrice": "Your offer must be lower than the seller's price",
   "bidSuccessMessage": "Your bid was placed successfully!",
   "bidOwnerNotification": "A new price of {amount} has been offered on your {carName}",
   "@bidOwnerNotification": {
@@ -281,6 +282,50 @@
   "navUsers": "Users",
   "navReports": "Reports",
   "navSettings": "Settings",
+  "navCarManagement": "Car Management",
+  "adminCarMetaSubtitle": "Manage brands, models, and trims in the car catalog.",
+  "adminCarMetaAddBrand": "Add brand",
+  "adminCarMetaEditBrand": "Edit brand",
+  "adminCarMetaAddModel": "Add model",
+  "adminCarMetaEditModel": "Edit model",
+  "adminCarMetaAddTrim": "Add trim",
+  "adminCarMetaEditTrim": "Edit trim",
+  "adminCarMetaAdd": "Add",
+  "adminCarMetaSave": "Save",
+  "adminCarMetaSaved": "Car catalog updated.",
+  "adminCarMetaBrandIdHint": "Brand id (e.g. toyota)",
+  "adminCarMetaModelNameHint": "Model name (e.g. Land Cruiser)",
+  "adminCarMetaTrimNameHint": "Trim name (e.g. GX.R)",
+  "adminCarMetaSearchBrands": "Search brands...",
+  "adminCarMetaNoBrands": "No brands yet. Add the first brand.",
+  "adminCarMetaNoModels": "No models for this brand yet.",
+  "adminCarMetaNoTrims": "No trims for this model yet.",
+  "adminCarMetaSelectBrand": "Select a brand to view its models.",
+  "adminCarMetaSelectModel": "Select a model to view its trims.",
+  "adminCarMetaModelsCount": "{count} models",
+  "@adminCarMetaModelsCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "adminCarMetaDeleteBrandConfirm": "Delete brand \"{name}\" and all of its models and trims?",
+  "@adminCarMetaDeleteBrandConfirm": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "adminCarMetaDeleteModelConfirm": "Delete model \"{name}\" and all of its trims?",
+  "@adminCarMetaDeleteModelConfirm": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "adminCarMetaDeleteTrimConfirm": "Delete trim \"{name}\"?",
+  "@adminCarMetaDeleteTrimConfirm": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
   "statPendingApproval": "Pending Approval",
   "statTotalUsers": "Total Users",
   "statActiveListings": "Active Listings",
@@ -312,6 +357,12 @@
   "homeFeedLoadError": "Could not load listings. Please try again.",
   "homeBrowseBrands": "Browse by brand",
   "homeAvailableListings": "Available cars",
+  "homeCarsAvailableCount": "{count} cars available",
+  "@homeCarsAvailableCount": {
+    "placeholders": {
+      "count": {"type": "String"}
+    }
+  },
   "homeRecommendedForYou": "Recommended for You",
   "homeTrendingCars": "Trending Cars",
   "favoritesEmpty": "No saved cars yet",

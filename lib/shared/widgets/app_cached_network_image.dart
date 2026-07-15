@@ -40,11 +40,13 @@ class AppCachedNetworkImage extends StatelessWidget {
             : (width != null
                 ? networkImageMemCacheExtent(context, width!)
                 : null));
+    // Only apply an explicit height decode. Deriving memCacheHeight from the
+    // display [height] (together with width) stretches the bitmap before
+    // BoxFit.cover can crop correctly.
     final resolvedMemHeight = memCacheHeight ??
-        networkImageMemCacheHeight(
-          context,
-          memCacheLogicalHeight ?? height,
-        );
+        (memCacheLogicalHeight != null
+            ? networkImageMemCacheExtent(context, memCacheLogicalHeight!)
+            : null);
 
     return CachedNetworkImage(
       imageUrl: imageUrl,

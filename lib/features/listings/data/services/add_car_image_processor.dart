@@ -8,7 +8,7 @@ const int addCarPreviewMaxEdge = 1600;
 const int addCarAiVisionMaxEdge = 1024;
 
 /// JPEG quality for wizard preview bytes held in memory.
-const int addCarPreviewJpegQuality = 85;
+const int addCarPreviewJpegQuality = 70;
 
 /// JPEG quality for AI vision requests.
 const int addCarAiVisionJpegQuality = 78;

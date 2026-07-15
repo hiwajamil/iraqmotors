@@ -12,6 +12,7 @@ import 'package:iq_motors/features/marketplace/presentation/widgets/advanced_fil
 import 'package:iq_motors/shared/widgets/location_picker_sheet.dart';
 import 'package:iq_motors/features/marketplace/presentation/widgets/home/home_brand_strip.dart';
 import 'package:iq_motors/features/marketplace/presentation/widgets/home/home_glass_nav_bar.dart';
+import 'package:iq_motors/features/marketplace/presentation/widgets/home/home_results_counter.dart';
 import 'package:iq_motors/features/marketplace/presentation/widgets/home/home_theme.dart';
 
 /// Cinematic hero with background image, headline, and filter header.
@@ -165,7 +166,10 @@ class HomeHeroSection extends StatelessWidget {
             child: _filterHeader(context, heroStyle: false),
           ),
         ),
-        const SizedBox(height: 4),
+        Padding(
+          padding: const EdgeInsets.only(top: 2, bottom: 8),
+          child: HomeResultsCounter(count: resultCount),
+        ),
         if (showAdvancedFilter)
           Padding(
             padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
@@ -268,6 +272,11 @@ class HomeHeroSection extends StatelessWidget {
                           child: _filterHeader(context, heroStyle: true),
                         ),
                       ),
+                    ),
+                    const SizedBox(height: 16),
+                    HomeResultsCounter(
+                      count: resultCount,
+                      heroStyle: true,
                     ),
                   ],
                 ),

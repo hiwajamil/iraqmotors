@@ -11,6 +11,7 @@ import 'package:iq_motors/features/marketplace/data/services/car_bid_service.dar
 class BidInputDialog {
   static const Color _textPrimary = Color(0xFF1D1D1F);
   static const Color _textSecondary = Color(0xFF86868B);
+  static const Color _errorColor = Color(0xFFFF3B30);
 
   /// Returns the accepted bid amount on success, or `null` if dismissed / rejected.
   static Future<int?> show(
@@ -53,10 +54,33 @@ class _BidFormState extends ConsumerState<_BidForm> {
   final _controller = TextEditingController();
   final _focusNode = FocusNode();
   bool _isSubmitting = false;
+  String? _fieldError;
+
+  /// Seller asking price resolved from listing data (`priceValue` or `price`).
+  late final int? _sellerPrice = _resolveSellerPrice(widget.car);
+
+  static int? _resolveSellerPrice(Map<String, dynamic>? car) {
+    if (car == null) return null;
+
+    final priceValue = car['priceValue'];
+    if (priceValue is num) {
+      final amount = priceValue.toInt();
+      if (amount > 0) return amount;
+    } else if (priceValue != null) {
+      final parsed = CarBidService.parseBidAmount(priceValue.toString());
+      if (parsed != null && parsed > 0) return parsed;
+    }
+
+    final fromPrice = CarBidService.parseBidAmount(car['price']?.toString() ?? '');
+    if (fromPrice != null && fromPrice > 0) return fromPrice;
+
+    return null;
+  }
 
   @override
   void initState() {
     super.initState();
+    _controller.addListener(_onOfferChanged);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) _focusNode.requestFocus();
     });
@@ -64,9 +88,39 @@ class _BidFormState extends ConsumerState<_BidForm> {
 
   @override
   void dispose() {
+    _controller.removeListener(_onOfferChanged);
     _controller.dispose();
     _focusNode.dispose();
     super.dispose();
+  }
+
+  void _onOfferChanged() {
+    final error = _validateOffer(_controller.text);
+    if (error != _fieldError) {
+      setState(() => _fieldError = error);
+    }
+  }
+
+  /// Returns a localized validation message, or `null` when the amount is OK /
+  /// empty (empty is handled on submit separately).
+  String? _validateOffer(String raw) {
+    final offerAmount = CarBidService.parseBidAmount(raw);
+    if (offerAmount == null || offerAmount <= 0) return null;
+
+    final sellerPrice = _sellerPrice;
+    if (sellerPrice != null && offerAmount >= sellerPrice) {
+      return context.l10n.bidMustBeBelowSellerPrice;
+    }
+    return null;
+  }
+
+  bool get _canSubmit {
+    if (_isSubmitting) return false;
+    final offerAmount = CarBidService.parseBidAmount(_controller.text);
+    if (offerAmount == null || offerAmount <= 0) return false;
+    final sellerPrice = _sellerPrice;
+    if (sellerPrice != null && offerAmount >= sellerPrice) return false;
+    return true;
   }
 
   void _showErrorSnackBar(String message) {
@@ -77,7 +131,7 @@ class _BidFormState extends ConsumerState<_BidForm> {
       SnackBar(
         content: Text(message),
         behavior: SnackBarBehavior.floating,
-        backgroundColor: const Color(0xFFFF3B30),
+        backgroundColor: BidInputDialog._errorColor,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
@@ -92,6 +146,14 @@ class _BidFormState extends ConsumerState<_BidForm> {
     final newBid = CarBidService.parseBidAmount(_controller.text);
     if (newBid == null || newBid <= 0) {
       _showErrorSnackBar(context.l10n.enterBidAmount);
+      return;
+    }
+
+    final sellerPrice = _sellerPrice;
+    if (sellerPrice != null && newBid >= sellerPrice) {
+      final message = context.l10n.bidMustBeBelowSellerPrice;
+      setState(() => _fieldError = message);
+      _showErrorSnackBar(message);
       return;
     }
 
@@ -148,6 +210,7 @@ class _BidFormState extends ConsumerState<_BidForm> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final hasFieldError = _fieldError != null;
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
@@ -198,18 +261,50 @@ class _BidFormState extends ConsumerState<_BidForm> {
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide.none,
               ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(
+                  color: hasFieldError
+                      ? BidInputDialog._errorColor
+                      : Colors.transparent,
+                  width: hasFieldError ? 1.5 : 0,
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(
+                  color: hasFieldError
+                      ? BidInputDialog._errorColor
+                      : BidInputDialog._textPrimary.withValues(alpha: 0.2),
+                  width: hasFieldError ? 1.5 : 1,
+                ),
+              ),
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 16,
                 vertical: 16,
               ),
             ),
-            onSubmitted: (_) => _submit(),
+            onSubmitted: (_) {
+              if (_canSubmit) _submit();
+            },
           ),
+          if (hasFieldError) ...[
+            const SizedBox(height: 8),
+            Text(
+              _fieldError!,
+              style: const TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+                color: BidInputDialog._errorColor,
+                height: 1.35,
+              ),
+            ),
+          ],
           const SizedBox(height: 20),
           SizedBox(
             height: 48,
             child: FilledButton(
-              onPressed: _isSubmitting ? null : _submit,
+              onPressed: _canSubmit ? _submit : null,
               style: FilledButton.styleFrom(
                 backgroundColor: BidInputDialog._textPrimary,
                 disabledBackgroundColor:

@@ -226,6 +226,7 @@
   "enterBidAmount": "نرخی پێشنیارکراوت داخڵ بکە",
   "submitBid": "ناردن",
   "bidTooLowError": "تکایە نرخێکی بەرزتر لە دوایین نرخ داخڵ بکە",
+  "bidMustBeBelowSellerPrice": "پێویستە نرخەکەت کەمتر بێت لە نرخی فرۆشیار",
   "bidSuccessMessage": "نرخەکەت بە سەرکەوتوویی دانرا!",
   "bidOwnerNotification": "نرخێکی نوێی {amount} بۆ {carName} پێشنیار کرا",
   "@bidOwnerNotification": {
@@ -277,6 +278,50 @@
   "navUsers": "بەکارهێنەران",
   "navReports": "ڕاپۆرتەکان",
   "navSettings": "ڕێکخستن",
+  "navCarManagement": "بەڕێوەبردنی ئۆتۆمبێلەکان",
+  "adminCarMetaSubtitle": "بەڕێوەبردنی براند، مۆدێل، و خاسڵەتەکانی کەتالۆگی ئۆتۆمبێل.",
+  "adminCarMetaAddBrand": "زیادکردنی براند",
+  "adminCarMetaEditBrand": "دەستکاری براند",
+  "adminCarMetaAddModel": "زیادکردنی مۆدێل",
+  "adminCarMetaEditModel": "دەستکاری مۆدێل",
+  "adminCarMetaAddTrim": "زیادکردنی خاسڵەت",
+  "adminCarMetaEditTrim": "دەستکاری خاسڵەت",
+  "adminCarMetaAdd": "زیادکردن",
+  "adminCarMetaSave": "پاشەکەوت",
+  "adminCarMetaSaved": "کەتالۆگی ئۆتۆمبێل نوێکرایەوە.",
+  "adminCarMetaBrandIdHint": "ناسنامەی براند (وەک toyota)",
+  "adminCarMetaModelNameHint": "ناوی مۆدێل (وەک Land Cruiser)",
+  "adminCarMetaTrimNameHint": "ناوی خاسڵەت (وەک GX.R)",
+  "adminCarMetaSearchBrands": "گەڕان بەدوای براند...",
+  "adminCarMetaNoBrands": "هیچ براندێک نییە. یەکەم براند زیاد بکە.",
+  "adminCarMetaNoModels": "هیچ مۆدێلێک بۆ ئەم براندە نییە.",
+  "adminCarMetaNoTrims": "هیچ خاسڵەتێک بۆ ئەم مۆدێلە نییە.",
+  "adminCarMetaSelectBrand": "براندێک هەڵبژێرە بۆ بینینی مۆدێلەکان.",
+  "adminCarMetaSelectModel": "مۆدێلێک هەڵبژێرە بۆ بینینی خاسڵەتەکان.",
+  "adminCarMetaModelsCount": "{count} مۆدێل",
+  "@adminCarMetaModelsCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "adminCarMetaDeleteBrandConfirm": "براندی \"{name}\" و هەموو مۆدێل و خاسڵەتەکانی بسڕدرێتەوە؟",
+  "@adminCarMetaDeleteBrandConfirm": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "adminCarMetaDeleteModelConfirm": "مۆدێلی \"{name}\" و هەموو خاسڵەتەکانی بسڕدرێتەوە؟",
+  "@adminCarMetaDeleteModelConfirm": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "adminCarMetaDeleteTrimConfirm": "خاسڵەتی \"{name}\" بسڕدرێتەوە؟",
+  "@adminCarMetaDeleteTrimConfirm": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
   "statPendingApproval": "چاوەڕوانی پەسەندکردن",
   "statTotalUsers": "کۆی بەکارهێنەران",
   "statActiveListings": "ڕیکلامی چالاک",
@@ -313,6 +358,12 @@
   "homeFeedLoadError": "نەتوانرا ڕیکلامەکان بار بکرێن. تکایە دووبارە هەوڵ بدەرەوە.",
   "homeBrowseBrands": "گەڕان بەپێی براند",
   "homeAvailableListings": "ئۆتۆمبێلە بەردەستەکان",
+  "homeCarsAvailableCount": "{count} ئۆتۆمبێل بەردەستە",
+  "@homeCarsAvailableCount": {
+    "placeholders": {
+      "count": {"type": "String"}
+    }
+  },
   "homeRecommendedForYou": "پێشنیارکراو بۆ تۆ",
   "homeTrendingCars": "ئۆتۆمبێلە بەناوبانگەکان",
   "favoritesEmpty": "هیچ ئۆتۆمبێلێکی سەیڤکراو نییە",

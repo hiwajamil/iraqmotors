@@ -216,6 +216,7 @@
   "enterBidAmount": "أدخل مبلغ عرضك",
   "submitBid": "إرسال",
   "bidTooLowError": "يرجى إدخال مبلغ أعلى من آخر عرض",
+  "bidMustBeBelowSellerPrice": "يجب أن يكون عرضك أقل من سعر البائع",
   "bidSuccessMessage": "تم تقديم عرضك بنجاح!",
   "bidOwnerNotification": "تم تقديم سعر جديد بقيمة {amount} على {carName}",
   "@bidOwnerNotification": {
@@ -262,6 +263,50 @@
   "navUsers": "المستخدمون",
   "navReports": "التقارير",
   "navSettings": "الإعدادات",
+  "navCarManagement": "إدارة السيارات",
+  "adminCarMetaSubtitle": "إدارة الماركات والموديلات والفئات في كتالوج السيارات.",
+  "adminCarMetaAddBrand": "إضافة ماركة",
+  "adminCarMetaEditBrand": "تعديل الماركة",
+  "adminCarMetaAddModel": "إضافة موديل",
+  "adminCarMetaEditModel": "تعديل الموديل",
+  "adminCarMetaAddTrim": "إضافة فئة",
+  "adminCarMetaEditTrim": "تعديل الفئة",
+  "adminCarMetaAdd": "إضافة",
+  "adminCarMetaSave": "حفظ",
+  "adminCarMetaSaved": "تم تحديث كتالوج السيارات.",
+  "adminCarMetaBrandIdHint": "معرّف الماركة (مثل toyota)",
+  "adminCarMetaModelNameHint": "اسم الموديل (مثل Land Cruiser)",
+  "adminCarMetaTrimNameHint": "اسم الفئة (مثل GX.R)",
+  "adminCarMetaSearchBrands": "ابحث عن ماركة...",
+  "adminCarMetaNoBrands": "لا توجد ماركات بعد. أضف أول ماركة.",
+  "adminCarMetaNoModels": "لا توجد موديلات لهذه الماركة بعد.",
+  "adminCarMetaNoTrims": "لا توجد فئات لهذا الموديل بعد.",
+  "adminCarMetaSelectBrand": "اختر ماركة لعرض موديلاتها.",
+  "adminCarMetaSelectModel": "اختر موديلاً لعرض فئاته.",
+  "adminCarMetaModelsCount": "{count} موديل",
+  "@adminCarMetaModelsCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "adminCarMetaDeleteBrandConfirm": "حذف الماركة \"{name}\" وجميع موديلاتها وفئاتها؟",
+  "@adminCarMetaDeleteBrandConfirm": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "adminCarMetaDeleteModelConfirm": "حذف الموديل \"{name}\" وجميع فئاته؟",
+  "@adminCarMetaDeleteModelConfirm": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "adminCarMetaDeleteTrimConfirm": "حذف الفئة \"{name}\"؟",
+  "@adminCarMetaDeleteTrimConfirm": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
   "statPendingApproval": "في انتظار الموافقة",
   "statTotalUsers": "إجمالي المستخدمين",
   "statActiveListings": "إعلانات نشطة",
@@ -293,6 +338,12 @@
   "homeFeedLoadError": "تعذر تحميل الإعلانات. يرجى المحاولة مرة أخرى.",
   "homeBrowseBrands": "تصفح حسب العلامة التجارية",
   "homeAvailableListings": "السيارات المتاحة",
+  "homeCarsAvailableCount": "{count} سيارة متاحة",
+  "@homeCarsAvailableCount": {
+    "placeholders": {
+      "count": {"type": "String"}
+    }
+  },
   "homeRecommendedForYou": "موصى به لك",
   "homeTrendingCars": "السيارات الرائجة",
   "favoritesEmpty": "لا توجد سيارات محفوظة",

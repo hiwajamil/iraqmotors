@@ -606,6 +606,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get bidTooLowError => 'يرجى إدخال مبلغ أعلى من آخر عرض';
 
   @override
+  String get bidMustBeBelowSellerPrice => 'يجب أن يكون عرضك أقل من سعر البائع';
+
+  @override
   String get bidSuccessMessage => 'تم تقديم عرضك بنجاح!';
 
   @override
@@ -731,6 +734,87 @@ class AppLocalizationsAr extends AppLocalizations {
   String get navSettings => 'الإعدادات';
 
   @override
+  String get navCarManagement => 'إدارة السيارات';
+
+  @override
+  String get adminCarMetaSubtitle =>
+      'إدارة الماركات والموديلات والفئات في كتالوج السيارات.';
+
+  @override
+  String get adminCarMetaAddBrand => 'إضافة ماركة';
+
+  @override
+  String get adminCarMetaEditBrand => 'تعديل الماركة';
+
+  @override
+  String get adminCarMetaAddModel => 'إضافة موديل';
+
+  @override
+  String get adminCarMetaEditModel => 'تعديل الموديل';
+
+  @override
+  String get adminCarMetaAddTrim => 'إضافة فئة';
+
+  @override
+  String get adminCarMetaEditTrim => 'تعديل الفئة';
+
+  @override
+  String get adminCarMetaAdd => 'إضافة';
+
+  @override
+  String get adminCarMetaSave => 'حفظ';
+
+  @override
+  String get adminCarMetaSaved => 'تم تحديث كتالوج السيارات.';
+
+  @override
+  String get adminCarMetaBrandIdHint => 'معرّف الماركة (مثل toyota)';
+
+  @override
+  String get adminCarMetaModelNameHint => 'اسم الموديل (مثل Land Cruiser)';
+
+  @override
+  String get adminCarMetaTrimNameHint => 'اسم الفئة (مثل GX.R)';
+
+  @override
+  String get adminCarMetaSearchBrands => 'ابحث عن ماركة...';
+
+  @override
+  String get adminCarMetaNoBrands => 'لا توجد ماركات بعد. أضف أول ماركة.';
+
+  @override
+  String get adminCarMetaNoModels => 'لا توجد موديلات لهذه الماركة بعد.';
+
+  @override
+  String get adminCarMetaNoTrims => 'لا توجد فئات لهذا الموديل بعد.';
+
+  @override
+  String get adminCarMetaSelectBrand => 'اختر ماركة لعرض موديلاتها.';
+
+  @override
+  String get adminCarMetaSelectModel => 'اختر موديلاً لعرض فئاته.';
+
+  @override
+  String adminCarMetaModelsCount(int count) {
+    return '$count موديل';
+  }
+
+  @override
+  String adminCarMetaDeleteBrandConfirm(String name) {
+    return 'حذف الماركة \"$name\" وجميع موديلاتها وفئاتها؟';
+  }
+
+  @override
+  String adminCarMetaDeleteModelConfirm(String name) {
+    return 'حذف الموديل \"$name\" وجميع فئاته؟';
+  }
+
+  @override
+  String adminCarMetaDeleteTrimConfirm(String name) {
+    return 'حذف الفئة \"$name\"؟';
+  }
+
+  @override
   String get statPendingApproval => 'في انتظار الموافقة';
 
   @override
@@ -825,6 +909,11 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get homeAvailableListings => 'السيارات المتاحة';
+
+  @override
+  String homeCarsAvailableCount(String count) {
+    return '$count سيارة متاحة';
+  }
 
   @override
   String get homeRecommendedForYou => 'موصى به لك';

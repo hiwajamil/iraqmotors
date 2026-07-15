@@ -48,8 +48,12 @@ class AddCarFlowScreen extends ConsumerStatefulWidget {
 }
 
 class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
-  final PageController _pageController = PageController();
+  static const double _pickMaxWidth = 1920;
+  static const double _pickMaxHeight = 1920;
+  static const int _pickImageQuality = 70;
+
   final ImagePicker _imagePicker = ImagePicker();
+  bool _isExiting = false;
 
   late final AddCarFlowSession _session = AddCarFlowSession(
     existingAdId: widget.existingAdId,
@@ -58,46 +62,58 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
     isDraft: widget.isDraft,
   );
 
-  AddCarFlowNotifier get _flow => ref.read(_flowProvider.notifier);
+  late final _flowProvider = addCarFlowProvider(_session);
 
-  get _flowProvider => addCarFlowProvider(_session);
+  AddCarFlowNotifier? _flowNotifier;
 
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-      final step = ref.read(_flowProvider).currentStep;
-      if (step > 0 && _pageController.hasClients) {
-        _pageController.jumpToPage(step);
-      }
-    });
-  }
+  AddCarFlowNotifier get _flow => _flowNotifier!;
 
   @override
   void dispose() {
-    _flow.releaseMemory();
-    _pageController.dispose();
+    _flowNotifier?.releaseMemory();
     super.dispose();
   }
 
   void _goBack() {
-    final flowState = ref.read(_flowProvider);
-    if (flowState.isPublishing || flowState.isAnyPhotoUploading || flowState.isAnalyzingAi) return;
+    if (_isExiting) return;
 
-    if (flowState.currentStep == 0) {
-      _flow.releaseMemory();
-      Navigator.of(context).maybePop();
+    final flowState = ref.read(_flowProvider);
+    if (flowState.isPublishing || flowState.isAnyPhotoUploading || flowState.isAnalyzingAi) {
       return;
     }
+
+    if (flowState.currentStep == 0) {
+      _exitWizardToDashboard();
+      return;
+    }
+
+    _flow.flushPendingTextUpdates();
     _flow.goToStep(flowState.currentStep - 1);
   }
 
-  void _exitToDashboard() {
-    final flowState = ref.read(_flowProvider);
-    if (flowState.isPublishing || flowState.isAnyPhotoUploading || flowState.isAnalyzingAi) return;
+  void _exitWizardToDashboard() {
+    if (_isExiting || !mounted) return;
+    _isExiting = true;
 
-    _flow.releaseMemory();
+    final navigator = Navigator.of(context);
+    if (navigator.canPop()) {
+      navigator.pop();
+      return;
+    }
+
+    _isExiting = false;
+    _exitToDashboard();
+  }
+
+  void _exitToDashboard() {
+    if (_isExiting || !mounted) return;
+
+    final flowState = ref.read(_flowProvider);
+    if (flowState.isPublishing || flowState.isAnyPhotoUploading || flowState.isAnalyzingAi) {
+      return;
+    }
+
+    _isExiting = true;
 
     final user = FirebaseAuth.instance.currentUser;
     final profile = ref.read(userProfileProvider).value;
@@ -400,17 +416,6 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
     );
   }
 
-  void _syncPageToStep(int step) {
-    if (!_pageController.hasClients) return;
-    final currentPage = _pageController.page?.round() ?? 0;
-    if (currentPage == step) return;
-    _pageController.animateToPage(
-      step,
-      duration: const Duration(milliseconds: 320),
-      curve: Curves.easeOutCubic,
-    );
-  }
-
   void _showPhotoFlowError(Object error) {
     final message = error.toString();
     webDebugLog('Photo flow error: $message');
@@ -429,102 +434,155 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
   }
 
   /// Opens the gallery for a single photo (one slot per tap).
+  ///
+  /// Returns an empty list when the user cancels (null/empty picker result).
   Future<List<_PickedPhoto>> _pickPhotos() async {
     if (kIsWeb) {
       return _pickPhotosWeb();
     }
 
-    final single = await _imagePicker.pickImage(
-      source: ImageSource.gallery,
-      imageQuality: 85,
-      requestFullMetadata: true,
-    );
-    if (single == null) return const [];
+    try {
+      final single = await _imagePicker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: _pickMaxWidth,
+        maxHeight: _pickMaxHeight,
+        imageQuality: _pickImageQuality,
+        requestFullMetadata: false,
+      );
+      // User dismissed the gallery without choosing a file.
+      if (single == null) return const [];
 
-    final bytes = await _loadXFileBytes(single);
-    return [_PickedPhoto(file: single, bytes: bytes)];
+      final bytes = await _loadXFileBytes(single);
+      if (bytes == null || bytes.isEmpty) {
+        throw StateError('Could not read image bytes for ${single.name}');
+      }
+      // Re-encode off the UI isolate; keep the original XFile for a stable path.
+      final compressed = await prepareAddCarPreviewBytes(bytes);
+      return [_PickedPhoto(file: single, bytes: compressed)];
+    } catch (e, stackTrace) {
+      webDebugLog('pickImage failed: $e');
+      webDebugLog('$stackTrace');
+      rethrow;
+    }
   }
 
   /// Web: pick image and load bytes in memory (never rely on [File.path]).
   Future<List<_PickedPhoto>> _pickPhotosWeb() async {
-    Object? filePickerError;
     try {
       final fromFilePicker = await _pickViaFilePickerWeb();
       if (fromFilePicker != null) return [fromFilePicker];
+      // Cancelled / empty — do not open a second picker without a fresh
+      // user gesture (image_picker can hang and leave the slot spinner forever).
+      return const [];
     } catch (e) {
-      filePickerError = e;
-      webDebugLog('FilePicker failed: $e');
+      webDebugLog('FilePicker failed: $e — falling back to image_picker');
     }
 
-    webDebugLog('FilePicker empty — trying image_picker…');
     try {
       final fromImagePicker = await _pickViaImagePickerWeb();
       if (fromImagePicker != null) return [fromImagePicker];
-    } catch (e) {
-      if (filePickerError != null) {
-        throw Exception(
-          'FilePicker: $filePickerError\nimage_picker: $e',
-        );
-      }
+      return const [];
+    } catch (e, stackTrace) {
+      webDebugLog('image_picker failed: $e');
+      webDebugLog('$stackTrace');
       rethrow;
     }
-
-    if (filePickerError != null) {
-      throw Exception('FilePicker failed: $filePickerError');
-    }
-    return const [];
   }
 
   Future<_PickedPhoto?> _pickViaFilePickerWeb() async {
     webDebugLog('Opening FilePicker…');
-    final result = await FilePicker.platform.pickFiles(
-      type: FileType.image,
-      allowMultiple: false,
-      withData: true,
-    );
-
-    if (result == null || result.files.isEmpty) {
-      webDebugLog('FilePicker cancelled');
-      return null;
-    }
-
-    final platformFile = result.files.single;
-    var bytes = platformFile.bytes;
-    if (bytes == null || bytes.isEmpty) {
-      final stream = platformFile.readStream;
-      if (stream != null) {
-        webDebugLog('Reading FilePicker stream…');
-        bytes = await _collectStreamBytes(stream);
-      }
-    }
-
-    webDebugLog('FilePicker ${bytes?.length ?? 0} bytes (${platformFile.name})');
-    if (bytes == null || bytes.isEmpty) {
-      throw StateError(
-        'FilePicker returned no bytes for ${platformFile.name}',
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.image,
+        allowMultiple: false,
+        withData: true,
       );
-    }
 
-    final name = platformFile.name.isNotEmpty ? platformFile.name : 'photo.jpg';
-    return _PickedPhoto(
-      file: XFile.fromData(bytes, name: name),
-      bytes: bytes,
-    );
+      if (result == null || result.files.isEmpty) {
+        webDebugLog('FilePicker cancelled');
+        return null;
+      }
+
+      final platformFile = result.files.single;
+      var bytes = platformFile.bytes;
+      if (bytes == null || bytes.isEmpty) {
+        final stream = platformFile.readStream;
+        if (stream != null) {
+          webDebugLog('Reading FilePicker stream…');
+          bytes = await _collectStreamBytes(stream);
+        }
+      }
+
+      webDebugLog(
+        'FilePicker ${bytes?.length ?? 0} bytes (${platformFile.name})',
+      );
+      if (bytes == null || bytes.isEmpty) {
+        throw StateError(
+          'FilePicker returned no bytes for ${platformFile.name}',
+        );
+      }
+
+      final name =
+          platformFile.name.isNotEmpty ? platformFile.name : 'photo.jpg';
+      // FilePicker has no imageQuality/maxWidth — compress before holding in memory.
+      final compressed = await prepareAddCarPreviewBytes(bytes);
+      webDebugLog(
+        'FilePicker compressed ${bytes.length} → ${compressed.length} bytes',
+      );
+      final safeName = name.toLowerCase().endsWith('.jpg') ||
+              name.toLowerCase().endsWith('.jpeg')
+          ? name
+          : '$name.jpg';
+      return _PickedPhoto(
+        file: XFile.fromData(
+          compressed,
+          name: safeName,
+          mimeType: 'image/jpeg',
+        ),
+        bytes: compressed,
+      );
+    } catch (e, stackTrace) {
+      webDebugLog('FilePicker pick failed: $e');
+      webDebugLog('$stackTrace');
+      rethrow;
+    }
   }
 
   Future<_PickedPhoto?> _pickViaImagePickerWeb() async {
-    final single = await _imagePicker.pickImage(source: ImageSource.gallery);
-    if (single == null) return null;
-
-    final bytes = await _loadXFileBytes(single);
-    if (bytes == null || bytes.isEmpty) {
-      throw StateError(
-        'image_picker returned no bytes for ${single.name} (path: ${single.path})',
+    try {
+      final single = await _imagePicker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: _pickMaxWidth,
+        maxHeight: _pickMaxHeight,
+        imageQuality: _pickImageQuality,
       );
-    }
+      if (single == null) return null;
 
-    webDebugLog('image_picker ${bytes.length} bytes (${single.name})');
-    return _PickedPhoto(file: single, bytes: bytes);
+      final bytes = await _loadXFileBytes(single);
+      if (bytes == null || bytes.isEmpty) {
+        throw StateError(
+          'image_picker returned no bytes for ${single.name} (path: ${single.path})',
+        );
+      }
+
+      // Web pickers may ignore quality params — compress defensively.
+      final compressed = await prepareAddCarPreviewBytes(bytes);
+      webDebugLog(
+        'image_picker ${bytes.length} → ${compressed.length} bytes (${single.name})',
+      );
+      return _PickedPhoto(
+        file: XFile.fromData(
+          compressed,
+          name: single.name,
+          mimeType: 'image/jpeg',
+        ),
+        bytes: compressed,
+      );
+    } catch (e, stackTrace) {
+      webDebugLog('image_picker web pick failed: $e');
+      webDebugLog('$stackTrace');
+      rethrow;
+    }
   }
 
   Future<Uint8List> _collectStreamBytes(Stream<List<int>> stream) async {
@@ -555,20 +613,29 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
 
   /// Pick image locally; upload is deferred until publish.
   Future<void> _handlePhotoSlotTap(int index) async {
+    final activeSlots = <int>{index};
+    _flow.clearPhotoSlotFailed(index);
+    // Show the per-slot loading spinner for this box.
     _flow.addUploadingSlot(index);
 
     try {
       final picked = await _pickPhotos();
       if (!mounted) return;
 
-      if (picked.isEmpty) {
-        _flow.removeUploadingSlot(index);
-        return;
-      }
+      // User cancelled the picker (null/empty) — clear loading in [finally]
+      // so this box is tappable again.
+      if (picked.isEmpty) return;
 
+      // Process slots one at a time so preview setState calls stay cheap.
       for (var i = 0; i < picked.length; i++) {
         final slotIndex = index + i;
         if (slotIndex >= AddCarDraft.photoSlotCount) break;
+
+        if (slotIndex != index) {
+          activeSlots.add(slotIndex);
+          _flow.clearPhotoSlotFailed(slotIndex);
+          _flow.addUploadingSlot(slotIndex);
+        }
 
         final photo = picked[i];
         if (photo.bytes == null || photo.bytes!.isEmpty) {
@@ -585,11 +652,20 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
         if (!mounted) return;
       }
     } catch (e, stackTrace) {
-      if (!mounted) return;
-      _flow.removeUploadingSlot(index);
+      // Any picker/processing error: stop loading so the user can retry.
+      for (final slot in activeSlots) {
+        _flow.markPhotoSlotFailed(slot);
+      }
       webDebugLog('Photo slot tap failed: $e');
       webDebugLog('$stackTrace');
-      _showPhotoFlowError(e);
+      if (mounted) {
+        _showPhotoFlowError(e);
+      }
+    } finally {
+      // Always clear isUploading for these boxes — cancel, error, or success.
+      for (final slot in activeSlots) {
+        _flow.removeUploadingSlot(slot);
+      }
     }
   }
 
@@ -723,16 +799,11 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
 
   @override
   Widget build(BuildContext context) {
+    _flowNotifier = ref.read(_flowProvider.notifier);
     final l10n = context.l10n;
     final shell = ref.watch(
       _flowProvider.select(selectAddCarWizardShell),
     );
-
-    ref.listen<int>(_flowProvider.select((s) => s.currentStep), (previous, next) {
-      if (previous != next) {
-        _syncPageToStep(next);
-      }
-    });
 
     final progress = (shell.currentStep + 1) / AddCarFlowState.stepCount;
     final isEditMode = shell.isEditMode;
@@ -840,7 +911,6 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
       ),
       body: AddCarWizardPageView(
         session: _session,
-        pageController: _pageController,
         onPhotoSlotTapped: _onPhotoSlotTapped,
         onPhotoRemoved: _onPhotoRemoved,
         onDamagePhotoAdded: _onDamagePhotoAdded,

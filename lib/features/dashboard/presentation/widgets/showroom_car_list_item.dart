@@ -105,20 +105,23 @@ class _CarDetailsRow extends StatelessWidget {
       children: [
         ClipRRect(
           borderRadius: BorderRadius.circular(8),
-          child: CarNetworkImage(
-            imageUrl: imageUrl,
+          child: SizedBox(
             width: compact ? 72 : 80,
             height: compact ? 54 : 60,
-            fit: BoxFit.cover,
-            errorBuilder: (_, __, ___) => Container(
-              width: compact ? 72 : 80,
-              height: compact ? 54 : 60,
-              color: const Color(0xFFF5F5F7),
-              alignment: Alignment.center,
-              child: const Icon(
-                Icons.directions_car_outlined,
-                size: 22,
-                color: ShowroomCarListItem._textGray,
+            child: CarNetworkImage(
+              imageUrl: imageUrl,
+              fit: BoxFit.cover,
+              cacheLogicalWidth: compact ? 72 : 80,
+              errorBuilder: (_, __, ___) => Container(
+                width: compact ? 72 : 80,
+                height: compact ? 54 : 60,
+                color: const Color(0xFFF5F5F7),
+                alignment: Alignment.center,
+                child: const Icon(
+                  Icons.directions_car_outlined,
+                  size: 22,
+                  color: ShowroomCarListItem._textGray,
+                ),
               ),
             ),
           ),

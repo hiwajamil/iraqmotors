@@ -22,7 +22,8 @@ class FilterStateNotifier extends Notifier<HomeFilterState> {
       brand: brand,
       clearBrand: brand == null,
       filters: _filtersAfterBrandChange(state.filters, brand),
-      advancedFilterExpanded: brand != null ? true : state.advancedFilterExpanded,
+      // Expand when a brand is selected; collapse fully when deselected.
+      advancedFilterExpanded: brand != null,
     );
   }
 

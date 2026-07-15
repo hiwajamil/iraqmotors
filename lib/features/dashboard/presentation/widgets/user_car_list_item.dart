@@ -321,20 +321,23 @@ class _CarThumbnail extends StatelessWidget {
       children: [
         ClipRRect(
           borderRadius: BorderRadius.circular(10),
-          child: CarNetworkImage(
-            imageUrl: imageUrl,
+          child: SizedBox(
             width: width,
             height: height,
-            fit: BoxFit.cover,
-            errorBuilder: (_, __, ___) => Container(
-              width: width,
-              height: height,
-              color: const Color(0xFFF5F5F7),
-              alignment: Alignment.center,
-              child: const Icon(
-                Icons.directions_car_outlined,
-                size: 24,
-                color: UserCarListItem._textGray,
+            child: CarNetworkImage(
+              imageUrl: imageUrl,
+              fit: BoxFit.cover,
+              cacheLogicalWidth: width,
+              errorBuilder: (_, __, ___) => Container(
+                width: width,
+                height: height,
+                color: const Color(0xFFF5F5F7),
+                alignment: Alignment.center,
+                child: const Icon(
+                  Icons.directions_car_outlined,
+                  size: 24,
+                  color: UserCarListItem._textGray,
+                ),
               ),
             ),
           ),

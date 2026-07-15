@@ -56,6 +56,7 @@ class AddCarFlowState {
     this.isPublishing = false,
     this.isSavingDraft = false,
     this.uploadingPhotoSlots = const {},
+    this.failedPhotoSlots = const {},
     this.slotPreviewBytes = const {},
     this.selectedImages = const [],
     this.aiFilledFields = const {},
@@ -73,6 +74,7 @@ class AddCarFlowState {
   final bool isPublishing;
   final bool isSavingDraft;
   final Set<int> uploadingPhotoSlots;
+  final Set<int> failedPhotoSlots;
   final Map<int, Uint8List> slotPreviewBytes;
   final List<XFile?> selectedImages;
   final Set<String> aiFilledFields;
@@ -119,6 +121,7 @@ class AddCarFlowState {
     bool? isPublishing,
     bool? isSavingDraft,
     Set<int>? uploadingPhotoSlots,
+    Set<int>? failedPhotoSlots,
     Map<int, Uint8List>? slotPreviewBytes,
     List<XFile?>? selectedImages,
     Set<String>? aiFilledFields,
@@ -132,6 +135,7 @@ class AddCarFlowState {
       isPublishing: isPublishing ?? this.isPublishing,
       isSavingDraft: isSavingDraft ?? this.isSavingDraft,
       uploadingPhotoSlots: uploadingPhotoSlots ?? this.uploadingPhotoSlots,
+      failedPhotoSlots: failedPhotoSlots ?? this.failedPhotoSlots,
       slotPreviewBytes: slotPreviewBytes ?? this.slotPreviewBytes,
       selectedImages: selectedImages ?? this.selectedImages,
       aiFilledFields: aiFilledFields ?? this.aiFilledFields,
@@ -295,12 +299,27 @@ class AddCarFlowNotifier extends Notifier<AddCarFlowState> {
   void addUploadingSlot(int index) {
     state = state.copyWith(
       uploadingPhotoSlots: {...state.uploadingPhotoSlots, index},
+      failedPhotoSlots: Set<int>.from(state.failedPhotoSlots)..remove(index),
     );
   }
 
   void removeUploadingSlot(int index) {
     final next = Set<int>.from(state.uploadingPhotoSlots)..remove(index);
     state = state.copyWith(uploadingPhotoSlots: next);
+  }
+
+  void markPhotoSlotFailed(int index) {
+    state = state.copyWith(
+      uploadingPhotoSlots: Set<int>.from(state.uploadingPhotoSlots)
+        ..remove(index),
+      failedPhotoSlots: {...state.failedPhotoSlots, index},
+    );
+  }
+
+  void clearPhotoSlotFailed(int index) {
+    if (!state.failedPhotoSlots.contains(index)) return;
+    final next = Set<int>.from(state.failedPhotoSlots)..remove(index);
+    state = state.copyWith(failedPhotoSlots: next);
   }
 
   void assignPhotoToSlot(
@@ -312,12 +331,14 @@ class AddCarFlowNotifier extends Notifier<AddCarFlowState> {
     final selectedImages = List<XFile?>.from(state.selectedImages);
     final previewBytes = Map<int, Uint8List>.from(state.slotPreviewBytes);
     final uploading = Set<int>.from(state.uploadingPhotoSlots)..remove(index);
+    final failed = Set<int>.from(state.failedPhotoSlots)..remove(index);
 
     selectedImages[index] = picked;
     previewBytes[index] = imageBytes;
 
     state = state.copyWith(
       uploadingPhotoSlots: uploading,
+      failedPhotoSlots: failed,
       selectedImages: selectedImages,
       slotPreviewBytes: previewBytes,
       aiPhotoAnalysisDone: false,
@@ -338,9 +359,12 @@ class AddCarFlowNotifier extends Notifier<AddCarFlowState> {
     final previewBytes = Map<int, Uint8List>.from(state.slotPreviewBytes);
     previewBytes.remove(index);
 
+    final failed = Set<int>.from(state.failedPhotoSlots)..remove(index);
+
     state = state.copyWith(
       selectedImages: selectedImages,
       slotPreviewBytes: previewBytes,
+      failedPhotoSlots: failed,
       aiPhotoAnalysisDone: false,
       aiFilledFields: const {},
       draft: state.draft.copyWith(photos: slots),

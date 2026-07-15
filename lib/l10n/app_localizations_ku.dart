@@ -612,6 +612,10 @@ class AppLocalizationsKu extends AppLocalizations {
   String get bidTooLowError => 'تکایە نرخێکی بەرزتر لە دوایین نرخ داخڵ بکە';
 
   @override
+  String get bidMustBeBelowSellerPrice =>
+      'پێویستە نرخەکەت کەمتر بێت لە نرخی فرۆشیار';
+
+  @override
   String get bidSuccessMessage => 'نرخەکەت بە سەرکەوتوویی دانرا!';
 
   @override
@@ -738,6 +742,88 @@ class AppLocalizationsKu extends AppLocalizations {
   String get navSettings => 'ڕێکخستن';
 
   @override
+  String get navCarManagement => 'بەڕێوەبردنی ئۆتۆمبێلەکان';
+
+  @override
+  String get adminCarMetaSubtitle =>
+      'بەڕێوەبردنی براند، مۆدێل، و خاسڵەتەکانی کەتالۆگی ئۆتۆمبێل.';
+
+  @override
+  String get adminCarMetaAddBrand => 'زیادکردنی براند';
+
+  @override
+  String get adminCarMetaEditBrand => 'دەستکاری براند';
+
+  @override
+  String get adminCarMetaAddModel => 'زیادکردنی مۆدێل';
+
+  @override
+  String get adminCarMetaEditModel => 'دەستکاری مۆدێل';
+
+  @override
+  String get adminCarMetaAddTrim => 'زیادکردنی خاسڵەت';
+
+  @override
+  String get adminCarMetaEditTrim => 'دەستکاری خاسڵەت';
+
+  @override
+  String get adminCarMetaAdd => 'زیادکردن';
+
+  @override
+  String get adminCarMetaSave => 'پاشەکەوت';
+
+  @override
+  String get adminCarMetaSaved => 'کەتالۆگی ئۆتۆمبێل نوێکرایەوە.';
+
+  @override
+  String get adminCarMetaBrandIdHint => 'ناسنامەی براند (وەک toyota)';
+
+  @override
+  String get adminCarMetaModelNameHint => 'ناوی مۆدێل (وەک Land Cruiser)';
+
+  @override
+  String get adminCarMetaTrimNameHint => 'ناوی خاسڵەت (وەک GX.R)';
+
+  @override
+  String get adminCarMetaSearchBrands => 'گەڕان بەدوای براند...';
+
+  @override
+  String get adminCarMetaNoBrands => 'هیچ براندێک نییە. یەکەم براند زیاد بکە.';
+
+  @override
+  String get adminCarMetaNoModels => 'هیچ مۆدێلێک بۆ ئەم براندە نییە.';
+
+  @override
+  String get adminCarMetaNoTrims => 'هیچ خاسڵەتێک بۆ ئەم مۆدێلە نییە.';
+
+  @override
+  String get adminCarMetaSelectBrand => 'براندێک هەڵبژێرە بۆ بینینی مۆدێلەکان.';
+
+  @override
+  String get adminCarMetaSelectModel =>
+      'مۆدێلێک هەڵبژێرە بۆ بینینی خاسڵەتەکان.';
+
+  @override
+  String adminCarMetaModelsCount(int count) {
+    return '$count مۆدێل';
+  }
+
+  @override
+  String adminCarMetaDeleteBrandConfirm(String name) {
+    return 'براندی \"$name\" و هەموو مۆدێل و خاسڵەتەکانی بسڕدرێتەوە؟';
+  }
+
+  @override
+  String adminCarMetaDeleteModelConfirm(String name) {
+    return 'مۆدێلی \"$name\" و هەموو خاسڵەتەکانی بسڕدرێتەوە؟';
+  }
+
+  @override
+  String adminCarMetaDeleteTrimConfirm(String name) {
+    return 'خاسڵەتی \"$name\" بسڕدرێتەوە؟';
+  }
+
+  @override
   String get statPendingApproval => 'چاوەڕوانی پەسەندکردن';
 
   @override
@@ -833,6 +919,11 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get homeAvailableListings => 'ئۆتۆمبێلە بەردەستەکان';
+
+  @override
+  String homeCarsAvailableCount(String count) {
+    return '$count ئۆتۆمبێل بەردەستە';
+  }
 
   @override
   String get homeRecommendedForYou => 'پێشنیارکراو بۆ تۆ';

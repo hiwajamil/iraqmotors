@@ -609,6 +609,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Please enter an amount higher than the latest bid';
 
   @override
+  String get bidMustBeBelowSellerPrice =>
+      'Your offer must be lower than the seller\'s price';
+
+  @override
   String get bidSuccessMessage => 'Your bid was placed successfully!';
 
   @override
@@ -735,6 +739,87 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navSettings => 'Settings';
 
   @override
+  String get navCarManagement => 'Car Management';
+
+  @override
+  String get adminCarMetaSubtitle =>
+      'Manage brands, models, and trims in the car catalog.';
+
+  @override
+  String get adminCarMetaAddBrand => 'Add brand';
+
+  @override
+  String get adminCarMetaEditBrand => 'Edit brand';
+
+  @override
+  String get adminCarMetaAddModel => 'Add model';
+
+  @override
+  String get adminCarMetaEditModel => 'Edit model';
+
+  @override
+  String get adminCarMetaAddTrim => 'Add trim';
+
+  @override
+  String get adminCarMetaEditTrim => 'Edit trim';
+
+  @override
+  String get adminCarMetaAdd => 'Add';
+
+  @override
+  String get adminCarMetaSave => 'Save';
+
+  @override
+  String get adminCarMetaSaved => 'Car catalog updated.';
+
+  @override
+  String get adminCarMetaBrandIdHint => 'Brand id (e.g. toyota)';
+
+  @override
+  String get adminCarMetaModelNameHint => 'Model name (e.g. Land Cruiser)';
+
+  @override
+  String get adminCarMetaTrimNameHint => 'Trim name (e.g. GX.R)';
+
+  @override
+  String get adminCarMetaSearchBrands => 'Search brands...';
+
+  @override
+  String get adminCarMetaNoBrands => 'No brands yet. Add the first brand.';
+
+  @override
+  String get adminCarMetaNoModels => 'No models for this brand yet.';
+
+  @override
+  String get adminCarMetaNoTrims => 'No trims for this model yet.';
+
+  @override
+  String get adminCarMetaSelectBrand => 'Select a brand to view its models.';
+
+  @override
+  String get adminCarMetaSelectModel => 'Select a model to view its trims.';
+
+  @override
+  String adminCarMetaModelsCount(int count) {
+    return '$count models';
+  }
+
+  @override
+  String adminCarMetaDeleteBrandConfirm(String name) {
+    return 'Delete brand \"$name\" and all of its models and trims?';
+  }
+
+  @override
+  String adminCarMetaDeleteModelConfirm(String name) {
+    return 'Delete model \"$name\" and all of its trims?';
+  }
+
+  @override
+  String adminCarMetaDeleteTrimConfirm(String name) {
+    return 'Delete trim \"$name\"?';
+  }
+
+  @override
   String get statPendingApproval => 'Pending Approval';
 
   @override
@@ -828,6 +913,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get homeAvailableListings => 'Available cars';
+
+  @override
+  String homeCarsAvailableCount(String count) {
+    return '$count cars available';
+  }
 
   @override
   String get homeRecommendedForYou => 'Recommended for You';

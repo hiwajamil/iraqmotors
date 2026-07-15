@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:iq_motors/shared/widgets/app_cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -13,7 +15,7 @@ import 'package:iq_motors/features/marketplace/data/services/car_database_servic
 import 'package:iq_motors/shared/widgets/car_network_image.dart';
 import 'package:iq_motors/features/auth/presentation/screens/auth_screen.dart';
 
-/// Car details (زانیاری ئۆتۆمبێل) — gallery collage, specs, sticky seller card.
+/// Car details (زانیاری ئۆتۆمبێل) — image carousel, specs, sticky seller card.
 class CarDetailsScreen extends ConsumerStatefulWidget {
   const CarDetailsScreen({
     super.key,
@@ -275,7 +277,6 @@ class _WideLayout extends StatelessWidget {
               child: _CarDetailsContent(
                 data: data,
                 images: images,
-                galleryHeight: 500,
               ),
             ),
           ),
@@ -318,7 +319,6 @@ class _MobileScrollBody extends StatelessWidget {
       child: _CarDetailsContent(
         data: data,
         images: images,
-        galleryHeight: 380,
       ),
     );
   }
@@ -351,7 +351,7 @@ class _MobileSellerBar extends StatelessWidget {
       child: SafeArea(
         top: false,
         child: Padding(
-          padding: const EdgeInsetsDirectional.fromSTEB(20, 16, 20, 16),
+          padding: const EdgeInsetsDirectional.fromSTEB(20, 14, 20, 14),
           child: _SellerContactCard(
             data: data,
             isSaved: isSaved,
@@ -368,12 +368,10 @@ class _CarDetailsContent extends StatelessWidget {
   const _CarDetailsContent({
     required this.data,
     required this.images,
-    required this.galleryHeight,
   });
 
   final Map<String, dynamic> data;
   final List<String> images;
-  final double galleryHeight;
 
   @override
   Widget build(BuildContext context) {
@@ -387,10 +385,7 @@ class _CarDetailsContent extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _ImageGalleryCollage(
-          images: images,
-          height: galleryHeight,
-        ),
+        _ImageGalleryCarousel(images: images),
         const SizedBox(height: 32),
         Text(
           make.toUpperCase(),
@@ -457,59 +452,140 @@ class _CarDetailsContent extends StatelessWidget {
   }
 }
 
-class _ImageGalleryCollage extends StatelessWidget {
-  const _ImageGalleryCollage({
-    required this.images,
-    required this.height,
-  });
+class _ImageGalleryCarousel extends StatefulWidget {
+  const _ImageGalleryCarousel({required this.images});
 
   final List<String> images;
-  final double height;
 
-  static const double _gap = 12;
+  @override
+  State<_ImageGalleryCarousel> createState() => _ImageGalleryCarouselState();
+}
+
+class _ImageGalleryCarouselState extends State<_ImageGalleryCarousel> {
   static const double _radius = 20;
-  static const double _smallRadius = 16;
+  static const Duration _autoPlayInterval = Duration(seconds: 3);
+  static const Duration _pageAnimationDuration = Duration(milliseconds: 400);
 
-  String _urlAt(int index) =>
-      images.length > index ? images[index] : images.first;
+  late final PageController _pageController;
+  Timer? _autoPlayTimer;
+  int _currentPage = 0;
+
+  List<String> get _images => widget.images;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController();
+    _startAutoPlay();
+  }
+
+  @override
+  void didUpdateWidget(covariant _ImageGalleryCarousel oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.images.length != widget.images.length) {
+      _currentPage = 0;
+      if (_pageController.hasClients) {
+        _pageController.jumpToPage(0);
+      }
+      _restartAutoPlay();
+    }
+  }
+
+  @override
+  void dispose() {
+    _autoPlayTimer?.cancel();
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  void _startAutoPlay() {
+    _autoPlayTimer?.cancel();
+    if (_images.length <= 1) return;
+    _autoPlayTimer = Timer.periodic(_autoPlayInterval, (_) => _goToNext());
+  }
+
+  void _restartAutoPlay() {
+    _autoPlayTimer?.cancel();
+    _startAutoPlay();
+  }
+
+  void _goToNext() {
+    if (!mounted || !_pageController.hasClients || _images.length <= 1) return;
+    final next = (_currentPage + 1) % _images.length;
+    _pageController.animateToPage(
+      next,
+      duration: _pageAnimationDuration,
+      curve: Curves.easeInOut,
+    );
+  }
+
+  void _onPageChanged(int index) {
+    setState(() => _currentPage = index);
+    _restartAutoPlay();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: height,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Expanded(
-            flex: 2,
-            child: _GalleryImage(
-              url: _urlAt(0),
-              borderRadius: BorderRadius.circular(_radius),
+    if (_images.isEmpty) {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(_radius),
+        child: AspectRatio(
+          aspectRatio: 16 / 10,
+          child: Container(
+            color: const Color(0xFFE8E8ED),
+            alignment: Alignment.center,
+            child: Icon(
+              Icons.directions_car_outlined,
+              size: 48,
+              color: Colors.black.withValues(alpha: 0.15),
             ),
           ),
-          const SizedBox(width: _gap),
-          Expanded(
-            flex: 1,
-            child: Column(
-              children: [
-                Expanded(
-                  child: _GalleryImage(
-                    url: _urlAt(1),
-                    borderRadius: BorderRadius.circular(_smallRadius),
-                  ),
-                ),
-                const SizedBox(height: _gap),
-                Expanded(
-                  child: _GalleryImage(
-                    url: _urlAt(2),
-                    borderRadius: BorderRadius.circular(_smallRadius),
-                  ),
-                ),
-              ],
+        ),
+      );
+    }
+
+    return Column(
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(_radius),
+          child: AspectRatio(
+            aspectRatio: 16 / 10,
+            child: PageView.builder(
+              controller: _pageController,
+              itemCount: _images.length,
+              onPageChanged: _onPageChanged,
+              itemBuilder: (context, index) {
+                return _GalleryImage(
+                  url: _images[index],
+                  borderRadius: BorderRadius.zero,
+                );
+              },
             ),
+          ),
+        ),
+        if (_images.length > 1) ...[
+          const SizedBox(height: 14),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              for (var i = 0; i < _images.length; i++)
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 220),
+                  margin: const EdgeInsets.symmetric(horizontal: 3.5),
+                  width: _currentPage == i ? 8 : 6,
+                  height: _currentPage == i ? 8 : 6,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: _currentPage == i
+                        ? _CarDetailsScreenState._textPrimary
+                        : _CarDetailsScreenState._textSecondary
+                            .withValues(alpha: 0.35),
+                  ),
+                ),
+            ],
           ),
         ],
-      ),
+      ],
     );
   }
 }
@@ -533,7 +609,7 @@ class _GalleryImage extends StatelessWidget {
         width: double.infinity,
         height: double.infinity,
         cacheLogicalWidth:
-            (MediaQuery.sizeOf(context).width * 0.5).clamp(180, 400),
+            MediaQuery.sizeOf(context).width.clamp(320, 900),
         loadingBuilder: (context, child, loadingProgress) {
           if (loadingProgress == null) return child;
           return Container(
@@ -957,38 +1033,41 @@ class _SellerContactCard extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: compact ? 16 : 28),
-          _ContactButton(
-            label: l10n.whatsapp,
-            icon: const FaIcon(
-              FontAwesomeIcons.whatsapp,
-              size: 20,
-              color: Colors.white,
-            ),
-            backgroundColor: _CarDetailsScreenState._whatsappGreen,
-            foregroundColor: Colors.white,
-            onPressed: () {},
-          ),
-          const SizedBox(height: 12),
-          _ContactButton(
-            label: l10n.phoneCall,
-            icon: const Icon(Icons.phone, size: 20, color: Colors.white),
-            backgroundColor: _CarDetailsScreenState._callBlack,
-            foregroundColor: Colors.white,
-            onPressed: () {},
-          ),
-          const SizedBox(height: 12),
-          _ContactButton(
-            label: isSaved ? l10n.removeFromWishlist : l10n.saveToWishlist,
-            icon: Icon(
-              isSaved ? Icons.favorite : Icons.favorite_border,
-              size: 20,
-              color: _CarDetailsScreenState._textPrimary,
-            ),
-            backgroundColor: Colors.transparent,
-            foregroundColor: _CarDetailsScreenState._textPrimary,
-            outlined: true,
-            onPressed: onSaveToggle,
+          SizedBox(height: compact ? 14 : 28),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              _CircularActionButton(
+                backgroundColor: _CarDetailsScreenState._whatsappGreen,
+                onPressed: () {},
+                child: const FaIcon(
+                  FontAwesomeIcons.whatsapp,
+                  size: 22,
+                  color: Colors.white,
+                ),
+              ),
+              _CircularActionButton(
+                backgroundColor: _CarDetailsScreenState._callBlack,
+                onPressed: () {},
+                child: const Icon(
+                  Icons.phone,
+                  size: 22,
+                  color: Colors.white,
+                ),
+              ),
+              _CircularActionButton(
+                backgroundColor: _CarDetailsScreenState._cardWhite,
+                outlined: true,
+                onPressed: onSaveToggle,
+                child: Icon(
+                  isSaved ? Icons.favorite : Icons.favorite_border,
+                  size: 22,
+                  color: isSaved
+                      ? const Color(0xFFFF3B30)
+                      : _CarDetailsScreenState._textPrimary,
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -996,34 +1075,30 @@ class _SellerContactCard extends StatelessWidget {
   }
 }
 
-class _ContactButton extends StatefulWidget {
-  const _ContactButton({
-    required this.label,
-    required this.icon,
+class _CircularActionButton extends StatefulWidget {
+  const _CircularActionButton({
     required this.backgroundColor,
-    required this.foregroundColor,
     required this.onPressed,
+    required this.child,
     this.outlined = false,
   });
 
-  final String label;
-  final Widget icon;
   final Color backgroundColor;
-  final Color foregroundColor;
   final VoidCallback onPressed;
+  final Widget child;
   final bool outlined;
 
   @override
-  State<_ContactButton> createState() => _ContactButtonState();
+  State<_CircularActionButton> createState() => _CircularActionButtonState();
 }
 
-class _ContactButtonState extends State<_ContactButton> {
+class _CircularActionButtonState extends State<_CircularActionButton> {
   bool _hovered = false;
 
   @override
   Widget build(BuildContext context) {
     final bg = widget.outlined
-        ? (_hovered ? const Color(0xFFF2F2F7) : Colors.transparent)
+        ? (_hovered ? const Color(0xFFF2F2F7) : widget.backgroundColor)
         : (widget.backgroundColor == _CarDetailsScreenState._callBlack &&
                 _hovered
             ? const Color(0xFF333333)
@@ -1036,32 +1111,27 @@ class _ContactButtonState extends State<_ContactButton> {
         onTap: widget.onPressed,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
-          height: 52,
+          width: 56,
+          height: 56,
           decoration: BoxDecoration(
             color: bg,
-            borderRadius: BorderRadius.circular(14),
+            shape: BoxShape.circle,
             border: widget.outlined
                 ? Border.all(
                     color: const Color(0xFFD1D1D6),
                     width: 1.5,
                   )
                 : null,
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              widget.icon,
-              const SizedBox(width: 10),
-              Text(
-                widget.label,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: widget.foregroundColor,
-                ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: widget.outlined ? 0.08 : 0.12),
+                blurRadius: widget.outlined ? 10 : 12,
+                offset: const Offset(0, 4),
               ),
             ],
           ),
+          alignment: Alignment.center,
+          child: widget.child,
         ),
       ),
     );
