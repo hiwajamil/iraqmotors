@@ -52,11 +52,6 @@ class CarFirestoreFilterQuery {
 
 /// Applies home advanced-search filters to car listing maps.
 abstract final class CarFilterService {
-  static const Map<String, String> _trimKeyToStoredValue = {
-    FilterOptionKeys.trimBase: 'Base',
-    FilterOptionKeys.trimSport: 'Sport',
-    FilterOptionKeys.trimLuxury: 'Luxury',
-  };
 
   static CarFirestoreFilterQuery toFirestoreQuery(HomeFilterState state) {
     final filters = state.filters;
@@ -189,11 +184,8 @@ abstract final class CarFilterService {
   }
 
   static bool _matchesTrim(Map<String, dynamic> car, String trimKey) {
-    // Legacy generic keys map to stored values; otherwise the key is the
-    // catalogued trim name itself (e.g. 'XLE', 'GLI Limited').
-    final expected = _trimKeyToStoredValue[trimKey] ?? trimKey;
     final trim = car['trim']?.toString().trim().toLowerCase();
-    return trim == expected.trim().toLowerCase();
+    return trim == trimKey.trim().toLowerCase();
   }
 
   static bool _matchesLocation(

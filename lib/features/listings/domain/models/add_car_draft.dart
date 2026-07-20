@@ -1,6 +1,5 @@
 import 'package:iq_motors/shared/data/add_car_form_options.dart';
 import 'package:iq_motors/shared/data/add_car_option_keys.dart';
-import 'package:iq_motors/shared/data/car_trims_by_model.dart';
 
 /// In-progress listing data collected across the add-car wizard.
 class AddCarDraft {
@@ -76,10 +75,6 @@ class AddCarDraft {
   bool get hasMinimumPhotos => filledPhotoCount >= minPhotoCount;
 
   bool get isBasicInfoComplete {
-    final trimRequired =
-        CarTrimsByModel.hasTrims(brandId, modelKey);
-    final trimOk = !trimRequired ||
-        (trim != null && trim!.isNotEmpty);
     return brandId != null &&
         brandId!.isNotEmpty &&
         modelKey != null &&
@@ -87,8 +82,7 @@ class AddCarDraft {
         colorKey != null &&
         colorKey!.isNotEmpty &&
         year != null &&
-        year!.isNotEmpty &&
-        trimOk;
+        year!.isNotEmpty;
   }
 
   bool get isPlateInfoComplete =>

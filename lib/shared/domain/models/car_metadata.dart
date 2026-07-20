@@ -71,11 +71,18 @@ class CarMetadataCatalog {
 
   List<String> trimsForModel(String? brandId, String? modelKey) {
     if (brandId == null || modelKey == null) return const [];
-    return brands[brandId]?.trimsFor(modelKey) ?? const [];
+    final resolvedBrandId = resolveBrandId(brandId) ?? brandId;
+    final brand = brands[resolvedBrandId];
+    if (brand == null) return const [];
+    final resolvedModel = resolveModelName(resolvedBrandId, modelKey) ?? modelKey;
+    return brand.trimsFor(resolvedModel);
   }
 
+  bool hasTrimsForModel(String? brandId, String? modelKey) =>
+      trimsForModel(brandId, modelKey).isNotEmpty;
+
   bool hasModel(String brandId, String modelKey) =>
-      brands[brandId]?.models.containsKey(modelKey) ?? false;
+      brands[resolveBrandId(brandId) ?? brandId]?.models.containsKey(modelKey) ?? false;
 
   /// Resolves a brand id to the exact Firestore document id (case-insensitive).
   String? resolveBrandId(String? brandId) {

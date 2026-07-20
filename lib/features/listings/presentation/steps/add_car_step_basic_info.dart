@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:iq_motors/core/localization/l10n_extensions.dart';
 import 'package:iq_motors/shared/data/add_car_form_options.dart';
 import 'package:iq_motors/shared/data/car_models_by_brand.dart';
-import 'package:iq_motors/shared/data/car_trims_by_model.dart';
 import 'package:iq_motors/shared/data/dummy_brands.dart';
 import 'package:iq_motors/shared/models/car_brand.dart';
+import 'package:iq_motors/shared/presentation/providers/car_metadata_providers.dart';
 import 'package:iq_motors/features/marketplace/presentation/widgets/brand_search_sheet.dart';
 import 'package:iq_motors/core/theme/app_theme.dart';
 import 'package:iq_motors/features/listings/presentation/add_car_theme.dart';
@@ -13,7 +14,7 @@ import 'package:iq_motors/features/listings/presentation/widgets/add_car_form_ca
 import 'package:iq_motors/features/listings/presentation/widgets/add_car_step_header.dart';
 
 /// Step 3 — brand, model, color, year, and trim.
-class AddCarStepBasicInfo extends StatelessWidget {
+class AddCarStepBasicInfo extends ConsumerWidget {
   const AddCarStepBasicInfo({
     super.key,
     required this.brandId,
@@ -151,8 +152,7 @@ class AddCarStepBasicInfo extends StatelessWidget {
     if (result != null) onYearChanged(result);
   }
 
-  Future<void> _openTrimPicker(BuildContext context) async {
-    final trims = CarTrimsByModel.trimsFor(brandId, modelKey);
+  Future<void> _openTrimPicker(BuildContext context, List<String> trims) async {
     if (trims.isEmpty) return;
 
     final result = await _openStringSheet(
@@ -281,7 +281,7 @@ class AddCarStepBasicInfo extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
     final languageCode = Localizations.localeOf(context).languageCode;
     final brand = _brand;
@@ -296,7 +296,9 @@ class AddCarStepBasicInfo extends StatelessWidget {
     final colorSwatch = colorKey != null
         ? AddCarFormOptions.swatchForKey(colorKey!)
         : null;
-    final catalogTrims = CarTrimsByModel.trimsFor(brandId, modelKey);
+    final catalog = ref.watch(carMetadataProvider).asData?.value;
+    final catalogTrims =
+        catalog?.trimsForModel(brandId, modelKey) ?? const <String>[];
     final showTrimDropdown =
         brandId != null && modelKey != null && catalogTrims.isNotEmpty;
     final showTrimTextField =
@@ -361,7 +363,7 @@ class AddCarStepBasicInfo extends StatelessWidget {
                     label: l10n.addCarTrimLabel,
                     value: trim,
                     placeholder: l10n.addCarTrimPlaceholder,
-                    onTap: () => _openTrimPicker(context),
+                    onTap: () => _openTrimPicker(context, catalogTrims),
                   ),
                 ],
                 if (showTrimTextField) ...[

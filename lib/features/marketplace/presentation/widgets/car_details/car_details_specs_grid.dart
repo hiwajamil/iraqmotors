@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:iq_motors/core/localization/l10n_extensions.dart';
+import 'package:iq_motors/shared/data/add_car_form_options.dart';
 
 /// Clean 4-chip specifications grid for car details.
 class QuickSpecsGrid extends StatelessWidget {
@@ -104,11 +105,44 @@ class FeaturesSection extends StatelessWidget {
 
   final List<String> features;
 
+  static IconData _iconForFeature(String key) {
+    return switch (key) {
+      'feature_sunroof' => Icons.wb_sunny_outlined,
+      'feature_panoramic_roof' => Icons.panorama_outlined,
+      'feature_seat_heater' => Icons.airline_seat_recline_extra_rounded,
+      'feature_steering_heater' => Icons.settings_remote_outlined,
+      'feature_rear_camera' => Icons.camera_rear_outlined,
+      'feature_radar_mirror' => Icons.radar_rounded,
+      'feature_radar' => Icons.radar_rounded,
+      'feature_parking_brake' => Icons.emergency_rounded,
+      'feature_sensitive' => Icons.sensors_rounded,
+      'feature_screen' => Icons.tv_rounded,
+      'feature_electric_mirror' => Icons.electric_bolt_rounded,
+      'feature_electric_seat' => Icons.chair_rounded,
+      'feature_smart_key' => Icons.key_rounded,
+      'feature_cruise_control' => Icons.speed_rounded,
+      'feature_xenon_light' => Icons.highlight_rounded,
+      'feature_auto_headlight' => Icons.lightbulb_rounded,
+      'feature_speaker_8' => Icons.speaker_rounded,
+      'feature_apple_carplay' => Icons.phone_iphone_rounded,
+      'feature_abs' => Icons.directions_car_rounded,
+      'feature_awd' => Icons.drive_eta_rounded,
+      'feature_wireless_charger' => Icons.battery_charging_full_rounded,
+      'feature_anti_theft' => Icons.lock_rounded,
+      'feature_horn' => Icons.campaign_rounded,
+      'feature_speed_sign' => Icons.sign_language_rounded,
+      'feature_tire_pressure' => Icons.tire_repair_rounded,
+      'feature_driver_attention' => Icons.remove_red_eye_rounded,
+      _ => Icons.check_circle_outline_rounded,
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
+    final l10n = context.l10n;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -126,20 +160,9 @@ class FeaturesSection extends StatelessWidget {
           runSpacing: 8,
           children: features
               .map(
-                (f) => Chip(
-                  side: BorderSide.none,
-                  backgroundColor: colorScheme.surfaceContainerHigh,
-                  avatar: Icon(
-                    Icons.check_rounded,
-                    size: 16,
-                    color: colorScheme.primary,
-                  ),
-                  label: Text(
-                    f,
-                    style: textTheme.bodyMedium?.copyWith(
-                      color: colorScheme.onSurface,
-                    ),
-                  ),
+                (f) => _FeatureChip(
+                  icon: _iconForFeature(f),
+                  label: AddCarFormOptions.featureLabel(l10n, f),
                 ),
               )
               .toList(),
@@ -149,6 +172,47 @@ class FeaturesSection extends StatelessWidget {
     );
   }
 }
+
+class _FeatureChip extends StatelessWidget {
+  const _FeatureChip({required this.icon, required this.label});
+
+  final IconData icon;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: colorScheme.primaryContainer.withValues(alpha: 0.4),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: colorScheme.primary.withValues(alpha: 0.15),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 15, color: colorScheme.primary),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: textTheme.labelMedium?.copyWith(
+              color: colorScheme.onSurface,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 
 /// Technical specifications list card.
 class FullSpecsCard extends StatelessWidget {

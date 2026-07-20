@@ -8,7 +8,7 @@ import 'package:iq_motors/core/localization/filter_l10n.dart';
 import 'package:iq_motors/core/localization/l10n_extensions.dart';
 import 'package:iq_motors/core/theme/app_theme.dart';
 import 'package:iq_motors/shared/data/car_models_by_brand.dart';
-import 'package:iq_motors/shared/data/car_trims_by_model.dart';
+import 'package:iq_motors/shared/presentation/providers/car_metadata_providers.dart';
 import 'package:iq_motors/shared/data/dummy_brands.dart';
 import 'package:iq_motors/l10n/app_localizations.dart';
 import 'package:iq_motors/features/marketplace/domain/models/advanced_filter_state.dart';
@@ -220,10 +220,12 @@ class _AdvancedFilterScreenState extends ConsumerState<AdvancedFilterScreen> {
 
   /// Trim options for the selected brand + model from the catalog database.
   List<String> _catalogTrimKeys() {
-    final trims = CarTrimsByModel.trimsFor(
-      _selectedBrand?.id,
-      _filters.modelKey,
-    );
+    final catalog = ref.read(carMetadataProvider).asData?.value;
+    final trims = catalog?.trimsForModel(
+          _selectedBrand?.id,
+          _filters.modelKey,
+        ) ??
+        const [];
     if (trims.isEmpty) return const [FilterOptionKeys.all];
     return [FilterOptionKeys.all, ...trims];
   }
