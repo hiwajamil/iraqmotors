@@ -142,7 +142,7 @@ class _PremiumCarCardState extends ConsumerState<PremiumCarCard> {
                     imageUrl: imageUrl,
                     fit: BoxFit.cover,
                     cacheLogicalWidth: widget.compact ? 240 : 480,
-                    errorBuilder: (_, __, ___) => Container(
+                    errorBuilder: (_, _, _) => Container(
                       color: colorScheme.surfaceContainerHighest,
                       alignment: Alignment.center,
                       child: Icon(

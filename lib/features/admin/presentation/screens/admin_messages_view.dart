@@ -9,6 +9,7 @@ import 'package:iq_motors/features/admin/domain/models/support_ticket.dart';
 import 'package:iq_motors/features/auth/presentation/providers/auth_providers.dart';
 import 'package:iq_motors/features/storage/presentation/providers/storage_providers.dart';
 import 'package:iq_motors/features/listings/presentation/add_car_theme.dart';
+import 'package:iq_motors/shared/widgets/app_loading_indicator.dart';
 
 enum _TicketFilter { all, open, resolved }
 
@@ -138,9 +139,7 @@ class _AdminMessagesViewState extends ConsumerState<AdminMessagesView> {
 
               if (snapshot.connectionState == ConnectionState.waiting &&
                   !snapshot.hasData) {
-                return const Center(
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                );
+                return const AppLoadingCenter();
               }
 
               final allTickets = snapshot.data ?? const [];
@@ -273,7 +272,7 @@ class _AdminMessagesViewState extends ConsumerState<AdminMessagesView> {
               : ListView.separated(
                   padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
                   itemCount: tickets.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 6),
+                  separatorBuilder: (_, _) => const SizedBox(height: 6),
                   itemBuilder: (context, index) {
                     final ticket = tickets[index];
                     return _TicketListItem(
@@ -354,9 +353,7 @@ class _AdminMessagesViewState extends ConsumerState<AdminMessagesView> {
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting &&
                     !snapshot.hasData) {
-                  return const Center(
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  );
+                  return const AppLoadingCenter();
                 }
 
                 final messages = snapshot.data ?? const [];
@@ -699,13 +696,8 @@ class _MessageComposer extends StatelessWidget {
               ),
             ),
             child: isSending
-                ? SizedBox(
-                    width: 18,
-                    height: 18,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: Theme.of(context).colorScheme.onPrimary,
-                    ),
+                ? AppLoadingIndicator.compact(
+                    color: Theme.of(context).colorScheme.onPrimary,
                   )
                 : Text(
                     sendLabel,

@@ -69,7 +69,7 @@ Future<void> main() async {
     stdout.writeln('Upload test OK: $testKey');
 
     final probeKeys = <String>{
-      if (sampleKey != null) sampleKey,
+      ?sampleKey,
       testKey,
     };
 

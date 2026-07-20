@@ -6,6 +6,7 @@ import 'package:iq_motors/core/localization/iraq_location_l10n.dart';
 import 'package:iq_motors/core/localization/l10n_extensions.dart';
 import 'package:iq_motors/core/theme/app_theme.dart';
 import 'package:iq_motors/shared/data/iraq_locations.dart';
+import 'package:iq_motors/shared/widgets/app_loading_indicator.dart';
 import 'package:iq_motors/features/storage/presentation/providers/storage_providers.dart';
 
 /// City overview grid for the admin approvals sidebar section.
@@ -308,17 +309,13 @@ class _CityStatsSkeletonGrid extends StatelessWidget {
         mainAxisExtent: 196,
       ),
       itemCount: IraqLocations.provinceOrder.length,
-      itemBuilder: (_, __) => Container(
+      itemBuilder: (_, _) => Container(
         decoration: BoxDecoration(
           color: scheme.surfaceContainerLowest,
           borderRadius: BorderRadius.circular(16),
         ),
         alignment: Alignment.center,
-        child: const SizedBox(
-          width: 22,
-          height: 22,
-          child: CircularProgressIndicator(strokeWidth: 2),
-        ),
+        child: const AppLoadingIndicator.compact(),
       ),
     );
   }

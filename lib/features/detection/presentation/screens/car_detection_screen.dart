@@ -12,6 +12,7 @@ import 'package:iq_motors/features/detection/presentation/widgets/camera_view.da
 import 'package:iq_motors/features/marketplace/domain/models/car.dart';
 import 'package:iq_motors/features/marketplace/presentation/screens/car_details_screen.dart';
 import 'package:iq_motors/shared/widgets/car_network_image.dart';
+import 'package:iq_motors/shared/widgets/app_loading_indicator.dart';
 import 'package:iq_motors/shared/data/dummy_brands.dart';
 import 'package:iq_motors/shared/data/car_models_by_brand.dart';
 import 'package:iq_motors/features/storage/presentation/providers/storage_providers.dart';
@@ -258,13 +259,8 @@ class _CarDetectionScreenState extends ConsumerState<CarDetectionScreen> {
                 ),
               ),
               if (_identifying)
-                SizedBox(
-                  width: 18,
-                  height: 18,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
+                AppLoadingIndicator.compact(
+                  color: Theme.of(context).colorScheme.primary,
                 ),
             ],
           ),
@@ -315,7 +311,7 @@ class _CarDetectionScreenState extends ConsumerState<CarDetectionScreen> {
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
               itemCount: result.listings.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 10),
+              separatorBuilder: (_, _) => const SizedBox(width: 10),
               itemBuilder: (context, index) {
                 final car = result.listings[index];
                 return _ListingChip(

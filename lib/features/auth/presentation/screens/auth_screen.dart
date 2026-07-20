@@ -15,6 +15,7 @@ import 'package:iq_motors/l10n/app_localizations.dart';
 import 'package:iq_motors/features/auth/presentation/providers/auth_providers.dart';
 import 'package:iq_motors/features/auth/data/services/auth_service.dart';
 import 'package:iq_motors/features/marketplace/presentation/screens/home_screen.dart';
+import 'package:iq_motors/shared/widgets/app_loading_indicator.dart';
 
 String _cityLabel(AppLocalizations l10n, String key) {
   return switch (key) {
@@ -549,15 +550,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                             ),
                             if (_isLoading) ...[
                               const SizedBox(height: 16),
-                              const Center(
-                                child: SizedBox(
-                                  width: 24,
-                                  height: 24,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                  ),
-                                ),
-                              ),
+                              const AppLoadingCenter(),
                             ],
                           ],
                         ),
@@ -1266,13 +1259,8 @@ class _SendCodeButton extends StatelessWidget {
         minimumSize: const Size(48, 48),
       ),
       child: isLoading
-          ? SizedBox(
-              width: 20,
-              height: 20,
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-                color: context.colorScheme.onPrimary,
-              ),
+          ? AppLoadingIndicator.compact(
+              color: context.colorScheme.onPrimary,
             )
           : isCodeSent && resendCountdown > 0
               ? Text('${resendCountdown}s')

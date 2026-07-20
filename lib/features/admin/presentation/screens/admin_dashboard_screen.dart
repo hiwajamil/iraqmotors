@@ -16,6 +16,7 @@ import 'package:iq_motors/shared/models/account_type.dart';
 import 'package:iq_motors/features/listings/domain/models/add_car_draft.dart';
 import 'package:iq_motors/features/auth/domain/models/user_profile.dart';
 import 'package:iq_motors/shared/widgets/car_network_image.dart';
+import 'package:iq_motors/shared/widgets/app_loading_indicator.dart';
 import 'package:iq_motors/features/listings/presentation/add_car_review_summary.dart';
 import 'package:iq_motors/features/auth/presentation/providers/auth_providers.dart';
 import 'package:iq_motors/features/storage/presentation/providers/storage_providers.dart';
@@ -1276,11 +1277,7 @@ class _SuperAdminStatCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 if (data.isLoading)
-                  const SizedBox(
-                    height: 26,
-                    width: 26,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
+                  const AppLoadingIndicator.standard()
                 else
                   Text(
                     data.value,
@@ -1465,9 +1462,8 @@ class _PendingApprovalsSection extends StatelessWidget {
               ),
             )
           else if (isLoading)
-            const Padding(
+            const AppLoadingCenter(
               padding: EdgeInsets.symmetric(vertical: 40),
-              child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
             )
           else if (approvals.isEmpty)
             Padding(
@@ -1488,7 +1484,7 @@ class _PendingApprovalsSection extends StatelessWidget {
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemCount: approvals.length,
-              separatorBuilder: (_, __) => const SizedBox(height: 12),
+              separatorBuilder: (_, _) => const SizedBox(height: 12),
               itemBuilder: (context, index) {
                 final item = approvals[index];
                 final isProcessing = processingIds.contains(item.id);
@@ -1779,7 +1775,7 @@ class _CarThumbnailRow extends StatelessWidget {
                 imageUrl: previews[i],
                 fit: BoxFit.cover,
                 cacheLogicalWidth: _size,
-                errorBuilder: (_, __, ___) => _placeholder(context),
+                errorBuilder: (_, _, _) => _placeholder(context),
               ),
             ),
           ),
@@ -1977,14 +1973,7 @@ class _ActionChip extends StatelessWidget {
       ),
     );
     final iconWidget = isLoading
-        ? SizedBox(
-            width: 18,
-            height: 18,
-            child: CircularProgressIndicator(
-              strokeWidth: 2,
-              color: fg,
-            ),
-          )
+        ? AppLoadingIndicator.compact(color: fg)
         : Icon(icon, size: 18, color: fg);
 
     final button = filled
@@ -2273,8 +2262,7 @@ class _DetailImageCarousel extends StatelessWidget {
                           return Container(
                             color: scheme.outlineVariant,
                             alignment: Alignment.center,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
+                            child: AppLoadingIndicator.standard(
                               value: loadingProgress.expectedTotalBytes != null
                                   ? loadingProgress.cumulativeBytesLoaded /
                                       loadingProgress.expectedTotalBytes!
@@ -2282,7 +2270,7 @@ class _DetailImageCarousel extends StatelessWidget {
                             ),
                           );
                         },
-                        errorBuilder: (_, __, ___) => Container(
+                        errorBuilder: (_, _, _) => Container(
                           color: scheme.outlineVariant,
                           alignment: Alignment.center,
                           child: Icon(
@@ -2594,14 +2582,7 @@ class _DetailActionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final child = isLoading
-        ? SizedBox(
-            width: 18,
-            height: 18,
-            child: CircularProgressIndicator(
-              strokeWidth: 2,
-              color: fg,
-            ),
-          )
+        ? AppLoadingIndicator.compact(color: fg)
         : Text(
             label,
             style: textTheme.labelLarge?.copyWith(

@@ -8,6 +8,7 @@ import 'package:iq_motors/features/admin/presentation/providers/admin_settings_p
 import 'package:iq_motors/features/storage/presentation/providers/storage_providers.dart';
 import 'package:iq_motors/features/admin/data/services/admin_database_service.dart';
 import 'package:iq_motors/features/admin/presentation/screens/admin_user_list_detail_screen.dart';
+import 'package:iq_motors/shared/widgets/app_loading_indicator.dart';
 
 /// User overview grid grouped by governorate for the admin users section.
 class AdminUsersByCityView extends ConsumerStatefulWidget {
@@ -253,17 +254,13 @@ class _UserCitySkeletonGrid extends StatelessWidget {
         mainAxisExtent: 160,
       ),
       itemCount: AdminDatabaseService.trackedCities.length,
-      itemBuilder: (_, __) => Container(
+      itemBuilder: (_, _) => Container(
         decoration: BoxDecoration(
           color: context.colorScheme.surfaceContainerLowest,
           borderRadius: BorderRadius.circular(16),
         ),
         alignment: Alignment.center,
-        child: const SizedBox(
-          width: 22,
-          height: 22,
-          child: CircularProgressIndicator(strokeWidth: 2),
-        ),
+        child: const AppLoadingIndicator.compact(),
       ),
     );
   }

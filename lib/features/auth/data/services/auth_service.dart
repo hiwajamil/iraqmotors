@@ -679,7 +679,7 @@ class AuthService {
 
       final updateData = <String, dynamic>{
         'displayName': displayName.trim(),
-        if (city != null) 'city': city,
+        'city': ?city,
         if (showroomName != null) 'showroomName': showroomName.trim(),
         if (ownerName != null) 'ownerName': ownerName.trim(),
         'updatedAt': FieldValue.serverTimestamp(),

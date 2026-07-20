@@ -902,7 +902,7 @@ class _BrandSquareRow extends StatelessWidget {
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: homeStripBrands.length + 1,
-        separatorBuilder: (_, __) => const SizedBox(width: 10),
+        separatorBuilder: (_, _) => const SizedBox(width: 10),
         itemBuilder: (context, index) {
           if (index == homeStripBrands.length) {
             return _ViewAllBrandCard(onTap: onViewAllTap);
@@ -956,7 +956,7 @@ class _BrandSquareCard extends StatelessWidget {
             imageUrl: brand.logoUrl,
             fit: BoxFit.contain,
             memCacheLogicalWidth: 52,
-            errorWidget: (_, __, ___) => Center(
+            errorWidget: (_, _, _) => Center(
               child: Text(
                 brand.nameEnglish[0],
                 style: context.textTheme.bodyMedium?.copyWith(

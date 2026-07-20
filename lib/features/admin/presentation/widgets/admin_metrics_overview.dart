@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:iq_motors/core/theme/app_theme.dart';
+import 'package:iq_motors/shared/widgets/app_loading_indicator.dart';
 
 /// Data class holding metric stats for the super admin panel.
 class SuperAdminStatData {
@@ -57,11 +58,7 @@ class SuperAdminStatCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 if (data.isLoading)
-                  const SizedBox(
-                    height: 26,
-                    width: 26,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
+                  const AppLoadingIndicator.standard()
                 else
                   Text(
                     data.value,

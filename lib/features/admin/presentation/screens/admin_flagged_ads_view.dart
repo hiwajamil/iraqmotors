@@ -1,4 +1,5 @@
 import 'package:iq_motors/shared/widgets/app_cached_network_image.dart';
+import 'package:iq_motors/shared/widgets/app_loading_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -242,9 +243,8 @@ class _AdminFlaggedAdsViewState extends ConsumerState<AdminFlaggedAdsView> {
           future: _reportsFuture,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Padding(
+              return const AppLoadingCenter(
                 padding: EdgeInsets.symmetric(vertical: 80),
-                child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
               );
             }
 
@@ -265,7 +265,7 @@ class _AdminFlaggedAdsViewState extends ConsumerState<AdminFlaggedAdsView> {
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemCount: reports.length,
-              separatorBuilder: (_, __) => const SizedBox(height: 14),
+              separatorBuilder: (_, _) => const SizedBox(height: 14),
               itemBuilder: (context, index) {
                 final report = reports[index];
                 return _FlaggedAdCard(
@@ -435,11 +435,7 @@ class _FlaggedAdCard extends StatelessWidget {
                 ),
                 if (isProcessing) ...[
                   const SizedBox(width: 12),
-                  const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  ),
+                  const AppLoadingIndicator.compact(),
                 ],
               ],
             ),
@@ -474,7 +470,7 @@ class _AdThumbnail extends StatelessWidget {
                 height: 88,
                 memCacheLogicalWidth: 88,
                 memCacheLogicalHeight: 88,
-                errorWidget: (_, __, ___) => Icon(
+                errorWidget: (_, _, _) => Icon(
                   Icons.broken_image_outlined,
                   color: context.colorScheme.onSurfaceVariant,
                 ),

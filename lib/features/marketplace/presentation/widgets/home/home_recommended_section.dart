@@ -32,7 +32,7 @@ class HomeRecommendedSection extends ConsumerWidget {
       loading: () => const SliverToBoxAdapter(
         child: _RecommendedSkeleton(),
       ),
-      error: (_, __) => const SliverToBoxAdapter(child: SizedBox.shrink()),
+      error: (_, _) => const SliverToBoxAdapter(child: SizedBox.shrink()),
       data: (result) {
         if (result.cars.isEmpty) {
           return const SliverToBoxAdapter(child: SizedBox.shrink());
@@ -124,7 +124,7 @@ class _RecommendedSkeleton extends StatelessWidget {
             padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 4),
             physics: const NeverScrollableScrollPhysics(),
             itemCount: 3,
-            itemBuilder: (_, __) => Padding(
+            itemBuilder: (_, _) => Padding(
               padding: const EdgeInsetsDirectional.only(end: 14),
               child: Container(
                 width: HomeRecommendedSection._cardWidth,

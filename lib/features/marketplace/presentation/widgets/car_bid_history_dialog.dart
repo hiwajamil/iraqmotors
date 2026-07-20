@@ -8,6 +8,7 @@ import 'package:iq_motors/core/theme/app_theme.dart';
 import 'package:iq_motors/shared/data/add_car_form_options.dart';
 import 'package:iq_motors/features/marketplace/domain/models/car_bid_record.dart';
 import 'package:iq_motors/features/storage/presentation/providers/storage_providers.dart';
+import 'package:iq_motors/shared/widgets/app_loading_indicator.dart';
 
 /// Centered dialog listing every offer placed on a car listing.
 class CarBidHistoryDialog extends ConsumerStatefulWidget {
@@ -147,15 +148,8 @@ class _CarBidHistoryDialogState extends ConsumerState<CarBidHistoryDialog> {
                 future: _loadBids(ref),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Padding(
+                    return const AppLoadingCenter(
                       padding: EdgeInsets.symmetric(vertical: 48),
-                      child: Center(
-                        child: SizedBox(
-                          width: 28,
-                          height: 28,
-                          child: CircularProgressIndicator(strokeWidth: 2.5),
-                        ),
-                      ),
                     );
                   }
 
@@ -215,7 +209,7 @@ class _CarBidHistoryDialogState extends ConsumerState<CarBidHistoryDialog> {
                     padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
                     shrinkWrap: true,
                     itemCount: bids.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: 10),
+                    separatorBuilder: (_, _) => const SizedBox(height: 10),
                     itemBuilder: (context, index) {
                       final bid = bids[index];
                       return _BidHistoryTile(

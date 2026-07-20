@@ -26,6 +26,7 @@ import 'package:iq_motors/features/storage/data/services/cloudflare_upload_servi
 import 'package:iq_motors/features/storage/data/services/r2_storage_service.dart';
 import 'package:iq_motors/features/storage/presentation/providers/storage_providers.dart';
 import 'package:iq_motors/shared/widgets/moderation_error_dialog.dart';
+import 'package:iq_motors/shared/widgets/app_loading_indicator.dart';
 import 'package:http/http.dart' as http;
 import 'package:iq_motors/features/listings/presentation/widgets/add_car_wizard_step_hosts.dart';
 
@@ -493,7 +494,7 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
   Future<_PickedPhoto?> _pickViaFilePickerWeb() async {
     webDebugLog('Opening FilePicker…');
     try {
-      final result = await FilePicker.platform.pickFiles(
+      final result = await FilePicker.pickFiles(
         type: FileType.image,
         allowMultiple: false,
         withData: true,
@@ -973,11 +974,7 @@ class _PublishingOverlay extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const SizedBox(
-                width: 36,
-                height: 36,
-                child: CircularProgressIndicator(strokeWidth: 3),
-              ),
+              const AppLoadingIndicator.large(),
               const SizedBox(height: 20),
               Text(
                 isEditMode ? l10n.addCarSaving : l10n.addCarPublishing,
@@ -1032,13 +1029,8 @@ class _AiAnalyzingOverlay extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              SizedBox(
-                width: 36,
-                height: 36,
-                child: CircularProgressIndicator(
-                  strokeWidth: 3,
-                  color: AddCarFormOptions.aiAccentText.withValues(alpha: 0.9),
-                ),
+              AppLoadingIndicator.large(
+                color: AddCarFormOptions.aiAccentText.withValues(alpha: 0.9),
               ),
               const SizedBox(height: 20),
               Text(
@@ -1166,13 +1158,8 @@ class _SaveBarButton extends StatelessWidget {
           ),
         ),
         child: isLoading
-            ? SizedBox(
-                width: 22,
-                height: 22,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2.5,
-                  color: context.colorScheme.onPrimary,
-                ),
+            ? AppLoadingIndicator.compact(
+                color: context.colorScheme.onPrimary,
               )
             : Text(
                 label,

@@ -8,6 +8,7 @@ import 'package:iq_motors/core/theme/app_theme.dart';
 import 'package:iq_motors/features/auth/presentation/providers/auth_providers.dart';
 import 'package:iq_motors/features/storage/presentation/providers/storage_providers.dart';
 import 'package:iq_motors/features/marketplace/data/services/car_bid_service.dart';
+import 'package:iq_motors/shared/widgets/app_loading_indicator.dart';
 
 /// Apple-style bid entry — centered dialog with on-submit Firestore validation.
 class BidInputDialog {
@@ -312,14 +313,7 @@ class _BidFormState extends ConsumerState<_BidForm> {
                 elevation: 0,
               ),
               child: _isSubmitting
-                  ? SizedBox(
-                      width: 22,
-                      height: 22,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: colorScheme.onPrimary,
-                      ),
-                    )
+                  ? AppLoadingIndicator.compact(color: colorScheme.onPrimary)
                   : Text(
                       l10n.submitBid,
                       style: textTheme.labelLarge?.copyWith(

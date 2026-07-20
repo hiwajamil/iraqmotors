@@ -1,4 +1,5 @@
 import 'package:iq_motors/shared/widgets/app_cached_network_image.dart';
+import 'package:iq_motors/shared/widgets/app_loading_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -321,7 +322,7 @@ class _ImageGallery extends StatelessWidget {
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: urls.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 10),
+        separatorBuilder: (_, _) => const SizedBox(width: 10),
         itemBuilder: (context, index) {
           return ClipRRect(
             borderRadius: BorderRadius.circular(14),
@@ -332,12 +333,12 @@ class _ImageGallery extends StatelessWidget {
               fit: BoxFit.cover,
               memCacheLogicalWidth: 300,
               memCacheLogicalHeight: 220,
-              placeholder: (_, __) => Container(
+              placeholder: (_, _) => Container(
                 color: divider,
                 alignment: Alignment.center,
-                child: const CircularProgressIndicator(strokeWidth: 2),
+                child: const AppLoadingIndicator.standard(),
               ),
-              errorWidget: (_, __, ___) => Container(
+              errorWidget: (_, _, _) => Container(
                 color: divider,
                 child: const Icon(Icons.directions_car_outlined, size: 48),
               ),
@@ -500,14 +501,7 @@ class _BottomActionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final child = isLoading
-        ? SizedBox(
-            width: 20,
-            height: 20,
-            child: CircularProgressIndicator(
-              strokeWidth: 2,
-              color: fg,
-            ),
-          )
+        ? AppLoadingIndicator.compact(color: fg)
         : Text(
             label,
             style: textTheme.labelLarge?.copyWith(

@@ -168,7 +168,7 @@ class CarBidService {
           bidAmountField: newBid,
           bidBidderNameField: resolvedName,
           bidBidderPhoneField: resolvedPhone,
-          if (userId != null) bidBidderIdField: userId,
+          bidBidderIdField: ?userId,
           bidCreatedAtField: FieldValue.serverTimestamp(),
         });
 
@@ -176,7 +176,7 @@ class CarBidService {
           final updates = <String, dynamic>{
             highestBidField: newBid,
             lastBidAtField: FieldValue.serverTimestamp(),
-            if (userId != null) lastBidByField: userId,
+            lastBidByField: ?userId,
           };
 
           // Soft-close anti-sniping protection: if auction ends within 60s, extend by 2m

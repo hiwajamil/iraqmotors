@@ -28,19 +28,36 @@ class CarMetadataService {
   static const String collectionName = 'car_metadata';
   static const String modelsField = 'models';
 
+  /// In-memory catalog TTL; expired entries refetch on next [loadCatalog].
+  static const Duration sessionCacheTtl = Duration(minutes: 30);
+
   CarMetadataCatalog? _sessionCache;
+  DateTime? _cachedAt;
 
   CollectionReference<Map<String, dynamic>> get _collection =>
       _firestore.collection(collectionName);
 
-  /// Returns cached metadata when available; otherwise loads once per session.
+  bool get _isSessionCacheFresh {
+    final cachedAt = _cachedAt;
+    if (_sessionCache == null || cachedAt == null) return false;
+    return DateTime.now().difference(cachedAt) < sessionCacheTtl;
+  }
+
+  /// Returns cached metadata when fresh; otherwise loads from Firestore.
+  ///
+  /// Normal loads use [Source.serverAndCache] so offline persistence still
+  /// helps. [forceRefresh] hits the server and replaces the session cache.
   Future<CarMetadataCatalog> loadCatalog({bool forceRefresh = false}) async {
-    if (!forceRefresh && _sessionCache != null) {
+    if (!forceRefresh && _isSessionCacheFresh) {
       return _sessionCache!;
     }
 
     try {
-      final snapshot = await _collection.get();
+      final snapshot = await _collection.get(
+        GetOptions(
+          source: forceRefresh ? Source.server : Source.serverAndCache,
+        ),
+      );
       final brands = <String, CarMetadataBrand>{};
 
       for (final doc in snapshot.docs) {
@@ -49,6 +66,7 @@ class CarMetadataService {
       }
 
       _sessionCache = CarMetadataCatalog(brands: brands);
+      _cachedAt = DateTime.now();
       return _sessionCache!;
     } on FirebaseException catch (e) {
       debugPrint('CarMetadataService.loadCatalog FirebaseException: '
@@ -62,7 +80,10 @@ class CarMetadataService {
     }
   }
 
-  void clearCache() => _sessionCache = null;
+  void clearCache() {
+    _sessionCache = null;
+    _cachedAt = null;
+  }
 
   Future<CarMetadataCatalog> refreshCatalog() =>
       loadCatalog(forceRefresh: true);

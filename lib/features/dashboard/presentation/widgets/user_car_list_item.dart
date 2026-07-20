@@ -322,7 +322,7 @@ class _CarThumbnail extends StatelessWidget {
               imageUrl: imageUrl,
               fit: BoxFit.cover,
               cacheLogicalWidth: width,
-              errorBuilder: (_, __, ___) => Container(
+              errorBuilder: (_, _, _) => Container(
                 width: width,
                 height: height,
                 color: colorScheme.surfaceContainerHighest,
@@ -503,9 +503,9 @@ class _AdMeta extends StatelessWidget {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (posted != null) posted,
+          ?posted,
           if (posted != null && remaining != null) const SizedBox(height: 6),
-          if (remaining != null) remaining,
+          ?remaining,
         ],
       );
     }

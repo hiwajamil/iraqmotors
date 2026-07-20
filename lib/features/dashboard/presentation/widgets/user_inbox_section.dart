@@ -7,6 +7,7 @@ import 'package:iq_motors/core/theme/app_theme.dart';
 import 'package:iq_motors/core/utils/relative_time.dart';
 import 'package:iq_motors/features/dashboard/domain/models/user_message.dart';
 import 'package:iq_motors/features/storage/presentation/providers/storage_providers.dart';
+import 'package:iq_motors/shared/widgets/app_loading_indicator.dart';
 
 /// Live bid-notification inbox for car owners.
 class UserInboxSection extends ConsumerWidget {
@@ -34,15 +35,9 @@ class UserInboxSection extends ConsumerWidget {
       stream: messageService.watchInbox(userId),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Padding(
+          return const AppLoadingCenter(
             padding: EdgeInsets.symmetric(vertical: 80),
-            child: Center(
-              child: SizedBox(
-                width: 32,
-                height: 32,
-                child: CircularProgressIndicator(strokeWidth: 3),
-              ),
-            ),
+            size: AppLoadingSize.large,
           );
         }
 
@@ -64,7 +59,7 @@ class UserInboxSection extends ConsumerWidget {
               ? const NeverScrollableScrollPhysics()
               : null,
           itemCount: messages.length,
-          separatorBuilder: (_, __) => const SizedBox(height: 8),
+          separatorBuilder: (_, _) => const SizedBox(height: 8),
           itemBuilder: (context, index) {
             final message = messages[index];
             return _MessageTile(

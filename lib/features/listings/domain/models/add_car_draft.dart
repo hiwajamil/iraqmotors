@@ -310,7 +310,7 @@ class AddCarDraft {
   /// Firestore-ready map of textual listing fields (images added separately).
   Map<String, dynamic> toFirestoreMap({String? sellerId}) {
     return {
-      if (sellerId != null) 'sellerId': sellerId,
+      'sellerId': ?sellerId,
       'province': province,
       'city': city,
       'brandId': brandId,

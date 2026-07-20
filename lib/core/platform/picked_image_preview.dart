@@ -7,6 +7,7 @@ import 'package:iq_motors/core/config/app_image_cache.dart';
 
 import 'package:iq_motors/features/listings/domain/models/add_car_draft.dart';
 import 'package:iq_motors/features/listings/presentation/add_car_theme.dart';
+import 'package:iq_motors/shared/widgets/app_loading_indicator.dart';
 
 /// Renders a preview for a locally picked or remote listing image.
 ///
@@ -43,7 +44,7 @@ class PickedImagePreview extends StatelessWidget {
           if (loadingProgress == null) return child;
           return _loadingPlaceholder(context, loadingProgress);
         },
-        errorBuilder: (context, __, ___) => _errorPlaceholder(context),
+        errorBuilder: (context, _, _) => _errorPlaceholder(context),
       );
     }
 
@@ -53,7 +54,7 @@ class PickedImagePreview extends StatelessWidget {
       width: double.infinity,
       height: double.infinity,
       gaplessPlayback: true,
-      errorBuilder: (context, __, ___) => _errorPlaceholder(context),
+      errorBuilder: (context, _, _) => _errorPlaceholder(context),
     );
   }
 
@@ -65,14 +66,9 @@ class PickedImagePreview extends StatelessWidget {
     return ColoredBox(
       color: AddCarTheme.inputFill(context),
       child: Center(
-        child: SizedBox(
-          width: 24,
-          height: 24,
-          child: CircularProgressIndicator(
-            strokeWidth: 2,
-            value: value,
-            color: AddCarTheme.focus(context),
-          ),
+        child: AppLoadingIndicator.standard(
+          value: value,
+          color: AddCarTheme.focus(context),
         ),
       ),
     );

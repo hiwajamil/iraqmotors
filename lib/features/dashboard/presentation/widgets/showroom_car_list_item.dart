@@ -108,7 +108,7 @@ class _CarDetailsRow extends StatelessWidget {
               imageUrl: imageUrl,
               fit: BoxFit.cover,
               cacheLogicalWidth: compact ? 72 : 80,
-              errorBuilder: (_, __, ___) => Container(
+              errorBuilder: (_, _, _) => Container(
                 width: compact ? 72 : 80,
                 height: compact ? 54 : 60,
                 color: colorScheme.surfaceContainerHighest,

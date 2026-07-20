@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:iq_motors/core/utils/activity_actions.dart';
+import 'package:iq_motors/core/services/app_cache_service.dart';
 import 'package:iq_motors/features/admin/domain/admin_audit_helper.dart';
 import 'package:iq_motors/core/localization/iraq_location_l10n.dart';
 import 'package:iq_motors/core/localization/l10n_extensions.dart';
@@ -14,6 +15,8 @@ import 'package:iq_motors/features/admin/presentation/providers/admin_settings_p
 import 'package:iq_motors/features/storage/presentation/providers/storage_providers.dart';
 import 'package:iq_motors/features/admin/data/services/admin_database_service.dart';
 import 'package:iq_motors/features/listings/presentation/add_car_theme.dart';
+import 'package:iq_motors/shared/presentation/providers/car_metadata_providers.dart';
+import 'package:iq_motors/shared/widgets/app_loading_indicator.dart';
 
 enum _SettingsCategory { general, packages, cities, security }
 
@@ -158,6 +161,30 @@ class _AdminSettingsViewState extends ConsumerState<AdminSettingsView> {
         backgroundColor: Theme.of(context).colorScheme.error,
       ),
     );
+  }
+
+  Future<void> _clearAppCache() async {
+    try {
+      await ref.read(appCacheServiceProvider).clearAll();
+      ref.invalidate(carMetadataProvider);
+      if (!mounted) return;
+      final scheme = Theme.of(context).colorScheme;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Image and metadata cache cleared.',
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: scheme.onInverseSurface,
+                ),
+          ),
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: AddCarTheme.success(context),
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      _showError('Failed to clear cache: $e');
+    }
   }
 
   Future<void> _addCity() async {
@@ -427,9 +454,8 @@ class _AdminSettingsViewState extends ConsumerState<AdminSettingsView> {
         ),
         const SizedBox(height: 20),
         if (_isLoading)
-          const Padding(
+          const AppLoadingCenter(
             padding: EdgeInsets.symmetric(vertical: 60),
-            child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
           )
         else
           _SettingsCard(
@@ -438,6 +464,7 @@ class _AdminSettingsViewState extends ConsumerState<AdminSettingsView> {
                   l10n: l10n,
                   isMaintenanceMode: _config?.isMaintenanceMode ?? false,
                   onToggleMaintenance: _toggleMaintenance,
+                  onClearCache: _clearAppCache,
                 ),
               _SettingsCategory.packages => _PackagesSection(
                   l10n: l10n,
@@ -543,15 +570,18 @@ class _GeneralSection extends StatelessWidget {
     required this.l10n,
     required this.isMaintenanceMode,
     required this.onToggleMaintenance,
+    required this.onClearCache,
   });
 
   final AppLocalizations l10n;
   final bool isMaintenanceMode;
   final ValueChanged<bool> onToggleMaintenance;
+  final VoidCallback onClearCache;
 
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -567,18 +597,36 @@ class _GeneralSection extends StatelessWidget {
         SwitchListTile(
           value: isMaintenanceMode,
           onChanged: onToggleMaintenance,
-          title: const Text(
+          title: Text(
             'Platform Maintenance Mode',
-            style: TextStyle(fontWeight: FontWeight.w600),
+            style: textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
           ),
-          subtitle: const Text(
+          subtitle: Text(
             'Restricts platform access for non-admin users during system maintenance.',
+            style: textTheme.bodySmall,
           ),
           secondary: Icon(
             Icons.build_circle_outlined,
             color: isMaintenanceMode ? scheme.error : scheme.primary,
           ),
           activeTrackColor: scheme.error,
+        ),
+        Divider(height: 32, color: AddCarTheme.border(context)),
+        ListTile(
+          contentPadding: EdgeInsets.zero,
+          leading: Icon(Icons.cleaning_services_outlined, color: scheme.primary),
+          title: Text(
+            'Clear image & metadata cache',
+            style: textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
+          ),
+          subtitle: Text(
+            'Frees disk and memory image cache and refreshes car brand metadata.',
+            style: textTheme.bodySmall,
+          ),
+          trailing: FilledButton.tonal(
+            onPressed: onClearCache,
+            child: const Text('Clear'),
+          ),
         ),
         Divider(height: 32, color: AddCarTheme.border(context)),
         _InfoRow(
@@ -961,7 +1009,7 @@ class _ListItemRow extends StatelessWidget {
               ],
             ),
           ),
-          if (trailing != null) trailing!,
+          ?trailing,
         ],
       ),
     );
@@ -990,13 +1038,8 @@ class _SaveButton extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 16),
         ),
         child: isLoading
-            ? SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
+            ? AppLoadingIndicator.compact(
+                color: Theme.of(context).colorScheme.onPrimary,
               )
             : Text(label),
       ),

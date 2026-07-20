@@ -9,6 +9,7 @@ import 'package:iq_motors/features/detection/core/camera_image_input.dart';
 import 'package:iq_motors/features/detection/data/services/car_detection_service.dart';
 import 'package:iq_motors/features/detection/domain/models/car_bounding_box.dart';
 import 'package:iq_motors/features/detection/presentation/widgets/detection_overlay_painter.dart';
+import 'package:iq_motors/shared/widgets/app_loading_indicator.dart';
 
 typedef OnDetectionsUpdated = void Function(List<CarBoundingBox> detections);
 typedef OnHighConfidenceDetection = Future<void> Function(
@@ -227,9 +228,7 @@ class CameraViewState extends State<CameraView> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     if (_initializing) {
-      return const Center(
-        child: CircularProgressIndicator(color: Colors.white),
-      );
+      return const AppLoadingCenter(color: Colors.white);
     }
 
     if (_error != null) {

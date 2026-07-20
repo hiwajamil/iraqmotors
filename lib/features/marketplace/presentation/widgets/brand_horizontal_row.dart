@@ -31,7 +31,7 @@ class BrandHorizontalRow extends StatelessWidget {
         ),
         padding: const EdgeInsetsDirectional.symmetric(horizontal: 4),
         itemCount: dummyBrands.length + 1,
-        separatorBuilder: (_, __) => const SizedBox(width: 12),
+        separatorBuilder: (_, _) => const SizedBox(width: 12),
         itemBuilder: (context, index) {
           if (index == dummyBrands.length) {
             return _ViewAllChip(onTap: onViewAllTap);

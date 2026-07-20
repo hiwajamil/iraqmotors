@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:iq_motors/core/config/app_image_cache.dart';
 import 'package:iq_motors/core/services/currency_service.dart';
 import 'package:iq_motors/core/services/firebase_performance_service.dart';
 import 'package:iq_motors/features/marketplace/data/services/car_notification_service.dart';
@@ -38,9 +39,7 @@ Future<void> main() async {
     WidgetsFlutterBinding.ensureInitialized();
 
     try {
-      // Optimize Flutter image cache limits for smooth 60/120fps scrolling.
-      PaintingBinding.instance.imageCache.maximumSize = 250;
-      PaintingBinding.instance.imageCache.maximumSizeBytes = 100 * 1024 * 1024;
+      AppImageCacheManager.configurePaintingCache();
 
       // Parallelize core startup configurations.
       await Future.wait([

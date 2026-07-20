@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:iq_motors/core/config/app_image_cache.dart';
 import 'package:iq_motors/shared/models/car_brand.dart';
+import 'package:iq_motors/shared/widgets/app_loading_indicator.dart';
 
 /// Renders a high-fidelity vector SVG brand logo with automated raster PNG fallback.
 class BrandLogoImage extends StatefulWidget {
@@ -83,7 +84,7 @@ class _BrandLogoImageState extends State<BrandLogoImage> {
       maxWidthDiskCache: cacheExtent,
       maxHeightDiskCache: cacheExtent,
       cacheManager: AppImageCacheManager.instance,
-      placeholder: (_, __) => _buildPlaceholder(),
+      placeholder: (_, _) => _buildPlaceholder(),
       errorWidget: (context, error, stackTrace) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (mounted && _attemptIndex < _sourceUrls.length) {
@@ -97,10 +98,10 @@ class _BrandLogoImageState extends State<BrandLogoImage> {
 
   Widget _buildPlaceholder() {
     return Center(
-      child: SizedBox(
-        width: widget.size * 0.3,
-        height: widget.size * 0.3,
-        child: const CircularProgressIndicator(strokeWidth: 2),
+      child: AppLoadingIndicator(
+        size: widget.size <= 40
+            ? AppLoadingSize.compact
+            : AppLoadingSize.standard,
       ),
     );
   }

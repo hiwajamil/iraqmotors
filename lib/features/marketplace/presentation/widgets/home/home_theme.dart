@@ -39,7 +39,7 @@ class HomeSectionTitle extends StatelessWidget {
               ),
             ),
           ),
-          if (trailing != null) trailing!,
+          ?trailing,
         ],
       ),
     );

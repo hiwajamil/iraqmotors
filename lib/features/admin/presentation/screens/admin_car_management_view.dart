@@ -11,6 +11,7 @@ import 'package:iq_motors/shared/data/services/car_metadata_service.dart';
 import 'package:iq_motors/shared/domain/models/car_metadata.dart';
 import 'package:iq_motors/shared/presentation/providers/car_metadata_providers.dart';
 import 'package:iq_motors/shared/widgets/car_network_image.dart';
+import 'package:iq_motors/shared/widgets/app_loading_indicator.dart';
 
 /// Super-admin Brand → Model → Trim manager for `car_metadata`.
 class AdminCarManagementView extends ConsumerStatefulWidget {
@@ -418,9 +419,7 @@ class _AdminCarManagementViewState
         const SizedBox(height: 20),
         Expanded(
           child: catalogAsync.when(
-            loading: () => const Center(
-              child: CircularProgressIndicator(strokeWidth: 2),
-            ),
+            loading: () => const AppLoadingCenter(),
             error: (error, _) => _ErrorState(
               message: error.toString(),
               retryLabel: l10n.adminRetry,
@@ -606,7 +605,7 @@ class _DesktopTriplePane extends StatelessWidget {
                           )
                         : ListView.separated(
                             itemCount: brands.length,
-                            separatorBuilder: (_, __) =>
+                            separatorBuilder: (_, _) =>
                                 const SizedBox(height: 8),
                             itemBuilder: (context, index) {
                               final brand = brands[index];
@@ -646,7 +645,7 @@ class _DesktopTriplePane extends StatelessWidget {
                     ? _EmptyHint(message: l10n.adminCarMetaNoModels)
                     : ListView.separated(
                         itemCount: models.length,
-                        separatorBuilder: (_, __) =>
+                        separatorBuilder: (_, _) =>
                             const SizedBox(height: 8),
                         itemBuilder: (context, index) {
                           final model = models[index];
@@ -675,7 +674,7 @@ class _DesktopTriplePane extends StatelessWidget {
                     ? _EmptyHint(message: l10n.adminCarMetaNoTrims)
                     : ListView.separated(
                         itemCount: trims.length,
-                        separatorBuilder: (_, __) =>
+                        separatorBuilder: (_, _) =>
                             const SizedBox(height: 8),
                         itemBuilder: (context, index) {
                           final trim = trims[index];
@@ -786,7 +785,7 @@ class _MobileDrillDown extends StatelessWidget {
                       )
                     : ListView.separated(
                         itemCount: brands.length,
-                        separatorBuilder: (_, __) =>
+                        separatorBuilder: (_, _) =>
                             const SizedBox(height: 8),
                         itemBuilder: (context, index) {
                           final brand = brands[index];
@@ -824,7 +823,7 @@ class _MobileDrillDown extends StatelessWidget {
             ? _EmptyHint(message: l10n.adminCarMetaNoModels)
             : ListView.separated(
                 itemCount: models.length,
-                separatorBuilder: (_, __) => const SizedBox(height: 8),
+                separatorBuilder: (_, _) => const SizedBox(height: 8),
                 itemBuilder: (context, index) {
                   final model = models[index];
                   return _SimpleRow(
@@ -853,7 +852,7 @@ class _MobileDrillDown extends StatelessWidget {
           ? _EmptyHint(message: l10n.adminCarMetaNoTrims)
           : ListView.separated(
               itemCount: trims.length,
-              separatorBuilder: (_, __) => const SizedBox(height: 8),
+              separatorBuilder: (_, _) => const SizedBox(height: 8),
               itemBuilder: (context, index) {
                 final trim = trims[index];
                 return _SimpleRow(
@@ -896,7 +895,7 @@ class _PaneCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              if (leading != null) leading!,
+              ?leading,
               Expanded(
                 child: Text.rich(
                   TextSpan(

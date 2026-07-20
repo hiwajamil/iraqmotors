@@ -69,7 +69,7 @@ class _WishlistCarCardState extends State<WishlistCarCard> {
                       CarNetworkImage(
                         imageUrl: widget.imageUrl,
                         fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => Container(
+                        errorBuilder: (_, _, _) => Container(
                           color: colorScheme.surfaceContainerHighest,
                           alignment: Alignment.center,
                           child: Icon(

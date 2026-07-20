@@ -11,6 +11,7 @@ import 'package:iq_motors/core/theme/app_theme.dart';
 import 'package:iq_motors/features/listings/presentation/add_car_theme.dart';
 import 'package:iq_motors/features/listings/presentation/widgets/add_car_form_card.dart';
 import 'package:iq_motors/features/listings/presentation/widgets/add_car_step_header.dart';
+import 'package:iq_motors/shared/widgets/app_loading_indicator.dart';
 
 bool _isFilledPhotoSlot(String? path) =>
     path != null && path.trim().isNotEmpty;
@@ -266,7 +267,7 @@ class _PhotoSlotState extends State<_PhotoSlot> {
               }
               return _buildImageLoadingState(loadingProgress);
             },
-            errorBuilder: (_, __, ___) {
+            errorBuilder: (_, _, _) {
               if (widget.previewBytes != null && widget.previewBytes!.isNotEmpty) {
                 return const SizedBox.shrink();
               }
@@ -288,14 +289,9 @@ class _PhotoSlotState extends State<_PhotoSlot> {
     return ColoredBox(
       color: AddCarTheme.inputFill(context),
       child: Center(
-        child: SizedBox(
-          width: 24,
-          height: 24,
-          child: CircularProgressIndicator(
-            strokeWidth: 2,
-            value: value,
-            color: AddCarTheme.focus(context),
-          ),
+        child: AppLoadingIndicator.standard(
+          value: value,
+          color: AddCarTheme.focus(context),
         ),
       ),
     );
@@ -316,13 +312,8 @@ class _PhotoSlotState extends State<_PhotoSlot> {
     return ColoredBox(
       color: AddCarTheme.cardBg(context).withValues(alpha: 0.72),
       child: Center(
-        child: SizedBox(
-          width: 28,
-          height: 28,
-          child: CircularProgressIndicator(
-            strokeWidth: 2.5,
-            color: AddCarTheme.focus(context),
-          ),
+        child: AppLoadingIndicator.standard(
+          color: AddCarTheme.focus(context),
         ),
       ),
     );

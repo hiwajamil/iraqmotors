@@ -8,6 +8,7 @@ import 'package:iq_motors/core/theme/app_theme.dart';
 import 'package:iq_motors/features/admin/domain/admin_audit_helper.dart';
 import 'package:iq_motors/features/listings/presentation/add_car_theme.dart';
 import 'package:iq_motors/features/storage/presentation/providers/storage_providers.dart';
+import 'package:iq_motors/shared/widgets/app_loading_indicator.dart';
 
 /// Lists all showrooms registered in a given governorate with search and details actions.
 class AdminShowroomListDetailScreen extends ConsumerStatefulWidget {
@@ -303,9 +304,7 @@ class _AdminShowroomListDetailScreenState
               future: _showroomsFuture,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  );
+                  return const AppLoadingCenter();
                 }
 
                 if (snapshot.hasError) {
@@ -359,7 +358,7 @@ class _AdminShowroomListDetailScreenState
                 return ListView.separated(
                   padding: const EdgeInsetsDirectional.fromSTEB(20, 8, 20, 24),
                   itemCount: showrooms.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 10),
+                  separatorBuilder: (_, _) => const SizedBox(height: 10),
                   itemBuilder: (context, index) {
                     final item = showrooms[index];
                     return _ShowroomListTile(

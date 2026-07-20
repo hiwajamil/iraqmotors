@@ -10,6 +10,7 @@ import 'package:iq_motors/l10n/app_localizations.dart';
 import 'package:iq_motors/features/admin/domain/models/admin_dashboard_analytics.dart';
 import 'package:iq_motors/features/admin/domain/models/analytics_date_range.dart';
 import 'package:iq_motors/features/admin/presentation/providers/admin_settings_provider.dart';
+import 'package:iq_motors/shared/widgets/app_loading_indicator.dart';
 
 /// Analytics and revenue reports for the super-admin dashboard.
 class AdminReportsView extends ConsumerStatefulWidget {
@@ -509,14 +510,7 @@ class _GenerateReportButton extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 16),
       ),
       icon: isLoading
-          ? SizedBox(
-              width: 18,
-              height: 18,
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-                color: scheme.onPrimary,
-              ),
-            )
+          ? AppLoadingIndicator.compact(color: scheme.onPrimary)
           : const Icon(Icons.insights_rounded, size: 20),
       label: Text(label),
     );
@@ -593,13 +587,7 @@ class _CardLoadingShell extends StatelessWidget {
               borderRadius: BorderRadius.circular(20),
               child: ColoredBox(
                 color: scheme.surface.withValues(alpha: 0.55),
-                child: const Center(
-                  child: SizedBox(
-                    width: 28,
-                    height: 28,
-                    child: CircularProgressIndicator(strokeWidth: 2.5),
-                  ),
-                ),
+                child: const AppLoadingCenter(),
               ),
             ),
           ),

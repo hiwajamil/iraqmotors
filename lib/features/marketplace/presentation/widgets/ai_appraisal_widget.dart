@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:iq_motors/core/localization/l10n_extensions.dart';
 import 'package:iq_motors/features/marketplace/data/services/car_appraisal_service.dart';
+import 'package:iq_motors/shared/widgets/app_loading_indicator.dart';
 
 // ---------------------------------------------------------------------------
 // Provider
@@ -68,13 +69,8 @@ class _AiAppraisalButtonState extends ConsumerState<AiAppraisalButton> {
       child: FilledButton.icon(
         onPressed: _loading ? null : _onTap,
         icon: _loading
-            ? SizedBox(
-                width: 18,
-                height: 18,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: colorScheme.onSurface.withValues(alpha: 0.38),
-                ),
+            ? AppLoadingIndicator.compact(
+                color: colorScheme.onSurface.withValues(alpha: 0.38),
               )
             : const Icon(Icons.auto_awesome_rounded, size: 20),
         label: Text(

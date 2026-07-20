@@ -17,6 +17,7 @@ import 'package:iq_motors/features/marketplace/presentation/widgets/home/home_pa
 import 'package:iq_motors/features/marketplace/presentation/widgets/home/home_recommended_section.dart';
 import 'package:iq_motors/features/marketplace/presentation/widgets/home/home_theme.dart';
 import 'package:iq_motors/features/marketplace/presentation/widgets/premium_car_card.dart';
+import 'package:iq_motors/shared/widgets/app_loading_indicator.dart';
 import 'package:iq_motors/features/auth/presentation/screens/auth_screen.dart';
 import 'package:iq_motors/features/marketplace/presentation/screens/advanced_filter_screen.dart';
 import 'package:iq_motors/features/marketplace/presentation/screens/car_details_screen.dart';
@@ -115,19 +116,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     return activeAds.when(
       loading: () => [
         const SliverToBoxAdapter(
-          child: Padding(
+          child: AppLoadingCenter(
             padding: EdgeInsets.symmetric(vertical: 72),
-            child: Center(
-              child: SizedBox(
-                width: 28,
-                height: 28,
-                child: CircularProgressIndicator(strokeWidth: 2.5),
-              ),
-            ),
           ),
         ),
       ],
-      error: (_, __) => [
+      error: (_, _) => [
         SliverToBoxAdapter(
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 72),
@@ -330,7 +324,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     final l10n = context.l10n;
     final navLinks = [l10n.navAllModels, l10n.navTuning, l10n.navShowrooms];
     final filterState = ref.watch(filterStateProvider);
-    ref.listen(filterStateProvider, (_, __) {
+    ref.listen(filterStateProvider, (_, _) {
       if (_currentPage != 1 && mounted) {
         setState(() => _currentPage = 1);
       }

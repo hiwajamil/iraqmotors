@@ -11,6 +11,7 @@ import 'package:iq_motors/core/localization/l10n_extensions.dart';
 import 'package:iq_motors/core/theme/app_theme.dart';
 import 'package:iq_motors/shared/data/add_car_form_options.dart';
 import 'package:iq_motors/shared/data/iraq_locations.dart';
+import 'package:iq_motors/shared/widgets/app_loading_indicator.dart';
 import 'package:iq_motors/features/auth/domain/models/user_profile.dart';
 import 'package:iq_motors/features/auth/presentation/providers/auth_providers.dart';
 import 'package:iq_motors/features/storage/presentation/providers/storage_providers.dart';
@@ -668,15 +669,9 @@ class _UserDashboardScreenState extends ConsumerState<UserDashboardScreen> {
 
   Widget _buildActiveSection({required bool isMobile}) {
     if (_isLoading) {
-      return const Padding(
+      return const AppLoadingCenter(
         padding: EdgeInsets.symmetric(vertical: 80),
-        child: Center(
-          child: SizedBox(
-            width: 32,
-            height: 32,
-            child: CircularProgressIndicator(strokeWidth: 3),
-          ),
-        ),
+        size: AppLoadingSize.large,
       );
     }
 
@@ -1319,7 +1314,7 @@ class _MyAdsSection extends StatelessWidget {
                       primary: false,
                       physics: const NeverScrollableScrollPhysics(),
                       itemCount: ads.length,
-                      separatorBuilder: (_, __) => const Divider(),
+                      separatorBuilder: (_, _) => const Divider(),
                       itemBuilder: (context, index) {
                         final ad = ads[index];
                         final rawStatus = ad['status']?.toString() ??
@@ -1580,9 +1575,8 @@ class __UserSettingsSectionState extends ConsumerState<_UserSettingsSection> {
     final profileAsync = ref.watch(userProfileProvider);
 
     return profileAsync.when(
-      loading: () => const Padding(
+      loading: () => const AppLoadingCenter(
         padding: EdgeInsets.symmetric(vertical: 60),
-        child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
       ),
       error: (err, _) => Padding(
         padding: const EdgeInsets.all(24),
@@ -1744,14 +1738,7 @@ class __UserSettingsSectionState extends ConsumerState<_UserSettingsSection> {
                       onPressed:
                           _isSavingProfile ? null : () => _saveProfile(profile.uid),
                       icon: _isSavingProfile
-                          ? const SizedBox(
-                              width: 16,
-                              height: 16,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: Colors.white,
-                              ),
-                            )
+                          ? const AppLoadingIndicator.compact(color: Colors.white)
                           : const Icon(Icons.save, size: 18),
                       label: const Text('Save Profile'),
                     ),

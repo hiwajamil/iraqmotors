@@ -45,7 +45,7 @@ class SellerContactCard extends StatelessWidget {
             width: 48,
             height: 48,
             fit: BoxFit.cover,
-            errorWidget: (_, __, ___) => Container(
+            errorWidget: (_, _, _) => Container(
               width: 48,
               height: 48,
               color: colorScheme.surfaceContainerHighest,
