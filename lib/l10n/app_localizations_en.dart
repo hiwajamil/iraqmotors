@@ -459,10 +459,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get filterToYear => 'To Year';
 
   @override
-  String get filterMinPrice => 'Min Price';
+  String get filterMinPrice => 'From Price';
 
   @override
-  String get filterMaxPrice => 'Max Price';
+  String get filterMaxPrice => 'To Price';
 
   @override
   String get filterMinMileage => 'Min Mileage';
@@ -1057,6 +1057,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsComingSoon => 'Settings coming soon';
+
+  @override
+  String get pwaInstallTitle => 'Install IQ Motors';
+
+  @override
+  String get pwaInstallMessage =>
+      'Add the app to your device for a faster, fullscreen experience.';
+
+  @override
+  String get pwaInstallAction => 'Install';
+
+  @override
+  String get pwaInstallDismiss => 'Not now';
 
   @override
   String get adminApprovalsByCitySubtitle => 'Ad overview by governorate';

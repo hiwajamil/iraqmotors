@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -159,8 +160,7 @@ class _BidFormState extends ConsumerState<_BidForm> {
 
     try {
       final bidService = ref.read(carBidServiceProvider);
-      // ignore: avoid_print
-      print('Attempting to submit offer for carId: ${widget.carId}');
+      if (kDebugMode) debugPrint('Attempting to submit offer for carId: ${widget.carId}');
       await bidService.ensureCarListingForBid(
         carId: widget.carId,
         seedData: widget.car,
@@ -202,6 +202,10 @@ class _BidFormState extends ConsumerState<_BidForm> {
       if (!mounted) return;
       setState(() => _isSubmitting = false);
       _showErrorSnackBar(e.message);
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _isSubmitting = false);
+      rethrow;
     }
   }
 

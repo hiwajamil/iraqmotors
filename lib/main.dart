@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:iq_motors/core/services/currency_service.dart';
 import 'package:iq_motors/core/services/firebase_performance_service.dart';
 import 'package:iq_motors/features/marketplace/data/services/car_notification_service.dart';
 
@@ -17,11 +18,13 @@ import 'package:iq_motors/core/localization/app_localization_delegates.dart';
 import 'package:iq_motors/core/config/firebase_web_config.dart';
 import 'package:iq_motors/core/localization/locale_config.dart';
 import 'package:iq_motors/core/theme/app_theme.dart';
+import 'package:iq_motors/app/providers/currency_provider.dart';
 import 'package:iq_motors/app/providers/locale_provider.dart';
 import 'package:iq_motors/app/providers/theme_provider.dart';
 import 'package:iq_motors/app/screens/coming_soon_screen.dart';
 import 'package:iq_motors/features/marketplace/presentation/screens/home_screen.dart';
 import 'package:iq_motors/app/screens/startup_error_screen.dart';
+import 'package:iq_motors/shared/widgets/pwa_install_banner.dart';
 
 /// True on web when the app is served from the public production domain.
 bool get isProductionWebDomain {
@@ -51,20 +54,24 @@ Future<void> main() async {
         cacheSizeBytes: 104857600,
       );
 
-      // Concurrently load user settings (Locale + ThemeMode).
+      // Concurrently load user settings (Locale + ThemeMode + CurrencyMode).
       Locale initialLocale = AppLocaleConfig.defaultLocale;
       ThemeMode initialThemeMode = ThemeMode.system;
+      CurrencyMode initialCurrencyMode = CurrencyMode.usd;
       try {
         final results = await Future.wait([
           loadSavedLocale(),
           loadSavedThemeMode(),
+          loadSavedCurrencyMode(),
         ]);
         initialLocale = results[0] as Locale;
         initialThemeMode = results[1] as ThemeMode;
+        initialCurrencyMode = results[2] as CurrencyMode;
       } catch (_) {}
 
       setBootLocale(initialLocale);
       setBootThemeMode(initialThemeMode);
+      setBootCurrencyMode(initialCurrencyMode);
 
       // Mount UI immediately for instant startup.
       runApp(
@@ -149,7 +156,9 @@ class IQMotorsApp extends ConsumerWidget {
           value: overlay,
           child: Directionality(
             textDirection: direction,
-            child: child ?? const SizedBox.shrink(),
+            child: PwaInstallHost(
+              child: child ?? const SizedBox.shrink(),
+            ),
           ),
         );
       },

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:iq_motors/core/localization/l10n_extensions.dart';
 import 'package:iq_motors/shared/widgets/app_cached_network_image.dart';
 
@@ -29,6 +30,11 @@ class SellerContactCard extends StatelessWidget {
     final showroom = data['sellerShowroom'] as String? ?? '';
     final avatarUrl = data['sellerAvatar'] as String? ?? '';
     final verified = data['sellerVerified'] as bool? ?? false;
+    // Resolve seller phone from multiple possible field names.
+    final sellerPhone = (data['sellerPhone'] as String?)?.trim() ??
+        (data['phone'] as String?)?.trim() ??
+        '';
+    final hasPhone = sellerPhone.isNotEmpty;
 
     return Row(
       children: [
@@ -99,7 +105,20 @@ class SellerContactCard extends StatelessWidget {
         ),
         const SizedBox(width: 8),
         FilledButton.icon(
-          onPressed: () {},
+          onPressed: hasPhone
+              ? () async {
+                  // Normalize the phone number: strip non-digits, ensure leading +
+                  final digits = sellerPhone.replaceAll(RegExp(r'[^\d+]'), '');
+                  final normalized =
+                      digits.startsWith('+') ? digits : '+964${digits.replaceFirst(RegExp(r'^0'), '')}';
+                  final uri = Uri.parse(
+                    'https://wa.me/$normalized?text=Hi%2C+I%20am%20interested%20in%20your%20car.',
+                  );
+                  if (await canLaunchUrl(uri)) {
+                    await launchUrl(uri, mode: LaunchMode.externalApplication);
+                  }
+                }
+              : null,
           icon: const FaIcon(FontAwesomeIcons.whatsapp, size: 16),
           label: const Text('Contact'),
           style: FilledButton.styleFrom(

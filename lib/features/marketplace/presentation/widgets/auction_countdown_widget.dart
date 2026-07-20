@@ -19,7 +19,7 @@ class AuctionCountdownWidget extends StatefulWidget {
 
 class _AuctionCountdownWidgetState extends State<AuctionCountdownWidget>
     with SingleTickerProviderStateMixin {
-  late Timer _timer;
+  Timer? _timer;
   late Duration _remaining;
   late AnimationController _pulseController;
 
@@ -32,7 +32,15 @@ class _AuctionCountdownWidgetState extends State<AuctionCountdownWidget>
       duration: const Duration(milliseconds: 900),
     )..repeat(reverse: true);
 
-    _startTimer();
+    if (_remaining.isNegative) {
+      // Auction already ended — no need to start a timer; notify after first frame.
+      _remaining = Duration.zero;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) widget.onEnded?.call();
+      });
+    } else {
+      _startTimer();
+    }
   }
 
   void _startTimer() {
@@ -40,7 +48,7 @@ class _AuctionCountdownWidgetState extends State<AuctionCountdownWidget>
       if (!mounted) return;
       final newRemaining = widget.endTime.difference(DateTime.now());
       if (newRemaining.isNegative) {
-        _timer.cancel();
+        _timer?.cancel();
         setState(() => _remaining = Duration.zero);
         widget.onEnded?.call();
       } else {
@@ -51,7 +59,7 @@ class _AuctionCountdownWidgetState extends State<AuctionCountdownWidget>
 
   @override
   void dispose() {
-    _timer.cancel();
+    _timer?.cancel();
     _pulseController.dispose();
     super.dispose();
   }

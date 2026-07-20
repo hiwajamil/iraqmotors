@@ -961,13 +961,13 @@ abstract class AppLocalizations {
   /// No description provided for @filterMinPrice.
   ///
   /// In ku, this message translates to:
-  /// **'کەمترین نرخ'**
+  /// **'لە نرخ'**
   String get filterMinPrice;
 
   /// No description provided for @filterMaxPrice.
   ///
   /// In ku, this message translates to:
-  /// **'زۆرترین نرخ'**
+  /// **'بۆ نرخ'**
   String get filterMaxPrice;
 
   /// No description provided for @filterMinMileage.
@@ -2097,6 +2097,30 @@ abstract class AppLocalizations {
   /// In ku, this message translates to:
   /// **'ڕێکخستنەکان بەزووی زیاد دەکرێت'**
   String get settingsComingSoon;
+
+  /// No description provided for @pwaInstallTitle.
+  ///
+  /// In ku, this message translates to:
+  /// **'دامەزراندنی IQ Motors'**
+  String get pwaInstallTitle;
+
+  /// No description provided for @pwaInstallMessage.
+  ///
+  /// In ku, this message translates to:
+  /// **'ئەپەکە زیاد بکە بۆ ئامێرەکەت بۆ ئەزموونێکی خێراتر و تەواو شاشە.'**
+  String get pwaInstallMessage;
+
+  /// No description provided for @pwaInstallAction.
+  ///
+  /// In ku, this message translates to:
+  /// **'دامەزراندن'**
+  String get pwaInstallAction;
+
+  /// No description provided for @pwaInstallDismiss.
+  ///
+  /// In ku, this message translates to:
+  /// **'ئێستا نا'**
+  String get pwaInstallDismiss;
 
   /// No description provided for @adminApprovalsByCitySubtitle.
   ///

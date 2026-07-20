@@ -457,10 +457,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get filterToYear => 'إلى سنة';
 
   @override
-  String get filterMinPrice => 'أقل سعر';
+  String get filterMinPrice => 'من سعر';
 
   @override
-  String get filterMaxPrice => 'أعلى سعر';
+  String get filterMaxPrice => 'إلى سعر';
 
   @override
   String get filterMinMileage => 'أقل مسافة';
@@ -1053,6 +1053,19 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get settingsComingSoon => 'الإعدادات قريباً';
+
+  @override
+  String get pwaInstallTitle => 'تثبيت IQ Motors';
+
+  @override
+  String get pwaInstallMessage =>
+      'أضف التطبيق إلى جهازك لتجربة أسرع بملء الشاشة.';
+
+  @override
+  String get pwaInstallAction => 'تثبيت';
+
+  @override
+  String get pwaInstallDismiss => 'ليس الآن';
 
   @override
   String get adminApprovalsByCitySubtitle =>

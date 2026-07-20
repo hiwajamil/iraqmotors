@@ -463,10 +463,10 @@ class AppLocalizationsKu extends AppLocalizations {
   String get filterToYear => 'بۆ ساڵی';
 
   @override
-  String get filterMinPrice => 'کەمترین نرخ';
+  String get filterMinPrice => 'لە نرخ';
 
   @override
-  String get filterMaxPrice => 'زۆرترین نرخ';
+  String get filterMaxPrice => 'بۆ نرخ';
 
   @override
   String get filterMinMileage => 'کەمترین کیلۆمەتر';
@@ -1063,6 +1063,19 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get settingsComingSoon => 'ڕێکخستنەکان بەزووی زیاد دەکرێت';
+
+  @override
+  String get pwaInstallTitle => 'دامەزراندنی IQ Motors';
+
+  @override
+  String get pwaInstallMessage =>
+      'ئەپەکە زیاد بکە بۆ ئامێرەکەت بۆ ئەزموونێکی خێراتر و تەواو شاشە.';
+
+  @override
+  String get pwaInstallAction => 'دامەزراندن';
+
+  @override
+  String get pwaInstallDismiss => 'ئێستا نا';
 
   @override
   String get adminApprovalsByCitySubtitle =>
