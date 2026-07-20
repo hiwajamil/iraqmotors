@@ -293,10 +293,10 @@ packages:
     dependency: "direct main"
     description:
       name: file_picker
-      sha256: "57d9a1dd5063f85fa3107fb42d1faffda52fdc948cefd5fe5ea85267a5fc7343"
+      sha256: f13a03000d942e476bc1ff0a736d2e9de711d2f89a95cd4c1d88f861c3348387
       url: "https://pub.dev"
     source: hosted
-    version: "10.3.10"
+    version: "11.0.2"
   file_selector_linux:
     dependency: transitive
     description:
@@ -538,10 +538,10 @@ packages:
     dependency: "direct dev"
     description:
       name: flutter_lints
-      sha256: "5398f14efa795ffb7a33e9b6a08798b26a180edac4ad7db3f231e40f82ce11e1"
+      sha256: "3105dc8492f6183fb076ccf1f351ac3d60564bff92e20bfc4af9cc1651f4e7e1"
       url: "https://pub.dev"
     source: hosted
-    version: "5.0.0"
+    version: "6.0.0"
   flutter_localizations:
     dependency: "direct main"
     description: flutter
@@ -585,10 +585,10 @@ packages:
     dependency: "direct main"
     description:
       name: font_awesome_flutter
-      sha256: b9011df3a1fa02993630b8fb83526368cf2206a711259830325bab2f1d2a4eb0
+      sha256: "09dcde8ab90ffae1a7d65ff2ef96fc62a17ad9d0ce7c127b317ded676b0d5935"
       url: "https://pub.dev"
     source: hosted
-    version: "10.12.0"
+    version: "11.0.0"
   frontend_server_client:
     dependency: transitive
     description:
@@ -617,26 +617,26 @@ packages:
     dependency: "direct main"
     description:
       name: google_mlkit_commons
-      sha256: "3e69fea4211727732cc385104e675ad1e40b29f12edd492ee52fa108423a6124"
+      sha256: c7fc384bdb66c3b83e24e3a41818e61d7a378d900f65f5e775344fbca95a0917
       url: "https://pub.dev"
     source: hosted
-    version: "0.11.1"
+    version: "0.12.0"
   google_mlkit_image_labeling:
     dependency: "direct main"
     description:
       name: google_mlkit_image_labeling
-      sha256: d744d1844c674aae860262f3bb22f5628fd96eaa9d482e6b8d64974efd003dac
+      sha256: "63c99815d74c880cf98d13212d16a3a24f7020b98ce0387ad93326fbc4a13df9"
       url: "https://pub.dev"
     source: hosted
-    version: "0.14.2"
+    version: "0.15.0"
   google_mlkit_object_detection:
     dependency: "direct main"
     description:
       name: google_mlkit_object_detection
-      sha256: "9dd35886972e18747e22098f8ebee78d30716a99a789bb2e3a65a24229e031e7"
+      sha256: a97f01226d18d246639d916080b15ebf8c482046b88ccc271f8d275dafe31266
       url: "https://pub.dev"
     source: hosted
-    version: "0.15.1"
+    version: "0.16.0"
   http:
     dependency: "direct main"
     description:
@@ -793,10 +793,10 @@ packages:
     dependency: transitive
     description:
       name: lints
-      sha256: c35bb79562d980e9a453fc715854e1ed39e24e7d0297a880ef54e17f9874a9d7
+      sha256: "12f842a479589fea194fe5c5a3095abc7be0c1f2ddfa9a0e76aed1dbd26a87df"
       url: "https://pub.dev"
     source: hosted
-    version: "5.1.1"
+    version: "6.1.0"
   logging:
     dependency: transitive
     description:
