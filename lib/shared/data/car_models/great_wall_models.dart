@@ -1,34 +1,25 @@
 import 'package:iq_motors/shared/models/localized_car_model.dart';
 
-const List<LocalizedCarModel> greatWallModels = [
-  LocalizedCarModel(
-    id: 'wingle_5',
-    ku: 'وینگل 5',
-    en: 'Wingle 5',
-    ar: 'وينجل 5',
-  ),
-  LocalizedCarModel(id: 'florid', ku: 'فلۆرید', en: 'Florid', ar: 'فلوريد'),
+const List<LocalizedCarModel> GreatWallModels = [
   LocalizedCarModel(id: 'deer', ku: 'دێر', en: 'Deer', ar: 'دير'),
-  LocalizedCarModel(id: 'wingle', ku: 'وینگل', en: 'Wingle', ar: 'وينجل'),
+  LocalizedCarModel(id: 'florid', ku: 'فلۆرید', en: 'Florid', ar: 'فلوريد'),
+  LocalizedCarModel(id: 'great_wall_great_american_chopper', ku: 'GREAT AMERICAN CHOPPER', en: 'GREAT AMERICAN CHOPPER', ar: 'GREAT AMERICAN CHOPPER'),
+  LocalizedCarModel(id: 'great_wall_great_basin_industries_inc', ku: 'Great Basin Industries Inc', en: 'Great Basin Industries Inc', ar: 'Great Basin Industries Inc'),
+  LocalizedCarModel(id: 'great_wall_great_dane_trailers', ku: 'Great Dane Trailers', en: 'Great Dane Trailers', ar: 'Great Dane Trailers'),
+  LocalizedCarModel(id: 'great_wall_great_day_golf_carts_of_oib', ku: 'Great Day Golf Carts of OIB', en: 'Great Day Golf Carts of OIB', ar: 'Great Day Golf Carts of OIB'),
+  LocalizedCarModel(id: 'great_wall_great_lakes_cargo', ku: 'Great Lakes Cargo', en: 'Great Lakes Cargo', ar: 'Great Lakes Cargo'),
+  LocalizedCarModel(id: 'great_wall_great_lakes_choppers', ku: 'Great Lakes Choppers', en: 'Great Lakes Choppers', ar: 'Great Lakes Choppers'),
+  LocalizedCarModel(id: 'great_wall_great_lakes_stage', ku: 'GREAT LAKES STAGE', en: 'GREAT LAKES STAGE', ar: 'GREAT LAKES STAGE'),
+  LocalizedCarModel(id: 'great_wall_great_lakes_trailer', ku: 'GREAT LAKES TRAILER', en: 'GREAT LAKES TRAILER', ar: 'GREAT LAKES TRAILER'),
+  LocalizedCarModel(id: 'great_wall_great_lakes_trailers', ku: 'Great Lakes Trailers', en: 'Great Lakes Trailers', ar: 'Great Lakes Trailers'),
+  LocalizedCarModel(id: 'great_wall_great_northern_trailer_works', ku: 'GREAT NORTHERN TRAILER WORKS', en: 'GREAT NORTHERN TRAILER WORKS', ar: 'GREAT NORTHERN TRAILER WORKS'),
+  LocalizedCarModel(id: 'great_wall_great_outdoor_cottages', ku: 'GREAT OUTDOOR COTTAGES', en: 'GREAT OUTDOOR COTTAGES', ar: 'GREAT OUTDOOR COTTAGES'),
+  LocalizedCarModel(id: 'great_wall_great_plains_fabrication', ku: 'GREAT PLAINS FABRICATION', en: 'GREAT PLAINS FABRICATION', ar: 'GREAT PLAINS FABRICATION'),
+  LocalizedCarModel(id: 'great_wall_great_timber_trailers', ku: 'Great Timber Trailers', en: 'Great Timber Trailers', ar: 'Great Timber Trailers'),
+  LocalizedCarModel(id: 'great_wall_great_white_trailers', ku: 'GREAT WHITE TRAILERS', en: 'GREAT WHITE TRAILERS', ar: 'GREAT WHITE TRAILERS'),
+  LocalizedCarModel(id: 'great_wall_great_wolf_trailers', ku: 'GREAT WOLF TRAILERS', en: 'GREAT WOLF TRAILERS', ar: 'GREAT WOLF TRAILERS'),
   LocalizedCarModel(id: 'peri', ku: 'پێری', en: 'Peri', ar: 'بيري'),
-  LocalizedCarModel(id: 'socool', ku: 'سۆکول', en: 'Socool', ar: 'سوكول'),
   LocalizedCarModel(id: 'sing', ku: 'سینگ', en: 'Sing', ar: 'سينغ'),
-  LocalizedCarModel(
-    id: 'voleex_c30',
-    ku: 'ڤۆلیکس C30',
-    en: 'Voleex C30',
-    ar: 'فوليكس C30',
-  ),
-  LocalizedCarModel(
-    id: 'h5_haval',
-    ku: 'H5 هەڤاڵ',
-    en: 'H5 Haval',
-    ar: 'H5 هافال',
-  ),
-  LocalizedCarModel(
-    id: 'cuv_hover',
-    ku: 'CUV هوڤەر',
-    en: 'CUV Hover',
-    ar: 'CUV هوفر',
-  ),
+  LocalizedCarModel(id: 'socool', ku: 'سۆکول', en: 'Socool', ar: 'سوكول'),
+  LocalizedCarModel(id: 'wingle', ku: 'وینگل', en: 'Wingle', ar: 'وينجل'),
 ];

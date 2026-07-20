@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:iq_motors/core/theme/app_theme.dart';
+
 /// Shown when [main] fails before the normal app shell can start.
 class StartupErrorScreen extends StatelessWidget {
   const StartupErrorScreen({
@@ -14,22 +16,30 @@ class StartupErrorScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        backgroundColor: const Color(0xFFF5F5F7),
-        body: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: SelectableText(
-              'IQ Motors could not start.\n\n$error'
-              '${stackTrace == null ? '' : '\n\n$stackTrace'}',
-              style: const TextStyle(
-                fontSize: 14,
-                color: Color(0xFF1D1D1F),
-                height: 1.4,
+      theme: AppTheme.light,
+      darkTheme: AppTheme.dark,
+      themeMode: ThemeMode.system,
+      home: Builder(
+        builder: (context) {
+          final colorScheme = context.colorScheme;
+          final textTheme = context.textTheme;
+          return Scaffold(
+            backgroundColor: colorScheme.surface,
+            body: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: SelectableText(
+                  'IQ Motors could not start.\n\n$error'
+                  '${stackTrace == null ? '' : '\n\n$stackTrace'}',
+                  style: textTheme.bodyMedium?.copyWith(
+                    color: colorScheme.onSurface,
+                    height: 1.4,
+                  ),
+                ),
               ),
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
   }

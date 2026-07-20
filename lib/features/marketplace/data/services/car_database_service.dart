@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 
+import 'package:iq_motors/core/services/firebase_performance_service.dart';
 import 'package:iq_motors/features/admin/domain/models/activity_log.dart';
 import 'package:iq_motors/features/marketplace/domain/models/car.dart';
 import 'package:iq_motors/features/admin/data/services/activity_log_service.dart';
@@ -26,9 +27,9 @@ class CarDatabaseService {
     FirebaseFirestore? firestore,
     R2StorageService? r2Storage,
     ActivityLogService? activityLog,
-  })  : _firestore = firestore ?? FirebaseFirestore.instance,
-        _r2 = r2Storage ?? R2StorageService(),
-        _activityLog = activityLog ?? ActivityLogService();
+  }) : _firestore = firestore ?? FirebaseFirestore.instance,
+       _r2 = r2Storage ?? R2StorageService(),
+       _activityLog = activityLog ?? ActivityLogService();
 
   final FirebaseFirestore _firestore;
   final R2StorageService _r2;
@@ -68,9 +69,7 @@ class CarDatabaseService {
       }
       return _mapsFromQuery(snapshot);
     } on FirebaseException catch (e) {
-      throw CarDatabaseException(
-        e.message ?? 'Failed to fetch user ads.',
-      );
+      throw CarDatabaseException(e.message ?? 'Failed to fetch user ads.');
     } catch (e) {
       throw CarDatabaseException('Failed to fetch user ads: $e');
     }
@@ -87,9 +86,22 @@ class CarDatabaseService {
           .get();
       return _mapsFromQuery(snapshot);
     } on FirebaseException catch (e) {
-      throw CarDatabaseException(
-        e.message ?? 'Failed to fetch favorite ads.',
-      );
+      throw CarDatabaseException(e.message ?? 'Failed to fetch favorite ads.');
+    } catch (e) {
+      throw CarDatabaseException('Failed to fetch favorite ads: $e');
+    }
+  }
+
+  /// Favorite listing IDs only — skips [Car.fromMap] / full map materialization.
+  Future<Set<String>> fetchFavoriteAdIds(String currentUserId) async {
+    try {
+      final snapshot = await _firestore
+          .collection('cars')
+          .where(likedByUsersField, arrayContains: currentUserId)
+          .get();
+      return snapshot.docs.map((doc) => doc.id).toSet();
+    } on FirebaseException catch (e) {
+      throw CarDatabaseException(e.message ?? 'Failed to fetch favorite ads.');
     } catch (e) {
       throw CarDatabaseException('Failed to fetch favorite ads: $e');
     }
@@ -129,9 +141,7 @@ class CarDatabaseService {
         throw CarDatabaseException('Car listing not found.');
       }
     } on FirebaseException catch (e) {
-      throw CarDatabaseException(
-        e.message ?? 'Failed to save favorite.',
-      );
+      throw CarDatabaseException(e.message ?? 'Failed to save favorite.');
     } catch (e) {
       if (e is CarDatabaseException) rethrow;
       throw CarDatabaseException('Failed to save favorite: $e');
@@ -148,9 +158,7 @@ class CarDatabaseService {
         likedByUsersField: FieldValue.arrayRemove([userId]),
       });
     } on FirebaseException catch (e) {
-      throw CarDatabaseException(
-        e.message ?? 'Failed to remove favorite.',
-      );
+      throw CarDatabaseException(e.message ?? 'Failed to remove favorite.');
     } catch (e) {
       throw CarDatabaseException('Failed to remove favorite: $e');
     }
@@ -178,10 +186,10 @@ class CarDatabaseService {
       };
 
       if (draftId != null && draftId.isNotEmpty) {
-        await _firestore.collection('cars').doc(draftId).set(
-              data,
-              SetOptions(merge: true),
-            );
+        await _firestore
+            .collection('cars')
+            .doc(draftId)
+            .set(data, SetOptions(merge: true));
         return draftId;
       }
 
@@ -193,9 +201,7 @@ class CarDatabaseService {
       });
       return doc.id;
     } on FirebaseException catch (e) {
-      throw CarDatabaseException(
-        e.message ?? 'Failed to save listing draft.',
-      );
+      throw CarDatabaseException(e.message ?? 'Failed to save listing draft.');
     } catch (e) {
       throw CarDatabaseException('Failed to save listing draft: $e');
     }
@@ -254,9 +260,7 @@ class CarDatabaseService {
       });
       return doc.id;
     } on FirebaseException catch (e) {
-      throw CarDatabaseException(
-        e.message ?? 'Failed to publish car listing.',
-      );
+      throw CarDatabaseException(e.message ?? 'Failed to publish car listing.');
     } catch (e) {
       throw CarDatabaseException('Failed to publish car listing: $e');
     }
@@ -291,9 +295,7 @@ class CarDatabaseService {
       return ads;
     } on FirebaseException catch (e) {
       debugPrint('Admin Fetch Error: $e');
-      throw CarDatabaseException(
-        e.message ?? 'Failed to fetch pending ads.',
-      );
+      throw CarDatabaseException(e.message ?? 'Failed to fetch pending ads.');
     } catch (e) {
       debugPrint('Admin Fetch Error: $e');
       throw CarDatabaseException('Failed to fetch pending ads: $e');
@@ -315,9 +317,7 @@ class CarDatabaseService {
         await _activityLog.logFromAudit(audit);
       }
     } on FirebaseException catch (e) {
-      throw CarDatabaseException(
-        e.message ?? 'Failed to update ad status.',
-      );
+      throw CarDatabaseException(e.message ?? 'Failed to update ad status.');
     } catch (e) {
       throw CarDatabaseException('Failed to update ad status: $e');
     }
@@ -330,12 +330,8 @@ class CarDatabaseService {
       final users = _firestore.collection('users');
 
       final results = await Future.wait([
-        _countQuery(
-          cars.where(statusField, isEqualTo: statusPending),
-        ),
-        _countQuery(
-          cars.where(statusField, isEqualTo: statusActive),
-        ),
+        _countQuery(cars.where(statusField, isEqualTo: statusPending)),
+        _countQuery(cars.where(statusField, isEqualTo: statusActive)),
         _countQuery(users),
         _countQuery(
           users.where(accountTypeField, isEqualTo: accountTypeShowroom),
@@ -401,9 +397,7 @@ class CarDatabaseService {
     } on R2StorageException catch (e) {
       throw CarDatabaseException(e.message);
     } on FirebaseException catch (e) {
-      throw CarDatabaseException(
-        e.message ?? 'Failed to update car listing.',
-      );
+      throw CarDatabaseException(e.message ?? 'Failed to update car listing.');
     } catch (e) {
       throw CarDatabaseException('Failed to update car listing: $e');
     }
@@ -437,25 +431,11 @@ class CarDatabaseService {
         await _activityLog.logFromAudit(audit);
       }
     } on FirebaseException catch (e) {
-      throw CarDatabaseException(
-        e.message ?? 'Failed to delete car listing.',
-      );
+      throw CarDatabaseException(e.message ?? 'Failed to delete car listing.');
     } catch (e) {
       if (e is CarDatabaseException) rethrow;
       throw CarDatabaseException('Failed to delete car listing: $e');
     }
-  }
-
-  /// Real-time stream of publicly visible car ads (`active` and `sold`).
-  Stream<List<Map<String, dynamic>>> watchActiveAds() {
-    return watchActiveCars().map(
-      (cars) => cars.map((car) => car.toMap()).toList(),
-    );
-  }
-
-  /// Real-time stream of parsed active listings for the home feed.
-  Stream<List<Car>> watchActiveCars() {
-    return watchFilteredActiveCars(const CarFirestoreFilterQuery());
   }
 
   /// Finds active/sold listings matching detected brand, model, and optional year.
@@ -471,10 +451,8 @@ class CarDatabaseService {
         modelKey: modelKey,
         year: year,
       );
-      final snapshot = await _filteredActiveCarsQuery(query).get();
-      final cars = _carsFromSnapshot(snapshot);
-      if (cars.length <= limit) return cars;
-      return cars.sublist(0, limit);
+      final (cars, _) = await fetchFilteredActiveCarsPage(query, limit: limit);
+      return cars;
     } on FirebaseException catch (e) {
       throw CarDatabaseException(
         e.message ?? 'Failed to search listings by detection.',
@@ -484,13 +462,53 @@ class CarDatabaseService {
     }
   }
 
-  /// Real-time stream of active listings with equality filters on Firestore.
-  ///
-  /// Range filters (price, mileage, year range) are applied client-side.
-  Stream<List<Car>> watchFilteredActiveCars(CarFirestoreFilterQuery query) {
-    return _filteredActiveCarsQuery(query)
-        .snapshots()
-        .map(_carsFromSnapshot);
+  /// Server-side count for equality filters (price/mileage/year-range are client-only).
+  Future<int> countFilteredActiveCars(CarFirestoreFilterQuery query) async {
+    try {
+      return await _countQuery(_filteredActiveCarsQuery(query));
+    } on FirebaseException catch (e) {
+      throw CarDatabaseException(
+        e.message ?? 'Failed to count filtered active cars.',
+      );
+    } catch (e) {
+      throw CarDatabaseException('Failed to count filtered active cars: $e');
+    }
+  }
+
+  /// Paginated fetch of active listings with equality filters.
+  /// Returns a tuple of the fetched cars and the last DocumentSnapshot for the next page.
+  Future<(List<Car>, DocumentSnapshot?)> fetchFilteredActiveCarsPage(
+    CarFirestoreFilterQuery query, {
+    DocumentSnapshot? startAfter,
+    int limit = 12,
+  }) async {
+    return FirebasePerformanceService.instance.traceAsync(
+      'fetchFilteredActiveCarsPage',
+      () async {
+        try {
+          Query<Map<String, dynamic>> q = _filteredActiveCarsQuery(
+            query,
+          ).orderBy('createdAt', descending: true).limit(limit);
+
+          if (startAfter != null) {
+            q = q.startAfterDocument(startAfter);
+          }
+
+          final snapshot = await q.get();
+          final cars = _carsFromSnapshot(snapshot);
+
+          final lastDoc = snapshot.docs.isNotEmpty ? snapshot.docs.last : null;
+          return (cars, lastDoc);
+        } on FirebaseException catch (e) {
+          throw CarDatabaseException(
+            e.message ?? 'Failed to fetch paginated active cars.',
+          );
+        } catch (e) {
+          throw CarDatabaseException('Failed to fetch paginated active cars: $e');
+        }
+      },
+      metrics: {'limit': limit},
+    );
   }
 
   Query<Map<String, dynamic>> _filteredActiveCarsQuery(
@@ -596,9 +614,7 @@ class CarDatabaseService {
       if (ads.length <= limit) return ads;
       return ads.sublist(0, limit);
     } on FirebaseException catch (e) {
-      throw CarDatabaseException(
-        e.message ?? 'Failed to fetch trending cars.',
-      );
+      throw CarDatabaseException(e.message ?? 'Failed to fetch trending cars.');
     } catch (e) {
       throw CarDatabaseException('Failed to fetch trending cars: $e');
     }
@@ -620,18 +636,21 @@ class CarDatabaseService {
       for (final interest in interests) {
         if (results.length >= limit) break;
 
+        final remaining = limit - results.length;
         final query = CarFirestoreFilterQuery(
           brandId: interest.brandId,
           modelKey: interest.modelKey,
         );
-        final snapshot = await _filteredActiveCarsQuery(query).get();
-        final cars = _mapsFromQuery(snapshot);
-        cars.sort(_compareByCreatedAtDesc);
+        final (cars, _) = await fetchFilteredActiveCarsPage(
+          query,
+          limit: remaining,
+        );
 
         for (final car in cars) {
-          final id = car['id']?.toString();
+          final map = car.toMap();
+          final id = map['id']?.toString();
           if (id == null || id.isEmpty || !seenIds.add(id)) continue;
-          results.add(car);
+          results.add(map);
           if (results.length >= limit) break;
         }
       }
@@ -649,37 +668,10 @@ class CarDatabaseService {
     }
   }
 
-  /// Lists publicly visible car ads (`status == active`).
-  Future<List<Map<String, dynamic>>> fetchActiveAds() async {
-    try {
-      QuerySnapshot<Map<String, dynamic>> snapshot;
-      try {
-        snapshot = await _activeAdsQuery().get();
-      } on FirebaseException catch (e) {
-        if (e.code != 'failed-precondition') rethrow;
-        snapshot = await _firestore
-            .collection('cars')
-            .where(statusField, whereIn: publicFeedStatuses)
-            .get();
-      }
-      final ads = _mapsFromQuery(snapshot);
-      ads.sort(_compareByCreatedAtDesc);
-      return ads;
-    } on FirebaseException catch (e) {
-      throw CarDatabaseException(
-        e.message ?? 'Failed to fetch active ads.',
-      );
-    } catch (e) {
-      throw CarDatabaseException('Failed to fetch active ads: $e');
-    }
-  }
-
   static List<Map<String, dynamic>> _mapsFromQuery(
     QuerySnapshot<Map<String, dynamic>> snapshot,
   ) {
-    return snapshot.docs
-        .map((doc) => {...doc.data(), 'id': doc.id})
-        .toList();
+    return snapshot.docs.map((doc) => {...doc.data(), 'id': doc.id}).toList();
   }
 
   static List<String> _urlListFromField(dynamic value) {

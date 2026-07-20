@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 
+import 'package:iq_motors/core/theme/app_theme.dart';
+
 /// Centered desktop-style picker for filter dropdowns (year, price, etc.).
 class FilterOptionPickerDialog {
-  static const Color _textPrimary = Color(0xFF1D1D1F);
-  static const Color _textSecondary = Color(0xFF86868B);
-
   static Future<String?> show(
     BuildContext context, {
     required String title,
@@ -12,13 +11,13 @@ class FilterOptionPickerDialog {
     required String Function(String key) resolveLabel,
     required String? valueKey,
   }) {
+    final scheme = context.colorScheme;
     return showDialog<String>(
       context: context,
-      barrierColor: Colors.black.withValues(alpha: 0.35),
+      barrierColor: scheme.scrim.withValues(alpha: 0.35),
       builder: (ctx) => Dialog(
-        backgroundColor: Colors.white,
-        elevation: 24,
-        shadowColor: Colors.black.withValues(alpha: 0.12),
+        backgroundColor: scheme.surfaceContainerHigh,
+        elevation: 2,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
         ),
@@ -44,13 +43,13 @@ class FilterOptionPickerDialog {
     required String Function(String key) resolveLabel,
     required String? valueKey,
   }) {
+    final scheme = context.colorScheme;
     return showDialog<String>(
       context: context,
-      barrierColor: Colors.black.withValues(alpha: 0.35),
+      barrierColor: scheme.scrim.withValues(alpha: 0.35),
       builder: (ctx) => Dialog(
-        backgroundColor: Colors.white,
-        elevation: 24,
-        shadowColor: Colors.black.withValues(alpha: 0.12),
+        backgroundColor: scheme.surfaceContainerHigh,
+        elevation: 2,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
         ),
@@ -85,6 +84,8 @@ class _OptionPickerBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = context.colorScheme;
+    final textTheme = context.textTheme;
     final maxHeight = MediaQuery.sizeOf(context).height * 0.55;
 
     return Column(
@@ -98,19 +99,17 @@ class _OptionPickerBody extends StatelessWidget {
               Expanded(
                 child: Text(
                   title,
-                  style: const TextStyle(
-                    fontSize: 18,
+                  style: textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.w600,
                     letterSpacing: -0.3,
-                    color: FilterOptionPickerDialog._textPrimary,
+                    color: scheme.onSurface,
                   ),
                 ),
               ),
               IconButton(
                 onPressed: () => Navigator.pop(context),
                 icon: const Icon(Icons.close_rounded, size: 22),
-                color: FilterOptionPickerDialog._textSecondary,
-                splashRadius: 20,
+                color: scheme.onSurfaceVariant,
               ),
             ],
           ),
@@ -126,7 +125,7 @@ class _OptionPickerBody extends StatelessWidget {
                 height: 1,
                 indent: 16,
                 endIndent: 16,
-                color: Colors.black.withValues(alpha: 0.06),
+                color: scheme.outlineVariant,
               ),
               itemBuilder: (context, index) {
                 final key = optionKeys[index];
@@ -136,18 +135,17 @@ class _OptionPickerBody extends StatelessWidget {
                   contentPadding: const EdgeInsets.symmetric(horizontal: 16),
                   title: Text(
                     resolveLabel(key),
-                    style: TextStyle(
-                      fontSize: 15,
+                    style: textTheme.bodyLarge?.copyWith(
                       fontWeight:
                           selected ? FontWeight.w600 : FontWeight.w500,
-                      color: FilterOptionPickerDialog._textPrimary,
+                      color: scheme.onSurface,
                     ),
                   ),
                   trailing: selected
-                      ? const Icon(
+                      ? Icon(
                           Icons.check_rounded,
                           size: 20,
-                          color: FilterOptionPickerDialog._textPrimary,
+                          color: scheme.primary,
                         )
                       : null,
                   onTap: () => Navigator.pop(context, key),
@@ -200,6 +198,9 @@ class _SearchablePickerBodyState extends State<_SearchablePickerBody> {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = context.colorScheme;
+    final textTheme = context.textTheme;
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -211,19 +212,17 @@ class _SearchablePickerBodyState extends State<_SearchablePickerBody> {
               Expanded(
                 child: Text(
                   widget.title,
-                  style: const TextStyle(
-                    fontSize: 18,
+                  style: textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.w600,
                     letterSpacing: -0.3,
-                    color: FilterOptionPickerDialog._textPrimary,
+                    color: scheme.onSurface,
                   ),
                 ),
               ),
               IconButton(
                 onPressed: () => Navigator.pop(context),
                 icon: const Icon(Icons.close_rounded, size: 22),
-                color: FilterOptionPickerDialog._textSecondary,
-                splashRadius: 20,
+                color: scheme.onSurfaceVariant,
               ),
             ],
           ),
@@ -233,16 +232,19 @@ class _SearchablePickerBodyState extends State<_SearchablePickerBody> {
           child: TextField(
             controller: _controller,
             onChanged: (v) => setState(() => _query = v),
+            style: textTheme.bodyLarge?.copyWith(color: scheme.onSurface),
             decoration: InputDecoration(
               hintText: widget.searchHint,
-              hintStyle: TextStyle(
-                color: FilterOptionPickerDialog._textSecondary.withValues(
-                  alpha: 0.8,
-                ),
+              hintStyle: textTheme.bodyLarge?.copyWith(
+                color: scheme.onSurfaceVariant.withValues(alpha: 0.85),
               ),
-              prefixIcon: const Icon(Icons.search_rounded, size: 20),
+              prefixIcon: Icon(
+                Icons.search_rounded,
+                size: 20,
+                color: scheme.onSurfaceVariant,
+              ),
               filled: true,
-              fillColor: const Color(0xFFF5F5F7),
+              fillColor: scheme.surfaceContainerHighest,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide.none,
@@ -263,7 +265,7 @@ class _SearchablePickerBodyState extends State<_SearchablePickerBody> {
               height: 1,
               indent: 16,
               endIndent: 16,
-              color: Colors.black.withValues(alpha: 0.06),
+              color: scheme.outlineVariant,
             ),
             itemBuilder: (context, index) {
               final key = _filtered[index];
@@ -272,18 +274,17 @@ class _SearchablePickerBodyState extends State<_SearchablePickerBody> {
                 contentPadding: const EdgeInsets.symmetric(horizontal: 16),
                 title: Text(
                   widget.resolveLabel(key),
-                  style: TextStyle(
-                    fontSize: 15,
+                  style: textTheme.bodyLarge?.copyWith(
                     fontWeight:
                         selected ? FontWeight.w600 : FontWeight.w500,
-                    color: FilterOptionPickerDialog._textPrimary,
+                    color: scheme.onSurface,
                   ),
                 ),
                 trailing: selected
-                    ? const Icon(
+                    ? Icon(
                         Icons.check_rounded,
                         size: 20,
-                        color: FilterOptionPickerDialog._textPrimary,
+                        color: scheme.primary,
                       )
                     : null,
                 onTap: () => Navigator.pop(context, key),

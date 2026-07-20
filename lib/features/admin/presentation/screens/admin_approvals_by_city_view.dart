@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:iq_motors/core/localization/iraq_location_l10n.dart';
 import 'package:iq_motors/core/localization/l10n_extensions.dart';
+import 'package:iq_motors/core/theme/app_theme.dart';
 import 'package:iq_motors/shared/data/iraq_locations.dart';
 import 'package:iq_motors/features/storage/presentation/providers/storage_providers.dart';
 
@@ -25,9 +26,6 @@ class AdminApprovalsByCityView extends ConsumerStatefulWidget {
 
 class _AdminApprovalsByCityViewState
     extends ConsumerState<AdminApprovalsByCityView> {
-  static const Color _textPrimary = Color(0xFF1D1D1F);
-  static const Color _textSecondary = Color(0xFF86868B);
-
   late Future<Map<String, Map<String, int>>> _cityStatsFuture;
 
   @override
@@ -53,6 +51,7 @@ class _AdminApprovalsByCityViewState
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final scheme = context.colorScheme;
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -71,17 +70,19 @@ class _AdminApprovalsByCityViewState
               children: [
                 Text(
                   l10n.navApprovals,
-                  style: TextStyle(
-                    fontSize: widget.isMobile ? 24 : 28,
+                  style: (widget.isMobile
+                          ? context.textTheme.headlineSmall
+                          : context.textTheme.headlineMedium)
+                      ?.copyWith(
                     fontWeight: FontWeight.w700,
-                    color: _textPrimary,
+                    color: scheme.onSurface,
                     height: 1.25,
                   ),
                 ),
                 const SizedBox(height: 6),
                 Text(
                   l10n.adminApprovalsByCitySubtitle,
-                  style: const TextStyle(fontSize: 14, color: _textSecondary),
+                  style: TextStyle(fontSize: 14, color: scheme.onSurfaceVariant),
                 ),
                 const SizedBox(height: 28),
                 if (snapshot.hasError)
@@ -101,9 +102,9 @@ class _AdminApprovalsByCityViewState
                       mainAxisSpacing: 16,
                       mainAxisExtent: 196,
                     ),
-            itemCount: cities.length,
-            itemBuilder: (context, index) {
-              final city = cities[index];
+                    itemCount: cities.length,
+                    itemBuilder: (context, index) {
+                      final city = cities[index];
                       final stats = cityStats[city] ??
                           const {'active': 0, 'pending': 0, 'expired': 0};
 
@@ -147,13 +148,10 @@ class _CityStatsCard extends StatelessWidget {
   final String expiredLabel;
   final VoidCallback onTap;
 
-  static const Color _cardWhite = Color(0xFFFFFFFF);
-  static const Color _textPrimary = Color(0xFF1D1D1F);
-  static const Color _divider = Color(0xFFE5E5EA);
-
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final scheme = context.colorScheme;
     final cityLabel = IraqLocationL10n.provinceLabel(l10n, cityKey);
 
     return Material(
@@ -163,16 +161,9 @@ class _CityStatsCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         child: Ink(
           decoration: BoxDecoration(
-            color: _cardWhite,
+            color: scheme.surfaceContainerLowest,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Colors.black.withValues(alpha: 0.03)),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.04),
-                blurRadius: 24,
-                offset: const Offset(0, 6),
-              ),
-            ],
+            border: Border.all(color: scheme.outlineVariant),
           ),
           child: Stack(
             children: [
@@ -182,7 +173,7 @@ class _CityStatsCard extends StatelessWidget {
                 child: Icon(
                   Icons.location_on_outlined,
                   size: 56,
-                  color: _textPrimary.withValues(alpha: 0.05),
+                  color: scheme.onSurface.withValues(alpha: 0.05),
                 ),
               ),
               Padding(
@@ -192,15 +183,15 @@ class _CityStatsCard extends StatelessWidget {
                   children: [
                     Text(
                       cityLabel,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w700,
-                        color: _textPrimary,
+                        color: scheme.onSurface,
                         letterSpacing: -0.3,
                       ),
                     ),
                     const SizedBox(height: 18),
-                    const Divider(height: 1, color: _divider),
+                    Divider(height: 1, color: scheme.outlineVariant),
                     const SizedBox(height: 18),
                     Row(
                       children: [
@@ -208,8 +199,8 @@ class _CityStatsCard extends StatelessWidget {
                           child: _StatBadge(
                             label: approvedLabel,
                             count: stats['active'] ?? 0,
-                            color: const Color(0xFF34C759),
-                            bg: const Color(0xFFE8F8ED),
+                            color: scheme.tertiary,
+                            bg: scheme.tertiaryContainer,
                           ),
                         ),
                         const SizedBox(width: 10),
@@ -217,8 +208,8 @@ class _CityStatsCard extends StatelessWidget {
                           child: _StatBadge(
                             label: pendingLabel,
                             count: stats['pending'] ?? 0,
-                            color: const Color(0xFFFF9500),
-                            bg: const Color(0xFFFFF4E6),
+                            color: scheme.secondary,
+                            bg: scheme.secondaryContainer,
                           ),
                         ),
                         const SizedBox(width: 10),
@@ -226,8 +217,8 @@ class _CityStatsCard extends StatelessWidget {
                           child: _StatBadge(
                             label: expiredLabel,
                             count: stats['expired'] ?? 0,
-                            color: const Color(0xFFFF3B30),
-                            bg: const Color(0xFFFFEBEA),
+                            color: scheme.error,
+                            bg: scheme.errorContainer,
                           ),
                         ),
                       ],
@@ -306,6 +297,7 @@ class _CityStatsSkeletonGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = context.colorScheme;
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -318,7 +310,7 @@ class _CityStatsSkeletonGrid extends StatelessWidget {
       itemCount: IraqLocations.provinceOrder.length,
       itemBuilder: (_, __) => Container(
         decoration: BoxDecoration(
-          color: const Color(0xFFFFFFFF),
+          color: scheme.surfaceContainerLowest,
           borderRadius: BorderRadius.circular(16),
         ),
         alignment: Alignment.center,
@@ -341,22 +333,23 @@ class _ErrorBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final scheme = context.colorScheme;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFFFFEBEA),
+        color: scheme.errorContainer,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
         children: [
-          const Icon(Icons.error_outline, color: Color(0xFFFF3B30), size: 20),
+          Icon(Icons.error_outline, color: scheme.error, size: 20),
           const SizedBox(width: 10),
           Expanded(
             child: Text(
               message,
-              style: const TextStyle(fontSize: 13, color: Color(0xFF1D1D1F)),
+              style: TextStyle(fontSize: 13, color: scheme.onErrorContainer),
             ),
           ),
           TextButton(onPressed: onRetry, child: Text(l10n.adminRetry)),

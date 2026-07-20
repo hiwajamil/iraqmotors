@@ -5,9 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:iq_motors/core/localization/l10n_extensions.dart';
+import 'package:iq_motors/core/theme/app_theme.dart';
 import 'package:iq_motors/features/auth/presentation/navigation/post_auth_navigation.dart';
 import 'package:iq_motors/features/auth/presentation/providers/auth_providers.dart';
+import 'package:iq_motors/app/providers/theme_provider.dart';
 import 'package:iq_motors/shared/widgets/language_switcher.dart';
+import 'package:iq_motors/shared/widgets/currency_switcher.dart';
 import 'package:iq_motors/features/listings/presentation/add_car_flow_screen.dart';
 import 'package:iq_motors/features/detection/presentation/screens/car_detection_screen.dart';
 import 'package:iq_motors/features/auth/presentation/screens/auth_screen.dart';
@@ -48,7 +51,7 @@ class HomeGlassNavBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final iconColor =
-        _useImmersiveStyle ? Colors.white : HomeScreenColors.textPrimary;
+        _useImmersiveStyle ? Colors.white : HomeScreenColors.textPrimary(context);
 
     final navContent = Padding(
       padding: EdgeInsetsDirectional.fromSTEB(
@@ -90,6 +93,10 @@ class HomeGlassNavBar extends StatelessWidget implements PreferredSizeWidget {
             ] else
               const SizedBox(width: 8),
             LanguageSwitcherButton(iconColor: iconColor),
+            SizedBox(width: isWide ? 8 : 4),
+            CurrencySwitcherButton(iconColor: iconColor),
+            SizedBox(width: isWide ? 8 : 4),
+            _ThemeSwitcherButton(iconColor: iconColor, isWide: isWide),
             SizedBox(width: isWide ? 12 : 6),
             IconButton(
               tooltip: 'Scan car',
@@ -177,36 +184,40 @@ class HomeGlassNavBar extends StatelessWidget implements PreferredSizeWidget {
       ),
     );
 
-    return AppBar(
-      elevation: 0,
-      scrolledUnderElevation: 0,
-      toolbarHeight: height,
-      backgroundColor: Colors.transparent,
-      surfaceTintColor: Colors.transparent,
-      automaticallyImplyLeading: false,
-      flexibleSpace: _useImmersiveStyle
-          ? SafeArea(
-              bottom: false,
-              child: navContent,
-            )
-          : kIsWeb
-              ? ClipRect(
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-                    child: _navBarBackground(navContent),
-                  ),
-                )
-              : _navBarBackground(navContent),
+    return RepaintBoundary(
+      child: AppBar(
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        toolbarHeight: height,
+        backgroundColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
+        automaticallyImplyLeading: false,
+        flexibleSpace: _useImmersiveStyle
+            ? SafeArea(
+                bottom: false,
+                child: navContent,
+              )
+            : kIsWeb
+                ? ClipRect(
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                      child: _navBarBackground(context, navContent),
+                    ),
+                  )
+                : _navBarBackground(context, navContent),
+      ),
     );
   }
 
-  Widget _navBarBackground(Widget child) {
+  Widget _navBarBackground(BuildContext context, Widget child) {
+    final colorScheme = context.colorScheme;
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: kIsWeb ? 0.8 : 0.97),
+        color: colorScheme.surface.withValues(alpha: kIsWeb ? 0.82 : 0.95),
         border: Border(
           bottom: BorderSide(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: colorScheme.outlineVariant.withValues(alpha: 0.35),
+            width: 1,
           ),
         ),
       ),
@@ -242,10 +253,9 @@ class _HomeNavLinkState extends State<_HomeNavLink> {
           opacity: _hovered ? 1 : 0.7,
           child: Text(
             widget.label,
-            style: const TextStyle(
-              fontSize: 14,
+            style: context.textTheme.bodyMedium?.copyWith(
               fontWeight: FontWeight.w500,
-              color: HomeScreenColors.textPrimary,
+              color: HomeScreenColors.textPrimary(context),
             ),
           ),
         ),
@@ -254,7 +264,7 @@ class _HomeNavLinkState extends State<_HomeNavLink> {
   }
 }
 
-class _HomeSellButton extends StatefulWidget {
+class _HomeSellButton extends StatelessWidget {
   const _HomeSellButton({
     required this.onTap,
     this.compact = false,
@@ -266,71 +276,28 @@ class _HomeSellButton extends StatefulWidget {
   final bool light;
 
   @override
-  State<_HomeSellButton> createState() => _HomeSellButtonState();
-}
-
-class _HomeSellButtonState extends State<_HomeSellButton> {
-  bool _hovered = false;
-
-  @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final scheme = context.colorScheme;
 
-    return MouseRegion(
-      onEnter: (_) => setState(() => _hovered = true),
-      onExit: (_) => setState(() => _hovered = false),
-      child: GestureDetector(
-        onTap: widget.onTap,
-        child: AnimatedScale(
-          scale: _hovered ? 1.04 : 1,
-          duration: const Duration(milliseconds: 200),
-          curve: Curves.easeOut,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            padding: EdgeInsetsDirectional.symmetric(
-              horizontal: widget.compact ? 12 : 20,
-              vertical: widget.compact ? 8 : 9,
-            ),
-            decoration: BoxDecoration(
-              color: widget.light
-                  ? Colors.white.withValues(alpha: _hovered ? 0.22 : 0.12)
-                  : _hovered
-                      ? const Color(0xFF000000)
-                      : HomeScreenColors.textPrimary,
-              borderRadius: BorderRadius.circular(12),
-              border: widget.light
-                  ? Border.all(
-                      color: Colors.white.withValues(alpha: 0.45),
-                    )
-                  : null,
-              boxShadow: widget.light
-                  ? null
-                  : [
-                      BoxShadow(
-                        color: Colors.black
-                            .withValues(alpha: _hovered ? 0.18 : 0.12),
-                        blurRadius: _hovered ? 16 : 10,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-            ),
-            child: Text(
-              l10n.sell,
-              style: TextStyle(
-                fontSize: widget.compact ? 13 : 14,
-                fontWeight: FontWeight.w600,
-                letterSpacing: -0.2,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ),
-      ),
+    // On the hero photo, prefer a high-contrast filled CTA (M3 highest emphasis).
+    // Off-hero, use the same filled style so hierarchy stays consistent.
+    final style = FilledButton.styleFrom(
+      minimumSize: Size(compact ? 48 : 64, 48),
+      padding: EdgeInsets.symmetric(horizontal: compact ? 16 : 24),
+      backgroundColor: light ? scheme.surface : scheme.primary,
+      foregroundColor: light ? scheme.onSurface : scheme.onPrimary,
+    );
+
+    return FilledButton(
+      onPressed: onTap,
+      style: style,
+      child: Text(l10n.sell),
     );
   }
 }
 
-class _HomeAccountButton extends StatefulWidget {
+class _HomeAccountButton extends StatelessWidget {
   const _HomeAccountButton({
     required this.label,
     required this.onTap,
@@ -344,57 +311,74 @@ class _HomeAccountButton extends StatefulWidget {
   final bool light;
 
   @override
-  State<_HomeAccountButton> createState() => _HomeAccountButtonState();
+  Widget build(BuildContext context) {
+    final scheme = context.colorScheme;
+
+    if (compact) {
+      return IconButton.filledTonal(
+        onPressed: onTap,
+        tooltip: label,
+        style: IconButton.styleFrom(
+          minimumSize: const Size(48, 48),
+          backgroundColor: light ? scheme.surface.withValues(alpha: 0.92) : null,
+          foregroundColor: light ? scheme.onSurface : null,
+        ),
+        icon: const Icon(Icons.person_outline_rounded),
+      );
+    }
+
+    return FilledButton.tonal(
+      onPressed: onTap,
+      style: FilledButton.styleFrom(
+        minimumSize: const Size(64, 48),
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        backgroundColor: light ? scheme.surface.withValues(alpha: 0.92) : null,
+        foregroundColor: light ? scheme.onSurface : null,
+      ),
+      child: Text(
+        label,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
+    );
+  }
 }
 
-class _HomeAccountButtonState extends State<_HomeAccountButton> {
-  bool _hovered = false;
+class _ThemeSwitcherButton extends ConsumerWidget {
+  const _ThemeSwitcherButton({
+    required this.iconColor,
+    required this.isWide,
+  });
+
+  final Color iconColor;
+  final bool isWide;
 
   @override
-  Widget build(BuildContext context) {
-    return MouseRegion(
-      onEnter: (_) => setState(() => _hovered = true),
-      onExit: (_) => setState(() => _hovered = false),
-      child: GestureDetector(
-        onTap: widget.onTap,
-        child: AnimatedScale(
-          scale: _hovered ? 1.05 : 1,
-          duration: const Duration(milliseconds: 200),
-          curve: Curves.easeOut,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            padding: EdgeInsetsDirectional.symmetric(
-              horizontal: widget.compact ? 10 : 24,
-              vertical: 8,
-            ),
-            decoration: BoxDecoration(
-              color: widget.light
-                  ? Colors.white.withValues(alpha: _hovered ? 0.22 : 0.12)
-                  : _hovered
-                      ? Colors.black
-                      : HomeScreenColors.textPrimary,
-              borderRadius: BorderRadius.circular(30),
-              border: widget.light
-                  ? Border.all(
-                      color: Colors.white.withValues(alpha: 0.45),
-                    )
-                  : null,
-            ),
-            child: widget.compact
-                ? const Icon(Icons.person_outline_rounded,
-                    size: 20, color: Colors.white)
-                : Text(
-                    widget.label,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.white,
-                    ),
-                  ),
-          ),
-        ),
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themeMode = ref.watch(themeModeProvider);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    final tooltip = switch (themeMode) {
+      ThemeMode.system => 'System theme (${isDark ? 'Dark' : 'Light'})',
+      ThemeMode.dark => 'Dark mode',
+      ThemeMode.light => 'Light mode',
+    };
+
+    final iconData = switch (themeMode) {
+      ThemeMode.system => Icons.brightness_auto_outlined,
+      ThemeMode.dark => Icons.dark_mode_outlined,
+      ThemeMode.light => Icons.light_mode_outlined,
+    };
+
+    return IconButton(
+      tooltip: tooltip,
+      onPressed: () {
+        ref.read(themeModeProvider.notifier).toggleTheme();
+      },
+      icon: Icon(
+        iconData,
+        color: iconColor,
+        size: isWide ? 22 : 20,
       ),
     );
   }

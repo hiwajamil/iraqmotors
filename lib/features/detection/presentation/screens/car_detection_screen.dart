@@ -37,11 +37,13 @@ class _CarDetectionScreenState extends ConsumerState<CarDetectionScreen> {
     final detectionService = ref.watch(carDetectionServiceProvider);
     final unsupported = kIsWeb || !(Platform.isAndroid || Platform.isIOS);
 
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: Colors.black,
-        foregroundColor: Colors.white,
+        backgroundColor: colorScheme.surface,
+        foregroundColor: colorScheme.onSurface,
         title: const Text('Car Model Detection'),
         elevation: 0,
       ),
@@ -74,7 +76,7 @@ class _CarDetectionScreenState extends ConsumerState<CarDetectionScreen> {
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 480),
                 child: Card(
-                  color: const Color(0xFF1C1C1E),
+                  color: Theme.of(context).colorScheme.surfaceContainerHigh,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),
@@ -83,42 +85,38 @@ class _CarDetectionScreenState extends ConsumerState<CarDetectionScreen> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.cloud_upload_outlined,
                           size: 64,
-                          color: Color(0xFF34C759),
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                         const SizedBox(height: 16),
-                        const Text(
+                        Text(
                           'Car Model Detection',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).colorScheme.onSurface,
+                              ),
                         ),
                         const SizedBox(height: 8),
-                        const Text(
+                        Text(
                           'Upload a photo of a vehicle to identify its make/model and search matching marketplace listings.',
                           textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Colors.white70,
-                            fontSize: 13,
-                            height: 1.4,
-                          ),
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                height: 1.4,
+                              ),
                         ),
                         const SizedBox(height: 24),
-                        ElevatedButton.icon(
+                        FilledButton.icon(
                           onPressed: _identifying ? null : _onUploadImage,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF34C759),
-                            foregroundColor: Colors.white,
+                          style: FilledButton.styleFrom(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 20,
                               vertical: 12,
                             ),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
+                              borderRadius: BorderRadius.circular(12),
                             ),
                           ),
                           icon: const Icon(Icons.photo_library),
@@ -244,7 +242,7 @@ class _CarDetectionScreenState extends ConsumerState<CarDetectionScreen> {
             children: [
               Icon(
                 _identifying ? Icons.auto_awesome : Icons.center_focus_strong,
-                color: const Color(0xFF34C759),
+                color: Theme.of(context).colorScheme.primary,
                 size: 20,
               ),
               const SizedBox(width: 8),
@@ -253,20 +251,19 @@ class _CarDetectionScreenState extends ConsumerState<CarDetectionScreen> {
                   _statusMessage ??
                       'Aim at a car. A green box appears above '
                       '${(CarDetectionService.confidenceThreshold * 100).round()}% confidence.',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                  ),
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface,
+                        fontWeight: FontWeight.w500,
+                      ),
                 ),
               ),
               if (_identifying)
-                const SizedBox(
+                SizedBox(
                   width: 18,
                   height: 18,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    color: Color(0xFF34C759),
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
             ],
@@ -287,7 +284,7 @@ class _CarDetectionScreenState extends ConsumerState<CarDetectionScreen> {
     return Container(
       constraints: const BoxConstraints(maxHeight: 220),
       width: double.infinity,
-      color: const Color(0xFF2C2C2E),
+      color: Theme.of(context).colorScheme.surfaceContainerHigh,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -295,9 +292,8 @@ class _CarDetectionScreenState extends ConsumerState<CarDetectionScreen> {
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
             child: Text(
               'Detected: $title',
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 16,
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                color: Theme.of(context).colorScheme.onSurface,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -308,7 +304,9 @@ class _CarDetectionScreenState extends ConsumerState<CarDetectionScreen> {
               result.listings.isEmpty
                   ? 'No active listings match this vehicle yet.'
                   : '${result.listings.length} matching listing(s) on IQ Motors',
-              style: const TextStyle(color: Colors.white60, fontSize: 13),
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
           ),
           const SizedBox(height: 8),
@@ -426,7 +424,7 @@ class _ListingChip extends StatelessWidget {
                   aspectRatio: 16 / 10,
                   child: imageUrl.isNotEmpty
                       ? CarNetworkImage(imageUrl: imageUrl, fit: BoxFit.cover)
-                      : Container(color: Colors.black26),
+                      : Container(color: Theme.of(context).colorScheme.surfaceContainerHighest),
                 ),
               ),
               Padding(
@@ -438,9 +436,8 @@ class _ListingChip extends StatelessWidget {
                       '$make $model'.trim(),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -448,9 +445,8 @@ class _ListingChip extends StatelessWidget {
                       const SizedBox(height: 2),
                       Text(
                         price,
-                        style: const TextStyle(
-                          color: Color(0xFF34C759),
-                          fontSize: 11,
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          color: Theme.of(context).colorScheme.primary,
                           fontWeight: FontWeight.w600,
                         ),
                       ),

@@ -1,10 +1,9 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
-import 'package:iq_motors/core/config/app_image_cache.dart';
-
+import 'package:iq_motors/core/theme/app_theme.dart';
 import 'package:iq_motors/shared/data/dummy_brands.dart';
 import 'package:iq_motors/shared/models/car_brand.dart';
+import 'package:iq_motors/shared/widgets/brand_logo_image.dart';
 import 'package:iq_motors/features/marketplace/presentation/widgets/home/home_theme.dart';
 
 /// Horizontally scrollable brand logos — logo above name.
@@ -21,9 +20,6 @@ class HomeBrandHorizontalStrip extends StatelessWidget {
   final String? selectedBrandId;
   final ValueChanged<CarBrand?> onBrandSelected;
   final VoidCallback onViewAllTap;
-
-  static const Color _brandFill = Color(0xFFE8E8ED);
-  static const Color _brandSelectedRing = Color(0xFF1D1D1F);
 
   double get _circleSize => isWide ? 88 : 70;
   double get _logoPadding => isWide ? 6 : 5;
@@ -152,6 +148,7 @@ class _HomeBrandLogoCircle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = context.colorScheme;
     return SizedBox(
       width: circleSize,
       height: circleSize,
@@ -162,19 +159,19 @@ class _HomeBrandLogoCircle extends StatelessWidget {
         width: circleSize,
         height: circleSize,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isSelected
+              ? colorScheme.primaryContainer.withValues(alpha: 0.15)
+              : colorScheme.surfaceContainerLowest,
           shape: BoxShape.circle,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: isSelected ? 0.1 : 0.05),
-              blurRadius: isSelected ? 14 : 8,
-              offset: const Offset(0, 4),
+              color: colorScheme.shadow.withValues(alpha: isSelected ? 0.08 : 0.04),
+              blurRadius: isSelected ? 12 : 6,
+              offset: const Offset(0, 3),
             ),
           ],
           border: Border.all(
-            color: isSelected
-                ? HomeBrandHorizontalStrip._brandSelectedRing
-                : HomeBrandHorizontalStrip._brandFill,
+            color: isSelected ? colorScheme.primary : colorScheme.outlineVariant.withValues(alpha: 0.5),
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -195,7 +192,7 @@ class _HomeBrandLogoCircle extends StatelessWidget {
   }
 }
 
-class _HomeBrandLogoImage extends StatefulWidget {
+class _HomeBrandLogoImage extends StatelessWidget {
   const _HomeBrandLogoImage({
     required this.brand,
     required this.fallbackLetter,
@@ -207,77 +204,10 @@ class _HomeBrandLogoImage extends StatefulWidget {
   final double circleSize;
 
   @override
-  State<_HomeBrandLogoImage> createState() => _HomeBrandLogoImageState();
-}
-
-class _HomeBrandLogoImageState extends State<_HomeBrandLogoImage> {
-  int _sourceIndex = 0;
-
-  List<String> get _urls => [
-        HomeBrandHorizontalStrip.clearbitLogoUrl(widget.brand),
-        widget.brand.logoUrl,
-      ];
-
-  @override
   Widget build(BuildContext context) {
-    final cacheExtent =
-        (widget.circleSize * MediaQuery.devicePixelRatioOf(context)).round();
-
-    return CachedNetworkImage(
-      imageUrl: _urls[_sourceIndex],
-      fit: BoxFit.contain,
-      width: double.infinity,
-      height: double.infinity,
-      filterQuality: FilterQuality.medium,
-      memCacheWidth: cacheExtent,
-      memCacheHeight: cacheExtent,
-      maxWidthDiskCache: cacheExtent,
-      maxHeightDiskCache: cacheExtent,
-      cacheManager: AppImageCacheManager.instance,
-      placeholder: (_, __) => Center(
-        child: SizedBox(
-          width: widget.circleSize * 0.28,
-          height: widget.circleSize * 0.28,
-          child: const CircularProgressIndicator(strokeWidth: 2),
-        ),
-      ),
-      errorWidget: (_, __, ___) {
-        if (_sourceIndex < _urls.length - 1) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (mounted && _sourceIndex < _urls.length - 1) {
-              setState(() => _sourceIndex++);
-            }
-          });
-        }
-        return _HomeBrandLogoLetterFallback(
-          letter: widget.fallbackLetter,
-          circleSize: widget.circleSize,
-        );
-      },
-    );
-  }
-}
-
-class _HomeBrandLogoLetterFallback extends StatelessWidget {
-  const _HomeBrandLogoLetterFallback({
-    required this.letter,
-    required this.circleSize,
-  });
-
-  final String letter;
-  final double circleSize;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text(
-        letter,
-        style: TextStyle(
-          fontSize: circleSize * 0.36,
-          fontWeight: FontWeight.w600,
-          color: Colors.grey[700],
-        ),
-      ),
+    return BrandLogoImage(
+      brand: brand,
+      size: circleSize,
     );
   }
 }
@@ -343,13 +273,12 @@ class _HomeBrandItemState extends State<_HomeBrandItem> {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 12,
+                  style: context.textTheme.bodySmall?.copyWith(
                     fontWeight:
                         widget.isSelected ? FontWeight.w600 : FontWeight.w500,
                     color: widget.isSelected
-                        ? HomeScreenColors.textPrimary
-                        : Colors.grey[700],
+                        ? HomeScreenColors.textPrimary(context)
+                        : context.colorScheme.onSurfaceVariant,
                   ),
                 ),
               ),
@@ -381,6 +310,7 @@ class _HomeBrandMoreChipState extends State<_HomeBrandMoreChip> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = context.colorScheme;
     return GestureDetector(
       onTapDown: (_) => setState(() => _pressed = true),
       onTapUp: (_) => setState(() => _pressed = false),
@@ -403,17 +333,17 @@ class _HomeBrandMoreChipState extends State<_HomeBrandMoreChip> {
                   width: widget.circleSize,
                   height: widget.circleSize,
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: colorScheme.surfaceContainerLowest,
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.05),
+                        color: colorScheme.shadow.withValues(alpha: 0.05),
                         blurRadius: 8,
                         offset: const Offset(0, 4),
                       ),
                     ],
                     border: Border.all(
-                      color: HomeBrandHorizontalStrip._brandFill,
+                      color: colorScheme.outlineVariant,
                       width: 1,
                     ),
                   ),
@@ -421,7 +351,7 @@ class _HomeBrandMoreChipState extends State<_HomeBrandMoreChip> {
                     child: Icon(
                       Icons.grid_view_rounded,
                       size: widget.circleSize * 0.4,
-                      color: HomeScreenColors.textPrimary,
+                      color: HomeScreenColors.textPrimary(context),
                     ),
                   ),
                 ),
@@ -434,10 +364,9 @@ class _HomeBrandMoreChipState extends State<_HomeBrandMoreChip> {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 12,
+                  style: context.textTheme.bodySmall?.copyWith(
                     fontWeight: FontWeight.w500,
-                    color: Colors.grey[700],
+                    color: colorScheme.onSurfaceVariant,
                   ),
                 ),
               ),

@@ -27,13 +27,6 @@ final carDatabaseServiceProvider = Provider<CarDatabaseService>((ref) {
   );
 });
 
-/// Live home-feed listings — admin-approved ads only (`status == active`).
-final activeAdsProvider = StreamProvider<List<Map<String, dynamic>>>((ref) {
-  return ref.watch(carDatabaseServiceProvider).watchActiveCars().map(
-        (cars) => cars.map((car) => car.toMap()).toList(),
-      );
-});
-
 final carBidServiceProvider = Provider<CarBidService>((ref) {
   return CarBidService(
     messageService: ref.watch(userMessageServiceProvider),
@@ -64,13 +57,13 @@ final userMessageServiceProvider = Provider<UserMessageService>((ref) {
 
 /// Live inbox stream for the signed-in user.
 final userInboxProvider =
-    StreamProvider.family<List<UserMessage>, String>((ref, userId) {
+    StreamProvider.autoDispose.family<List<UserMessage>, String>((ref, userId) {
   return ref.watch(userMessageServiceProvider).watchInbox(userId);
 });
 
 /// Unread message count for nav badges.
 final userUnreadMessageCountProvider =
-    StreamProvider.family<int, String>((ref, userId) {
+    StreamProvider.autoDispose.family<int, String>((ref, userId) {
   return ref.watch(userMessageServiceProvider).watchUnreadCount(userId);
 });
 

@@ -1,0 +1,927 @@
+{
+  "brandsTotal": 403,
+  "brandsStartedWithModels": 124,
+  "modelsAdded": 11397,
+  "brandsFilledFromNhtsa": [
+    "toyota",
+    "mercedes_benz",
+    "kia",
+    "byd",
+    "volkswagen",
+    "chevrolet",
+    "gac_motor",
+    "mitsubishi",
+    "geely",
+    "jaguar",
+    "hyundai",
+    "land_rover",
+    "dodge",
+    "cadillac",
+    "lexus",
+    "jeep",
+    "nissan",
+    "mini",
+    "mg",
+    "mclaren",
+    "mazda",
+    "maserati",
+    "lincoln",
+    "lamborghini",
+    "opel",
+    "volvo",
+    "tesla",
+    "suzuki",
+    "subaru",
+    "seat",
+    "saab",
+    "renault",
+    "ram",
+    "porsche",
+    "peugeot",
+    "king_long",
+    "cmc",
+    "citro_n",
+    "chrysler",
+    "bugatti",
+    "bmw",
+    "bentley",
+    "audi",
+    "aston_martin",
+    "alfa_romeo",
+    "acura",
+    "daihatsu",
+    "dongfeng",
+    "faw",
+    "jac",
+    "isuzu",
+    "infiniti",
+    "hummer",
+    "honda",
+    "gmc",
+    "genesis",
+    "foton",
+    "ford",
+    "mercury",
+    "fiat",
+    "ferrari",
+    "great_wall",
+    "uaz",
+    "polaris",
+    "smart",
+    "buick",
+    "pontiac",
+    "hongqi",
+    "karry",
+    "lifan",
+    "renault_samsung_motors",
+    "daewoo",
+    "zimmer",
+    "gaz",
+    "jonway",
+    "rox",
+    "ora",
+    "polestar",
+    "saturn",
+    "lada",
+    "austin",
+    "zyle_daewoo_commercial_vehicles",
+    "swm_motors",
+    "vanderhall",
+    "wuling",
+    "iveco",
+    "morris",
+    "jmc",
+    "oldsmobile",
+    "kawasaki",
+    "hino",
+    "lotus",
+    "peterbilt",
+    "general_motors",
+    "kenworth",
+    "ktm",
+    "maybach",
+    "koenigsegg",
+    "mack",
+    "daimler",
+    "datsun",
+    "holden",
+    "alpine",
+    "ds",
+    "navistar",
+    "pagani",
+    "rover",
+    "ariel",
+    "karma",
+    "lucid",
+    "saleen",
+    "studebaker",
+    "western_star",
+    "fisker",
+    "geo",
+    "scania",
+    "sterling",
+    "international",
+    "ih_international_harvester",
+    "abt",
+    "noble",
+    "vinfast",
+    "maz",
+    "man",
+    "rimac",
+    "ssc",
+    "desoto",
+    "irizar",
+    "nio",
+    "rivian",
+    "wey",
+    "erf",
+    "spyker",
+    "freightliner",
+    "ic_bus",
+    "tauro_sport_auto",
+    "vector",
+    "panoz",
+    "canoo",
+    "lordstown",
+    "mahindra",
+    "mosler",
+    "ruf",
+    "david_brown",
+    "levc",
+    "nikola",
+    "workhorse",
+    "apollo",
+    "bertone",
+    "brammo",
+    "daf",
+    "devel_sixteen",
+    "dina",
+    "lancia",
+    "lister",
+    "pininfarina",
+    "radical",
+    "setra",
+    "ud",
+    "dayun",
+    "golden_dragon",
+    "zhongtong",
+    "zeekr",
+    "ac",
+    "bac",
+    "bitter",
+    "detroit_electric",
+    "delorean",
+    "eagle",
+    "elfin",
+    "force",
+    "jawa",
+    "jba_motors",
+    "morgan",
+    "alta",
+    "amc",
+    "aro",
+    "axon",
+    "cole",
+    "corre_la_licorne",
+    "franklin",
+    "gardner_douglas",
+    "hudson",
+    "iso",
+    "jensen",
+    "kaiser",
+    "marlin",
+    "merkur",
+    "mev",
+    "mk",
+    "plymouth",
+    "premier",
+    "rambler",
+    "riley",
+    "triumph",
+    "ultima",
+    "ranz"
+  ],
+  "brandsFilledFromCsv": [
+    "toyota",
+    "mercedes_benz",
+    "kia",
+    "byd",
+    "haval",
+    "jetour",
+    "volkswagen",
+    "chevrolet",
+    "gac_motor",
+    "mitsubishi",
+    "geely",
+    "hyundai",
+    "land_rover",
+    "dodge",
+    "cadillac",
+    "jeep",
+    "nissan",
+    "mini",
+    "mg",
+    "mclaren",
+    "mazda",
+    "maxus",
+    "maserati",
+    "lincoln",
+    "lamborghini",
+    "opel",
+    "volvo",
+    "tesla",
+    "suzuki",
+    "subaru",
+    "ssangyong",
+    "seat",
+    "rolls_royce",
+    "renault",
+    "ram",
+    "porsche",
+    "peugeot",
+    "king_long",
+    "chrysler",
+    "chery",
+    "changan",
+    "brilliance",
+    "bmw",
+    "bentley",
+    "baic",
+    "audi",
+    "aston_martin",
+    "alfa_romeo",
+    "daihatsu",
+    "dongfeng",
+    "faw",
+    "jac",
+    "infiniti",
+    "honda",
+    "gmc",
+    "foton",
+    "ford",
+    "mercury",
+    "fiat",
+    "ferrari",
+    "zotye",
+    "hawtai",
+    "mitsuoka",
+    "uaz",
+    "zx_auto",
+    "polaris",
+    "smart",
+    "haima",
+    "buick",
+    "pontiac",
+    "hongqi",
+    "lifan",
+    "kaiyi",
+    "saipa",
+    "daewoo",
+    "ineos",
+    "zimmer",
+    "xev",
+    "hafei",
+    "jinbei",
+    "higer",
+    "poer",
+    "ora",
+    "gwm_tank",
+    "polestar",
+    "austin",
+    "swm_motors",
+    "dadi_auto",
+    "polarsun",
+    "dfsk",
+    "cevo_mobility",
+    "vanderhall",
+    "exeed",
+    "baw",
+    "wuling",
+    "jmc",
+    "voyah",
+    "oldsmobile",
+    "kawasaki",
+    "hino",
+    "maybach",
+    "maz",
+    "ac",
+    "rambler"
+  ],
+  "brandsStillEmpty": [
+    {
+      "id": "vauxhall",
+      "en": "Vauxhall"
+    },
+    {
+      "id": "paccar",
+      "en": "Paccar"
+    },
+    {
+      "id": "abarth",
+      "en": "Abarth"
+    },
+    {
+      "id": "hennessey",
+      "en": "Hennessey"
+    },
+    {
+      "id": "dacia",
+      "en": "Dacia"
+    },
+    {
+      "id": "packard",
+      "en": "Packard"
+    },
+    {
+      "id": "eicher",
+      "en": "Eicher"
+    },
+    {
+      "id": "alpina",
+      "en": "Alpina"
+    },
+    {
+      "id": "brabus",
+      "en": "Brabus"
+    },
+    {
+      "id": "jetta",
+      "en": "Jetta"
+    },
+    {
+      "id": "saic_motor",
+      "en": "SAIC Motor"
+    },
+    {
+      "id": "vlf",
+      "en": "VLF"
+    },
+    {
+      "id": "vencer",
+      "en": "Vencer"
+    },
+    {
+      "id": "elemental",
+      "en": "Elemental"
+    },
+    {
+      "id": "faraday_future",
+      "en": "Faraday Future"
+    },
+    {
+      "id": "suffolk",
+      "en": "Suffolk"
+    },
+    {
+      "id": "de_tomaso",
+      "en": "De Tomaso"
+    },
+    {
+      "id": "tramontana",
+      "en": "Tramontana"
+    },
+    {
+      "id": "arash",
+      "en": "Arash"
+    },
+    {
+      "id": "artega",
+      "en": "Artega"
+    },
+    {
+      "id": "gumpert",
+      "en": "Gumpert"
+    },
+    {
+      "id": "tucker",
+      "en": "Tucker"
+    },
+    {
+      "id": "sisu",
+      "en": "Sisu"
+    },
+    {
+      "id": "carlsson",
+      "en": "Carlsson"
+    },
+    {
+      "id": "troller",
+      "en": "Troller"
+    },
+    {
+      "id": "tatra",
+      "en": "Tatra"
+    },
+    {
+      "id": "spania_gta",
+      "en": "Spania GTA"
+    },
+    {
+      "id": "ascari",
+      "en": "Ascari"
+    },
+    {
+      "id": "lagonda",
+      "en": "Lagonda"
+    },
+    {
+      "id": "mansory",
+      "en": "Mansory"
+    },
+    {
+      "id": "rossion",
+      "en": "Rossion"
+    },
+    {
+      "id": "arrival",
+      "en": "Arrival"
+    },
+    {
+      "id": "arrinera",
+      "en": "Arrinera"
+    },
+    {
+      "id": "bharatbenz",
+      "en": "BharatBenz"
+    },
+    {
+      "id": "trion",
+      "en": "Trion"
+    },
+    {
+      "id": "duesenberg",
+      "en": "Duesenberg"
+    },
+    {
+      "id": "laraki",
+      "en": "Laraki"
+    },
+    {
+      "id": "perodua",
+      "en": "Perodua"
+    },
+    {
+      "id": "rezvani",
+      "en": "Rezvani"
+    },
+    {
+      "id": "techart",
+      "en": "TechArt"
+    },
+    {
+      "id": "hindustan_motors",
+      "en": "Hindustan Motors"
+    },
+    {
+      "id": "keating",
+      "en": "Keating"
+    },
+    {
+      "id": "mazzanti",
+      "en": "Mazzanti"
+    },
+    {
+      "id": "tvr",
+      "en": "TVR"
+    },
+    {
+      "id": "zenvo",
+      "en": "Zenvo"
+    },
+    {
+      "id": "arcfox",
+      "en": "Arcfox"
+    },
+    {
+      "id": "li_auto",
+      "en": "Li Auto"
+    },
+    {
+      "id": "weltmeister",
+      "en": "Weltmeister"
+    },
+    {
+      "id": "singulato",
+      "en": "Singulato"
+    },
+    {
+      "id": "nevs",
+      "en": "NEVS"
+    },
+    {
+      "id": "geometry",
+      "en": "Geometry"
+    },
+    {
+      "id": "9ff",
+      "en": "9ff"
+    },
+    {
+      "id": "aixam",
+      "en": "Aixam"
+    },
+    {
+      "id": "autobacs",
+      "en": "Autobacs"
+    },
+    {
+      "id": "baojun",
+      "en": "Baojun"
+    },
+    {
+      "id": "caparo",
+      "en": "Caparo"
+    },
+    {
+      "id": "caterham",
+      "en": "Caterham"
+    },
+    {
+      "id": "edsel",
+      "en": "Edsel"
+    },
+    {
+      "id": "ginetta",
+      "en": "Ginetta"
+    },
+    {
+      "id": "grinnall",
+      "en": "Grinnall"
+    },
+    {
+      "id": "hsv",
+      "en": "HSV"
+    },
+    {
+      "id": "kamaz",
+      "en": "Kamaz"
+    },
+    {
+      "id": "ligier",
+      "en": "Ligier"
+    },
+    {
+      "id": "luxgen",
+      "en": "Luxgen"
+    },
+    {
+      "id": "melkus",
+      "en": "Melkus"
+    },
+    {
+      "id": "microcar",
+      "en": "Microcar"
+    },
+    {
+      "id": "oltcit",
+      "en": "Oltcit"
+    },
+    {
+      "id": "osca",
+      "en": "OSCA"
+    },
+    {
+      "id": "praga",
+      "en": "Praga"
+    },
+    {
+      "id": "prodrive",
+      "en": "Prodrive"
+    },
+    {
+      "id": "qoros",
+      "en": "Qoros"
+    },
+    {
+      "id": "w_motors",
+      "en": "W Motors"
+    },
+    {
+      "id": "yulon",
+      "en": "Yulon"
+    },
+    {
+      "id": "zarooq_motors",
+      "en": "Zarooq Motors"
+    },
+    {
+      "id": "zenos",
+      "en": "Zenos"
+    },
+    {
+      "id": "stutz",
+      "en": "Stutz"
+    },
+    {
+      "id": "sinotruk_cnhtc",
+      "en": "Sinotruk (CNHTC)"
+    },
+    {
+      "id": "shacman",
+      "en": "Shacman"
+    },
+    {
+      "id": "hongyan",
+      "en": "Hongyan"
+    },
+    {
+      "id": "beiben",
+      "en": "BeiBen"
+    },
+    {
+      "id": "camc",
+      "en": "CAMC"
+    },
+    {
+      "id": "yutong",
+      "en": "Yutong"
+    },
+    {
+      "id": "zinoro",
+      "en": "Zinoro"
+    },
+    {
+      "id": "hiphi",
+      "en": "HiPhi"
+    },
+    {
+      "id": "leapmotor",
+      "en": "Leapmotor"
+    },
+    {
+      "id": "aiways",
+      "en": "Aiways"
+    },
+    {
+      "id": "alvis",
+      "en": "Alvis"
+    },
+    {
+      "id": "atalanta",
+      "en": "Atalanta"
+    },
+    {
+      "id": "bowler",
+      "en": "Bowler"
+    },
+    {
+      "id": "bufori",
+      "en": "Bufori"
+    },
+    {
+      "id": "changfeng",
+      "en": "Changfeng"
+    },
+    {
+      "id": "dartz",
+      "en": "Dartz"
+    },
+    {
+      "id": "donkervoort",
+      "en": "Donkervoort"
+    },
+    {
+      "id": "edag",
+      "en": "EDAG"
+    },
+    {
+      "id": "eterniti",
+      "en": "Eterniti"
+    },
+    {
+      "id": "facel_vega",
+      "en": "Facel Vega"
+    },
+    {
+      "id": "fpv",
+      "en": "FPV"
+    },
+    {
+      "id": "landwind",
+      "en": "Landwind"
+    },
+    {
+      "id": "lloyd",
+      "en": "Lloyd"
+    },
+    {
+      "id": "lobini",
+      "en": "Lobini"
+    },
+    {
+      "id": "spirra",
+      "en": "Spirra"
+    },
+    {
+      "id": "venucia",
+      "en": "Venucia"
+    },
+    {
+      "id": "westfield",
+      "en": "Westfield"
+    },
+    {
+      "id": "wiesmann",
+      "en": "Wiesmann"
+    },
+    {
+      "id": "abadal",
+      "en": "Abadal"
+    },
+    {
+      "id": "abbott_detroit",
+      "en": "Abbott-Detroit"
+    },
+    {
+      "id": "askam",
+      "en": "Askam"
+    },
+    {
+      "id": "auburn",
+      "en": "Auburn"
+    },
+    {
+      "id": "autobianchi",
+      "en": "Autobianchi"
+    },
+    {
+      "id": "berkeley",
+      "en": "Berkeley"
+    },
+    {
+      "id": "berliet",
+      "en": "Berliet"
+    },
+    {
+      "id": "bizzarrini",
+      "en": "Bizzarrini"
+    },
+    {
+      "id": "bristol",
+      "en": "Bristol"
+    },
+    {
+      "id": "brooke",
+      "en": "Brooke"
+    },
+    {
+      "id": "cisitalia",
+      "en": "Cisitalia"
+    },
+    {
+      "id": "cizeta",
+      "en": "Cizeta"
+    },
+    {
+      "id": "delage",
+      "en": "Delage"
+    },
+    {
+      "id": "diatto",
+      "en": "Diatto"
+    },
+    {
+      "id": "dkw",
+      "en": "DKW"
+    },
+    {
+      "id": "elva",
+      "en": "Elva"
+    },
+    {
+      "id": "englon",
+      "en": "Englon"
+    },
+    {
+      "id": "fioravanti",
+      "en": "Fioravanti"
+    },
+    {
+      "id": "foden",
+      "en": "Foden"
+    },
+    {
+      "id": "gilbern",
+      "en": "Gilbern"
+    },
+    {
+      "id": "gillet",
+      "en": "Gillet"
+    },
+    {
+      "id": "gonow",
+      "en": "Gonow"
+    },
+    {
+      "id": "hillman",
+      "en": "Hillman"
+    },
+    {
+      "id": "hispano_suiza",
+      "en": "Hispano-Suiza"
+    },
+    {
+      "id": "hommell",
+      "en": "Hommell"
+    },
+    {
+      "id": "horch",
+      "en": "Horch"
+    },
+    {
+      "id": "hupmobile",
+      "en": "Hupmobile"
+    },
+    {
+      "id": "innocenti",
+      "en": "Innocenti"
+    },
+    {
+      "id": "intermeccanica",
+      "en": "Intermeccanica"
+    },
+    {
+      "id": "isdera",
+      "en": "Isdera"
+    },
+    {
+      "id": "leyland",
+      "en": "Leyland"
+    },
+    {
+      "id": "marcos",
+      "en": "Marcos"
+    },
+    {
+      "id": "mastretta",
+      "en": "Mastretta"
+    },
+    {
+      "id": "panhard",
+      "en": "Panhard"
+    },
+    {
+      "id": "pegaso",
+      "en": "Pegaso"
+    },
+    {
+      "id": "pgo",
+      "en": "PGO"
+    },
+    {
+      "id": "pierce_arrow",
+      "en": "Pierce-Arrow"
+    },
+    {
+      "id": "rinspeed",
+      "en": "Rinspeed"
+    },
+    {
+      "id": "ronart",
+      "en": "Ronart"
+    },
+    {
+      "id": "simca",
+      "en": "Simca"
+    },
+    {
+      "id": "singer",
+      "en": "Singer"
+    },
+    {
+      "id": "talbot",
+      "en": "Talbot"
+    },
+    {
+      "id": "vandenbrink",
+      "en": "Vandenbrink"
+    },
+    {
+      "id": "venturi",
+      "en": "Venturi"
+    },
+    {
+      "id": "wanderer",
+      "en": "Wanderer"
+    },
+    {
+      "id": "wartburg",
+      "en": "Wartburg"
+    },
+    {
+      "id": "willys_overland",
+      "en": "Willys-Overland"
+    },
+    {
+      "id": "zastava",
+      "en": "Zastava"
+    },
+    {
+      "id": "zaz",
+      "en": "ZAZ"
+    }
+  ],
+  "trimsAssigned": 12288,
+  "trimsFromCsv": 317,
+  "trimsDefaulted": 11971
+}

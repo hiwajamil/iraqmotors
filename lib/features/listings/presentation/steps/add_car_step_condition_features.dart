@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:iq_motors/core/localization/l10n_extensions.dart';
 import 'package:iq_motors/shared/data/add_car_form_options.dart';
 import 'package:iq_motors/features/listings/presentation/widgets/add_car_chip_selector.dart';
+import 'package:iq_motors/core/theme/app_theme.dart';
 import 'package:iq_motors/features/listings/presentation/add_car_theme.dart';
 import 'package:iq_motors/features/listings/presentation/widgets/add_car_form_card.dart';
 import 'package:iq_motors/features/listings/presentation/widgets/add_car_step_header.dart';
@@ -85,7 +86,7 @@ class AddCarStepConditionFeatures extends StatelessWidget {
               'ar' => 'ميزات إضافية',
               _ => 'تایبەتمەندی زیاتر',
             },
-            style: AddCarTheme.sectionTitle,
+            style: AddCarTheme.sectionTitle(context),
           ),
           const SizedBox(height: 14),
           _SelectAllRow(
@@ -157,23 +158,22 @@ class _DamagePhotoButtonState extends State<_DamagePhotoButton> {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: AddCarTheme.inputFill,
+                  color: AddCarTheme.inputFill(context),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.photo_camera_outlined,
                   size: 22,
-                  color: AddCarTheme.textPrimary,
+                  color: AddCarTheme.textPrimary(context),
                 ),
               ),
               const SizedBox(width: 14),
               Expanded(
                 child: Text(
                   widget.label,
-                  style: const TextStyle(
-                    fontSize: 15,
+                  style: context.textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: AddCarTheme.textPrimary,
+                    color: AddCarTheme.textPrimary(context),
                   ),
                 ),
               ),
@@ -184,15 +184,14 @@ class _DamagePhotoButtonState extends State<_DamagePhotoButton> {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: AddCarTheme.textPrimary,
+                    color: AddCarTheme.primary(context),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
                     '${widget.photoCount}',
-                    style: const TextStyle(
-                      fontSize: 13,
+                    style: context.textTheme.bodySmall?.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: Colors.white,
+                      color: context.colorScheme.onPrimary,
                     ),
                   ),
                 ),
@@ -232,17 +231,16 @@ class _SelectAllRow extends StatelessWidget {
               Expanded(
                 child: Text(
                   label,
-                  style: const TextStyle(
-                    fontSize: 15,
+                  style: context.textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: AddCarTheme.textPrimary,
+                    color: AddCarTheme.textPrimary(context),
                   ),
                 ),
               ),
               Switch.adaptive(
                 value: value,
                 onChanged: onChanged,
-                activeTrackColor: AddCarTheme.textPrimary,
+                activeTrackColor: AddCarTheme.primary(context),
               ),
             ],
           ),

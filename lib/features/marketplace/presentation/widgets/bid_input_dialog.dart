@@ -3,29 +3,27 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:iq_motors/core/localization/l10n_extensions.dart';
+import 'package:iq_motors/core/theme/app_theme.dart';
 import 'package:iq_motors/features/auth/presentation/providers/auth_providers.dart';
 import 'package:iq_motors/features/storage/presentation/providers/storage_providers.dart';
 import 'package:iq_motors/features/marketplace/data/services/car_bid_service.dart';
 
 /// Apple-style bid entry — centered dialog with on-submit Firestore validation.
 class BidInputDialog {
-  static const Color _textPrimary = Color(0xFF1D1D1F);
-  static const Color _textSecondary = Color(0xFF86868B);
-  static const Color _errorColor = Color(0xFFFF3B30);
-
   /// Returns the accepted bid amount on success, or `null` if dismissed / rejected.
   static Future<int?> show(
     BuildContext context, {
     required String carId,
     Map<String, dynamic>? car,
   }) {
+    final colorScheme = context.colorScheme;
     return showDialog<int>(
       context: context,
-      barrierColor: Colors.black.withValues(alpha: 0.35),
+      barrierColor: colorScheme.scrim.withValues(alpha: 0.35),
       builder: (ctx) => AlertDialog(
-        backgroundColor: Colors.white,
+        backgroundColor: colorScheme.surfaceContainerHigh,
         elevation: 24,
-        shadowColor: Colors.black.withValues(alpha: 0.12),
+        shadowColor: colorScheme.shadow.withValues(alpha: 0.12),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
         ),
@@ -131,7 +129,7 @@ class _BidFormState extends ConsumerState<_BidForm> {
       SnackBar(
         content: Text(message),
         behavior: SnackBarBehavior.floating,
-        backgroundColor: BidInputDialog._errorColor,
+        backgroundColor: context.colorScheme.error,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
@@ -188,7 +186,7 @@ class _BidFormState extends ConsumerState<_BidForm> {
           SnackBar(
             content: Text(successMessage),
             behavior: SnackBarBehavior.floating,
-            backgroundColor: const Color(0xFF34C759),
+            backgroundColor: context.colorScheme.tertiary,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
@@ -210,6 +208,8 @@ class _BidFormState extends ConsumerState<_BidForm> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final colorScheme = context.colorScheme;
+    final textTheme = context.textTheme;
     final hasFieldError = _fieldError != null;
 
     return Padding(
@@ -220,19 +220,19 @@ class _BidFormState extends ConsumerState<_BidForm> {
         children: [
           Text(
             l10n.placeYourBid,
-            style: const TextStyle(
+            style: textTheme.titleLarge?.copyWith(
               fontSize: 20,
               fontWeight: FontWeight.w700,
               letterSpacing: -0.4,
-              color: BidInputDialog._textPrimary,
+              color: colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             l10n.enterBidAmount,
-            style: const TextStyle(
+            style: textTheme.bodyMedium?.copyWith(
               fontSize: 14,
-              color: BidInputDialog._textSecondary,
+              color: colorScheme.onSurfaceVariant,
               height: 1.4,
             ),
           ),
@@ -243,20 +243,20 @@ class _BidFormState extends ConsumerState<_BidForm> {
             keyboardType: TextInputType.number,
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             enabled: !_isSubmitting,
-            style: const TextStyle(
+            style: textTheme.titleLarge?.copyWith(
               fontSize: 22,
               fontWeight: FontWeight.w600,
-              color: BidInputDialog._textPrimary,
+              color: colorScheme.onSurface,
             ),
             decoration: InputDecoration(
               hintText: l10n.enterBidAmount,
-              hintStyle: TextStyle(
-                color: BidInputDialog._textSecondary.withValues(alpha: 0.6),
+              hintStyle: textTheme.bodyLarge?.copyWith(
+                color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
                 fontWeight: FontWeight.w400,
                 fontSize: 16,
               ),
               filled: true,
-              fillColor: const Color(0xFFF5F5F7),
+              fillColor: colorScheme.surfaceContainerHighest,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide.none,
@@ -264,19 +264,15 @@ class _BidFormState extends ConsumerState<_BidForm> {
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide(
-                  color: hasFieldError
-                      ? BidInputDialog._errorColor
-                      : Colors.transparent,
+                  color: hasFieldError ? colorScheme.error : Colors.transparent,
                   width: hasFieldError ? 1.5 : 0,
                 ),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide(
-                  color: hasFieldError
-                      ? BidInputDialog._errorColor
-                      : BidInputDialog._textPrimary.withValues(alpha: 0.2),
-                  width: hasFieldError ? 1.5 : 1,
+                  color: hasFieldError ? colorScheme.error : colorScheme.primary,
+                  width: hasFieldError ? 1.5 : 2,
                 ),
               ),
               contentPadding: const EdgeInsets.symmetric(
@@ -292,10 +288,10 @@ class _BidFormState extends ConsumerState<_BidForm> {
             const SizedBox(height: 8),
             Text(
               _fieldError!,
-              style: const TextStyle(
+              style: textTheme.bodySmall?.copyWith(
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
-                color: BidInputDialog._errorColor,
+                color: colorScheme.error,
                 height: 1.35,
               ),
             ),
@@ -306,27 +302,23 @@ class _BidFormState extends ConsumerState<_BidForm> {
             child: FilledButton(
               onPressed: _canSubmit ? _submit : null,
               style: FilledButton.styleFrom(
-                backgroundColor: BidInputDialog._textPrimary,
-                disabledBackgroundColor:
-                    BidInputDialog._textPrimary.withValues(alpha: 0.6),
-                foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
                 elevation: 0,
               ),
               child: _isSubmitting
-                  ? const SizedBox(
+                  ? SizedBox(
                       width: 22,
                       height: 22,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        color: Colors.white,
+                        color: colorScheme.onPrimary,
                       ),
                     )
                   : Text(
                       l10n.submitBid,
-                      style: const TextStyle(
+                      style: textTheme.labelLarge?.copyWith(
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
                       ),

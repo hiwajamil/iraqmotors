@@ -42,7 +42,7 @@ class IraqLocationDropdowns extends StatelessWidget {
   }) async {
     final result = await showModalBottomSheet<String>(
       context: context,
-      backgroundColor: AddCarTheme.cardBg,
+      backgroundColor: AddCarTheme.cardBg(context),
       shape: AddCarTheme.bottomSheetShape,
       builder: (ctx) {
         return SafeArea(
@@ -51,9 +51,9 @@ class IraqLocationDropdowns extends StatelessWidget {
             children: [
               Padding(
                 padding: const EdgeInsets.all(16),
-                child: Text(title, style: AddCarTheme.sectionLabel),
+                child: Text(title, style: AddCarTheme.sectionLabel(context)),
               ),
-              const Divider(height: 1, color: AddCarTheme.border),
+              Divider(height: 1, color: AddCarTheme.border(context)),
               Flexible(
                 child: ListView.builder(
                   shrinkWrap: true,
@@ -68,7 +68,7 @@ class IraqLocationDropdowns extends StatelessWidget {
                           fontSize: 16,
                           fontWeight:
                               isSelected ? FontWeight.w600 : FontWeight.w400,
-                          color: AddCarTheme.textPrimary,
+                          color: AddCarTheme.textPrimary(context),
                         ),
                       ),
                       trailing: isSelected
@@ -174,8 +174,8 @@ class _LocationFieldState extends State<_LocationField> {
   Widget build(BuildContext context) {
     final hasValue = widget.value != null;
     final textColor = widget.enabled
-        ? (hasValue ? AddCarTheme.textPrimary : AddCarTheme.textSecondary)
-        : AddCarTheme.textSecondary.withValues(alpha: 0.45);
+        ? (hasValue ? AddCarTheme.textPrimary(context) : AddCarTheme.textSecondary(context))
+        : AddCarTheme.textSecondary(context).withValues(alpha: 0.45);
 
     return GestureDetector(
       onTapDown: widget.enabled && widget.onTap != null
@@ -194,8 +194,7 @@ class _LocationFieldState extends State<_LocationField> {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 180),
           padding: const EdgeInsetsDirectional.fromSTEB(16, 14, 12, 14),
-          decoration: AddCarTheme.inputDecorationBox(
-            focused: _pressed,
+          decoration: AddCarTheme.inputDecorationBox(context, focused: _pressed,
             enabled: widget.enabled,
           ),
           child: Row(
@@ -206,10 +205,10 @@ class _LocationFieldState extends State<_LocationField> {
                   children: [
                     Text(
                       widget.label,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
-                        color: AddCarTheme.textSecondary,
+                        color: AddCarTheme.textSecondary(context),
                       ),
                     ),
                     const SizedBox(height: 6),

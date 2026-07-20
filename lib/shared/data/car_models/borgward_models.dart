@@ -1,6 +1,6 @@
 import 'package:iq_motors/shared/models/localized_car_model.dart';
 
-const List<LocalizedCarModel> borgwardModels = [
+const List<LocalizedCarModel> BorgwardModels = [
   LocalizedCarModel(id: 'bx5', ku: 'BX5', en: 'BX5', ar: 'BX5'),
   LocalizedCarModel(id: 'bx7', ku: 'BX7', en: 'BX7', ar: 'BX7'),
 ];

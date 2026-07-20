@@ -1,0 +1,25 @@
+import 'package:iq_motors/shared/models/localized_car_model.dart';
+
+const List<LocalizedCarModel> PremierModels = [
+  LocalizedCarModel(id: 'premier_bellwether_premier', ku: 'BELLWETHER / Premier', en: 'BELLWETHER / Premier', ar: 'BELLWETHER / Premier'),
+  LocalizedCarModel(id: 'premier_cga_341', ku: 'CGA 341', en: 'CGA 341', ar: 'CGA 341'),
+  LocalizedCarModel(id: 'premier_cgs_premier', ku: 'CGS Premier', en: 'CGS Premier', ar: 'CGS Premier'),
+  LocalizedCarModel(id: 'premier_kaiser_premier_llc', ku: 'KAISER PREMIER LLC', en: 'KAISER PREMIER LLC', ar: 'KAISER PREMIER LLC'),
+  LocalizedCarModel(id: 'premier_mc_331', ku: 'MC-331', en: 'MC-331', ar: 'MC-331'),
+  LocalizedCarModel(id: 'premier_mc_338', ku: 'MC-338', en: 'MC-338', ar: 'MC-338'),
+  LocalizedCarModel(id: 'premier_premier', ku: 'PREMIER', en: 'PREMIER', ar: 'PREMIER'),
+  LocalizedCarModel(id: 'premier_premier_coachbuilders_inc', ku: 'Premier Coachbuilders Inc', en: 'Premier Coachbuilders Inc', ar: 'Premier Coachbuilders Inc'),
+  LocalizedCarModel(id: 'premier_premier_coil', ku: 'Premier Coil', en: 'Premier Coil', ar: 'Premier Coil'),
+  LocalizedCarModel(id: 'premier_premier_fabricating_inc', ku: 'Premier Fabricating INC', en: 'Premier Fabricating INC', ar: 'Premier Fabricating INC'),
+  LocalizedCarModel(id: 'premier_premier_fabricators_llc', ku: 'Premier Fabricators LLC', en: 'Premier Fabricators LLC', ar: 'Premier Fabricators LLC'),
+  LocalizedCarModel(id: 'premier_premier_northwest', ku: 'PREMIER NORTHWEST', en: 'PREMIER NORTHWEST', ar: 'PREMIER NORTHWEST'),
+  LocalizedCarModel(id: 'premier_premier_pump_and_power', ku: 'Premier Pump and Power', en: 'Premier Pump and Power', ar: 'Premier Pump and Power'),
+  LocalizedCarModel(id: 'premier_premier_trailer', ku: 'Premier Trailer', en: 'Premier Trailer', ar: 'Premier Trailer'),
+  LocalizedCarModel(id: 'premier_premier_trailer_manufacturing_inc', ku: 'Premier Trailer Manufacturing, Inc.', en: 'Premier Trailer Manufacturing, Inc.', ar: 'Premier Trailer Manufacturing, Inc.'),
+  LocalizedCarModel(id: 'premier_premier_trailer_solutions_llc', ku: 'PREMIER TRAILER SOLUTIONS LLC', en: 'PREMIER TRAILER SOLUTIONS LLC', ar: 'PREMIER TRAILER SOLUTIONS LLC'),
+  LocalizedCarModel(id: 'premier_premier_trailers', ku: 'Premier Trailers', en: 'Premier Trailers', ar: 'Premier Trailers'),
+  LocalizedCarModel(id: 'premier_tc_331', ku: 'TC-331', en: 'TC-331', ar: 'TC-331'),
+  LocalizedCarModel(id: 'premier_tc_338', ku: 'TC-338', en: 'TC-338', ar: 'TC-338'),
+  LocalizedCarModel(id: 'premier_tc_341', ku: 'TC-341', en: 'TC-341', ar: 'TC-341'),
+  LocalizedCarModel(id: 'premier_trailers_by_premier', ku: 'Trailers by Premier', en: 'Trailers by Premier', ar: 'Trailers by Premier'),
+];

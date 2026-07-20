@@ -1816,6 +1816,54 @@ abstract class AppLocalizations {
   /// **'نەتوانرا ڕیکلامەکان بار بکرێن. تکایە دووبارە هەوڵ بدەرەوە.'**
   String get homeFeedLoadError;
 
+  /// No description provided for @homeFeedEnd.
+  ///
+  /// In ku, this message translates to:
+  /// **'هەموو ڕیکلامە بەردەستەکانت بینیوە'**
+  String get homeFeedEnd;
+
+  /// No description provided for @aiAppraisalButton.
+  ///
+  /// In ku, this message translates to:
+  /// **'نرخی AI بەدەست بهێنە'**
+  String get aiAppraisalButton;
+
+  /// No description provided for @aiAppraisalTitle.
+  ///
+  /// In ku, this message translates to:
+  /// **'هەڵسەنگاندنی نرخ بە AI'**
+  String get aiAppraisalTitle;
+
+  /// No description provided for @aiAppraisalSubtitle.
+  ///
+  /// In ku, this message translates to:
+  /// **'کارپێکراوی Gemini AI'**
+  String get aiAppraisalSubtitle;
+
+  /// No description provided for @aiAppraisalEstimatedRange.
+  ///
+  /// In ku, this message translates to:
+  /// **'نرخی بازاڕی خەمڵێنراو'**
+  String get aiAppraisalEstimatedRange;
+
+  /// No description provided for @aiAppraisalConfidence.
+  ///
+  /// In ku, this message translates to:
+  /// **'ئاستی دڵنیایی'**
+  String get aiAppraisalConfidence;
+
+  /// No description provided for @aiAppraisalDisclaimer.
+  ///
+  /// In ku, this message translates to:
+  /// **'ئەم خەمڵێنکردنە لەلایەن AI ئامادەکراوە و تەنها بۆ ڕێنمایی دەبێت. نرخی ڕاستەقینە لەگەڵ بارودۆخ و داواکاری ناوخۆ جیاواز دەبێت.'**
+  String get aiAppraisalDisclaimer;
+
+  /// No description provided for @aiAppraisalClose.
+  ///
+  /// In ku, this message translates to:
+  /// **'تێگەیشتم'**
+  String get aiAppraisalClose;
+
   /// No description provided for @homeBrowseBrands.
   ///
   /// In ku, this message translates to:

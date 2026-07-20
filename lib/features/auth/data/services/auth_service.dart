@@ -660,4 +660,70 @@ class AuthService {
       throw AuthException(AuthErrorCode.invalidPhone);
     }
   }
+
+  /// Updates user profile details in Firestore `users/$uid` and Firebase Auth.
+  Future<void> updateProfile({
+    required String uid,
+    required String displayName,
+    String? city,
+    String? showroomName,
+    String? ownerName,
+  }) async {
+    try {
+      final user = _auth.currentUser;
+      if (user != null && user.uid == uid) {
+        if (displayName.trim().isNotEmpty && user.displayName != displayName.trim()) {
+          await user.updateDisplayName(displayName.trim());
+        }
+      }
+
+      final updateData = <String, dynamic>{
+        'displayName': displayName.trim(),
+        if (city != null) 'city': city,
+        if (showroomName != null) 'showroomName': showroomName.trim(),
+        if (ownerName != null) 'ownerName': ownerName.trim(),
+        'updatedAt': FieldValue.serverTimestamp(),
+      };
+
+      await _firestore.collection('users').doc(uid).set(
+        updateData,
+        SetOptions(merge: true),
+      );
+    } on FirebaseException catch (e) {
+      debugPrint('[Auth] updateProfile error: ${e.message}');
+      rethrow;
+    } catch (e) {
+      debugPrint('[Auth] updateProfile error: $e');
+      rethrow;
+    }
+  }
+
+  /// Re-authenticates user with current password and updates to new password.
+  Future<void> updatePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) async {
+    final user = _auth.currentUser;
+    if (user == null) {
+      throw AuthException(AuthErrorCode.userNotFound);
+    }
+
+    final email = user.email;
+    if (email == null || email.isEmpty) {
+      throw AuthException(AuthErrorCode.userNotFound);
+    }
+
+    try {
+      final cred = EmailAuthProvider.credential(
+        email: email,
+        password: currentPassword,
+      );
+      await user.reauthenticateWithCredential(cred);
+      await user.updatePassword(newPassword);
+    } on FirebaseAuthException {
+      rethrow;
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

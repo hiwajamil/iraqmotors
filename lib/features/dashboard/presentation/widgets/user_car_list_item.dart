@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:iq_motors/core/localization/l10n_extensions.dart';
+import 'package:iq_motors/core/theme/app_theme.dart';
 import 'package:iq_motors/shared/widgets/car_network_image.dart';
 
 /// Single car row for the regular user dashboard "My Ads" list.
@@ -46,14 +47,6 @@ class UserCarListItem extends StatelessWidget {
   final VoidCallback? onDelete;
   final VoidCallback? onToggleActive;
 
-  static const Color _textPrimary = Color(0xFF1D1D1F);
-  static const Color _textGray = Color(0xFF86868B);
-  static const Color _dateGray = Color(0xFF6E6E73);
-  static const Color _primaryBlue = Color(0xFF007AFF);
-  static const Color _statusActive = Color(0xFF34C759);
-  static const Color _deleteRed = Color(0xFFFF3B30);
-  static const Color _draftOrange = Color(0xFFFF9500);
-
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
@@ -61,7 +54,7 @@ class UserCarListItem extends StatelessWidget {
         final useMobileLayout = constraints.maxWidth < _mobileBreakpoint;
 
         return Padding(
-          padding: EdgeInsets.symmetric(vertical: useMobileLayout ? 14 : 10),
+          padding: EdgeInsets.symmetric(vertical: useMobileLayout ? 16 : 8),
           child: useMobileLayout
               ? _MobileCarListItem(
                   title: title,
@@ -261,7 +254,7 @@ class _MobileCarListItem extends StatelessWidget {
                 width: 88,
                 height: 66,
               ),
-              const SizedBox(width: 14),
+              const SizedBox(width: 16),
               Expanded(
                 child: _CarInfo(
                   title: title,
@@ -281,7 +274,7 @@ class _MobileCarListItem extends StatelessWidget {
             layout: _AdMetaLayout.stacked,
           ),
         ],
-        const SizedBox(height: 14),
+        const SizedBox(height: 16),
         _CarActions(
           isDraft: isDraft,
           isActive: isActive,
@@ -316,6 +309,7 @@ class _CarThumbnail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = context.colorScheme;
     return Stack(
       clipBehavior: Clip.none,
       children: [
@@ -331,12 +325,12 @@ class _CarThumbnail extends StatelessWidget {
               errorBuilder: (_, __, ___) => Container(
                 width: width,
                 height: height,
-                color: const Color(0xFFF5F5F7),
+                color: colorScheme.surfaceContainerHighest,
                 alignment: Alignment.center,
-                child: const Icon(
+                child: Icon(
                   Icons.directions_car_outlined,
                   size: 24,
-                  color: UserCarListItem._textGray,
+                  color: colorScheme.onSurfaceVariant,
                 ),
               ),
             ),
@@ -347,7 +341,7 @@ class _CarThumbnail extends StatelessWidget {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(10),
               child: ColoredBox(
-                color: UserCarListItem._draftOrange.withValues(alpha: 0.08),
+                color: colorScheme.secondary.withValues(alpha: 0.08),
               ),
             ),
           ),
@@ -378,6 +372,8 @@ class _CarInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = context.colorScheme;
+    final textTheme = context.textTheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -386,10 +382,9 @@ class _CarInfo extends StatelessWidget {
           title,
           maxLines: titleMaxLines,
           overflow: TextOverflow.ellipsis,
-          style: const TextStyle(
-            fontSize: 15,
+          style: textTheme.titleSmall?.copyWith(
             fontWeight: FontWeight.w600,
-            color: UserCarListItem._textPrimary,
+            color: colorScheme.onSurface,
             height: 1.25,
           ),
         ),
@@ -398,14 +393,13 @@ class _CarInfo extends StatelessWidget {
           price,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: const TextStyle(
-            fontSize: 13,
-            color: UserCarListItem._textGray,
+          style: textTheme.bodySmall?.copyWith(
+            color: colorScheme.onSurfaceVariant,
             height: 1.2,
           ),
         ),
         if (latestBidLabel != null && latestBidLabel!.isNotEmpty) ...[
-          const SizedBox(height: 6),
+          const SizedBox(height: 8),
           Align(
             alignment: AlignmentDirectional.centerStart,
             child: _LatestBidChip(
@@ -427,22 +421,24 @@ class _LatestBidChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = context.colorScheme;
+    final textTheme = context.textTheme;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: UserCarListItem._primaryBlue.withValues(alpha: 0.1),
+        color: colorScheme.primary.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: UserCarListItem._primaryBlue.withValues(alpha: 0.25),
+          color: colorScheme.primary.withValues(alpha: 0.25),
         ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(
+          Icon(
             Icons.gavel_rounded,
             size: 12,
-            color: UserCarListItem._primaryBlue,
+            color: colorScheme.primary,
           ),
           const SizedBox(width: 4),
           Flexible(
@@ -451,19 +447,17 @@ class _LatestBidChip extends StatelessWidget {
                 children: [
                   TextSpan(
                     text: '$label ',
-                    style: const TextStyle(
-                      fontSize: 12,
+                    style: textTheme.labelSmall?.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: UserCarListItem._primaryBlue,
+                      color: colorScheme.primary,
                       height: 1.2,
                     ),
                   ),
                   TextSpan(
                     text: value,
-                    style: const TextStyle(
-                      fontSize: 12,
+                    style: textTheme.labelSmall?.copyWith(
                       fontWeight: FontWeight.w700,
-                      color: UserCarListItem._primaryBlue,
+                      color: colorScheme.primary,
                       height: 1.2,
                     ),
                   ),
@@ -519,7 +513,7 @@ class _AdMeta extends StatelessWidget {
     return Row(
       children: [
         if (posted != null) Flexible(child: posted),
-        if (posted != null && remaining != null) const SizedBox(width: 14),
+        if (posted != null && remaining != null) const SizedBox(width: 16),
         if (remaining != null) Flexible(child: remaining),
       ],
     );
@@ -534,19 +528,20 @@ class _MetaLine extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = context.colorScheme;
+    final textTheme = context.textTheme;
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 13, color: UserCarListItem._dateGray),
+        Icon(icon, size: 13, color: colorScheme.onSurfaceVariant),
         const SizedBox(width: 4),
         Flexible(
           child: Text(
             label,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              fontSize: 12,
-              color: UserCarListItem._dateGray,
+            style: textTheme.labelSmall?.copyWith(
+              color: colorScheme.onSurfaceVariant,
               height: 1.2,
             ),
           ),
@@ -582,6 +577,7 @@ class _CarActions extends StatelessWidget {
   final VoidCallback? onDelete;
 
   List<Widget> _buildButtons(BuildContext context) {
+    final colorScheme = context.colorScheme;
     final buttons = <Widget>[
       if (canToggleActive) ...[
         _ActiveToggleButton(
@@ -594,7 +590,7 @@ class _CarActions extends StatelessWidget {
         icon: isDraft ? Icons.play_arrow_rounded : Icons.edit_outlined,
         tooltip: isDraft ? context.l10n.adCompleteDraft : context.l10n.editAction,
         onTap: onEdit,
-        accentColor: isDraft ? UserCarListItem._draftOrange : null,
+        accentColor: isDraft ? colorScheme.secondary : null,
       ),
       if (!isDraft) ...[
         const SizedBox(width: 8),
@@ -602,7 +598,7 @@ class _CarActions extends StatelessWidget {
           icon: Icons.gavel_rounded,
           tooltip: context.l10n.offersAction,
           onTap: onPrices,
-          accentColor: UserCarListItem._primaryBlue,
+          accentColor: colorScheme.primary,
         ),
         if (!isSold) ...[
           const SizedBox(width: 8),
@@ -618,7 +614,7 @@ class _CarActions extends StatelessWidget {
         icon: Icons.delete_outline,
         tooltip: context.l10n.deleteAction,
         onTap: onDelete,
-        accentColor: UserCarListItem._deleteRed,
+        accentColor: colorScheme.error,
       ),
     ];
 
@@ -638,12 +634,12 @@ class _CarActions extends StatelessWidget {
 
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: const Color(0xFFF5F5F7).withValues(alpha: 0.65),
+        color: context.colorScheme.surfaceContainerHighest.withValues(alpha: 0.65),
         borderRadius: BorderRadius.circular(12),
       ),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         clipBehavior: Clip.none,
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -672,17 +668,14 @@ class _ActiveToggleButtonState extends State<_ActiveToggleButton> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = context.colorScheme;
     final active = widget.isActive;
     final bg = active
-        ? UserCarListItem._statusActive.withValues(
-            alpha: _hovered ? 0.22 : 0.14,
-          )
+        ? colorScheme.tertiary.withValues(alpha: _hovered ? 0.22 : 0.14)
         : (_hovered
-            ? const Color(0xFFE5E5EA)
-            : const Color(0xFFF5F5F7));
-    final fg = active
-        ? UserCarListItem._statusActive
-        : UserCarListItem._textGray;
+            ? colorScheme.surfaceContainerHighest
+            : colorScheme.surfaceContainerHigh);
+    final fg = active ? colorScheme.tertiary : colorScheme.onSurfaceVariant;
 
     return MouseRegion(
       onEnter: (_) => setState(() => _hovered = true),
@@ -693,14 +686,13 @@ class _ActiveToggleButtonState extends State<_ActiveToggleButton> {
           onTap: widget.onTap,
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 150),
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
             decoration: BoxDecoration(
               color: bg,
               borderRadius: BorderRadius.circular(8),
               border: active
                   ? Border.all(
-                      color: UserCarListItem._statusActive
-                          .withValues(alpha: 0.35),
+                      color: colorScheme.tertiary.withValues(alpha: 0.35),
                     )
                   : null,
             ),
@@ -738,8 +730,9 @@ class _IconActionButtonState extends State<_IconActionButton> {
 
   @override
   Widget build(BuildContext context) {
-    final base = widget.accentColor ?? UserCarListItem._textGray;
-    final color = _hovered ? UserCarListItem._textPrimary : base;
+    final colorScheme = context.colorScheme;
+    final base = widget.accentColor ?? colorScheme.onSurfaceVariant;
+    final color = _hovered ? colorScheme.onSurface : base;
 
     return MouseRegion(
       onEnter: (_) => setState(() => _hovered = true),
@@ -765,16 +758,16 @@ class _DraftBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = context.colorScheme;
+    final textTheme = context.textTheme;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFFFFB340), Color(0xFFFF9500)],
-        ),
+        color: colorScheme.secondary,
         borderRadius: BorderRadius.circular(8),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFFFF9500).withValues(alpha: 0.35),
+            color: colorScheme.secondary.withValues(alpha: 0.35),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -782,10 +775,9 @@ class _DraftBadge extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: const TextStyle(
-          fontSize: 10,
+        style: textTheme.labelSmall?.copyWith(
           fontWeight: FontWeight.w700,
-          color: Colors.white,
+          color: colorScheme.onSecondary,
           letterSpacing: -0.1,
         ),
       ),

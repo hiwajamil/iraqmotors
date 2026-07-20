@@ -2,6 +2,7 @@ import 'package:iq_motors/shared/widgets/app_cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:iq_motors/core/theme/app_theme.dart';
 import 'package:iq_motors/core/utils/activity_actions.dart';
 import 'package:iq_motors/features/admin/domain/admin_audit_helper.dart';
 import 'package:iq_motors/core/localization/l10n_extensions.dart';
@@ -15,6 +16,7 @@ import 'package:iq_motors/features/auth/domain/models/user_profile.dart';
 import 'package:iq_motors/features/storage/presentation/providers/storage_providers.dart';
 import 'package:iq_motors/features/marketplace/data/services/car_database_service.dart';
 import 'package:iq_motors/features/listings/presentation/add_car_review_summary.dart';
+import 'package:iq_motors/features/listings/presentation/add_car_theme.dart';
 
 /// Admin review screen for a pending car listing.
 class AdminAdDetailScreen extends ConsumerStatefulWidget {
@@ -33,12 +35,6 @@ class AdminAdDetailScreen extends ConsumerStatefulWidget {
 }
 
 class _AdminAdDetailScreenState extends ConsumerState<AdminAdDetailScreen> {
-  static const Color _bg = Color(0xFFF5F5F7);
-  static const Color _card = Color(0xFFFFFFFF);
-  static const Color _textPrimary = Color(0xFF1D1D1F);
-  static const Color _textSecondary = Color(0xFF86868B);
-  static const Color _divider = Color(0xFFE5E5EA);
-
   bool _isProcessing = false;
 
   String get _adId => widget.adData['id']?.toString() ?? '';
@@ -124,7 +120,7 @@ class _AdminAdDetailScreenState extends ConsumerState<AdminAdDetailScreen> {
         SnackBar(
           content: Text(e.message),
           behavior: SnackBarBehavior.floating,
-          backgroundColor: const Color(0xFFFF3B30),
+          backgroundColor: Theme.of(context).colorScheme.error,
         ),
       );
     }
@@ -138,11 +134,14 @@ class _AdminAdDetailScreenState extends ConsumerState<AdminAdDetailScreen> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
           l10n.adminRejectAdTitle,
-          style: const TextStyle(fontWeight: FontWeight.w700, color: _textPrimary),
+          style: TextStyle(
+            fontWeight: FontWeight.w700,
+            color: AddCarTheme.textPrimary(context),
+          ),
         ),
         content: Text(
           l10n.adminRejectAdConfirm,
-          style: const TextStyle(color: _textSecondary),
+          style: TextStyle(color: AddCarTheme.textSecondary(context)),
         ),
         actions: [
           TextButton(
@@ -151,7 +150,9 @@ class _AdminAdDetailScreenState extends ConsumerState<AdminAdDetailScreen> {
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            style: TextButton.styleFrom(foregroundColor: const Color(0xFFFF3B30)),
+            style: TextButton.styleFrom(
+              foregroundColor: Theme.of(context).colorScheme.error,
+            ),
             child: Text(l10n.actionReject),
           ),
         ],
@@ -168,23 +169,23 @@ class _AdminAdDetailScreenState extends ConsumerState<AdminAdDetailScreen> {
     final l10n = context.l10n;
     final sections = AddCarReviewSummary.build(l10n, _draft);
     final profile = widget.sellerProfile;
+    final scheme = context.colorScheme;
 
     return Scaffold(
-      backgroundColor: _bg,
+      backgroundColor: scheme.surface,
       appBar: AppBar(
-        backgroundColor: _bg,
+        backgroundColor: scheme.surface,
         elevation: 0,
         scrolledUnderElevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, size: 18, color: _textPrimary),
+          icon: Icon(Icons.arrow_back_ios_new, size: 18, color: scheme.onSurface),
           onPressed: () => Navigator.of(context).maybePop(),
         ),
         title: Text(
           l10n.actionView,
-          style: const TextStyle(
-            fontSize: 17,
+          style: context.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w600,
-            color: _textPrimary,
+            color: scheme.onSurface,
           ),
         ),
         centerTitle: true,
@@ -197,9 +198,9 @@ class _AdminAdDetailScreenState extends ConsumerState<AdminAdDetailScreen> {
               Expanded(
                 child: _BottomActionButton(
                   label: l10n.actionReject,
-                  fg: const Color(0xFFFF3B30),
-                  bg: Colors.white,
-                  border: const Color(0xFFFF3B30),
+                  fg: scheme.error,
+                  bg: scheme.surfaceContainerLowest,
+                  border: scheme.error,
                   isLoading: _isProcessing,
                   onTap: _confirmReject,
                 ),
@@ -208,9 +209,9 @@ class _AdminAdDetailScreenState extends ConsumerState<AdminAdDetailScreen> {
               Expanded(
                 child: _BottomActionButton(
                   label: l10n.actionApprove,
-                  fg: Colors.white,
-                  bg: const Color(0xFF1D1D1F),
-                  border: const Color(0xFF1D1D1F),
+                  fg: scheme.onPrimary,
+                  bg: scheme.primary,
+                  border: scheme.primary,
                   filled: true,
                   isLoading: _isProcessing,
                   onTap: () => _updateStatus(CarDatabaseService.statusActive),
@@ -232,7 +233,7 @@ class _AdminAdDetailScreenState extends ConsumerState<AdminAdDetailScreen> {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: _card,
+                color: scheme.surfaceContainerLowest,
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Column(
@@ -240,20 +241,20 @@ class _AdminAdDetailScreenState extends ConsumerState<AdminAdDetailScreen> {
                 children: [
                   Text(
                     _title(l10n),
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.w700,
-                      color: _textPrimary,
+                      color: scheme.onSurface,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     _formatPrice(),
                     textDirection: TextDirection.ltr,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w700,
-                      color: _textPrimary,
+                      color: scheme.onSurface,
                     ),
                   ),
                 ],
@@ -273,7 +274,7 @@ class _AdminAdDetailScreenState extends ConsumerState<AdminAdDetailScreen> {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: _card,
+                  color: scheme.surfaceContainerLowest,
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Column(
@@ -281,19 +282,19 @@ class _AdminAdDetailScreenState extends ConsumerState<AdminAdDetailScreen> {
                   children: [
                     Text(
                       l10n.adminDescriptionLabel,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
-                        color: _textPrimary,
+                        color: scheme.onSurface,
                       ),
                     ),
                     const SizedBox(height: 12),
                     Text(
                       _draft.description!,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 14,
                         height: 1.5,
-                        color: _textSecondary,
+                        color: scheme.onSurfaceVariant,
                       ),
                     ),
                   ],
@@ -314,6 +315,7 @@ class _ImageGallery extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final divider = context.colorScheme.outlineVariant;
     return SizedBox(
       height: 220,
       child: ListView.separated(
@@ -331,12 +333,12 @@ class _ImageGallery extends StatelessWidget {
               memCacheLogicalWidth: 300,
               memCacheLogicalHeight: 220,
               placeholder: (_, __) => Container(
-                color: _AdminAdDetailScreenState._divider,
+                color: divider,
                 alignment: Alignment.center,
                 child: const CircularProgressIndicator(strokeWidth: 2),
               ),
               errorWidget: (_, __, ___) => Container(
-                color: _AdminAdDetailScreenState._divider,
+                color: divider,
                 child: const Icon(Icons.directions_car_outlined, size: 48),
               ),
             ),
@@ -355,11 +357,14 @@ class _PublisherCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isShowroom = profile.accountType == AccountType.showroom;
+    final scheme = context.colorScheme;
+    final accentBg = isShowroom ? scheme.secondaryContainer : scheme.primaryContainer;
+    final accentFg = isShowroom ? scheme.onSecondaryContainer : scheme.onPrimaryContainer;
 
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: _AdminAdDetailScreenState._card,
+        color: scheme.surfaceContainerLowest,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
@@ -368,16 +373,12 @@ class _PublisherCard extends StatelessWidget {
             width: 44,
             height: 44,
             decoration: BoxDecoration(
-              color: isShowroom
-                  ? const Color(0xFFF3EBFF)
-                  : const Color(0xFFE6F0FF),
+              color: accentBg,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
               isShowroom ? Icons.storefront_outlined : Icons.person_outline,
-              color: isShowroom
-                  ? const Color(0xFFAF52DE)
-                  : const Color(0xFF007AFF),
+              color: accentFg,
             ),
           ),
           const SizedBox(width: 14),
@@ -387,19 +388,19 @@ class _PublisherCard extends StatelessWidget {
               children: [
                 Text(
                   profile.displayName,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
-                    color: _AdminAdDetailScreenState._textPrimary,
+                    color: scheme.onSurface,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   profile.phone,
                   textDirection: TextDirection.ltr,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 13,
-                    color: _AdminAdDetailScreenState._textSecondary,
+                    color: scheme.onSurfaceVariant,
                   ),
                 ),
               ],
@@ -418,10 +419,11 @@ class _DetailSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = context.colorScheme;
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: _AdminAdDetailScreenState._card,
+        color: scheme.surfaceContainerLowest,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -429,18 +431,18 @@ class _DetailSection extends StatelessWidget {
         children: [
           Text(
             section.title,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w700,
-              color: _AdminAdDetailScreenState._textPrimary,
+              color: scheme.onSurface,
             ),
           ),
           const SizedBox(height: 14),
           for (var i = 0; i < section.rows.length; i++) ...[
             if (i > 0)
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 10),
-                child: Divider(height: 1, color: _AdminAdDetailScreenState._divider),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: Divider(height: 1, color: scheme.outlineVariant),
               ),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -449,9 +451,9 @@ class _DetailSection extends StatelessWidget {
                   flex: 2,
                   child: Text(
                     section.rows[i].label,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 13,
-                      color: _AdminAdDetailScreenState._textSecondary,
+                      color: scheme.onSurfaceVariant,
                     ),
                   ),
                 ),
@@ -459,10 +461,10 @@ class _DetailSection extends StatelessWidget {
                   flex: 3,
                   child: Text(
                     section.rows[i].value,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
-                      color: _AdminAdDetailScreenState._textPrimary,
+                      color: scheme.onSurface,
                     ),
                   ),
                 ),
@@ -496,34 +498,46 @@ class _BottomActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: isLoading ? null : onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 14),
-        decoration: BoxDecoration(
-          color: bg,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: border),
+    final textTheme = Theme.of(context).textTheme;
+    final child = isLoading
+        ? SizedBox(
+            width: 20,
+            height: 20,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              color: fg,
+            ),
+          )
+        : Text(
+            label,
+            style: textTheme.labelLarge?.copyWith(
+              fontWeight: FontWeight.w600,
+              color: fg,
+            ),
+          );
+
+    if (filled) {
+      return FilledButton(
+        onPressed: isLoading ? null : onTap,
+        style: FilledButton.styleFrom(
+          minimumSize: const Size.fromHeight(48),
+          backgroundColor: bg,
+          foregroundColor: fg,
+          disabledBackgroundColor: bg.withValues(alpha: 0.7),
+          disabledForegroundColor: fg,
         ),
-        alignment: Alignment.center,
-        child: isLoading
-            ? SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: filled ? Colors.white : fg,
-                ),
-              )
-            : Text(
-                label,
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                  color: fg,
-                ),
-              ),
+        child: child,
+      );
+    }
+
+    return OutlinedButton(
+      onPressed: isLoading ? null : onTap,
+      style: OutlinedButton.styleFrom(
+        minimumSize: const Size.fromHeight(48),
+        foregroundColor: fg,
+        side: BorderSide(color: border),
       ),
+      child: child,
     );
   }
 }

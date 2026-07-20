@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:iq_motors/core/localization/l10n_extensions.dart';
+import 'package:iq_motors/core/theme/app_theme.dart';
 import 'package:iq_motors/core/utils/relative_time.dart';
 import 'package:iq_motors/l10n/app_localizations.dart';
 import 'package:iq_motors/features/admin/domain/models/support_ticket.dart';
@@ -22,13 +23,6 @@ class AdminMessagesView extends ConsumerStatefulWidget {
 }
 
 class _AdminMessagesViewState extends ConsumerState<AdminMessagesView> {
-  static const Color _bg = Color(0xFFF5F5F7);
-  static const Color _textPrimary = Color(0xFF1D1D1F);
-  static const Color _textSecondary = Color(0xFF86868B);
-  static const Color _adminBubble = Color(0xFF007AFF);
-  static const Color _userBubble = Color(0xFFE5E5EA);
-  static const Color _divider = Color(0xFFE5E5EA);
-
   String? _selectedTicketId;
   _TicketFilter _filter = _TicketFilter.all;
   final _messageController = TextEditingController();
@@ -84,7 +78,7 @@ class _AdminMessagesViewState extends ConsumerState<AdminMessagesView> {
         SnackBar(
           content: Text(e.toString()),
           behavior: SnackBarBehavior.floating,
-          backgroundColor: const Color(0xFFFF3B30),
+          backgroundColor: Theme.of(context).colorScheme.error,
         ),
       );
     } finally {
@@ -107,7 +101,7 @@ class _AdminMessagesViewState extends ConsumerState<AdminMessagesView> {
         SnackBar(
           content: Text(e.toString()),
           behavior: SnackBarBehavior.floating,
-          backgroundColor: const Color(0xFFFF3B30),
+          backgroundColor: Theme.of(context).colorScheme.error,
         ),
       );
     }
@@ -122,17 +116,16 @@ class _AdminMessagesViewState extends ConsumerState<AdminMessagesView> {
       children: [
         Text(
           l10n.adminMessagesTitle,
-          style: TextStyle(
-            fontSize: widget.isMobile ? 24 : 28,
+          style: context.textTheme.headlineMedium?.copyWith(
             fontWeight: FontWeight.w700,
-            color: _textPrimary,
+            color: AddCarTheme.textPrimary(context),
             height: 1.25,
           ),
         ),
         const SizedBox(height: 6),
         Text(
           l10n.adminMessagesSubtitle,
-          style: const TextStyle(fontSize: 14, color: _textSecondary),
+          style: AddCarTheme.stepSubtitle(context).copyWith(fontSize: 14),
         ),
         const SizedBox(height: 20),
         Expanded(
@@ -189,9 +182,8 @@ class _AdminMessagesViewState extends ConsumerState<AdminMessagesView> {
   ) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.colorScheme.surfaceContainerLowest,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: AddCarTheme.cardShadow,
       ),
       clipBehavior: Clip.antiAlias,
       child: Row(
@@ -200,9 +192,9 @@ class _AdminMessagesViewState extends ConsumerState<AdminMessagesView> {
           SizedBox(
             width: 340,
             child: DecoratedBox(
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 border: Border(
-                  right: BorderSide(color: _divider),
+                  right: BorderSide(color: context.colorScheme.outlineVariant),
                 ),
               ),
               child: _buildTicketList(tickets, l10n, selectedId: selected?.id),
@@ -228,16 +220,15 @@ class _AdminMessagesViewState extends ConsumerState<AdminMessagesView> {
             onPressed: () => setState(() => _selectedTicketId = null),
             icon: const Icon(Icons.arrow_back, size: 18),
             label: Text(l10n.adminMessagesBackToList),
-            style: TextButton.styleFrom(foregroundColor: AddCarTheme.focusBlue),
+            style: TextButton.styleFrom(foregroundColor: AddCarTheme.focus(context)),
           ),
         ),
         const SizedBox(height: 8),
         Expanded(
           child: Container(
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: context.colorScheme.surfaceContainerLowest,
               borderRadius: BorderRadius.circular(20),
-              boxShadow: AddCarTheme.cardShadow,
             ),
             clipBehavior: Clip.antiAlias,
             child: _buildThread(ticket, l10n, showBack: false),
@@ -274,7 +265,7 @@ class _AdminMessagesViewState extends ConsumerState<AdminMessagesView> {
                     padding: const EdgeInsets.all(24),
                     child: Text(
                       l10n.messagesEmpty,
-                      style: const TextStyle(color: _textSecondary),
+                      style: TextStyle(color: AddCarTheme.textSecondary(context)),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -312,8 +303,10 @@ class _AdminMessagesViewState extends ConsumerState<AdminMessagesView> {
       children: [
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-          decoration: const BoxDecoration(
-            border: Border(bottom: BorderSide(color: _divider)),
+          decoration: BoxDecoration(
+            border: Border(
+              bottom: BorderSide(color: context.colorScheme.outlineVariant),
+            ),
           ),
           child: Row(
             children: [
@@ -325,18 +318,16 @@ class _AdminMessagesViewState extends ConsumerState<AdminMessagesView> {
                       ticket.userDisplayName.isNotEmpty
                           ? ticket.userDisplayName
                           : ticket.userId,
-                      style: const TextStyle(
-                        fontSize: 17,
+                      style: context.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w600,
-                        color: _textPrimary,
+                        color: AddCarTheme.textPrimary(context),
                       ),
                     ),
                     if (ticket.subject != null && ticket.subject!.isNotEmpty)
                       Text(
                         ticket.subject!,
-                        style: const TextStyle(
-                          fontSize: 13,
-                          color: _textSecondary,
+                        style: context.textTheme.bodySmall?.copyWith(
+                          color: AddCarTheme.textSecondary(context),
                         ),
                       ),
                   ],
@@ -355,7 +346,7 @@ class _AdminMessagesViewState extends ConsumerState<AdminMessagesView> {
         ),
         Expanded(
           child: Container(
-            color: _bg,
+            color: context.colorScheme.surface,
             child: StreamBuilder<List<SupportMessage>>(
               stream: ref
                   .read(supportTicketServiceProvider)
@@ -375,7 +366,7 @@ class _AdminMessagesViewState extends ConsumerState<AdminMessagesView> {
                   return Center(
                     child: Text(
                       l10n.messagesEmpty,
-                      style: const TextStyle(color: _textSecondary),
+                      style: TextStyle(color: AddCarTheme.textSecondary(context)),
                     ),
                   );
                 }
@@ -440,10 +431,12 @@ class _FilterChips extends StatelessWidget {
           labelStyle: TextStyle(
             fontSize: 13,
             fontWeight: FontWeight.w600,
-            color: selected ? Colors.white : const Color(0xFF1D1D1F),
+            color: selected
+                ? context.colorScheme.onPrimary
+                : context.colorScheme.onSurface,
           ),
-          selectedColor: AddCarTheme.focusBlue,
-          backgroundColor: const Color(0xFFF2F2F7),
+          selectedColor: AddCarTheme.focus(context),
+          backgroundColor: context.colorScheme.surfaceContainerHighest,
           side: BorderSide.none,
           padding: const EdgeInsets.symmetric(horizontal: 4),
         );
@@ -474,7 +467,9 @@ class _TicketListItem extends StatelessWidget {
     final isOpen = ticket.isOpen;
 
     return Material(
-      color: isSelected ? const Color(0xFFE8F2FF) : Colors.transparent,
+      color: isSelected
+          ? context.colorScheme.primaryContainer
+          : Colors.transparent,
       borderRadius: BorderRadius.circular(14),
       child: InkWell(
         onTap: onTap,
@@ -495,10 +490,9 @@ class _TicketListItem extends StatelessWidget {
                             ticket.userDisplayName.isNotEmpty
                                 ? ticket.userDisplayName
                                 : ticket.userId,
-                            style: const TextStyle(
-                              fontSize: 15,
+                            style: context.textTheme.bodyLarge?.copyWith(
                               fontWeight: FontWeight.w600,
-                              color: Color(0xFF1D1D1F),
+                              color: context.colorScheme.onSurface,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -508,9 +502,8 @@ class _TicketListItem extends StatelessWidget {
                           const SizedBox(width: 8),
                           Text(
                             timeLabel!,
-                            style: const TextStyle(
-                              fontSize: 11,
-                              color: Color(0xFF86868B),
+                            style: context.textTheme.labelSmall?.copyWith(
+                              color: context.colorScheme.onSurfaceVariant,
                             ),
                           ),
                         ],
@@ -519,9 +512,8 @@ class _TicketListItem extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       ticket.lastMessage,
-                      style: const TextStyle(
-                        fontSize: 13,
-                        color: Color(0xFF86868B),
+                      style: context.textTheme.bodySmall?.copyWith(
+                        color: context.colorScheme.onSurfaceVariant,
                         height: 1.35,
                       ),
                       maxLines: 2,
@@ -551,8 +543,9 @@ class _StatusBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bg = isOpen ? const Color(0xFFE8F8ED) : const Color(0xFFF2F2F7);
-    final fg = isOpen ? const Color(0xFF34C759) : const Color(0xFF86868B);
+    final scheme = context.colorScheme;
+    final bg = isOpen ? scheme.tertiaryContainer : scheme.surfaceContainerHighest;
+    final fg = isOpen ? scheme.tertiary : scheme.onSurfaceVariant;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -596,10 +589,9 @@ class _MessageBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bubbleColor =
-        isAdmin ? _AdminMessagesViewState._adminBubble : _AdminMessagesViewState._userBubble;
-    final textColor =
-        isAdmin ? Colors.white : _AdminMessagesViewState._textPrimary;
+    final scheme = context.colorScheme;
+    final bubbleColor = isAdmin ? scheme.primary : scheme.surfaceContainerHighest;
+    final textColor = isAdmin ? scheme.onPrimary : scheme.onSurface;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
@@ -643,9 +635,9 @@ class _MessageBubble extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   timeLabel!,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 11,
-                    color: _AdminMessagesViewState._textSecondary,
+                    color: scheme.onSurfaceVariant,
                   ),
                 ),
               ],
@@ -676,9 +668,11 @@ class _MessageComposer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        border: Border(top: BorderSide(color: _AdminMessagesViewState._divider)),
+      decoration: BoxDecoration(
+        color: context.colorScheme.surfaceContainerLowest,
+        border: Border(
+          top: BorderSide(color: context.colorScheme.outlineVariant),
+        ),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
@@ -690,27 +684,27 @@ class _MessageComposer extends StatelessWidget {
               maxLines: 4,
               textInputAction: TextInputAction.send,
               onSubmitted: (_) => onSend(),
-              decoration: AddCarTheme.textFieldDecoration(hintText: hintText),
+              decoration: AddCarTheme.textFieldDecoration(context, hintText: hintText),
             ),
           ),
           const SizedBox(width: 10),
           FilledButton(
             onPressed: isSending ? null : onSend,
             style: FilledButton.styleFrom(
-              backgroundColor: AddCarTheme.focusBlue,
-              foregroundColor: Colors.white,
+              backgroundColor: AddCarTheme.focus(context),
+              foregroundColor: Theme.of(context).colorScheme.onPrimary,
               padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
             child: isSending
-                ? const SizedBox(
+                ? SizedBox(
                     width: 18,
                     height: 18,
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
-                      color: Colors.white,
+                      color: Theme.of(context).colorScheme.onPrimary,
                     ),
                   )
                 : Text(
@@ -738,12 +732,14 @@ class _EmptyThreadPlaceholder extends StatelessWidget {
           Icon(
             Icons.chat_bubble_outline,
             size: 48,
-            color: const Color(0xFF86868B).withValues(alpha: 0.45),
+            color: context.colorScheme.onSurfaceVariant.withValues(alpha: 0.45),
           ),
           const SizedBox(height: 16),
           Text(
             message,
-            style: const TextStyle(fontSize: 14, color: Color(0xFF86868B)),
+            style: context.textTheme.bodyMedium?.copyWith(
+              color: context.colorScheme.onSurfaceVariant,
+            ),
           ),
         ],
       ),

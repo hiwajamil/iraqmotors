@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:iq_motors/core/theme/app_theme.dart';
+import 'package:iq_motors/features/listings/presentation/add_car_theme.dart';
 import 'package:iq_motors/core/utils/activity_actions.dart';
 import 'package:iq_motors/features/admin/domain/admin_audit_helper.dart';
 import 'package:iq_motors/core/utils/car_image_urls.dart';
@@ -52,7 +54,6 @@ enum _SuperAdminNav {
 }
 
 class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen> {
-  static const Color _bgMain = Color(0xFFF5F5F7);
   static const double _mobileBreakpoint = 992;
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -63,6 +64,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen> {
   bool _isLoadingPending = true;
   String? _pendingAdsError;
   final Set<String> _processingAdIds = {};
+  final Set<String> _selectedPendingAdIds = {};
   late Future<Map<String, int>> _statsFuture;
 
   @override
@@ -218,7 +220,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen> {
         SnackBar(
           content: Text(l10n.adminAdApprovedSuccess),
           behavior: SnackBarBehavior.floating,
-          backgroundColor: Color(0xFF34C759),
+          backgroundColor: AddCarTheme.success(context),
         ),
       );
       await _loadPendingAds();
@@ -230,7 +232,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen> {
         SnackBar(
           content: Text(e.message),
           behavior: SnackBarBehavior.floating,
-          backgroundColor: const Color(0xFFFF3B30),
+          backgroundColor: Theme.of(context).colorScheme.error,
         ),
       );
       return false;
@@ -249,14 +251,14 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
           l10n.adminRejectAdTitle,
-          style: const TextStyle(
+          style: TextStyle(
             fontWeight: FontWeight.w700,
-            color: Color(0xFF1D1D1F),
+            color: AddCarTheme.textPrimary(context),
           ),
         ),
         content: Text(
           l10n.adminRejectAdConfirm,
-          style: const TextStyle(color: Color(0xFF86868B)),
+          style: TextStyle(color: AddCarTheme.textSecondary(context)),
         ),
         actions: [
           TextButton(
@@ -266,7 +268,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen> {
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
             style: TextButton.styleFrom(
-              foregroundColor: const Color(0xFFFF3B30),
+              foregroundColor: Theme.of(context).colorScheme.error,
             ),
             child: Text(l10n.actionReject),
           ),
@@ -304,7 +306,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen> {
         SnackBar(
           content: Text(e.message),
           behavior: SnackBarBehavior.floating,
-          backgroundColor: const Color(0xFFFF3B30),
+          backgroundColor: Theme.of(context).colorScheme.error,
         ),
       );
       return false;
@@ -312,6 +314,114 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen> {
       if (mounted) {
         setState(() => _processingAdIds.remove(data.id));
       }
+    }
+  }
+
+  Future<void> _bulkApproveSelected() async {
+    if (_selectedPendingAdIds.isEmpty) return;
+    final ids = _selectedPendingAdIds.toList();
+    try {
+      await ref.read(adminDatabaseServiceProvider).bulkApproveAds(
+            ids,
+            audit: buildAdminAudit(
+              ref,
+              action: ActivityActions.approvedAd,
+              details: 'Bulk approved ${ids.length} pending ads',
+            ),
+          );
+      if (!mounted) return;
+      setState(() => _selectedPendingAdIds.clear());
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Bulk approved ${ids.length} listings.'),
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: AddCarTheme.success(context),
+        ),
+      );
+      await _loadPendingAds();
+      _refreshDashboardStats();
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString()),
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: Theme.of(context).colorScheme.error,
+        ),
+      );
+    }
+  }
+
+  Future<void> _bulkRejectSelected() async {
+    if (_selectedPendingAdIds.isEmpty) return;
+    final ids = _selectedPendingAdIds.toList();
+    final reasonCtrl = TextEditingController();
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('Reject ${ids.length} Selected Ads'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('Enter rejection reason for selected listings:'),
+            const SizedBox(height: 12),
+            TextField(
+              controller: reasonCtrl,
+              decoration: const InputDecoration(
+                hintText: 'Rejection reason',
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: FilledButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.error,
+            ),
+            child: const Text('Reject Selected'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true || !mounted) return;
+
+    try {
+      await ref.read(adminDatabaseServiceProvider).bulkRejectAds(
+            ids,
+            reason: reasonCtrl.text.trim(),
+            audit: buildAdminAudit(
+              ref,
+              action: ActivityActions.rejectedAd,
+              details: 'Bulk rejected ${ids.length} pending ads: ${reasonCtrl.text.trim()}',
+            ),
+          );
+      if (!mounted) return;
+      setState(() => _selectedPendingAdIds.clear());
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Bulk rejected ${ids.length} listings.'),
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: Theme.of(context).colorScheme.error,
+        ),
+      );
+      await _loadPendingAds();
+      _refreshDashboardStats();
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString()),
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: Theme.of(context).colorScheme.error,
+        ),
+      );
     }
   }
 
@@ -329,7 +439,8 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen> {
   }
 
   List<_SuperAdminStatData> _buildStats(
-    AppLocalizations l10n, {
+    AppLocalizations l10n,
+    ColorScheme scheme, {
     Map<String, int>? counts,
     bool isLoading = false,
   }) =>
@@ -338,32 +449,32 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen> {
           value: _formatCount(counts?['pendingAds'] ?? 0),
           label: l10n.statPendingApproval,
           icon: Icons.pending_actions_outlined,
-          accentBg: const Color(0xFFFFF4E6),
-          accentFg: const Color(0xFFFF9500),
+          accentBg: scheme.secondaryContainer,
+          accentFg: scheme.secondary,
           isLoading: isLoading,
         ),
         _SuperAdminStatData(
           value: _formatCount(counts?['totalUsers'] ?? 0),
           label: l10n.statTotalUsers,
           icon: Icons.people_outline,
-          accentBg: const Color(0xFFE8F2FF),
-          accentFg: const Color(0xFF007AFF),
+          accentBg: scheme.primaryContainer,
+          accentFg: scheme.primary,
           isLoading: isLoading,
         ),
         _SuperAdminStatData(
           value: _formatCount(counts?['activeAds'] ?? 0),
           label: l10n.statActiveListings,
           icon: Icons.directions_car_outlined,
-          accentBg: const Color(0xFFE8F8ED),
-          accentFg: const Color(0xFF34C759),
+          accentBg: scheme.tertiaryContainer,
+          accentFg: scheme.tertiary,
           isLoading: isLoading,
         ),
         _SuperAdminStatData(
           value: _formatCount(counts?['totalShowrooms'] ?? 0),
           label: l10n.statRegisteredShowrooms,
           icon: Icons.storefront_outlined,
-          accentBg: const Color(0xFFF3EBFF),
-          accentFg: const Color(0xFFAF52DE),
+          accentBg: scheme.errorContainer,
+          accentFg: scheme.error,
           isLoading: isLoading,
         ),
       ];
@@ -386,6 +497,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = context.colorScheme;
     return LayoutBuilder(
       builder: (context, constraints) {
         final isMobile = constraints.maxWidth < _mobileBreakpoint;
@@ -393,10 +505,10 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen> {
         if (isMobile) {
           return Scaffold(
             key: _scaffoldKey,
-            backgroundColor: _bgMain,
+            backgroundColor: scheme.surface,
             drawer: Drawer(
               width: 280,
-              backgroundColor: Colors.white,
+              backgroundColor: scheme.surfaceContainerLowest,
               child: SafeArea(
                 child: _SuperAdminSidebar(
                   isCompact: false,
@@ -424,7 +536,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen> {
         }
 
         return Scaffold(
-          backgroundColor: _bgMain,
+          backgroundColor: scheme.surface,
           body: SafeArea(
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -495,6 +607,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen> {
 
   Widget _buildDashboardHome({required bool isMobile}) {
     final l10n = context.l10n;
+    final scheme = context.colorScheme;
     final adminName = l10n.superAdminTitle;
 
     return Column(
@@ -516,6 +629,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen> {
                 _SuperAdminStatsGrid(
                   stats: _buildStats(
                     l10n,
+                    scheme,
                     counts: counts,
                     isLoading: isLoading,
                   ),
@@ -525,9 +639,9 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen> {
                   const SizedBox(height: 12),
                   Text(
                     statsError,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 13,
-                      color: Color(0xFFFF3B30),
+                      color: scheme.error,
                     ),
                   ),
                 ],
@@ -541,6 +655,28 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen> {
           isLoading: _isLoadingPending,
           errorMessage: _pendingAdsError,
           processingIds: _processingAdIds,
+          selectedIds: _selectedPendingAdIds,
+          onToggleSelect: (id) {
+            setState(() {
+              if (_selectedPendingAdIds.contains(id)) {
+                _selectedPendingAdIds.remove(id);
+              } else {
+                _selectedPendingAdIds.add(id);
+              }
+            });
+          },
+          onSelectAll: () {
+            setState(() {
+              final allIds = _mapPendingAds(l10n).map((a) => a.id).toSet();
+              if (_selectedPendingAdIds.length == allIds.length) {
+                _selectedPendingAdIds.clear();
+              } else {
+                _selectedPendingAdIds.addAll(allIds);
+              }
+            });
+          },
+          onBulkApprove: _bulkApproveSelected,
+          onBulkReject: _bulkRejectSelected,
           isMobile: isMobile,
           onView: _viewAd,
           onReject: _rejectAd,
@@ -605,29 +741,30 @@ class _MobileTopBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final scheme = context.colorScheme;
 
     return Container(
       padding: const EdgeInsetsDirectional.fromSTEB(12, 8, 20, 8),
-      decoration: const BoxDecoration(
-        color: Colors.white,
+      decoration: BoxDecoration(
+        color: scheme.surfaceContainerLowest,
         border: Border(
-          bottom: BorderSide(color: Color(0xFFE5E5EA)),
+          bottom: BorderSide(color: scheme.outlineVariant),
         ),
       ),
       child: Row(
         children: [
           IconButton(
             onPressed: onMenuTap,
-            icon: const Icon(Icons.menu, color: Color(0xFF1D1D1F)),
+            icon: Icon(Icons.menu, color: scheme.onSurface),
           ),
           Expanded(
             child: Text(
               l10n.appTitle,
               textAlign: TextAlign.center,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
-                color: Color(0xFF1D1D1F),
+                color: scheme.onSurface,
                 letterSpacing: -0.3,
               ),
             ),
@@ -654,19 +791,17 @@ class _SuperAdminSidebar extends StatelessWidget {
   final ValueChanged<_SuperAdminNav> onNavTap;
   final VoidCallback onLogout;
 
-  static const Color _bgCard = Color(0xFFFFFFFF);
-  static const Color _borderLight = Color(0xFFE5E5EA);
-
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final scheme = context.colorScheme;
 
     return Container(
       width: isCompact ? double.infinity : 280,
-      decoration: const BoxDecoration(
-        color: _bgCard,
+      decoration: BoxDecoration(
+        color: scheme.surfaceContainerLowest,
         border: BorderDirectional(
-          end: BorderSide(color: _borderLight),
+          end: BorderSide(color: scheme.outlineVariant),
         ),
       ),
       padding: const EdgeInsetsDirectional.fromSTEB(20, 30, 20, 30),
@@ -682,9 +817,9 @@ class _SuperAdminSidebar extends StatelessWidget {
             padding: const EdgeInsetsDirectional.only(end: 10),
             child: Text(
               l10n.superAdminTitle,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 13,
-                color: Color(0xFF86868B),
+                color: scheme.onSurfaceVariant,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -709,6 +844,7 @@ class _BrandBlock extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final scheme = context.colorScheme;
 
     return Row(
       children: [
@@ -716,23 +852,23 @@ class _BrandBlock extends StatelessWidget {
           width: 40,
           height: 40,
           decoration: BoxDecoration(
-            color: const Color(0xFF1D1D1F),
+            color: scheme.primary,
             borderRadius: BorderRadius.circular(12),
           ),
           alignment: Alignment.center,
-          child: const Icon(
+          child: Icon(
             Icons.shield_outlined,
-            color: Colors.white,
+            color: scheme.onPrimary,
             size: 22,
           ),
         ),
         const SizedBox(width: 12),
         Text(
           l10n.appTitle,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 22,
             fontWeight: FontWeight.w700,
-            color: Color(0xFF1D1D1F),
+            color: scheme.onSurface,
             letterSpacing: -0.5,
           ),
         ),
@@ -867,16 +1003,17 @@ class _SuperAdminNavLinkState extends State<_SuperAdminNavLink> {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = context.colorScheme;
     final bg = widget.isActive
-        ? const Color(0xFF000000)
+        ? scheme.primary
         : _hovered
-            ? const Color(0xFFF5F5F7)
+            ? scheme.surfaceContainerHighest
             : Colors.transparent;
     final fg = widget.isActive
-        ? Colors.white
+        ? scheme.onPrimary
         : _hovered
-            ? const Color(0xFF1D1D1F)
-            : const Color(0xFF86868B);
+            ? scheme.onSurface
+            : scheme.onSurfaceVariant;
 
     return MouseRegion(
       onEnter: (_) => setState(() => _hovered = true),
@@ -912,17 +1049,17 @@ class _SuperAdminNavLinkState extends State<_SuperAdminNavLink> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
                   decoration: BoxDecoration(
-                    color: widget.isActive
-                        ? const Color(0xFFFF9500)
-                        : const Color(0xFFFF3B30),
+                    color: widget.isActive ? scheme.secondary : scheme.error,
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Text(
                     '${widget.badgeCount}',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.w600,
-                      color: Colors.white,
+                      color: widget.isActive
+                          ? scheme.onSecondary
+                          : scheme.onError,
                     ),
                   ),
                 ),
@@ -943,29 +1080,18 @@ class _SuperAdminLogoutButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final scheme = context.colorScheme;
 
-    return GestureDetector(
-      onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsetsDirectional.symmetric(
-          horizontal: 15,
-          vertical: 12,
-        ),
-        child: Row(
-          children: [
-            const Icon(Icons.logout, size: 18, color: Color(0xFFFF3B30)),
-            const SizedBox(width: 15),
-            Text(
-              l10n.signOut,
-              style: const TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w500,
-                color: Color(0xFFFF3B30),
-              ),
-            ),
-          ],
-        ),
+    return TextButton.icon(
+      onPressed: onTap,
+      style: TextButton.styleFrom(
+        minimumSize: const Size(48, 48),
+        foregroundColor: scheme.error,
+        alignment: AlignmentDirectional.centerStart,
+        padding: const EdgeInsetsDirectional.symmetric(horizontal: 16),
       ),
+      icon: const Icon(Icons.logout, size: 18),
+      label: Text(l10n.signOut),
     );
   }
 }
@@ -982,6 +1108,7 @@ class _SuperAdminHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final scheme = context.colorScheme;
 
     final welcome = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -991,16 +1118,16 @@ class _SuperAdminHeader extends StatelessWidget {
           style: TextStyle(
             fontSize: isMobile ? 24 : 28,
             fontWeight: FontWeight.w700,
-            color: const Color(0xFF1D1D1F),
+            color: scheme.onSurface,
             height: 1.25,
           ),
         ),
         const SizedBox(height: 6),
         Text(
           l10n.adminSubtitle,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 14,
-            color: Color(0xFF86868B),
+            color: scheme.onSurfaceVariant,
           ),
         ),
       ],
@@ -1012,25 +1139,25 @@ class _SuperAdminHeader extends StatelessWidget {
         vertical: 8,
       ),
       decoration: BoxDecoration(
-        color: const Color(0xFFFFF4E6),
+        color: scheme.secondaryContainer,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFFFF9500).withValues(alpha: 0.2)),
+        border: Border.all(color: scheme.secondary.withValues(alpha: 0.2)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(
+          Icon(
             Icons.verified_user_outlined,
             size: 16,
-            color: Color(0xFFFF9500),
+            color: scheme.secondary,
           ),
           const SizedBox(width: 8),
           Text(
             l10n.superAdminBadge,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w600,
-              color: Color(0xFFFF9500),
+              color: scheme.secondary,
             ),
           ),
         ],
@@ -1123,19 +1250,13 @@ class _SuperAdminStatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = context.colorScheme;
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: scheme.surfaceContainerLowest,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.black.withValues(alpha: 0.02)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
-            blurRadius: 20,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        border: Border.all(color: scheme.outlineVariant),
       ),
       child: Row(
         children: [
@@ -1163,18 +1284,18 @@ class _SuperAdminStatCard extends StatelessWidget {
                 else
                   Text(
                     data.value,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.w700,
-                      color: Color(0xFF1D1D1F),
+                      color: scheme.onSurface,
                     ),
                   ),
                 const SizedBox(height: 2),
                 Text(
                   data.label,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 13,
-                    color: Color(0xFF86868B),
+                    color: scheme.onSurfaceVariant,
                   ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -1194,6 +1315,11 @@ class _PendingApprovalsSection extends StatelessWidget {
     required this.isLoading,
     this.errorMessage,
     required this.processingIds,
+    required this.selectedIds,
+    required this.onToggleSelect,
+    required this.onSelectAll,
+    required this.onBulkApprove,
+    required this.onBulkReject,
     required this.isMobile,
     required this.onView,
     required this.onReject,
@@ -1204,6 +1330,11 @@ class _PendingApprovalsSection extends StatelessWidget {
   final bool isLoading;
   final String? errorMessage;
   final Set<String> processingIds;
+  final Set<String> selectedIds;
+  final ValueChanged<String> onToggleSelect;
+  final VoidCallback onSelectAll;
+  final VoidCallback onBulkApprove;
+  final VoidCallback onBulkReject;
   final bool isMobile;
   final ValueChanged<_PendingApprovalData> onView;
   final ValueChanged<_PendingApprovalData> onReject;
@@ -1212,19 +1343,14 @@ class _PendingApprovalsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final scheme = context.colorScheme;
+    final allSelected = approvals.isNotEmpty && selectedIds.length == approvals.length;
 
     return Container(
       padding: EdgeInsets.all(isMobile ? 20 : 28),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: scheme.surfaceContainerLowest,
         borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
-            blurRadius: 20,
-            offset: const Offset(0, 4),
-          ),
-        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -1234,26 +1360,39 @@ class _PendingApprovalsSection extends StatelessWidget {
               Expanded(
                 child: Text(
                   l10n.pendingListingsTitle,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w700,
-                    color: Color(0xFF1D1D1F),
+                    color: scheme.onSurface,
                   ),
                 ),
               ),
+              if (approvals.isNotEmpty) ...[
+                TextButton.icon(
+                  onPressed: onSelectAll,
+                  icon: Icon(
+                    allSelected
+                        ? Icons.check_box
+                        : Icons.check_box_outline_blank,
+                    size: 18,
+                  ),
+                  label: Text(allSelected ? 'Deselect All' : 'Select All'),
+                ),
+                const SizedBox(width: 8),
+              ],
               Container(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFFF4E6),
+                  color: scheme.secondaryContainer,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
                   l10n.newCount(approvals.length),
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
-                    color: Color(0xFFFF9500),
+                    color: scheme.secondary,
                   ),
                 ),
               ),
@@ -1262,17 +1401,66 @@ class _PendingApprovalsSection extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             l10n.pendingListingsSubtitle,
-            style: const TextStyle(fontSize: 14, color: Color(0xFF86868B)),
+            style: TextStyle(fontSize: 14, color: scheme.onSurfaceVariant),
           ),
+          if (selectedIds.isNotEmpty) ...[
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              decoration: BoxDecoration(
+                color: scheme.primaryContainer.withAlpha(150),
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: scheme.primary.withAlpha(80)),
+              ),
+              child: Row(
+                children: [
+                  Text(
+                    '${selectedIds.length} listing(s) selected',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: scheme.onPrimaryContainer,
+                    ),
+                  ),
+                  const Spacer(),
+                  FilledButton.icon(
+                    onPressed: onBulkApprove,
+                    icon: const Icon(Icons.check, size: 16),
+                    label: const Text('Approve Selected'),
+                    style: FilledButton.styleFrom(
+                      backgroundColor: AddCarTheme.success(context),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 8,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  OutlinedButton.icon(
+                    onPressed: onBulkReject,
+                    icon: const Icon(Icons.close, size: 16),
+                    label: const Text('Reject Selected'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: scheme.error,
+                      side: BorderSide(color: scheme.error),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 8,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
           const SizedBox(height: 24),
           if (errorMessage != null)
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 24),
               child: Text(
                 errorMessage!,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 14,
-                  color: Color(0xFFFF3B30),
+                  color: scheme.error,
                 ),
               ),
             )
@@ -1287,9 +1475,9 @@ class _PendingApprovalsSection extends StatelessWidget {
               child: Text(
                 l10n.adminNoPendingListings,
                 textAlign: TextAlign.center,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 14,
-                  color: Color(0xFF86868B),
+                  color: scheme.onSurfaceVariant,
                 ),
               ),
             )
@@ -1304,13 +1492,24 @@ class _PendingApprovalsSection extends StatelessWidget {
               itemBuilder: (context, index) {
                 final item = approvals[index];
                 final isProcessing = processingIds.contains(item.id);
-                return _PendingApprovalRow(
-                  data: item,
-                  isMobile: isMobile,
-                  isProcessing: isProcessing,
-                  onView: () => onView(item),
-                  onReject: () => onReject(item),
-                  onApprove: () => onApprove(item),
+                final isSelected = selectedIds.contains(item.id);
+                return Row(
+                  children: [
+                    Checkbox(
+                      value: isSelected,
+                      onChanged: (_) => onToggleSelect(item.id),
+                    ),
+                    Expanded(
+                      child: _PendingApprovalRow(
+                        data: item,
+                        isMobile: isMobile,
+                        isProcessing: isProcessing,
+                        onView: () => onView(item),
+                        onReject: () => onReject(item),
+                        onApprove: () => onApprove(item),
+                      ),
+                    ),
+                  ],
                 );
               },
             ),
@@ -1398,10 +1597,10 @@ class _HeaderCell extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       label,
-      style: const TextStyle(
+      style: TextStyle(
         fontSize: 12,
         fontWeight: FontWeight.w600,
-        color: Color(0xFF86868B),
+        color: context.colorScheme.onSurfaceVariant,
         letterSpacing: 0.2,
       ),
     );
@@ -1437,11 +1636,12 @@ class _PendingApprovalRow extends StatelessWidget {
       );
     }
 
+    final scheme = context.colorScheme;
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFFFFFFFF),
+        color: scheme.surfaceContainerLowest,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.black.withValues(alpha: 0.04)),
+        border: Border.all(color: scheme.outlineVariant),
       ),
       child: _ApprovalsRowLayout(
         car: _CarCell(data: data),
@@ -1449,10 +1649,10 @@ class _PendingApprovalRow extends StatelessWidget {
         price: Text(
           data.price,
           textDirection: TextDirection.ltr,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w600,
-            color: Color(0xFF1D1D1F),
+            color: scheme.onSurface,
           ),
         ),
         actions: _ApprovalActions(
@@ -1484,12 +1684,13 @@ class _PendingApprovalCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = context.colorScheme;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFFFFFFFF),
+        color: scheme.surfaceContainerLowest,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.black.withValues(alpha: 0.04)),
+        border: Border.all(color: scheme.outlineVariant),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -1501,10 +1702,10 @@ class _PendingApprovalCard extends StatelessWidget {
           Text(
             data.price,
             textDirection: TextDirection.ltr,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 17,
               fontWeight: FontWeight.w700,
-              color: Color(0xFF1D1D1F),
+              color: scheme.onSurface,
             ),
           ),
           const SizedBox(height: 14),
@@ -1535,10 +1736,10 @@ class _CarCell extends StatelessWidget {
         Expanded(
           child: Text(
             data.title,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.w600,
-              color: Color(0xFF1D1D1F),
+              color: context.colorScheme.onSurface,
             ),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
@@ -1561,7 +1762,7 @@ class _CarThumbnailRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final previews = urls.take(4).toList();
     if (previews.isEmpty) {
-      return _placeholder();
+      return _placeholder(context);
     }
 
     return Row(
@@ -1578,7 +1779,7 @@ class _CarThumbnailRow extends StatelessWidget {
                 imageUrl: previews[i],
                 fit: BoxFit.cover,
                 cacheLogicalWidth: _size,
-                errorBuilder: (_, __, ___) => _placeholder(),
+                errorBuilder: (_, __, ___) => _placeholder(context),
               ),
             ),
           ),
@@ -1587,17 +1788,18 @@ class _CarThumbnailRow extends StatelessWidget {
     );
   }
 
-  Widget _placeholder() {
+  Widget _placeholder(BuildContext context) {
+    final scheme = context.colorScheme;
     return ClipRRect(
       borderRadius: BorderRadius.circular(_radius),
       child: Container(
         width: _size,
         height: _size,
-        color: const Color(0xFFE5E5EA),
-        child: const Icon(
+        color: scheme.surfaceContainerHighest,
+        child: Icon(
           Icons.directions_car_outlined,
           size: 20,
-          color: Color(0xFF86868B),
+          color: scheme.onSurfaceVariant,
         ),
       ),
     );
@@ -1612,18 +1814,21 @@ class _PublisherCell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final scheme = context.colorScheme;
     final isShowroom = data.publisherType == 'showroom';
     final typeLabel = FilterL10n.publisherTypeLabel(l10n, data.publisherType);
+    final accentBg = isShowroom ? scheme.secondaryContainer : scheme.primaryContainer;
+    final accentFg = isShowroom ? scheme.onSecondaryContainer : scheme.onPrimaryContainer;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           data.publisherName,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w600,
-            color: Color(0xFF1D1D1F),
+            color: scheme.onSurface,
           ),
         ),
         const SizedBox(height: 4),
@@ -1632,9 +1837,7 @@ class _PublisherCell extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
               decoration: BoxDecoration(
-                color: isShowroom
-                    ? const Color(0xFFF3EBFF)
-                    : const Color(0xFFE8F2FF),
+                color: accentBg,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
@@ -1642,9 +1845,7 @@ class _PublisherCell extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
-                  color: isShowroom
-                      ? const Color(0xFFAF52DE)
-                      : const Color(0xFF007AFF),
+                  color: accentFg,
                 ),
               ),
             ),
@@ -1652,9 +1853,9 @@ class _PublisherCell extends StatelessWidget {
             Text(
               data.publisherPhone,
               textDirection: TextDirection.ltr,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 12,
-                color: Color(0xFF86868B),
+                color: scheme.onSurfaceVariant,
               ),
             ),
           ],
@@ -1682,14 +1883,15 @@ class _ApprovalActions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final scheme = context.colorScheme;
 
     final children = [
       _ActionChip(
         label: l10n.actionView,
         icon: Icons.visibility_outlined,
-        fg: const Color(0xFF007AFF),
-        bg: const Color(0xFFE6F0FF),
-        border: const Color(0xFF007AFF),
+        fg: scheme.primary,
+        bg: scheme.primaryContainer,
+        border: scheme.primary,
         filled: false,
         onTap: isProcessing ? null : onView,
         expand: compact,
@@ -1697,9 +1899,9 @@ class _ApprovalActions extends StatelessWidget {
       _ActionChip(
         label: l10n.actionReject,
         icon: Icons.close,
-        fg: const Color(0xFFFF3B30),
-        bg: Colors.white,
-        border: const Color(0xFFFF3B30),
+        fg: scheme.error,
+        bg: scheme.surfaceContainerLowest,
+        border: scheme.error,
         filled: false,
         onTap: isProcessing ? null : onReject,
         expand: compact,
@@ -1707,9 +1909,9 @@ class _ApprovalActions extends StatelessWidget {
       _ActionChip(
         label: l10n.actionApprove,
         icon: Icons.check,
-        fg: Colors.white,
-        bg: const Color(0xFF1D1D1F),
-        border: const Color(0xFF1D1D1F),
+        fg: scheme.onPrimary,
+        bg: scheme.primary,
+        border: scheme.primary,
         filled: true,
         isLoading: isProcessing,
         onTap: isProcessing ? null : onApprove,
@@ -1741,7 +1943,7 @@ class _ApprovalActions extends StatelessWidget {
   }
 }
 
-class _ActionChip extends StatefulWidget {
+class _ActionChip extends StatelessWidget {
   const _ActionChip({
     required this.label,
     required this.icon,
@@ -1765,69 +1967,54 @@ class _ActionChip extends StatefulWidget {
   final bool isLoading;
 
   @override
-  State<_ActionChip> createState() => _ActionChipState();
-}
-
-class _ActionChipState extends State<_ActionChip> {
-  bool _hovered = false;
-
-  @override
   Widget build(BuildContext context) {
-    final child = MouseRegion(
-      onEnter: (_) => setState(() => _hovered = true),
-      onExit: (_) => setState(() => _hovered = false),
-      child: GestureDetector(
-        onTap: widget.onTap,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 150),
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          decoration: BoxDecoration(
-            color: widget.filled && _hovered
-                ? const Color(0xFF333333)
-                : widget.bg,
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(
-              color: widget.border.withValues(
-                alpha: widget.filled ? 0 : (_hovered ? 0.6 : 0.25),
-              ),
-            ),
-          ),
-          child: Row(
-            mainAxisSize:
-                widget.expand ? MainAxisSize.max : MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              if (widget.isLoading)
-                SizedBox(
-                  width: 14,
-                  height: 14,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: widget.fg,
-                  ),
-                )
-              else ...[
-                Icon(widget.icon, size: 14, color: widget.fg),
-                const SizedBox(width: 6),
-                Text(
-                  widget.label,
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: widget.fg,
-                  ),
-                ),
-              ],
-            ],
-          ),
-        ),
+    final textTheme = Theme.of(context).textTheme;
+    final labelWidget = Text(
+      label,
+      style: textTheme.labelLarge?.copyWith(
+        fontWeight: FontWeight.w600,
+        color: fg,
       ),
     );
+    final iconWidget = isLoading
+        ? SizedBox(
+            width: 18,
+            height: 18,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              color: fg,
+            ),
+          )
+        : Icon(icon, size: 18, color: fg);
 
-    if (widget.expand) {
-      return SizedBox(width: double.infinity, child: child);
+    final button = filled
+        ? FilledButton.icon(
+            onPressed: isLoading ? null : onTap,
+            icon: iconWidget,
+            label: labelWidget,
+            style: FilledButton.styleFrom(
+              minimumSize: Size(expand ? double.infinity : 48, 48),
+              backgroundColor: bg,
+              foregroundColor: fg,
+              disabledBackgroundColor: bg.withValues(alpha: 0.7),
+              disabledForegroundColor: fg,
+            ),
+          )
+        : OutlinedButton.icon(
+            onPressed: onTap,
+            icon: iconWidget,
+            label: labelWidget,
+            style: OutlinedButton.styleFrom(
+              minimumSize: Size(expand ? double.infinity : 48, 48),
+              foregroundColor: fg,
+              side: BorderSide(color: border.withValues(alpha: 0.45)),
+            ),
+          );
+
+    if (expand) {
+      return SizedBox(width: double.infinity, child: button);
     }
-    return child;
+    return button;
   }
 }
 
@@ -1847,10 +2034,6 @@ class _PendingAdDetailDialog extends StatefulWidget {
 }
 
 class _PendingAdDetailDialogState extends State<_PendingAdDetailDialog> {
-  static const Color _textPrimary = Color(0xFF1D1D1F);
-  static const Color _textSecondary = Color(0xFF86868B);
-  static const Color _divider = Color(0xFFE5E5EA);
-
   late final PageController _pageController;
   int _currentPage = 0;
   bool _isProcessing = false;
@@ -1890,6 +2073,7 @@ class _PendingAdDetailDialogState extends State<_PendingAdDetailDialog> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final scheme = context.colorScheme;
     final isMobile = MediaQuery.sizeOf(context).width < 600;
     final sections = AddCarReviewSummary.build(l10n, _draft);
     final profile = widget.data.sellerProfile;
@@ -1909,7 +2093,7 @@ class _PendingAdDetailDialogState extends State<_PendingAdDetailDialog> {
         child: ClipRRect(
           borderRadius: BorderRadius.circular(20),
           child: Material(
-            color: Colors.white,
+            color: scheme.surfaceContainerLowest,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -1920,10 +2104,10 @@ class _PendingAdDetailDialogState extends State<_PendingAdDetailDialog> {
                       Expanded(
                         child: Text(
                           l10n.actionView,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 17,
                             fontWeight: FontWeight.w700,
-                            color: _textPrimary,
+                            color: scheme.onSurface,
                             letterSpacing: -0.3,
                           ),
                         ),
@@ -1932,10 +2116,10 @@ class _PendingAdDetailDialogState extends State<_PendingAdDetailDialog> {
                         onPressed: _isProcessing
                             ? null
                             : () => Navigator.of(context).pop(),
-                        icon: const Icon(
+                        icon: Icon(
                           Icons.close,
                           size: 20,
-                          color: _textSecondary,
+                          color: scheme.onSurfaceVariant,
                         ),
                       ),
                     ],
@@ -1957,10 +2141,10 @@ class _PendingAdDetailDialogState extends State<_PendingAdDetailDialog> {
                         const SizedBox(height: 20),
                         Text(
                           widget.data.title,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.w700,
-                            color: _textPrimary,
+                            color: scheme.onSurface,
                             letterSpacing: -0.3,
                           ),
                         ),
@@ -1968,10 +2152,10 @@ class _PendingAdDetailDialogState extends State<_PendingAdDetailDialog> {
                         Text(
                           widget.data.price,
                           textDirection: TextDirection.ltr,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w700,
-                            color: _textPrimary,
+                            color: scheme.onSurface,
                           ),
                         ),
                         if (profile != null) ...[
@@ -2002,17 +2186,17 @@ class _PendingAdDetailDialogState extends State<_PendingAdDetailDialog> {
                 ),
                 Container(
                   padding: const EdgeInsetsDirectional.fromSTEB(20, 12, 20, 20),
-                  decoration: const BoxDecoration(
-                    border: Border(top: BorderSide(color: _divider)),
+                  decoration: BoxDecoration(
+                    border: Border(top: BorderSide(color: scheme.outlineVariant)),
                   ),
                   child: Row(
                     children: [
                       Expanded(
                         child: _DetailActionButton(
                           label: l10n.actionReject,
-                          fg: const Color(0xFFFF3B30),
-                          bg: Colors.white,
-                          border: const Color(0xFFFF3B30),
+                          fg: scheme.error,
+                          bg: scheme.surfaceContainerLowest,
+                          border: scheme.error,
                           isLoading: _isProcessing,
                           onTap: _handleReject,
                         ),
@@ -2021,9 +2205,9 @@ class _PendingAdDetailDialogState extends State<_PendingAdDetailDialog> {
                       Expanded(
                         child: _DetailActionButton(
                           label: l10n.actionApprove,
-                          fg: Colors.white,
-                          bg: const Color(0xFF1D1D1F),
-                          border: const Color(0xFF1D1D1F),
+                          fg: scheme.onPrimary,
+                          bg: scheme.primary,
+                          border: scheme.primary,
                           filled: true,
                           isLoading: _isProcessing,
                           onTap: _handleApprove,
@@ -2056,8 +2240,9 @@ class _DetailImageCarousel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = context.colorScheme;
     if (urls.isEmpty) {
-      return _emptyImagePlaceholder();
+      return _emptyImagePlaceholder(scheme);
     }
 
     const pageAnimationDuration = Duration(milliseconds: 300);
@@ -2086,7 +2271,7 @@ class _DetailImageCarousel extends StatelessWidget {
                         loadingBuilder: (context, child, loadingProgress) {
                           if (loadingProgress == null) return child;
                           return Container(
-                            color: _PendingAdDetailDialogState._divider,
+                            color: scheme.outlineVariant,
                             alignment: Alignment.center,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
@@ -2098,13 +2283,12 @@ class _DetailImageCarousel extends StatelessWidget {
                           );
                         },
                         errorBuilder: (_, __, ___) => Container(
-                          color: _PendingAdDetailDialogState._divider,
+                          color: scheme.outlineVariant,
                           alignment: Alignment.center,
                           child: Icon(
                             Icons.broken_image_outlined,
                             size: 40,
-                            color: _PendingAdDetailDialogState._textSecondary
-                                .withValues(alpha: 0.7),
+                            color: scheme.onSurfaceVariant.withValues(alpha: 0.7),
                           ),
                         ),
                       ),
@@ -2158,8 +2342,8 @@ class _DetailImageCarousel extends StatelessWidget {
                   height: 6,
                   decoration: BoxDecoration(
                     color: currentPage == i
-                        ? _PendingAdDetailDialogState._textPrimary
-                        : _PendingAdDetailDialogState._divider,
+                        ? scheme.onSurface
+                        : scheme.outlineVariant,
                     borderRadius: BorderRadius.circular(3),
                   ),
                 ),
@@ -2170,18 +2354,18 @@ class _DetailImageCarousel extends StatelessWidget {
     );
   }
 
-  Widget _emptyImagePlaceholder() {
+  Widget _emptyImagePlaceholder(ColorScheme scheme) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(14),
       child: AspectRatio(
         aspectRatio: 16 / 10,
         child: Container(
-          color: _PendingAdDetailDialogState._divider,
+          color: scheme.outlineVariant,
           alignment: Alignment.center,
-          child: const Icon(
+          child: Icon(
             Icons.directions_car_outlined,
             size: 48,
-            color: _PendingAdDetailDialogState._textSecondary,
+            color: scheme.onSurfaceVariant,
           ),
         ),
       ),
@@ -2200,18 +2384,14 @@ class _CarouselNavButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: IconButton(
-        onPressed: onPressed,
-        icon: Icon(icon, size: 32, color: Colors.white),
-        style: IconButton.styleFrom(
-          backgroundColor: Colors.black.withValues(alpha: 0.5),
-          shape: const CircleBorder(),
-          padding: const EdgeInsets.all(8),
-          minimumSize: const Size(44, 44),
-        ),
-        tooltip: '',
+    final scheme = Theme.of(context).colorScheme;
+    return IconButton.filled(
+      onPressed: onPressed,
+      icon: Icon(icon, size: 28),
+      style: IconButton.styleFrom(
+        minimumSize: const Size(48, 48),
+        backgroundColor: scheme.scrim.withValues(alpha: 0.45),
+        foregroundColor: scheme.onInverseSurface,
       ),
     );
   }
@@ -2230,10 +2410,14 @@ class _DetailPublisherRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = context.colorScheme;
+    final accentBg = isShowroom ? scheme.secondaryContainer : scheme.primaryContainer;
+    final accentFg = isShowroom ? scheme.onSecondaryContainer : scheme.onPrimaryContainer;
+
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFFF5F5F7),
+        color: scheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -2242,17 +2426,13 @@ class _DetailPublisherRow extends StatelessWidget {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: isShowroom
-                  ? const Color(0xFFF3EBFF)
-                  : const Color(0xFFE6F0FF),
+              color: accentBg,
               borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(
               isShowroom ? Icons.storefront_outlined : Icons.person_outline,
               size: 20,
-              color: isShowroom
-                  ? const Color(0xFFAF52DE)
-                  : const Color(0xFF007AFF),
+              color: accentFg,
             ),
           ),
           const SizedBox(width: 12),
@@ -2262,19 +2442,19 @@ class _DetailPublisherRow extends StatelessWidget {
               children: [
                 Text(
                   name,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: _PendingAdDetailDialogState._textPrimary,
+                    color: scheme.onSurface,
                   ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   phone,
                   textDirection: TextDirection.ltr,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 13,
-                    color: _PendingAdDetailDialogState._textSecondary,
+                    color: scheme.onSurfaceVariant,
                   ),
                 ),
               ],
@@ -2293,10 +2473,11 @@ class _DetailSectionBlock extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = context.colorScheme;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFFF5F5F7),
+        color: scheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -2304,10 +2485,10 @@ class _DetailSectionBlock extends StatelessWidget {
         children: [
           Text(
             section.title,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w700,
-              color: _PendingAdDetailDialogState._textPrimary,
+              color: scheme.onSurface,
             ),
           ),
           const SizedBox(height: 12),
@@ -2320,9 +2501,9 @@ class _DetailSectionBlock extends StatelessWidget {
                   flex: 2,
                   child: Text(
                     section.rows[i].label,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 13,
-                      color: _PendingAdDetailDialogState._textSecondary,
+                      color: scheme.onSurfaceVariant,
                     ),
                   ),
                 ),
@@ -2330,10 +2511,10 @@ class _DetailSectionBlock extends StatelessWidget {
                   flex: 3,
                   child: Text(
                     section.rows[i].value,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w500,
-                      color: _PendingAdDetailDialogState._textPrimary,
+                      color: scheme.onSurface,
                     ),
                   ),
                 ),
@@ -2357,10 +2538,11 @@ class _DetailDescriptionBlock extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = context.colorScheme;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFFF5F5F7),
+        color: scheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -2368,19 +2550,19 @@ class _DetailDescriptionBlock extends StatelessWidget {
         children: [
           Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w700,
-              color: _PendingAdDetailDialogState._textPrimary,
+              color: scheme.onSurface,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             text,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13,
               height: 1.5,
-              color: _PendingAdDetailDialogState._textSecondary,
+              color: scheme.onSurfaceVariant,
             ),
           ),
         ],
@@ -2410,34 +2592,46 @@ class _DetailActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: isLoading ? null : onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 13),
-        decoration: BoxDecoration(
-          color: bg,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: border),
+    final textTheme = Theme.of(context).textTheme;
+    final child = isLoading
+        ? SizedBox(
+            width: 18,
+            height: 18,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              color: fg,
+            ),
+          )
+        : Text(
+            label,
+            style: textTheme.labelLarge?.copyWith(
+              fontWeight: FontWeight.w600,
+              color: fg,
+            ),
+          );
+
+    if (filled) {
+      return FilledButton(
+        onPressed: isLoading ? null : onTap,
+        style: FilledButton.styleFrom(
+          minimumSize: const Size.fromHeight(48),
+          backgroundColor: bg,
+          foregroundColor: fg,
+          disabledBackgroundColor: bg.withValues(alpha: 0.7),
+          disabledForegroundColor: fg,
         ),
-        alignment: Alignment.center,
-        child: isLoading
-            ? SizedBox(
-                width: 18,
-                height: 18,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: filled ? Colors.white : fg,
-                ),
-              )
-            : Text(
-                label,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: fg,
-                ),
-              ),
+        child: child,
+      );
+    }
+
+    return OutlinedButton(
+      onPressed: isLoading ? null : onTap,
+      style: OutlinedButton.styleFrom(
+        minimumSize: const Size.fromHeight(48),
+        foregroundColor: fg,
+        side: BorderSide(color: border),
       ),
+      child: child,
     );
   }
 }

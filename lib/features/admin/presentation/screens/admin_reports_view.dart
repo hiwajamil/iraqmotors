@@ -1,9 +1,11 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:iq_motors/core/localization/iraq_location_l10n.dart';
 import 'package:iq_motors/core/localization/l10n_extensions.dart';
+import 'package:iq_motors/core/theme/app_theme.dart';
 import 'package:iq_motors/l10n/app_localizations.dart';
 import 'package:iq_motors/features/admin/domain/models/admin_dashboard_analytics.dart';
 import 'package:iq_motors/features/admin/domain/models/analytics_date_range.dart';
@@ -20,13 +22,6 @@ class AdminReportsView extends ConsumerStatefulWidget {
 }
 
 class _AdminReportsViewState extends ConsumerState<AdminReportsView> {
-  static const Color _textPrimary = Color(0xFF1D1D1F);
-  static const Color _textSecondary = Color(0xFF86868B);
-  static const Color _blue = Color(0xFF007AFF);
-  static const Color _orange = Color(0xFFFF9500);
-  static const Color _green = Color(0xFF34C759);
-  static const Color _purple = Color(0xFF5856D6);
-
   late AnalyticsDateRange _dateRange;
   AdminDashboardAnalytics? _reportData;
   bool _isGenerating = false;
@@ -83,16 +78,6 @@ class _AdminReportsViewState extends ConsumerState<AdminReportsView> {
         start: _dateRange.start,
         end: _dateRange.end,
       ),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: Theme.of(context).colorScheme.copyWith(
-                  primary: _blue,
-                ),
-          ),
-          child: child!,
-        );
-      },
     );
 
     if (picked == null || !mounted) return;
@@ -134,6 +119,7 @@ class _AdminReportsViewState extends ConsumerState<AdminReportsView> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final scheme = context.colorScheme;
     final showEmpty = _reportData == null && !_isGenerating;
     final showSkeleton = _isGenerating && _reportData == null;
     final showContent = _reportData != null;
@@ -143,10 +129,12 @@ class _AdminReportsViewState extends ConsumerState<AdminReportsView> {
       children: [
         Text(
           l10n.navReports,
-          style: TextStyle(
-            fontSize: widget.isMobile ? 24 : 28,
+          style: (widget.isMobile
+                  ? context.textTheme.headlineSmall
+                  : context.textTheme.headlineMedium)
+              ?.copyWith(
             fontWeight: FontWeight.w700,
-            color: _textPrimary,
+            color: scheme.onSurface,
             height: 1.25,
             letterSpacing: -0.4,
           ),
@@ -154,7 +142,7 @@ class _AdminReportsViewState extends ConsumerState<AdminReportsView> {
         const SizedBox(height: 6),
         Text(
           l10n.adminReportsSubtitle,
-          style: const TextStyle(fontSize: 14, color: _textSecondary),
+          style: TextStyle(fontSize: 14, color: scheme.onSurfaceVariant),
         ),
         const SizedBox(height: 24),
         _buildControls(l10n),
@@ -180,6 +168,56 @@ class _AdminReportsViewState extends ConsumerState<AdminReportsView> {
     );
   }
 
+  void _exportCsv() {
+    if (_reportData == null) return;
+    final data = _reportData!;
+    final totalNewAds = data.dailyNewAds.fold<int>(0, (a, b) => a + b);
+    final sb = StringBuffer();
+    sb.writeln('IQ Motors Analytics Report');
+    sb.writeln('Date Range: ${_dateRange.formatChip()}');
+    sb.writeln('Total Revenue (IQD),${data.totalRevenue}');
+    sb.writeln('Card Revenue (IQD),${data.revenueCard}');
+    sb.writeln('E-Wallet Revenue (IQD),${data.revenueEWallet}');
+    sb.writeln('Total New Ads,$totalNewAds');
+    sb.writeln();
+    sb.writeln('Governorate,Total Ads,Approved Ads');
+    for (final city in data.cityPerformance) {
+      sb.writeln('${city.city},${city.totalAds},${city.approvedAds}');
+    }
+
+    showDialog<void>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Exported CSV Data'),
+        content: SizedBox(
+          width: 500,
+          child: SingleChildScrollView(
+            child: SelectableText(
+              sb.toString(),
+              style: const TextStyle(fontFamily: 'monospace', fontSize: 12),
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Clipboard.setData(ClipboardData(text: sb.toString()));
+              Navigator.pop(ctx);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('CSV copied to clipboard')),
+              );
+            },
+            child: const Text('Copy to Clipboard'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildControls(AppLocalizations l10n) {
     if (widget.isMobile) {
       return Column(
@@ -191,10 +229,24 @@ class _AdminReportsViewState extends ConsumerState<AdminReportsView> {
             onTap: _pickDateRange,
           ),
           const SizedBox(height: 12),
-          _GenerateReportButton(
-            label: l10n.adminGenerateReport,
-            isLoading: _isGenerating,
-            onPressed: _generateReport,
+          Row(
+            children: [
+              Expanded(
+                child: _GenerateReportButton(
+                  label: l10n.adminGenerateReport,
+                  isLoading: _isGenerating,
+                  onPressed: _generateReport,
+                ),
+              ),
+              if (_reportData != null) ...[
+                const SizedBox(width: 8),
+                OutlinedButton.icon(
+                  onPressed: _exportCsv,
+                  icon: const Icon(Icons.download_outlined, size: 18),
+                  label: const Text('Export CSV'),
+                ),
+              ],
+            ],
           ),
         ],
       );
@@ -216,6 +268,17 @@ class _AdminReportsViewState extends ConsumerState<AdminReportsView> {
           isLoading: _isGenerating,
           onPressed: _generateReport,
         ),
+        if (_reportData != null) ...[
+          const SizedBox(width: 12),
+          OutlinedButton.icon(
+            onPressed: _exportCsv,
+            icon: const Icon(Icons.download_outlined, size: 18),
+            label: const Text('Export CSV'),
+            style: OutlinedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            ),
+          ),
+        ],
       ],
     );
   }
@@ -313,13 +376,14 @@ class _AdminReportsViewState extends ConsumerState<AdminReportsView> {
     AdminDashboardAnalytics? data,
     required bool isLoading,
   }) {
+    final scheme = context.colorScheme;
     final revenueCard = _CardLoadingShell(
       isLoading: isLoading,
       child: _SummaryStatCard(
         label: l10n.adminTotalRevenue,
         value: data != null ? _formatIqd(data.totalRevenue) : '—',
         subtitle: l10n.adminRevenueFromBoost,
-        accentColor: _blue,
+        accentColor: scheme.primary,
         icon: Icons.payments_outlined,
       ),
     );
@@ -329,7 +393,7 @@ class _AdminReportsViewState extends ConsumerState<AdminReportsView> {
         label: l10n.adminTodaysActiveUsers,
         value: data != null ? _formatCount(data.todaysActiveUsers) : '—',
         subtitle: l10n.adminDailyActiveUsers,
-        accentColor: _green,
+        accentColor: scheme.tertiary,
         icon: Icons.people_outline_rounded,
       ),
     );
@@ -339,7 +403,7 @@ class _AdminReportsViewState extends ConsumerState<AdminReportsView> {
         label: l10n.adminTotalAppDownloads,
         value: data != null ? _formatCount(data.totalAppDownloads) : '—',
         subtitle: l10n.adminLast30Days,
-        accentColor: _purple,
+        accentColor: scheme.secondary,
         icon: Icons.download_rounded,
       ),
     );
@@ -373,6 +437,7 @@ class _AdminReportsViewState extends ConsumerState<AdminReportsView> {
     AdminDashboardAnalytics? data,
     required bool isLoading,
   }) {
+    final scheme = context.colorScheme;
     final rangeSubtitle = _dateRange.formatChip();
     final labels = data?.dayLabels ?? const <String>[];
     final dauValues = data?.dailyActiveUsers ?? const <int>[];
@@ -383,7 +448,7 @@ class _AdminReportsViewState extends ConsumerState<AdminReportsView> {
       child: _ChartCard(
         title: l10n.adminDailyActiveUsers,
         subtitle: rangeSubtitle,
-        color: _blue,
+        color: scheme.primary,
         labels: labels,
         values: dauValues,
         isBarChart: false,
@@ -395,7 +460,7 @@ class _AdminReportsViewState extends ConsumerState<AdminReportsView> {
       child: _ChartCard(
         title: l10n.adminDailyNewAds,
         subtitle: rangeSubtitle,
-        color: _orange,
+        color: scheme.secondary,
         labels: labels,
         values: adsValues,
         isBarChart: true,
@@ -434,68 +499,26 @@ class _GenerateReportButton extends StatelessWidget {
   final bool isLoading;
   final VoidCallback onPressed;
 
-  static const Color _blue = Color(0xFF007AFF);
-  static const Color _blueDark = Color(0xFF0056CC);
-
   @override
   Widget build(BuildContext context) {
-    return Material(
-      borderRadius: BorderRadius.circular(16),
-      child: InkWell(
-        onTap: isLoading ? null : onPressed,
-        borderRadius: BorderRadius.circular(16),
-        child: Ink(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            gradient: const LinearGradient(
-              colors: [_blue, _blueDark],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: _blue.withValues(alpha: 0.35),
-                blurRadius: 20,
-                offset: const Offset(0, 6),
-              ),
-            ],
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 16),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                if (isLoading)
-                  const SizedBox(
-                    width: 18,
-                    height: 18,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: Colors.white,
-                    ),
-                  )
-                else
-                  const Icon(
-                    Icons.insights_rounded,
-                    color: Colors.white,
-                    size: 20,
-                  ),
-                const SizedBox(width: 10),
-                Text(
-                  label,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: -0.2,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
+    final scheme = context.colorScheme;
+    return FilledButton.icon(
+      onPressed: isLoading ? null : onPressed,
+      style: FilledButton.styleFrom(
+        minimumSize: const Size(48, 48),
+        padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 16),
       ),
+      icon: isLoading
+          ? SizedBox(
+              width: 18,
+              height: 18,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: scheme.onPrimary,
+              ),
+            )
+          : const Icon(Icons.insights_rounded, size: 20),
+      label: Text(label),
     );
   }
 }
@@ -505,22 +528,14 @@ class _ReportsEmptyState extends StatelessWidget {
 
   final String hint;
 
-  static const Color _textSecondary = Color(0xFF86868B);
-
   @override
   Widget build(BuildContext context) {
+    final scheme = context.colorScheme;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 56),
       decoration: BoxDecoration(
-        color: const Color(0xFFFFFFFF),
+        color: scheme.surfaceContainerLowest,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 24,
-            offset: const Offset(0, 6),
-          ),
-        ],
       ),
       child: Column(
         children: [
@@ -528,23 +543,23 @@ class _ReportsEmptyState extends StatelessWidget {
             width: 72,
             height: 72,
             decoration: BoxDecoration(
-              color: const Color(0xFF007AFF).withValues(alpha: 0.08),
+              color: scheme.primary.withValues(alpha: 0.08),
               shape: BoxShape.circle,
             ),
             child: Icon(
               Icons.analytics_outlined,
               size: 36,
-              color: const Color(0xFF007AFF).withValues(alpha: 0.55),
+              color: scheme.primary.withValues(alpha: 0.55),
             ),
           ),
           const SizedBox(height: 20),
           Text(
             hint,
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 15,
               height: 1.5,
-              color: _textSecondary,
+              color: scheme.onSurfaceVariant,
             ),
           ),
         ],
@@ -564,6 +579,7 @@ class _CardLoadingShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = context.colorScheme;
     return Stack(
       children: [
         AnimatedOpacity(
@@ -576,7 +592,7 @@ class _CardLoadingShell extends StatelessWidget {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(20),
               child: ColoredBox(
-                color: Colors.white.withValues(alpha: 0.55),
+                color: scheme.surface.withValues(alpha: 0.55),
                 child: const Center(
                   child: SizedBox(
                     width: 28,
@@ -603,18 +619,13 @@ class _DateRangeBar extends StatelessWidget {
   final String rangeText;
   final VoidCallback onTap;
 
-  static const Color _cardWhite = Color(0xFFFFFFFF);
-  static const Color _textPrimary = Color(0xFF1D1D1F);
-  static const Color _textSecondary = Color(0xFF86868B);
-  static const Color _blue = Color(0xFF007AFF);
-
   @override
   Widget build(BuildContext context) {
+    final scheme = context.colorScheme;
     return Material(
-      color: _cardWhite,
+      color: scheme.surfaceContainerLowest,
       borderRadius: BorderRadius.circular(16),
       elevation: 0,
-      shadowColor: Colors.black.withValues(alpha: 0.06),
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(16),
@@ -622,13 +633,7 @@ class _DateRangeBar extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
-                blurRadius: 20,
-                offset: const Offset(0, 4),
-              ),
-            ],
+            border: Border.all(color: scheme.outlineVariant),
           ),
           child: Row(
             children: [
@@ -636,13 +641,13 @@ class _DateRangeBar extends StatelessWidget {
                 width: 36,
                 height: 36,
                 decoration: BoxDecoration(
-                  color: _blue.withValues(alpha: 0.1),
+                  color: scheme.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.calendar_month_rounded,
                   size: 20,
-                  color: _blue,
+                  color: scheme.primary,
                 ),
               ),
               const SizedBox(width: 14),
@@ -652,28 +657,28 @@ class _DateRangeBar extends StatelessWidget {
                   children: [
                     Text(
                       label,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
-                        color: _textSecondary,
+                        color: scheme.onSurfaceVariant,
                       ),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       rangeText,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
-                        color: _textPrimary,
+                        color: scheme.onSurface,
                         letterSpacing: -0.2,
                       ),
                     ),
                   ],
                 ),
               ),
-              const Icon(
+              Icon(
                 Icons.chevron_right_rounded,
-                color: _textSecondary,
+                color: scheme.onSurfaceVariant,
               ),
             ],
           ),
@@ -698,23 +703,14 @@ class _SummaryStatCard extends StatelessWidget {
   final Color accentColor;
   final IconData icon;
 
-  static const Color _cardWhite = Color(0xFFFFFFFF);
-  static const Color _textSecondary = Color(0xFF86868B);
-
   @override
   Widget build(BuildContext context) {
+    final scheme = context.colorScheme;
     return Container(
       padding: const EdgeInsets.all(22),
       decoration: BoxDecoration(
-        color: _cardWhite,
+        color: scheme.surfaceContainerLowest,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 24,
-            offset: const Offset(0, 6),
-          ),
-        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -726,10 +722,10 @@ class _SummaryStatCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   label,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
-                    color: _textSecondary,
+                    color: scheme.onSurfaceVariant,
                   ),
                 ),
               ),
@@ -749,7 +745,7 @@ class _SummaryStatCard extends StatelessWidget {
           const SizedBox(height: 6),
           Text(
             subtitle,
-            style: const TextStyle(fontSize: 12, color: _textSecondary),
+            style: TextStyle(fontSize: 12, color: scheme.onSurfaceVariant),
           ),
         ],
       ),
@@ -774,10 +770,6 @@ class _ChartCard extends StatelessWidget {
   final List<int> values;
   final bool isBarChart;
 
-  static const Color _cardWhite = Color(0xFFFFFFFF);
-  static const Color _textPrimary = Color(0xFF1D1D1F);
-  static const Color _textSecondary = Color(0xFF86868B);
-
   double get _maxY {
     if (values.isEmpty) return 5;
     final maxVal = values.reduce((a, b) => a > b ? a : b);
@@ -792,47 +784,43 @@ class _ChartCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = context.colorScheme;
     return Container(
       padding: const EdgeInsets.all(22),
       decoration: BoxDecoration(
-        color: _cardWhite,
+        color: scheme.surfaceContainerLowest,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 24,
-            offset: const Offset(0, 6),
-          ),
-        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 17,
               fontWeight: FontWeight.w700,
-              color: _textPrimary,
+              color: scheme.onSurface,
               letterSpacing: -0.3,
             ),
           ),
           const SizedBox(height: 4),
           Text(
             subtitle,
-            style: const TextStyle(fontSize: 13, color: _textSecondary),
+            style: TextStyle(fontSize: 13, color: scheme.onSurfaceVariant),
           ),
           const SizedBox(height: 24),
           SizedBox(
             height: 220,
-            child: isBarChart ? _buildBarChart() : _buildLineChart(),
+            child: isBarChart
+                ? _buildBarChart(scheme.outlineVariant, scheme.onSurfaceVariant)
+                : _buildLineChart(scheme.outlineVariant, scheme.onSurfaceVariant),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildLineChart() {
+  Widget _buildLineChart(Color gridColor, Color labelColor) {
     return LineChart(
       LineChartData(
         minY: 0,
@@ -842,7 +830,7 @@ class _ChartCard extends StatelessWidget {
           drawVerticalLine: false,
           horizontalInterval: _maxY / 4,
           getDrawingHorizontalLine: (_) => FlLine(
-            color: const Color(0xFFE5E5EA),
+            color: gridColor,
             strokeWidth: 1,
           ),
         ),
@@ -856,7 +844,7 @@ class _ChartCard extends StatelessWidget {
               reservedSize: 32,
               getTitlesWidget: (value, meta) => Text(
                 value.toInt().toString(),
-                style: const TextStyle(fontSize: 10, color: _textSecondary),
+                style: TextStyle(fontSize: 10, color: labelColor),
               ),
             ),
           ),
@@ -877,7 +865,7 @@ class _ChartCard extends StatelessWidget {
                   padding: const EdgeInsets.only(top: 6),
                   child: Text(
                     labels[index],
-                    style: const TextStyle(fontSize: 9, color: _textSecondary),
+                    style: TextStyle(fontSize: 9, color: labelColor),
                   ),
                 );
               },
@@ -915,7 +903,7 @@ class _ChartCard extends StatelessWidget {
     );
   }
 
-  Widget _buildBarChart() {
+  Widget _buildBarChart(Color gridColor, Color labelColor) {
     return BarChart(
       BarChartData(
         minY: 0,
@@ -925,7 +913,7 @@ class _ChartCard extends StatelessWidget {
           drawVerticalLine: false,
           horizontalInterval: _maxY / 4,
           getDrawingHorizontalLine: (_) => FlLine(
-            color: const Color(0xFFE5E5EA),
+            color: gridColor,
             strokeWidth: 1,
           ),
         ),
@@ -939,7 +927,7 @@ class _ChartCard extends StatelessWidget {
               reservedSize: 32,
               getTitlesWidget: (value, meta) => Text(
                 value.toInt().toString(),
-                style: const TextStyle(fontSize: 10, color: _textSecondary),
+                style: TextStyle(fontSize: 10, color: labelColor),
               ),
             ),
           ),
@@ -960,7 +948,7 @@ class _ChartCard extends StatelessWidget {
                   padding: const EdgeInsets.only(top: 6),
                   child: Text(
                     labels[index],
-                    style: const TextStyle(fontSize: 9, color: _textSecondary),
+                    style: TextStyle(fontSize: 9, color: labelColor),
                   ),
                 );
               },
@@ -1010,26 +998,23 @@ class _RevenueBreakdownCard extends StatelessWidget {
   final String eWalletLabel;
   final bool isMobile;
 
-  static const Color _cardWhite = Color(0xFFFFFFFF);
-  static const Color _textSecondary = Color(0xFF86868B);
-  static const Color _blue = Color(0xFF007AFF);
-
   @override
   Widget build(BuildContext context) {
+    final scheme = context.colorScheme;
     final breakdown = isMobile
         ? Column(
             children: [
               _PaymentBreakdownTile(
                 label: cardLabel,
                 amount: cardRevenue,
-                color: _blue,
+                color: scheme.primary,
                 icon: Icons.credit_card_outlined,
               ),
               const SizedBox(height: 12),
               _PaymentBreakdownTile(
                 label: eWalletLabel,
                 amount: eWalletRevenue,
-                color: const Color(0xFF34C759),
+                color: scheme.tertiary,
                 icon: Icons.account_balance_wallet_outlined,
               ),
             ],
@@ -1040,7 +1025,7 @@ class _RevenueBreakdownCard extends StatelessWidget {
                 child: _PaymentBreakdownTile(
                   label: cardLabel,
                   amount: cardRevenue,
-                  color: _blue,
+                  color: scheme.primary,
                   icon: Icons.credit_card_outlined,
                 ),
               ),
@@ -1049,7 +1034,7 @@ class _RevenueBreakdownCard extends StatelessWidget {
                 child: _PaymentBreakdownTile(
                   label: eWalletLabel,
                   amount: eWalletRevenue,
-                  color: const Color(0xFF34C759),
+                  color: scheme.tertiary,
                   icon: Icons.account_balance_wallet_outlined,
                 ),
               ),
@@ -1059,41 +1044,34 @@ class _RevenueBreakdownCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: _cardWhite,
+        color: scheme.surfaceContainerLowest,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 24,
-            offset: const Offset(0, 6),
-          ),
-        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             totalLabel,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.w600,
-              color: _textSecondary,
+              color: scheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             totalRevenue,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 28,
               fontWeight: FontWeight.w700,
-              color: _blue,
+              color: scheme.primary,
               letterSpacing: -0.5,
             ),
           ),
           const SizedBox(height: 4),
           Text(
             subtitleLabel,
-            style: const TextStyle(fontSize: 13, color: _textSecondary),
+            style: TextStyle(fontSize: 13, color: scheme.onSurfaceVariant),
           ),
           const SizedBox(height: 24),
           breakdown,
@@ -1118,6 +1096,7 @@ class _PaymentBreakdownTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = context.colorScheme;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -1143,10 +1122,10 @@ class _PaymentBreakdownTile extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   amount,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w700,
-                    color: Color(0xFF1D1D1F),
+                    color: scheme.onSurface,
                   ),
                 ),
               ],
@@ -1183,12 +1162,9 @@ class _CityPerformanceTable extends StatelessWidget {
   final bool showVisitorTraffic;
   final ValueChanged<bool> onMetricChanged;
 
-  static const Color _cardWhite = Color(0xFFFFFFFF);
-  static const Color _textPrimary = Color(0xFF1D1D1F);
-  static const Color _textSecondary = Color(0xFF86868B);
-
   @override
   Widget build(BuildContext context) {
+    final scheme = context.colorScheme;
     final maxVisitors = rows.isEmpty
         ? 1
         : rows.map((r) => r.visitorCount).reduce((a, b) => a > b ? a : b);
@@ -1196,15 +1172,8 @@ class _CityPerformanceTable extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: _cardWhite,
+        color: scheme.surfaceContainerLowest,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 24,
-            offset: const Offset(0, 6),
-          ),
-        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -1214,10 +1183,10 @@ class _CityPerformanceTable extends StatelessWidget {
               Expanded(
                 child: Text(
                   title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 17,
                     fontWeight: FontWeight.w700,
-                    color: _textPrimary,
+                    color: scheme.onSurface,
                     letterSpacing: -0.3,
                   ),
                 ),
@@ -1237,10 +1206,10 @@ class _CityPerformanceTable extends StatelessWidget {
                 flex: 3,
                 child: Text(
                   cityLabel,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
-                    color: _textSecondary,
+                    color: scheme.onSurfaceVariant,
                   ),
                 ),
               ),
@@ -1249,10 +1218,10 @@ class _CityPerformanceTable extends StatelessWidget {
                   child: Text(
                     totalLabel,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
-                      color: _textSecondary,
+                      color: scheme.onSurfaceVariant,
                     ),
                   ),
                 ),
@@ -1260,10 +1229,10 @@ class _CityPerformanceTable extends StatelessWidget {
                   child: Text(
                     approvedLabel,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
-                      color: _textSecondary,
+                      color: scheme.onSurfaceVariant,
                     ),
                   ),
                 ),
@@ -1274,10 +1243,10 @@ class _CityPerformanceTable extends StatelessWidget {
                   child: Text(
                     visitorLabel,
                     textAlign: TextAlign.end,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
-                      color: _textSecondary,
+                      color: scheme.onSurfaceVariant,
                     ),
                   ),
                 ),
@@ -1314,72 +1283,20 @@ class _MetricToggle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(3),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF2F2F7),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _ToggleChip(
-            label: adsLabel,
-            isSelected: !showVisitors,
-            onTap: () => onChanged(false),
-          ),
-          _ToggleChip(
-            label: visitorsLabel,
-            isSelected: showVisitors,
-            onTap: () => onChanged(true),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _ToggleChip extends StatelessWidget {
-  const _ToggleChip({
-    required this.label,
-    required this.isSelected,
-    required this.onTap,
-  });
-
-  final String label;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  static const Color _blue = Color(0xFF007AFF);
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        decoration: BoxDecoration(
-          color: isSelected ? Colors.white : Colors.transparent,
-          borderRadius: BorderRadius.circular(8),
-          boxShadow: isSelected
-              ? [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.06),
-                    blurRadius: 6,
-                    offset: const Offset(0, 1),
-                  ),
-                ]
-              : null,
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w600,
-            color: isSelected ? _blue : const Color(0xFF86868B),
-          ),
-        ),
+    return SegmentedButton<bool>(
+      segments: [
+        ButtonSegment(value: false, label: Text(adsLabel)),
+        ButtonSegment(value: true, label: Text(visitorsLabel)),
+      ],
+      selected: {showVisitors},
+      onSelectionChanged: (next) {
+        if (next.isEmpty) return;
+        onChanged(next.first);
+      },
+      showSelectedIcon: false,
+      style: const ButtonStyle(
+        visualDensity: VisualDensity.standard,
+        tapTargetSize: MaterialTapTargetSize.padded,
       ),
     );
   }
@@ -1396,14 +1313,10 @@ class _CityPerformanceRow extends StatelessWidget {
   final bool showVisitorTraffic;
   final int maxVisitors;
 
-  static const Color _textPrimary = Color(0xFF1D1D1F);
-  static const Color _green = Color(0xFF34C759);
-  static const Color _orange = Color(0xFFFF9500);
-  static const Color _blue = Color(0xFF007AFF);
-
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final scheme = context.colorScheme;
     final pending = row.totalAds - row.approvedAds;
     final approvalFraction = row.approvalRate.clamp(0.0, 1.0);
     final visitorFraction =
@@ -1412,7 +1325,7 @@ class _CityPerformanceRow extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
       decoration: BoxDecoration(
-        color: const Color(0xFFF5F5F7),
+        color: scheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -1421,10 +1334,10 @@ class _CityPerformanceRow extends StatelessWidget {
             flex: 3,
             child: Text(
               IraqLocationL10n.provinceLabel(l10n, row.city),
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color: _textPrimary,
+                color: scheme.onSurface,
               ),
             ),
           ),
@@ -1433,10 +1346,10 @@ class _CityPerformanceRow extends StatelessWidget {
               child: Text(
                 '${row.totalAds}',
                 textAlign: TextAlign.center,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
-                  color: _textPrimary,
+                  color: scheme.onSurface,
                 ),
               ),
             ),
@@ -1444,10 +1357,10 @@ class _CityPerformanceRow extends StatelessWidget {
               child: Text(
                 '${row.approvedAds}',
                 textAlign: TextAlign.center,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
-                  color: _green,
+                  color: scheme.tertiary,
                 ),
               ),
             ),
@@ -1461,8 +1374,8 @@ class _CityPerformanceRow extends StatelessWidget {
                     child: LinearProgressIndicator(
                       value: approvalFraction,
                       minHeight: 6,
-                      backgroundColor: _orange.withValues(alpha: 0.25),
-                      color: _green,
+                      backgroundColor: scheme.secondary.withValues(alpha: 0.25),
+                      color: scheme.tertiary,
                     ),
                   ),
                   if (pending > 0) ...[
@@ -1472,7 +1385,7 @@ class _CityPerformanceRow extends StatelessWidget {
                       textAlign: TextAlign.end,
                       style: TextStyle(
                         fontSize: 10,
-                        color: _orange.withValues(alpha: 0.9),
+                        color: scheme.secondary.withValues(alpha: 0.9),
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -1491,10 +1404,10 @@ class _CityPerformanceRow extends StatelessWidget {
                           RegExp(r'(\d)(?=(\d{3})+(?!\d))'),
                           (match) => '${match[1]},',
                         ),
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
-                      color: _blue,
+                      color: scheme.primary,
                     ),
                   ),
                   const SizedBox(height: 6),
@@ -1503,8 +1416,8 @@ class _CityPerformanceRow extends StatelessWidget {
                     child: LinearProgressIndicator(
                       value: visitorFraction.clamp(0.0, 1.0),
                       minHeight: 6,
-                      backgroundColor: _blue.withValues(alpha: 0.12),
-                      color: _blue,
+                      backgroundColor: scheme.primary.withValues(alpha: 0.12),
+                      color: scheme.primary,
                     ),
                   ),
                 ],
@@ -1529,20 +1442,21 @@ class _ErrorBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = context.colorScheme;
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFFFFEBEA),
+        color: scheme.errorContainer,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
         children: [
-          const Icon(Icons.error_outline, color: Color(0xFFFF3B30), size: 20),
+          Icon(Icons.error_outline, color: scheme.error, size: 20),
           const SizedBox(width: 10),
           Expanded(
             child: Text(
               message,
-              style: const TextStyle(fontSize: 13, color: Color(0xFF1D1D1F)),
+              style: TextStyle(fontSize: 13, color: scheme.onErrorContainer),
             ),
           ),
           TextButton(onPressed: onRetry, child: Text(retryLabel)),

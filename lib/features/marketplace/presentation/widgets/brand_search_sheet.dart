@@ -1,9 +1,12 @@
-import 'package:iq_motors/shared/widgets/app_cached_network_image.dart';
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import 'package:iq_motors/core/localization/l10n_extensions.dart';
+import 'package:iq_motors/core/theme/app_theme.dart';
 import 'package:iq_motors/shared/data/dummy_brands.dart';
 import 'package:iq_motors/shared/models/car_brand.dart';
+import 'package:iq_motors/shared/widgets/brand_logo_image.dart';
 
 /// Apple-style bottom sheet for browsing and filtering car brands.
 class BrandSearchSheet extends StatefulWidget {
@@ -23,27 +26,41 @@ class BrandSearchSheet extends StatefulWidget {
 }
 
 class _BrandSearchSheetState extends State<BrandSearchSheet> {
-  static const Color _background = Color(0xFFF5F5F7);
-  static const Color _surface = Colors.white;
-  static const Color _textPrimary = Color(0xFF1D1D1F);
-  static const Color _textSecondary = Color(0xFF86868B);
-  static const Color _border = Color(0xFFE5E5EA);
-
   final TextEditingController _searchController = TextEditingController();
   String _query = '';
+  Timer? _searchDebounce;
+  late List<CarBrand> _filteredBrands;
+
+  @override
+  void initState() {
+    super.initState();
+    _filteredBrands = List<CarBrand>.from(dummyBrands);
+  }
 
   @override
   void dispose() {
+    _searchDebounce?.cancel();
     _searchController.dispose();
     super.dispose();
   }
 
-  List<CarBrand> get _filteredBrands =>
-      dummyBrands.where((b) => b.matchesQuery(_query)).toList();
+  void _onSearchChanged(String value) {
+    _searchDebounce?.cancel();
+    _searchDebounce = Timer(const Duration(milliseconds: 180), () {
+      if (!mounted) return;
+      setState(() {
+        _query = value;
+        _filteredBrands =
+            dummyBrands.where((b) => b.matchesQuery(_query)).toList();
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final colorScheme = context.colorScheme;
+    final textTheme = context.textTheme;
     final bottomInset = MediaQuery.viewInsetsOf(context).bottom;
     final maxHeight = MediaQuery.sizeOf(context).height * 0.88;
 
@@ -55,9 +72,9 @@ class _BrandSearchSheetState extends State<BrandSearchSheet> {
           color: Colors.transparent,
           child: Container(
             constraints: BoxConstraints(maxHeight: maxHeight),
-            decoration: const BoxDecoration(
-              color: _background,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+            decoration: BoxDecoration(
+              color: colorScheme.surfaceContainerHigh,
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -67,7 +84,7 @@ class _BrandSearchSheetState extends State<BrandSearchSheet> {
                   width: 36,
                   height: 5,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFD2D2D7),
+                    color: colorScheme.outlineVariant,
                     borderRadius: BorderRadius.circular(3),
                   ),
                 ),
@@ -79,18 +96,18 @@ class _BrandSearchSheetState extends State<BrandSearchSheet> {
                       Text(
                         l10n.brandTitle,
                         textAlign: TextAlign.center,
-                        style: const TextStyle(
+                        style: textTheme.titleLarge?.copyWith(
                           fontSize: 20,
                           fontWeight: FontWeight.w600,
                           letterSpacing: -0.3,
-                          color: _textPrimary,
+                          color: colorScheme.onSurface,
                         ),
                       ),
                       const SizedBox(height: 16),
                       _SearchField(
                         hintText: l10n.brandSearchHint,
                         controller: _searchController,
-                        onChanged: (value) => setState(() => _query = value),
+                        onChanged: _onSearchChanged,
                       ),
                     ],
                   ),
@@ -102,9 +119,9 @@ class _BrandSearchSheetState extends State<BrandSearchSheet> {
                           child: Text(
                             l10n.noBrandsFound,
                             textAlign: TextAlign.center,
-                            style: const TextStyle(
+                            style: textTheme.bodyLarge?.copyWith(
                               fontSize: 16,
-                              color: _textSecondary,
+                              color: colorScheme.onSurfaceVariant,
                             ),
                           ),
                         )
@@ -126,6 +143,7 @@ class _BrandSearchSheetState extends State<BrandSearchSheet> {
                           itemBuilder: (context, index) {
                             final brand = _filteredBrands[index];
                             return _BrandGridTile(
+                              key: ValueKey(brand.id),
                               brand: brand,
                               onTap: () => Navigator.of(context).pop(brand),
                             );
@@ -154,14 +172,16 @@ class _SearchField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = context.colorScheme;
+    final textTheme = context.textTheme;
     return Container(
       decoration: BoxDecoration(
-        color: _BrandSearchSheetState._surface,
+        color: colorScheme.surfaceContainerLowest,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: _BrandSearchSheetState._border),
+        border: Border.all(color: colorScheme.outlineVariant),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
+            color: colorScheme.shadow.withValues(alpha: 0.04),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -170,20 +190,20 @@ class _SearchField extends StatelessWidget {
       child: TextField(
         controller: controller,
         onChanged: onChanged,
-        textDirection: TextDirection.rtl,
-        style: const TextStyle(
+        textDirection: Directionality.of(context),
+        style: textTheme.bodyLarge?.copyWith(
           fontSize: 16,
-          color: _BrandSearchSheetState._textPrimary,
+          color: colorScheme.onSurface,
         ),
         decoration: InputDecoration(
           hintText: hintText,
-          hintStyle: const TextStyle(
-            color: _BrandSearchSheetState._textSecondary,
+          hintStyle: textTheme.bodyLarge?.copyWith(
+            color: colorScheme.onSurfaceVariant,
             fontWeight: FontWeight.w400,
           ),
-          prefixIcon: const Icon(
+          prefixIcon: Icon(
             Icons.search_rounded,
-            color: _BrandSearchSheetState._textSecondary,
+            color: colorScheme.onSurfaceVariant,
             size: 22,
           ),
           border: InputBorder.none,
@@ -199,6 +219,7 @@ class _SearchField extends StatelessWidget {
 
 class _BrandGridTile extends StatefulWidget {
   const _BrandGridTile({
+    super.key,
     required this.brand,
     required this.onTap,
   });
@@ -216,6 +237,8 @@ class _BrandGridTileState extends State<_BrandGridTile> {
   @override
   Widget build(BuildContext context) {
     final lang = Localizations.localeOf(context).languageCode;
+    final colorScheme = context.colorScheme;
+    final textTheme = context.textTheme;
 
     return GestureDetector(
       onTapDown: (_) => setState(() => _pressed = true),
@@ -228,12 +251,12 @@ class _BrandGridTileState extends State<_BrandGridTile> {
         curve: Curves.easeOut,
         child: Container(
           decoration: BoxDecoration(
-            color: _BrandSearchSheetState._surface,
+            color: colorScheme.surfaceContainerLowest,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: _BrandSearchSheetState._border),
+            border: Border.all(color: colorScheme.outlineVariant),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.03),
+                color: colorScheme.shadow.withValues(alpha: 0.03),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
@@ -246,27 +269,9 @@ class _BrandGridTileState extends State<_BrandGridTile> {
               Expanded(
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(10),
-                  child: AppCachedNetworkImage(
-                    imageUrl: widget.brand.logoUrl,
-                    fit: BoxFit.contain,
-                    memCacheLogicalWidth: 80,
-                    placeholder: (_, __) => const Center(
-                      child: SizedBox(
-                        width: 24,
-                        height: 24,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      ),
-                    ),
-                    errorWidget: (_, __, ___) => Center(
-                      child: Text(
-                        widget.brand.nameEnglish[0].toUpperCase(),
-                        style: const TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.w600,
-                          color: _BrandSearchSheetState._textSecondary,
-                        ),
-                      ),
-                    ),
+                  child: BrandLogoImage(
+                    brand: widget.brand,
+                    size: 64,
                   ),
                 ),
               ),
@@ -276,11 +281,11 @@ class _BrandGridTileState extends State<_BrandGridTile> {
                 textAlign: TextAlign.center,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
+                style: textTheme.labelSmall?.copyWith(
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
                   height: 1.2,
-                  color: _BrandSearchSheetState._textPrimary,
+                  color: colorScheme.onSurface,
                 ),
               ),
             ],

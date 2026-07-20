@@ -79,6 +79,22 @@ service cloud.firestore {
       allow write: if isSuperAdmin();
     }
 
+    // Normalized catalog imported from Data/*.csv (source of truth).
+    match /catalog_brands/{brandId} {
+      allow read: if true;
+      allow write: if isSuperAdmin();
+    }
+
+    match /catalog_models/{modelId} {
+      allow read: if true;
+      allow write: if isSuperAdmin();
+    }
+
+    match /catalog_trims/{trimId} {
+      allow read: if true;
+      allow write: if isSuperAdmin();
+    }
+
     // Platform settings (package prices, cities, R2 credentials).
     // Contains secrets — super admins only.
     match /system_config/{docId} {

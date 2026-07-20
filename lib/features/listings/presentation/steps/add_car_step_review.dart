@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:iq_motors/core/localization/l10n_extensions.dart';
 import 'package:iq_motors/features/listings/domain/models/add_car_draft.dart';
 import 'package:iq_motors/features/listings/presentation/add_car_review_summary.dart';
+import 'package:iq_motors/core/theme/app_theme.dart';
 import 'package:iq_motors/features/listings/presentation/add_car_theme.dart';
+import 'package:iq_motors/features/listings/presentation/widgets/add_car_form_card.dart';
 import 'package:iq_motors/features/listings/presentation/widgets/add_car_step_header.dart';
 
 /// Step 10 — full listing review before publish.
@@ -72,8 +74,7 @@ class _ReviewSectionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: AddCarTheme.cardDecoration(),
+    return AddCarFormCard(
       padding: const EdgeInsetsDirectional.fromSTEB(16, 14, 16, 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -83,39 +84,26 @@ class _ReviewSectionCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   section.title,
-                  style: const TextStyle(
-                    fontSize: 16,
+                  style: context.textTheme.bodyLarge?.copyWith(
                     fontWeight: FontWeight.w700,
-                    color: AddCarTheme.textPrimary,
-                    letterSpacing: -0.2,
+                    color: AddCarTheme.textPrimary(context),
                   ),
                 ),
               ),
               TextButton(
                 onPressed: onEdit,
                 style: TextButton.styleFrom(
-                  padding: const EdgeInsetsDirectional.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
-                  ),
-                  minimumSize: Size.zero,
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  minimumSize: const Size(48, 48),
+                  foregroundColor: AddCarTheme.focus(context),
                 ),
-                child: Text(
-                  editLabel,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: AddCarTheme.focusBlue,
-                  ),
-                ),
+                child: Text(editLabel),
               ),
             ],
           ),
           const SizedBox(height: 8),
           for (var i = 0; i < section.rows.length; i++) ...[
             if (i > 0)
-              const Divider(height: 16, color: AddCarTheme.border),
+              Divider(height: 16, color: AddCarTheme.border(context)),
             _ReviewRow(row: section.rows[i]),
           ],
         ],
@@ -138,10 +126,9 @@ class _ReviewRow extends StatelessWidget {
           flex: 2,
           child: Text(
             row.label,
-            style: const TextStyle(
-              fontSize: 14,
+            style: context.textTheme.bodyMedium?.copyWith(
               fontWeight: FontWeight.w500,
-              color: AddCarTheme.textSecondary,
+              color: AddCarTheme.textSecondary(context),
             ),
           ),
         ),
@@ -151,10 +138,9 @@ class _ReviewRow extends StatelessWidget {
           child: Text(
             row.value,
             textAlign: TextAlign.end,
-            style: const TextStyle(
-              fontSize: 14,
+            style: context.textTheme.bodyMedium?.copyWith(
               fontWeight: FontWeight.w600,
-              color: AddCarTheme.textPrimary,
+              color: AddCarTheme.textPrimary(context),
               height: 1.35,
             ),
           ),

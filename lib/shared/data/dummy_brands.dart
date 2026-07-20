@@ -2444,7 +2444,11 @@ const List<String> _homeStripBrandIds = [
   'audi',
 ];
 
+/// O(1) brand lookup by id — prefer over scanning [dummyBrands].
+final Map<String, CarBrand> dummyBrandsById = {
+  for (final brand in dummyBrands) brand.id: brand,
+};
+
 final List<CarBrand> homeStripBrands = [
-  for (final id in _homeStripBrandIds)
-    dummyBrands.firstWhere((b) => b.id == id),
+  for (final id in _homeStripBrandIds) dummyBrandsById[id]!,
 ];

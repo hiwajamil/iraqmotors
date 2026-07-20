@@ -1,0 +1,12 @@
+{
+  "make": "Karma",
+  "models": [
+    "Karma",
+    "Atlantic",
+    "Revero",
+    "Revero GT",
+    "GS-6",
+    "Kaveya",
+    "Gyesera"
+  ]
+}

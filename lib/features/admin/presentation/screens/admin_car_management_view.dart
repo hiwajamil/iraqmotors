@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:iq_motors/core/localization/l10n_extensions.dart';
+import 'package:iq_motors/core/theme/app_theme.dart';
 import 'package:iq_motors/features/listings/presentation/add_car_theme.dart';
 import 'package:iq_motors/l10n/app_localizations.dart';
 import 'package:iq_motors/shared/data/car_metadata_brand_lookup.dart';
@@ -24,9 +25,6 @@ class AdminCarManagementView extends ConsumerStatefulWidget {
 
 class _AdminCarManagementViewState
     extends ConsumerState<AdminCarManagementView> {
-  static const Color _textPrimary = Color(0xFF1D1D1F);
-  static const Color _textSecondary = Color(0xFF86868B);
-
   String? _selectedBrandId;
   String? _selectedModelName;
   final _searchController = TextEditingController();
@@ -83,7 +81,7 @@ class _AdminCarManagementViewState
         SnackBar(
           content: Text(context.l10n.adminCarMetaSaved),
           behavior: SnackBarBehavior.floating,
-          backgroundColor: AddCarTheme.successGreen,
+          backgroundColor: AddCarTheme.success(context),
         ),
       );
     } on CarMetadataException catch (e) {
@@ -137,7 +135,7 @@ class _AdminCarManagementViewState
       SnackBar(
         content: Text(message),
         behavior: SnackBarBehavior.floating,
-        backgroundColor: const Color(0xFFFF3B30),
+        backgroundColor: Theme.of(context).colorScheme.error,
       ),
     );
   }
@@ -159,7 +157,7 @@ class _AdminCarManagementViewState
           controller: controller,
           autofocus: true,
           textCapitalization: TextCapitalization.words,
-          decoration: AddCarTheme.textFieldDecoration(hintText: hint),
+          decoration: AddCarTheme.textFieldDecoration(context, hintText: hint),
           onSubmitted: (value) => Navigator.pop(ctx, value.trim()),
         ),
         actions: [
@@ -194,7 +192,9 @@ class _AdminCarManagementViewState
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            style: TextButton.styleFrom(foregroundColor: const Color(0xFFFF3B30)),
+            style: TextButton.styleFrom(
+              foregroundColor: Theme.of(context).colorScheme.error,
+            ),
             child: Text(l10n.deleteAction),
           ),
         ],
@@ -404,17 +404,16 @@ class _AdminCarManagementViewState
       children: [
         Text(
           l10n.navCarManagement,
-          style: TextStyle(
-            fontSize: widget.isMobile ? 24 : 28,
+          style: context.textTheme.headlineMedium?.copyWith(
             fontWeight: FontWeight.w700,
-            color: _textPrimary,
+            color: AddCarTheme.textPrimary(context),
             height: 1.25,
           ),
         ),
         const SizedBox(height: 6),
         Text(
           l10n.adminCarMetaSubtitle,
-          style: const TextStyle(fontSize: 14, color: _textSecondary),
+          style: AddCarTheme.stepSubtitle(context).copyWith(fontSize: 14),
         ),
         const SizedBox(height: 20),
         Expanded(
@@ -580,11 +579,12 @@ class _DesktopTriplePane extends StatelessWidget {
                 TextField(
                   controller: searchController,
                   decoration: AddCarTheme.textFieldDecoration(
+                    context,
                     hintText: l10n.adminCarMetaSearchBrands,
                   ).copyWith(
-                    prefixIcon: const Icon(
+                    prefixIcon: Icon(
                       Icons.search,
-                      color: Color(0xFF86868B),
+                      color: AddCarTheme.textSecondary(context),
                       size: 20,
                     ),
                   ),
@@ -759,11 +759,12 @@ class _MobileDrillDown extends StatelessWidget {
             TextField(
               controller: searchController,
               decoration: AddCarTheme.textFieldDecoration(
+                context,
                 hintText: l10n.adminCarMetaSearchBrands,
               ).copyWith(
-                prefixIcon: const Icon(
+                prefixIcon: Icon(
                   Icons.search,
-                  color: Color(0xFF86868B),
+                  color: AddCarTheme.textSecondary(context),
                   size: 20,
                 ),
               ),
@@ -888,7 +889,7 @@ class _PaneCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: AddCarTheme.cardDecoration(),
+      decoration: AddCarTheme.cardDecoration(context),
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -900,12 +901,12 @@ class _PaneCard extends StatelessWidget {
                 child: Text.rich(
                   TextSpan(
                     text: title,
-                    style: AddCarTheme.sectionTitle.copyWith(fontSize: 18),
+                    style: AddCarTheme.sectionTitle(context).copyWith(fontSize: 18),
                     children: [
                       if (count != null)
                         TextSpan(
                           text: ' ($count)',
-                          style: AddCarTheme.stepSubtitle.copyWith(
+                          style: AddCarTheme.stepSubtitle(context).copyWith(
                             fontSize: 14,
                           ),
                         ),
@@ -952,7 +953,9 @@ class _BrandRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final brand = carBrandFromMetadataId(brandId);
     return Material(
-      color: selected ? const Color(0xFFF2F2F7) : AddCarTheme.inputFill,
+      color: selected
+          ? context.colorScheme.surfaceContainerHighest
+          : AddCarTheme.inputFill(context),
       borderRadius: BorderRadius.circular(12),
       child: InkWell(
         onTap: onTap,
@@ -962,7 +965,7 @@ class _BrandRow extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: selected ? AddCarTheme.textPrimary : AddCarTheme.border,
+              color: selected ? AddCarTheme.textPrimary(context) : AddCarTheme.border(context),
               width: selected ? 1.5 : 1,
             ),
           ),
@@ -974,11 +977,11 @@ class _BrandRow extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(label, style: AddCarTheme.sectionLabel),
+                    Text(label, style: AddCarTheme.sectionLabel(context)),
                     const SizedBox(height: 2),
                     Text(
                       modelsLabel,
-                      style: AddCarTheme.stepSubtitle.copyWith(fontSize: 12),
+                      style: AddCarTheme.stepSubtitle(context).copyWith(fontSize: 12),
                     ),
                   ],
                 ),
@@ -1012,7 +1015,9 @@ class _SimpleRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: selected ? const Color(0xFFF2F2F7) : AddCarTheme.inputFill,
+      color: selected
+          ? context.colorScheme.surfaceContainerHighest
+          : AddCarTheme.inputFill(context),
       borderRadius: BorderRadius.circular(12),
       child: InkWell(
         onTap: onTap,
@@ -1022,18 +1027,21 @@ class _SimpleRow extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: selected ? AddCarTheme.textPrimary : AddCarTheme.border,
+              color: selected ? AddCarTheme.textPrimary(context) : AddCarTheme.border(context),
               width: selected ? 1.5 : 1,
             ),
           ),
           child: Row(
             children: [
               Expanded(
-                child: Text(title, style: AddCarTheme.sectionLabel),
+                child: Text(title, style: AddCarTheme.sectionLabel(context)),
               ),
               _RowActions(onEdit: onEdit, onDelete: onDelete),
               if (trailingChevron)
-                const Icon(Icons.chevron_right, color: Color(0xFF86868B)),
+                Icon(
+                  Icons.chevron_right,
+                  color: AddCarTheme.textSecondary(context),
+                ),
             ],
           ),
         ),
@@ -1057,14 +1065,14 @@ class _RowActions extends StatelessWidget {
           tooltip: context.l10n.editAction,
           onPressed: onEdit,
           icon: const Icon(Icons.edit_outlined, size: 18),
-          color: AddCarTheme.textSecondary,
+          color: AddCarTheme.textSecondary(context),
           visualDensity: VisualDensity.compact,
         ),
         IconButton(
           tooltip: context.l10n.deleteAction,
           onPressed: onDelete,
           icon: const Icon(Icons.delete_outline, size: 18),
-          color: const Color(0xFFFF3B30),
+          color: Theme.of(context).colorScheme.error,
           visualDensity: VisualDensity.compact,
         ),
       ],
@@ -1083,9 +1091,9 @@ class _BrandLogo extends StatelessWidget {
       width: 40,
       height: 40,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.colorScheme.surfaceContainerLowest,
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: AddCarTheme.border),
+        border: Border.all(color: AddCarTheme.border(context)),
       ),
       padding: const EdgeInsets.all(6),
       child: logoUrl.isEmpty
@@ -1111,7 +1119,7 @@ class _EmptyHint extends StatelessWidget {
         child: Text(
           message,
           textAlign: TextAlign.center,
-          style: AddCarTheme.stepSubtitle.copyWith(fontSize: 14),
+          style: AddCarTheme.stepSubtitle(context).copyWith(fontSize: 14),
         ),
       ),
     );

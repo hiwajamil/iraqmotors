@@ -1,0 +1,15 @@
+{
+  "make": "UAZ",
+  "models": [
+    "H2",
+    "H3",
+    "Zorex",
+    "PA6",
+    "Plus",
+    "G500",
+    "G300",
+    "Stage",
+    "Tank",
+    "Votex"
+  ]
+}

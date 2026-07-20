@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:iq_motors/core/localization/l10n_extensions.dart';
 import 'package:iq_motors/shared/data/add_car_form_options.dart';
 import 'package:iq_motors/features/listings/presentation/widgets/add_car_chip_selector.dart';
+import 'package:iq_motors/core/theme/app_theme.dart';
 import 'package:iq_motors/features/listings/presentation/add_car_theme.dart';
 import 'package:iq_motors/features/listings/presentation/widgets/add_car_form_card.dart';
 import 'package:iq_motors/features/listings/presentation/widgets/add_car_step_header.dart';
@@ -95,13 +96,12 @@ class _AddCarStepPriceDescriptionState extends State<AddCarStepPriceDescription>
               minLines: 4,
               maxLines: 8,
               onChanged: widget.onDescriptionChanged,
-              style: const TextStyle(
-                fontSize: 16,
+              style: context.textTheme.bodyLarge?.copyWith(
                 fontWeight: FontWeight.w500,
-                color: AddCarTheme.textPrimary,
+                color: AddCarTheme.textPrimary(context),
                 height: 1.45,
               ),
-              decoration: AddCarTheme.textFieldDecoration(
+              decoration: AddCarTheme.textFieldDecoration(context,
                 hintText: switch (locale) {
                   'en' => 'Add a note if you like',
                   'ar' => 'أضف ملاحظة إن أردت',
@@ -110,8 +110,8 @@ class _AddCarStepPriceDescriptionState extends State<AddCarStepPriceDescription>
               ).copyWith(
                 border: InputBorder.none,
                 enabledBorder: InputBorder.none,
-                focusedBorder: const OutlineInputBorder(
-                  borderSide: BorderSide(color: AddCarTheme.focusBlue, width: 1.5),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: AddCarTheme.focus(context), width: 1.5),
                 ),
               ),
             ),
@@ -123,7 +123,7 @@ class _AddCarStepPriceDescriptionState extends State<AddCarStepPriceDescription>
               'ar' => 'سعر البيع',
               _ => 'نرخی فرۆشتن',
             },
-            style: AddCarTheme.sectionTitle,
+            style: AddCarTheme.sectionTitle(context),
           ),
           const SizedBox(height: 16),
           Row(
@@ -156,25 +156,22 @@ class _AddCarStepPriceDescriptionState extends State<AddCarStepPriceDescription>
                 FilteringTextInputFormatter.digitsOnly,
                 _ThousandsSeparatorInputFormatter(),
               ],
-              style: const TextStyle(
-                fontSize: 32,
+              style: context.textTheme.headlineLarge?.copyWith(
                 fontWeight: FontWeight.w700,
-                letterSpacing: -1,
-                color: AddCarTheme.textPrimary,
+                color: AddCarTheme.textPrimary(context),
               ),
-              decoration: AddCarTheme.textFieldDecoration(
+              decoration: AddCarTheme.textFieldDecoration(context,
                 hintText: '140,000',
                 prefixText: '$symbol ',
               ).copyWith(
                 border: InputBorder.none,
                 enabledBorder: InputBorder.none,
-                focusedBorder: const OutlineInputBorder(
-                  borderSide: BorderSide(color: AddCarTheme.focusBlue, width: 1.5),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: AddCarTheme.focus(context), width: 1.5),
                 ),
-                hintStyle: TextStyle(
-                  fontSize: 32,
+                hintStyle: context.textTheme.headlineLarge?.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: AddCarTheme.textPrimary.withValues(alpha: 0.2),
+                  color: AddCarTheme.textPrimary(context).withValues(alpha: 0.2),
                 ),
               ),
               onChanged: widget.onPriceChanged,

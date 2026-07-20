@@ -1,0 +1,656 @@
+{
+  "filled": [
+    "vauxhall",
+    "paccar",
+    "abarth",
+    "hennessey",
+    "dacia",
+    "packard",
+    "eicher",
+    "alpina",
+    "brabus",
+    "jetta",
+    "saic_motor",
+    "vlf",
+    "vencer",
+    "elemental",
+    "faraday_future",
+    "suffolk",
+    "de_tomaso",
+    "tramontana",
+    "arash",
+    "artega",
+    "gumpert",
+    "tucker",
+    "sisu",
+    "carlsson",
+    "troller",
+    "tatra",
+    "spania_gta",
+    "ascari",
+    "lagonda",
+    "mansory",
+    "rossion",
+    "arrival",
+    "arrinera",
+    "bharatbenz",
+    "trion",
+    "duesenberg",
+    "laraki",
+    "perodua",
+    "rezvani",
+    "techart",
+    "hindustan_motors",
+    "keating",
+    "mazzanti",
+    "tvr",
+    "zenvo",
+    "arcfox",
+    "li_auto",
+    "weltmeister",
+    "singulato",
+    "nevs",
+    "geometry",
+    "9ff",
+    "aixam",
+    "autobacs",
+    "baojun",
+    "caparo",
+    "caterham",
+    "edsel",
+    "ginetta",
+    "grinnall",
+    "hsv",
+    "kamaz",
+    "ligier",
+    "luxgen",
+    "melkus",
+    "microcar",
+    "oltcit",
+    "osca",
+    "praga",
+    "prodrive",
+    "qoros",
+    "w_motors",
+    "yulon",
+    "zarooq_motors",
+    "zenos",
+    "stutz",
+    "sinotruk_cnhtc",
+    "shacman",
+    "hongyan",
+    "beiben",
+    "yutong",
+    "leapmotor",
+    "aiways",
+    "alvis",
+    "donkervoort",
+    "lloyd",
+    "westfield",
+    "auburn",
+    "berkeley",
+    "bristol",
+    "delage",
+    "hillman",
+    "hupmobile",
+    "leyland",
+    "panhard",
+    "simca",
+    "singer",
+    "talbot",
+    "wartburg",
+    "zastava",
+    "zaz"
+  ],
+  "stillEmpty": [
+    {
+      "id": "camc",
+      "en": "CAMC"
+    },
+    {
+      "id": "zinoro",
+      "en": "Zinoro"
+    },
+    {
+      "id": "hiphi",
+      "en": "HiPhi"
+    },
+    {
+      "id": "atalanta",
+      "en": "Atalanta"
+    },
+    {
+      "id": "bowler",
+      "en": "Bowler"
+    },
+    {
+      "id": "bufori",
+      "en": "Bufori"
+    },
+    {
+      "id": "changfeng",
+      "en": "Changfeng"
+    },
+    {
+      "id": "dartz",
+      "en": "Dartz"
+    },
+    {
+      "id": "edag",
+      "en": "EDAG"
+    },
+    {
+      "id": "eterniti",
+      "en": "Eterniti"
+    },
+    {
+      "id": "facel_vega",
+      "en": "Facel Vega"
+    },
+    {
+      "id": "fpv",
+      "en": "FPV"
+    },
+    {
+      "id": "landwind",
+      "en": "Landwind"
+    },
+    {
+      "id": "lobini",
+      "en": "Lobini"
+    },
+    {
+      "id": "spirra",
+      "en": "Spirra"
+    },
+    {
+      "id": "venucia",
+      "en": "Venucia"
+    },
+    {
+      "id": "wiesmann",
+      "en": "Wiesmann"
+    },
+    {
+      "id": "abadal",
+      "en": "Abadal"
+    },
+    {
+      "id": "abbott_detroit",
+      "en": "Abbott-Detroit"
+    },
+    {
+      "id": "askam",
+      "en": "Askam"
+    },
+    {
+      "id": "autobianchi",
+      "en": "Autobianchi"
+    },
+    {
+      "id": "berliet",
+      "en": "Berliet"
+    },
+    {
+      "id": "bizzarrini",
+      "en": "Bizzarrini"
+    },
+    {
+      "id": "brooke",
+      "en": "Brooke"
+    },
+    {
+      "id": "cisitalia",
+      "en": "Cisitalia"
+    },
+    {
+      "id": "cizeta",
+      "en": "Cizeta"
+    },
+    {
+      "id": "diatto",
+      "en": "Diatto"
+    },
+    {
+      "id": "dkw",
+      "en": "DKW"
+    },
+    {
+      "id": "elva",
+      "en": "Elva"
+    },
+    {
+      "id": "englon",
+      "en": "Englon"
+    },
+    {
+      "id": "fioravanti",
+      "en": "Fioravanti"
+    },
+    {
+      "id": "foden",
+      "en": "Foden"
+    },
+    {
+      "id": "gilbern",
+      "en": "Gilbern"
+    },
+    {
+      "id": "gillet",
+      "en": "Gillet"
+    },
+    {
+      "id": "gonow",
+      "en": "Gonow"
+    },
+    {
+      "id": "hispano_suiza",
+      "en": "Hispano-Suiza"
+    },
+    {
+      "id": "hommell",
+      "en": "Hommell"
+    },
+    {
+      "id": "horch",
+      "en": "Horch"
+    },
+    {
+      "id": "innocenti",
+      "en": "Innocenti"
+    },
+    {
+      "id": "intermeccanica",
+      "en": "Intermeccanica"
+    },
+    {
+      "id": "isdera",
+      "en": "Isdera"
+    },
+    {
+      "id": "marcos",
+      "en": "Marcos"
+    },
+    {
+      "id": "mastretta",
+      "en": "Mastretta"
+    },
+    {
+      "id": "pegaso",
+      "en": "Pegaso"
+    },
+    {
+      "id": "pgo",
+      "en": "PGO"
+    },
+    {
+      "id": "pierce_arrow",
+      "en": "Pierce-Arrow"
+    },
+    {
+      "id": "rinspeed",
+      "en": "Rinspeed"
+    },
+    {
+      "id": "ronart",
+      "en": "Ronart"
+    },
+    {
+      "id": "vandenbrink",
+      "en": "Vandenbrink"
+    },
+    {
+      "id": "venturi",
+      "en": "Venturi"
+    },
+    {
+      "id": "wanderer",
+      "en": "Wanderer"
+    },
+    {
+      "id": "willys_overland",
+      "en": "Willys-Overland"
+    }
+  ],
+  "modelsAdded": 5753,
+  "sources": {
+    "vauxhall": [
+      "curated",
+      "vehiclesdb"
+    ],
+    "paccar": [
+      "curated",
+      "nhtsa",
+      "vehiclesdb"
+    ],
+    "abarth": [
+      "curated",
+      "vehiclesdb"
+    ],
+    "hennessey": [
+      "curated"
+    ],
+    "dacia": [
+      "curated",
+      "nhtsa",
+      "vehiclesdb"
+    ],
+    "packard": [
+      "curated",
+      "vehiclesdb"
+    ],
+    "eicher": [
+      "curated"
+    ],
+    "alpina": [
+      "curated",
+      "nhtsa",
+      "vehiclesdb"
+    ],
+    "brabus": [
+      "curated",
+      "nhtsa",
+      "vehiclesdb"
+    ],
+    "jetta": [
+      "curated",
+      "nhtsa",
+      "vehiclesdb"
+    ],
+    "saic_motor": [
+      "curated",
+      "nhtsa",
+      "vehiclesdb"
+    ],
+    "vlf": [
+      "curated"
+    ],
+    "vencer": [
+      "curated"
+    ],
+    "elemental": [
+      "curated"
+    ],
+    "faraday_future": [
+      "curated",
+      "nhtsa"
+    ],
+    "suffolk": [
+      "curated"
+    ],
+    "de_tomaso": [
+      "curated",
+      "vehiclesdb"
+    ],
+    "tramontana": [
+      "curated"
+    ],
+    "arash": [
+      "curated"
+    ],
+    "artega": [
+      "curated"
+    ],
+    "gumpert": [
+      "curated"
+    ],
+    "tucker": [
+      "curated"
+    ],
+    "sisu": [
+      "curated",
+      "vehiclesdb"
+    ],
+    "carlsson": [
+      "curated"
+    ],
+    "troller": [
+      "curated"
+    ],
+    "tatra": [
+      "curated"
+    ],
+    "spania_gta": [
+      "curated"
+    ],
+    "ascari": [
+      "curated"
+    ],
+    "lagonda": [
+      "curated",
+      "vehiclesdb"
+    ],
+    "mansory": [
+      "curated"
+    ],
+    "rossion": [
+      "curated"
+    ],
+    "arrival": [
+      "curated"
+    ],
+    "arrinera": [
+      "curated"
+    ],
+    "bharatbenz": [
+      "curated",
+      "nhtsa",
+      "vehiclesdb"
+    ],
+    "trion": [
+      "curated"
+    ],
+    "duesenberg": [
+      "curated"
+    ],
+    "laraki": [
+      "curated"
+    ],
+    "perodua": [
+      "curated",
+      "vehiclesdb"
+    ],
+    "rezvani": [
+      "curated"
+    ],
+    "techart": [
+      "curated"
+    ],
+    "hindustan_motors": [
+      "curated"
+    ],
+    "keating": [
+      "curated"
+    ],
+    "mazzanti": [
+      "curated"
+    ],
+    "tvr": [
+      "curated",
+      "vehiclesdb"
+    ],
+    "zenvo": [
+      "curated"
+    ],
+    "arcfox": [
+      "curated",
+      "vehiclesdb"
+    ],
+    "li_auto": [
+      "curated",
+      "nhtsa"
+    ],
+    "weltmeister": [
+      "curated"
+    ],
+    "singulato": [
+      "curated"
+    ],
+    "nevs": [
+      "curated",
+      "nhtsa",
+      "vehiclesdb"
+    ],
+    "geometry": [
+      "curated",
+      "nhtsa",
+      "vehiclesdb"
+    ],
+    "9ff": [
+      "curated"
+    ],
+    "aixam": [
+      "curated",
+      "vehiclesdb"
+    ],
+    "autobacs": [
+      "curated"
+    ],
+    "baojun": [
+      "curated",
+      "nhtsa"
+    ],
+    "caparo": [
+      "curated"
+    ],
+    "caterham": [
+      "curated",
+      "vehiclesdb"
+    ],
+    "edsel": [
+      "curated"
+    ],
+    "ginetta": [
+      "curated",
+      "vehiclesdb"
+    ],
+    "grinnall": [
+      "curated"
+    ],
+    "hsv": [
+      "curated",
+      "nhtsa",
+      "vehiclesdb"
+    ],
+    "kamaz": [
+      "curated"
+    ],
+    "ligier": [
+      "curated"
+    ],
+    "luxgen": [
+      "curated"
+    ],
+    "melkus": [
+      "curated"
+    ],
+    "microcar": [
+      "curated"
+    ],
+    "oltcit": [
+      "curated"
+    ],
+    "osca": [
+      "curated"
+    ],
+    "praga": [
+      "curated"
+    ],
+    "prodrive": [
+      "curated"
+    ],
+    "qoros": [
+      "curated"
+    ],
+    "w_motors": [
+      "curated"
+    ],
+    "yulon": [
+      "curated"
+    ],
+    "zarooq_motors": [
+      "curated"
+    ],
+    "zenos": [
+      "curated"
+    ],
+    "stutz": [
+      "curated"
+    ],
+    "sinotruk_cnhtc": [
+      "curated"
+    ],
+    "shacman": [
+      "curated"
+    ],
+    "hongyan": [
+      "curated"
+    ],
+    "beiben": [
+      "curated"
+    ],
+    "yutong": [
+      "vehiclesdb"
+    ],
+    "leapmotor": [
+      "vehiclesdb"
+    ],
+    "aiways": [
+      "vehiclesdb"
+    ],
+    "alvis": [
+      "vehiclesdb"
+    ],
+    "donkervoort": [
+      "vehiclesdb"
+    ],
+    "lloyd": [
+      "vehiclesdb"
+    ],
+    "westfield": [
+      "vehiclesdb"
+    ],
+    "auburn": [
+      "vehiclesdb"
+    ],
+    "berkeley": [
+      "vehiclesdb"
+    ],
+    "bristol": [
+      "vehiclesdb"
+    ],
+    "delage": [
+      "vehiclesdb"
+    ],
+    "hillman": [
+      "vehiclesdb"
+    ],
+    "hupmobile": [
+      "vehiclesdb"
+    ],
+    "leyland": [
+      "vehiclesdb"
+    ],
+    "panhard": [
+      "vehiclesdb"
+    ],
+    "simca": [
+      "vehiclesdb"
+    ],
+    "singer": [
+      "vehiclesdb"
+    ],
+    "talbot": [
+      "vehiclesdb"
+    ],
+    "wartburg": [
+      "vehiclesdb"
+    ],
+    "zastava": [
+      "vehiclesdb"
+    ],
+    "zaz": [
+      "vehiclesdb"
+    ]
+  }
+}

@@ -3,16 +3,22 @@ import 'dart:async';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:iq_motors/core/services/firebase_performance_service.dart';
+import 'package:iq_motors/features/marketplace/data/services/car_notification_service.dart';
 
 import 'package:iq_motors/core/localization/app_localization_delegates.dart';
 import 'package:iq_motors/core/config/firebase_web_config.dart';
 import 'package:iq_motors/core/localization/locale_config.dart';
-import 'package:iq_motors/core/config/recaptcha_enterprise_config.dart';
+import 'package:iq_motors/core/theme/app_theme.dart';
 import 'package:iq_motors/app/providers/locale_provider.dart';
+import 'package:iq_motors/app/providers/theme_provider.dart';
 import 'package:iq_motors/app/screens/coming_soon_screen.dart';
 import 'package:iq_motors/features/marketplace/presentation/screens/home_screen.dart';
 import 'package:iq_motors/app/screens/startup_error_screen.dart';
@@ -29,51 +35,46 @@ Future<void> main() async {
     WidgetsFlutterBinding.ensureInitialized();
 
     try {
-      // R2 + Gemini keys from bundled `.env` (must be listed in pubspec assets).
-      await dotenv.load(fileName: '.env');
-      if (kDebugMode) {
-        final hasR2Keys =
-            (dotenv.env['R2_ACCESS_KEY_ID']?.trim().isNotEmpty ?? false) &&
-                (dotenv.env['R2_SECRET_ACCESS_KEY']?.trim().isNotEmpty ??
-                    false);
-        if (!hasR2Keys) {
-          debugPrint(
-            'R2 credentials not loaded from .env. Copy .env.example to .env '
-            'in the project root, or set keys in Admin → Security.',
-          );
-        }
-      }
+      // Optimize Flutter image cache limits for smooth 60/120fps scrolling.
+      PaintingBinding.instance.imageCache.maximumSize = 250;
+      PaintingBinding.instance.imageCache.maximumSizeBytes = 100 * 1024 * 1024;
 
-      await Firebase.initializeApp(
-        options: resolveFirebaseOptions(),
+      // Parallelize core startup configurations.
+      await Future.wait([
+        dotenv.load(fileName: '.env').catchError((_) {}),
+        Firebase.initializeApp(options: resolveFirebaseOptions()),
+      ]);
+
+      // Enable Firestore offline persistence (client‑side cache) with 100MB bound.
+      FirebaseFirestore.instance.settings = const Settings(
+        persistenceEnabled: true,
+        cacheSizeBytes: 104857600,
       );
 
-      // reCAPTCHA Enterprise (web, Android, iOS) — required before phone OTP.
-      try {
-        await FirebaseAuth.instance.initializeRecaptchaConfig();
-        if (kDebugMode) {
-          debugPrint(
-            'reCAPTCHA Enterprise initialized '
-            '(web=${RecaptchaEnterpriseConfig.webSiteKey.substring(0, 8)}…)',
-          );
-        }
-      } catch (e, stackTrace) {
-        debugPrint('initializeRecaptchaConfig failed: $e\n$stackTrace');
-      }
-
+      // Concurrently load user settings (Locale + ThemeMode).
       Locale initialLocale = AppLocaleConfig.defaultLocale;
+      ThemeMode initialThemeMode = ThemeMode.system;
       try {
-        initialLocale = await loadSavedLocale();
-      } catch (_) {
-        // SharedPreferences can fail in some browsers; fall back to Kurdish.
-      }
-      setBootLocale(initialLocale);
+        final results = await Future.wait([
+          loadSavedLocale(),
+          loadSavedThemeMode(),
+        ]);
+        initialLocale = results[0] as Locale;
+        initialThemeMode = results[1] as ThemeMode;
+      } catch (_) {}
 
+      setBootLocale(initialLocale);
+      setBootThemeMode(initialThemeMode);
+
+      // Mount UI immediately for instant startup.
       runApp(
         const ProviderScope(
           child: IQMotorsApp(),
         ),
       );
+
+      // Asynchronously initialize secondary background services without blocking startup.
+      unawaited(_warmupBackgroundServices());
     } catch (error, stackTrace) {
       if (kDebugMode) {
         debugPrint('Startup failed: $error\n$stackTrace');
@@ -87,6 +88,28 @@ Future<void> main() async {
   });
 }
 
+/// Non-blocking background initialization after UI frame render.
+Future<void> _warmupBackgroundServices() async {
+  // Performance Monitoring
+  try {
+    await FirebasePerformanceService.instance.setCollectionEnabled(!kDebugMode);
+  } catch (_) {}
+
+  // Firebase Cloud Messaging
+  try {
+    await CarNotificationService().init();
+  } catch (e) {
+    if (kDebugMode) debugPrint('FCM init failed: $e');
+  }
+
+  // reCAPTCHA Enterprise
+  try {
+    await FirebaseAuth.instance.initializeRecaptchaConfig();
+  } catch (e) {
+    if (kDebugMode) debugPrint('Recaptcha init failed: $e');
+  }
+}
+
 class IQMotorsApp extends ConsumerWidget {
   const IQMotorsApp({super.key});
 
@@ -95,6 +118,7 @@ class IQMotorsApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final locale = ref.watch(localeProvider);
+    final themeMode = ref.watch(themeModeProvider);
 
     return MaterialApp(
       title: 'IQ Motors',
@@ -110,19 +134,28 @@ class IQMotorsApp extends ConsumerWidget {
       ],
       builder: (context, child) {
         final direction = AppLocaleConfig.textDirectionFor(locale);
-        return Directionality(
-          textDirection: direction,
-          child: child ?? const SizedBox.shrink(),
+        final scheme = Theme.of(context).colorScheme;
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        final overlay = SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness:
+              isDark ? Brightness.light : Brightness.dark,
+          statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
+          systemNavigationBarColor: scheme.surface,
+          systemNavigationBarIconBrightness:
+              isDark ? Brightness.light : Brightness.dark,
+        );
+        return AnnotatedRegion<SystemUiOverlayStyle>(
+          value: overlay,
+          child: Directionality(
+            textDirection: direction,
+            child: child ?? const SizedBox.shrink(),
+          ),
         );
       },
-      theme: ThemeData(
-        useMaterial3: true,
-        scaffoldBackgroundColor: const Color(0xFFF5F5F7),
-        colorScheme: const ColorScheme.light(
-          surface: Color(0xFFF5F5F7),
-          onSurface: Color(0xFF1D1D1F),
-        ),
-      ),
+      theme: AppTheme.light,
+      darkTheme: AppTheme.dark,
+      themeMode: themeMode,
       home: isProductionWebDomain
           ? const ComingSoonScreen()
           : const HomeScreen(),

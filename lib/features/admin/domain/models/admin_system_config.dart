@@ -7,6 +7,7 @@ class AdminSystemConfig {
     required this.packagePrices,
     required this.activeCities,
     required this.admins,
+    this.isMaintenanceMode = false,
     this.r2Endpoint = '',
     this.r2AccessKey = '',
     this.r2SecretKey = '',
@@ -54,6 +55,7 @@ class AdminSystemConfig {
   final Map<String, int> packagePrices;
   final List<String> activeCities;
   final List<AdminAccountEntry> admins;
+  final bool isMaintenanceMode;
   final String r2Endpoint;
   final String r2AccessKey;
   final String r2SecretKey;
@@ -71,6 +73,7 @@ class AdminSystemConfig {
     return AdminSystemConfig(
       packagePrices: Map<String, int>.from(defaultPackagePrices),
       activeCities: List<String>.from(defaultTrackedCities),
+      isMaintenanceMode: false,
       admins: const [
         AdminAccountEntry(
           email: 'hiwa.constructions@gmail.com',
@@ -123,6 +126,7 @@ class AdminSystemConfig {
       packagePrices: prices,
       activeCities: cities,
       admins: admins,
+      isMaintenanceMode: data['isMaintenanceMode'] == true,
       r2Endpoint: data['r2Endpoint']?.toString() ?? '',
       r2AccessKey: data['r2AccessKey']?.toString() ?? '',
       r2SecretKey: data['r2SecretKey']?.toString() ?? '',
@@ -137,6 +141,7 @@ class AdminSystemConfig {
       'packagePrices': packagePrices,
       'activeCities': activeCities,
       'admins': admins.map((a) => a.toMap()).toList(),
+      'isMaintenanceMode': isMaintenanceMode,
       'r2Endpoint': r2Endpoint,
       'r2AccessKey': r2AccessKey,
       'r2SecretKey': r2SecretKey,
@@ -150,6 +155,7 @@ class AdminSystemConfig {
     Map<String, int>? packagePrices,
     List<String>? activeCities,
     List<AdminAccountEntry>? admins,
+    bool? isMaintenanceMode,
     String? r2Endpoint,
     String? r2AccessKey,
     String? r2SecretKey,
@@ -161,6 +167,7 @@ class AdminSystemConfig {
       packagePrices: packagePrices ?? this.packagePrices,
       activeCities: activeCities ?? this.activeCities,
       admins: admins ?? this.admins,
+      isMaintenanceMode: isMaintenanceMode ?? this.isMaintenanceMode,
       r2Endpoint: r2Endpoint ?? this.r2Endpoint,
       r2AccessKey: r2AccessKey ?? this.r2AccessKey,
       r2SecretKey: r2SecretKey ?? this.r2SecretKey,

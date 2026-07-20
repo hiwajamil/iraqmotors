@@ -1,0 +1,33 @@
+{
+  "make": "Mazda",
+  "models": [
+    "Tribute",
+    "MX-5",
+    "RX-8",
+    "Mazda3",
+    "Mazda5",
+    "CX-7",
+    "CX-9",
+    "Mazda6",
+    "Mazda2",
+    "MPV",
+    "CX-5",
+    "B-Series",
+    "Protege",
+    "Millenia",
+    "626",
+    "323",
+    "MX-3",
+    "929",
+    "RX-7",
+    "MX-6",
+    "CX-3",
+    "GLC",
+    "Navajo",
+    "CX-30",
+    "MX-30",
+    "CX-50",
+    "CX-90",
+    "CX-70"
+  ]
+}

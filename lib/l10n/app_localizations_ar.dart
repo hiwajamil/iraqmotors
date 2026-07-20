@@ -905,6 +905,31 @@ class AppLocalizationsAr extends AppLocalizations {
       'تعذر تحميل الإعلانات. يرجى المحاولة مرة أخرى.';
 
   @override
+  String get homeFeedEnd => 'لقد رأيت جميع الإعلانات المتاحة';
+
+  @override
+  String get aiAppraisalButton => 'احصل على تقدير سعر AI';
+
+  @override
+  String get aiAppraisalTitle => 'تقييم السعر بالذكاء الاصطناعي';
+
+  @override
+  String get aiAppraisalSubtitle => 'مدعوم من Gemini AI';
+
+  @override
+  String get aiAppraisalEstimatedRange => 'القيمة السوقية التقديرية';
+
+  @override
+  String get aiAppraisalConfidence => 'مستوى الثقة';
+
+  @override
+  String get aiAppraisalDisclaimer =>
+      'هذا التقدير صادر عن الذكاء الاصطناعي وهو للإرشاد فقط. قد يختلف السعر الفعلي بناءً على الحالة والتفاوض والطلب المحلي.';
+
+  @override
+  String get aiAppraisalClose => 'فهمت';
+
+  @override
   String get homeBrowseBrands => 'تصفح حسب العلامة التجارية';
 
   @override

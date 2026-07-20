@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:iq_motors/core/localization/l10n_extensions.dart';
 import 'package:iq_motors/shared/data/add_car_option_keys.dart';
+import 'package:iq_motors/core/theme/app_theme.dart';
 import 'package:iq_motors/features/listings/presentation/add_car_theme.dart';
 import 'package:iq_motors/features/listings/presentation/widgets/add_car_step_header.dart';
 
@@ -112,11 +113,11 @@ class _PaymentMethodTileState extends State<_PaymentMethodTile> {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsetsDirectional.all(16),
-          decoration: AddCarTheme.cardDecoration().copyWith(
+          decoration: AddCarTheme.cardDecoration(context).copyWith(
             border: Border.all(
               color: widget.selected
-                  ? AddCarTheme.textPrimary
-                  : AddCarTheme.border,
+                  ? AddCarTheme.primary(context)
+                  : AddCarTheme.border(context),
               width: widget.selected ? 2 : 1,
             ),
           ),
@@ -132,20 +133,20 @@ class _PaymentMethodTileState extends State<_PaymentMethodTile> {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: widget.selected
-                          ? AddCarTheme.textPrimary
+                          ? AddCarTheme.primary(context)
                           : Colors.transparent,
                       border: Border.all(
                         color: widget.selected
-                            ? AddCarTheme.textPrimary
-                            : AddCarTheme.border,
+                            ? AddCarTheme.primary(context)
+                            : AddCarTheme.border(context),
                         width: 2,
                       ),
                     ),
                     child: widget.selected
-                        ? const Icon(
+                        ? Icon(
                             Icons.check_rounded,
                             size: 14,
-                            color: Colors.white,
+                            color: context.colorScheme.onPrimary,
                           )
                         : null,
                   ),
@@ -153,10 +154,9 @@ class _PaymentMethodTileState extends State<_PaymentMethodTile> {
                   Expanded(
                     child: Text(
                       widget.title,
-                      style: const TextStyle(
-                        fontSize: 16,
+                      style: context.textTheme.bodyLarge?.copyWith(
                         fontWeight: FontWeight.w600,
-                        color: AddCarTheme.textPrimary,
+                        color: AddCarTheme.textPrimary(context),
                       ),
                     ),
                   ),
@@ -180,6 +180,8 @@ class _CardBrandLogos extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Official card-network colors — intentionally not theme-derived so the
+    // badges stay recognizable regardless of app theme/brightness.
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -208,8 +210,7 @@ class _BrandPill extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: TextStyle(
-          fontSize: 10,
+        style: context.textTheme.labelSmall?.copyWith(
           fontWeight: FontWeight.w800,
           color: color,
           letterSpacing: 0.5,
@@ -224,18 +225,19 @@ class _ZainCashLogo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Official Zain Cash brand color — intentionally not theme-derived.
+    const zainCashColor = Color(0xFF6B2D5B);
     return Container(
       padding: const EdgeInsetsDirectional.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: const Color(0xFF6B2D5B).withValues(alpha: 0.1),
+        color: zainCashColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
       ),
-      child: const Text(
+      child: Text(
         'Zain Cash',
-        style: TextStyle(
-          fontSize: 12,
+        style: context.textTheme.bodySmall?.copyWith(
           fontWeight: FontWeight.w800,
-          color: Color(0xFF6B2D5B),
+          color: zainCashColor,
         ),
       ),
     );
@@ -250,9 +252,9 @@ class _FibQrPreview extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AddCarTheme.scaffoldBg,
+        color: AddCarTheme.scaffoldBg(context),
         borderRadius: BorderRadius.circular(AddCarTheme.inputRadius),
-        border: Border.all(color: AddCarTheme.border),
+        border: Border.all(color: AddCarTheme.border(context)),
       ),
       child: Row(
         children: [
@@ -261,9 +263,11 @@ class _FibQrPreview extends StatelessWidget {
             height: 88,
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
+              // QR codes must stay black-on-white to remain scannable in
+              // both light and dark themes.
               color: Colors.white,
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: const Color(0xFFE5E5EA)),
+              border: Border.all(color: context.colorScheme.outlineVariant),
             ),
             child: CustomPaint(
               painter: _MockQrPainter(),
@@ -275,12 +279,11 @@ class _FibQrPreview extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   'FIB',
-                  style: TextStyle(
-                    fontSize: 18,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w800,
-                    color: AddCarTheme.textPrimary,
+                    color: AddCarTheme.textPrimary(context),
                     letterSpacing: -0.3,
                   ),
                 ),
@@ -291,11 +294,10 @@ class _FibQrPreview extends StatelessWidget {
                     'ar' => 'امسح QR بتطبيق المصرف العراقي الأول',
                     _ => 'QR بخوێنەرەوە لە ئەپی بانکی یەکەمی عێراق',
                   },
-                  style: const TextStyle(
-                    fontSize: 13,
+                  style: context.textTheme.bodySmall?.copyWith(
                     fontWeight: FontWeight.w500,
                     height: 1.35,
-                    color: AddCarTheme.textSecondary,
+                    color: AddCarTheme.textSecondary(context),
                   ),
                 ),
               ],
@@ -310,7 +312,9 @@ class _FibQrPreview extends StatelessWidget {
 class _MockQrPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()..color = const Color(0xFF1D1D1F);
+    // Mock QR pattern needs solid dark pixels; kept as an absolute color
+    // rather than theme-derived (a real QR doesn't invert for dark mode).
+    final paint = Paint()..color = Colors.black;
     const cell = 6.0;
     for (var row = 0; row < size.height / cell; row++) {
       for (var col = 0; col < size.width / cell; col++) {

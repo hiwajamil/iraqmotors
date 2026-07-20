@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:iq_motors/core/theme/app_theme.dart';
 import 'package:iq_motors/features/admin/domain/models/showroom_listing_status.dart';
 import 'package:iq_motors/features/auth/presentation/providers/auth_providers.dart';
 import 'package:iq_motors/features/dashboard/presentation/widgets/showroom_car_list_item.dart';
@@ -31,7 +32,6 @@ enum _ListingFilter {
 
 class _ShowroomDashboardScreenState
     extends ConsumerState<ShowroomDashboardScreen> {
-  static const Color _bgMain = Color(0xFFF5F5F7);
   static const double _mobileBreakpoint = 992;
 
   _ShowroomNav _activeNav = _ShowroomNav.dashboard;
@@ -122,7 +122,7 @@ class _ShowroomDashboardScreenState
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: _bgMain,
+        backgroundColor: context.colorScheme.surface,
         body: SafeArea(
           child: LayoutBuilder(
             builder: (context, constraints) {
@@ -242,21 +242,20 @@ class _ShowroomSidebar extends StatelessWidget {
   final ValueChanged<_ShowroomNav> onNavTap;
   final VoidCallback onLogout;
 
-  static const Color _bgCard = Color(0xFFFFFFFF);
-  static const Color _borderLight = Color(0xFFE5E5EA);
-
   @override
   Widget build(BuildContext context) {
+    final colorScheme = context.colorScheme;
+
     if (isCompact) {
       return Container(
         width: double.infinity,
-        decoration: const BoxDecoration(
-          color: _bgCard,
+        decoration: BoxDecoration(
+          color: colorScheme.surfaceContainerLowest,
           border: Border(
-            bottom: BorderSide(color: _borderLight),
+            bottom: BorderSide(color: colorScheme.outlineVariant),
           ),
         ),
-        padding: const EdgeInsetsDirectional.fromSTEB(20, 15, 20, 12),
+        padding: const EdgeInsetsDirectional.fromSTEB(20, 16, 20, 12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -274,10 +273,10 @@ class _ShowroomSidebar extends StatelessWidget {
 
     return Container(
       width: 280,
-      decoration: const BoxDecoration(
-        color: _bgCard,
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainerLowest,
         border: BorderDirectional(
-          end: BorderSide(color: _borderLight),
+          end: BorderSide(color: colorScheme.outlineVariant),
         ),
       ),
       padding: const EdgeInsetsDirectional.fromSTEB(20, 30, 20, 30),
@@ -307,12 +306,11 @@ class _BrandTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Text(
+    return Text(
       'IQ Motors',
-      style: TextStyle(
-        fontSize: 24,
+      style: context.textTheme.titleLarge?.copyWith(
         fontWeight: FontWeight.w700,
-        color: Color(0xFF1D1D1F),
+        color: context.colorScheme.onSurface,
         letterSpacing: -0.5,
       ),
     );
@@ -389,7 +387,7 @@ class _ShowroomNavMenu extends StatelessWidget {
             isHorizontal: false,
             onTap: () => onNavTap(item.nav),
           ),
-          if (item != _items.last) const SizedBox(height: 10),
+          if (item != _items.last) const SizedBox(height: 8),
         ],
       ],
     );
@@ -432,16 +430,19 @@ class _ShowroomNavLinkState extends State<_ShowroomNavLink> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = context.colorScheme;
+    final textTheme = context.textTheme;
+
     final bg = widget.isActive
-        ? const Color(0xFF000000)
+        ? colorScheme.primary
         : _hovered
-            ? const Color(0xFFF5F5F7)
+            ? colorScheme.surfaceContainerHighest
             : Colors.transparent;
     final fg = widget.isActive
-        ? Colors.white
+        ? colorScheme.onPrimary
         : _hovered
-            ? const Color(0xFF1D1D1F)
-            : const Color(0xFF86868B);
+            ? colorScheme.onSurface
+            : colorScheme.onSurfaceVariant;
 
     return MouseRegion(
       onEnter: (_) => setState(() => _hovered = true),
@@ -451,7 +452,7 @@ class _ShowroomNavLinkState extends State<_ShowroomNavLink> {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           padding: EdgeInsetsDirectional.symmetric(
-            horizontal: widget.isHorizontal ? 12 : 15,
+            horizontal: widget.isHorizontal ? 12 : 16,
             vertical: widget.isHorizontal ? 8 : 12,
           ),
           decoration: BoxDecoration(
@@ -463,13 +464,12 @@ class _ShowroomNavLinkState extends State<_ShowroomNavLink> {
                 widget.isHorizontal ? MainAxisSize.min : MainAxisSize.max,
             children: [
               Icon(widget.item.icon, size: 18, color: fg),
-              SizedBox(width: widget.isHorizontal ? 8 : 15),
+              SizedBox(width: widget.isHorizontal ? 8 : 16),
               if (!widget.isHorizontal)
                 Expanded(
                   child: Text(
                     widget.item.label,
-                    style: TextStyle(
-                      fontSize: 15,
+                    style: textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.w500,
                       color: fg,
                     ),
@@ -478,52 +478,46 @@ class _ShowroomNavLinkState extends State<_ShowroomNavLink> {
               else
                 Text(
                   widget.item.label,
-                  style: TextStyle(
-                    fontSize: 15,
+                  style: textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w500,
                     color: fg,
                   ),
                 ),
               if (widget.item.badgeCount != null && !widget.isHorizontal) ...[
                 const Spacer(),
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFFF3B30),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Text(
-                    '${widget.item.badgeCount}',
-                    style: const TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
+                _NavBadge(count: widget.item.badgeCount!),
               ] else if (widget.item.badgeCount != null &&
                   widget.isHorizontal) ...[
                 const SizedBox(width: 6),
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFFF3B30),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Text(
-                    '${widget.item.badgeCount}',
-                    style: const TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
+                _NavBadge(count: widget.item.badgeCount!),
               ],
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _NavBadge extends StatelessWidget {
+  const _NavBadge({required this.count});
+
+  final int count;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = context.colorScheme;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      decoration: BoxDecoration(
+        color: colorScheme.error,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Text(
+        '$count',
+        style: context.textTheme.labelSmall?.copyWith(
+          fontWeight: FontWeight.w600,
+          color: colorScheme.onError,
         ),
       ),
     );
@@ -542,20 +536,25 @@ class _ShowroomLogoutButton extends StatefulWidget {
 class _ShowroomLogoutButtonState extends State<_ShowroomLogoutButton> {
   @override
   Widget build(BuildContext context) {
+    final colorScheme = context.colorScheme;
+    final textTheme = context.textTheme;
+
     return GestureDetector(
       onTap: widget.onTap,
-      child: const Padding(
-        padding: EdgeInsetsDirectional.symmetric(horizontal: 15, vertical: 12),
+      child: Padding(
+        padding: const EdgeInsetsDirectional.symmetric(
+          horizontal: 16,
+          vertical: 12,
+        ),
         child: Row(
           children: [
-            Icon(Icons.logout, size: 18, color: Color(0xFFFF3B30)),
-            SizedBox(width: 15),
+            Icon(Icons.logout, size: 18, color: colorScheme.error),
+            const SizedBox(width: 16),
             Text(
               'چوونەدەرەوە',
-              style: TextStyle(
-                fontSize: 15,
+              style: textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w500,
-                color: Color(0xFFFF3B30),
+                color: colorScheme.error,
               ),
             ),
           ],
@@ -576,24 +575,26 @@ class _ShowroomHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = context.colorScheme;
+    final textTheme = context.textTheme;
+
     final welcome = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'بەخێربێیت، $showroomName',
-          style: TextStyle(
-            fontSize: isMobile ? 24 : 28.8,
+          style: (isMobile ? textTheme.headlineSmall : textTheme.headlineMedium)
+              ?.copyWith(
             fontWeight: FontWeight.w700,
-            color: const Color(0xFF1D1D1F),
+            color: colorScheme.onSurface,
             height: 1.25,
           ),
         ),
-        const SizedBox(height: 5),
-        const Text(
+        const SizedBox(height: 4),
+        Text(
           'ئەمڕۆ ئامارەکانت زۆر باش دەردەکەون.',
-          style: TextStyle(
-            fontSize: 14,
-            color: Color(0xFF86868B),
+          style: textTheme.bodyMedium?.copyWith(
+            color: colorScheme.onSurfaceVariant,
           ),
         ),
       ],
@@ -607,15 +608,15 @@ class _ShowroomHeader extends StatelessWidget {
         Container(
           width: 45,
           height: 45,
-          decoration: const BoxDecoration(
-            color: Color(0xFFE5E5EA),
+          decoration: BoxDecoration(
+            color: colorScheme.surfaceContainerHighest,
             shape: BoxShape.circle,
           ),
           alignment: Alignment.center,
-          child: const Icon(
+          child: Icon(
             Icons.person_outline,
             size: 22,
-            color: Color(0xFF86868B),
+            color: colorScheme.onSurfaceVariant,
           ),
         ),
       ],
@@ -660,36 +661,13 @@ class _AddAdButtonState extends State<_AddAdButton> {
     return MouseRegion(
       onEnter: (_) => setState(() => _hovered = true),
       onExit: (_) => setState(() => _hovered = false),
-      child: GestureDetector(
-        onTap: widget.onTap,
-        child: AnimatedScale(
-          scale: _hovered ? 1.05 : 1,
-          duration: const Duration(milliseconds: 200),
-          child: Container(
-            padding: const EdgeInsetsDirectional.symmetric(
-              horizontal: 20,
-              vertical: 10,
-            ),
-            decoration: BoxDecoration(
-              color: const Color(0xFF007AFF),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: const Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.add, size: 16, color: Colors.white),
-                SizedBox(width: 8),
-                Text(
-                  'ڕیکلامی نوێ',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
-            ),
-          ),
+      child: AnimatedScale(
+        scale: _hovered ? 1.05 : 1,
+        duration: const Duration(milliseconds: 200),
+        child: FilledButton.icon(
+          onPressed: widget.onTap,
+          icon: const Icon(Icons.add, size: 16),
+          label: const Text('ڕیکلامی نوێ'),
         ),
       ),
     );
@@ -736,57 +714,48 @@ class _StatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: const Color(0xFFFFFFFF),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.black.withValues(alpha: 0.02)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
-            blurRadius: 20,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 60,
-            height: 60,
-            decoration: BoxDecoration(
-              color: const Color(0xFFF5F5F7),
-              borderRadius: BorderRadius.circular(16),
+    final colorScheme = context.colorScheme;
+    final textTheme = context.textTheme;
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Row(
+          children: [
+            Container(
+              width: 60,
+              height: 60,
+              decoration: BoxDecoration(
+                color: colorScheme.surfaceContainerHighest,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              alignment: Alignment.center,
+              child: Icon(data.icon, size: 24, color: colorScheme.primary),
             ),
-            alignment: Alignment.center,
-            child: Icon(data.icon, size: 24, color: const Color(0xFF000000)),
-          ),
-          const SizedBox(width: 20),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  data.value,
-                  style: const TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w700,
-                    color: Color(0xFF1D1D1F),
+            const SizedBox(width: 20),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    data.value,
+                    style: textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: colorScheme.onSurface,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  data.label,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: Color(0xFF86868B),
+                  const SizedBox(height: 4),
+                  Text(
+                    data.label,
+                    style: textTheme.bodyMedium?.copyWith(
+                      color: colorScheme.onSurfaceVariant,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -807,70 +776,55 @@ class _ListingsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(30),
-      decoration: BoxDecoration(
-        color: const Color(0xFFFFFFFF),
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
-            blurRadius: 20,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          _ListingsSectionHeader(
-            activeFilter: activeFilter,
-            isMobile: isMobile,
-            onFilterChanged: onFilterChanged,
-          ),
-          const SizedBox(height: 25),
-          if (listings.isEmpty)
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 24),
-              child: Center(
-                child: Text(
-                  'هیچ ڕیکلامێک نییە',
-                  style: TextStyle(
-                    fontSize: 15,
-                    color: Color(0xFF86868B),
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _ListingsSectionHeader(
+              activeFilter: activeFilter,
+              isMobile: isMobile,
+              onFilterChanged: onFilterChanged,
+            ),
+            const SizedBox(height: 24),
+            if (listings.isEmpty)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 24),
+                child: Center(
+                  child: Text(
+                    'هیچ ڕیکلامێک نییە',
+                    style: context.textTheme.bodyMedium?.copyWith(
+                      color: context.colorScheme.onSurfaceVariant,
+                    ),
                   ),
                 ),
-              ),
-            )
-          else
-            Column(
-              children: [
-                for (var i = 0; i < listings.length; i++) ...[
-                  ShowroomCarListItem(
-                    title: listings[i].title,
-                    price: listings[i].price,
-                    imageUrl: listings[i].imageUrl,
-                    viewsLabel: listings[i].viewsLabel,
-                    savesLabel: listings[i].savesLabel,
-                    status: listings[i].status,
-                    isMobile: isMobile,
-                    latestBid: listings[i].latestBid,
-                    onEdit: () {},
-                    onPrices: () {},
-                    onMarkAsSold: () {},
-                    onDelete: () {},
-                    onToggleActive: () {},
-                  ),
-                  if (i < listings.length - 1)
-                    const Divider(
-                      height: 1,
-                      thickness: 1,
-                      color: Color(0xFFE5E5EA),
+              )
+            else
+              Column(
+                children: [
+                  for (var i = 0; i < listings.length; i++) ...[
+                    ShowroomCarListItem(
+                      title: listings[i].title,
+                      price: listings[i].price,
+                      imageUrl: listings[i].imageUrl,
+                      viewsLabel: listings[i].viewsLabel,
+                      savesLabel: listings[i].savesLabel,
+                      status: listings[i].status,
+                      isMobile: isMobile,
+                      latestBid: listings[i].latestBid,
+                      onEdit: () {},
+                      onPrices: () {},
+                      onMarkAsSold: () {},
+                      onDelete: () {},
+                      onToggleActive: () {},
                     ),
+                    if (i < listings.length - 1) const Divider(),
+                  ],
                 ],
-              ],
-            ),
-        ],
+              ),
+          ],
+        ),
       ),
     );
   }
@@ -889,12 +843,11 @@ class _ListingsSectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const title = Text(
+    final title = Text(
       'دواین ڕیکلامەکانت',
-      style: TextStyle(
-        fontSize: 19.2,
+      style: context.textTheme.titleLarge?.copyWith(
         fontWeight: FontWeight.w600,
-        color: Color(0xFF1D1D1F),
+        color: context.colorScheme.onSurface,
       ),
     );
 
@@ -944,13 +897,13 @@ class _FilterTabs extends StatelessWidget {
           isActive: activeFilter == _ListingFilter.all,
           onTap: () => onFilterChanged(_ListingFilter.all),
         ),
-        const SizedBox(width: 15),
+        const SizedBox(width: 16),
         _FilterTab(
           label: 'چالاک',
           isActive: activeFilter == _ListingFilter.active,
           onTap: () => onFilterChanged(_ListingFilter.active),
         ),
-        const SizedBox(width: 15),
+        const SizedBox(width: 16),
         _FilterTab(
           label: 'چاوەڕوان',
           isActive: activeFilter == _ListingFilter.pending,
@@ -974,6 +927,9 @@ class _FilterTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = context.colorScheme;
+    final accent = isActive ? colorScheme.primary : colorScheme.onSurfaceVariant;
+
     return GestureDetector(
       onTap: onTap,
       child: Column(
@@ -981,19 +937,16 @@ class _FilterTab extends StatelessWidget {
         children: [
           Text(
             label,
-            style: TextStyle(
-              fontSize: 14,
+            style: context.textTheme.labelLarge?.copyWith(
               fontWeight: FontWeight.w500,
-              color: isActive
-                  ? const Color(0xFF000000)
-                  : const Color(0xFF86868B),
+              color: accent,
             ),
           ),
-          const SizedBox(height: 5),
+          const SizedBox(height: 4),
           Container(
             height: 2,
             width: isActive ? 24 : 0,
-            color: const Color(0xFF000000),
+            color: colorScheme.primary,
           ),
         ],
       ),

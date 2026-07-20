@@ -140,7 +140,7 @@ class _AdminSettingsViewState extends ConsumerState<AdminSettingsView> {
         SnackBar(
           content: Text(context.l10n.adminSettingsSavedSuccess),
           behavior: SnackBarBehavior.floating,
-          backgroundColor: AddCarTheme.successGreen,
+          backgroundColor: AddCarTheme.success(context),
         ),
       );
     } on AdminDatabaseException catch (e) {
@@ -155,7 +155,7 @@ class _AdminSettingsViewState extends ConsumerState<AdminSettingsView> {
       SnackBar(
         content: Text(message),
         behavior: SnackBarBehavior.floating,
-        backgroundColor: const Color(0xFFFF3B30),
+        backgroundColor: Theme.of(context).colorScheme.error,
       ),
     );
   }
@@ -170,8 +170,7 @@ class _AdminSettingsViewState extends ConsumerState<AdminSettingsView> {
         title: Text(l10n.adminSettingsAddCityTitle),
         content: TextField(
           controller: controller,
-          decoration: AddCarTheme.textFieldDecoration(
-            hintText: l10n.adminSettingsNewCityHint,
+          decoration: AddCarTheme.textFieldDecoration(context, hintText: l10n.adminSettingsNewCityHint,
           ),
         ),
         actions: [
@@ -239,24 +238,21 @@ class _AdminSettingsViewState extends ConsumerState<AdminSettingsView> {
             children: [
               TextField(
                 controller: nameCtrl,
-                decoration: AddCarTheme.textFieldDecoration(
-                  hintText: l10n.adminSettingsAdminName,
+                decoration: AddCarTheme.textFieldDecoration(context, hintText: l10n.adminSettingsAdminName,
                 ),
               ),
               const SizedBox(height: 12),
               TextField(
                 controller: emailCtrl,
                 keyboardType: TextInputType.emailAddress,
-                decoration: AddCarTheme.textFieldDecoration(
-                  hintText: l10n.adminSettingsAdminEmail,
+                decoration: AddCarTheme.textFieldDecoration(context, hintText: l10n.adminSettingsAdminEmail,
                 ),
               ),
               const SizedBox(height: 12),
               TextField(
                 controller: phoneCtrl,
                 keyboardType: TextInputType.phone,
-                decoration: AddCarTheme.textFieldDecoration(
-                  hintText: l10n.adminSettingsAdminPhone,
+                decoration: AddCarTheme.textFieldDecoration(context, hintText: l10n.adminSettingsAdminPhone,
                 ),
               ),
             ],
@@ -362,7 +358,7 @@ class _AdminSettingsViewState extends ConsumerState<AdminSettingsView> {
         SnackBar(
           content: Text(context.l10n.adminSettingsSavedSuccess),
           behavior: SnackBarBehavior.floating,
-          backgroundColor: AddCarTheme.successGreen,
+          backgroundColor: AddCarTheme.success(context),
         ),
       );
     } on AdminDatabaseException catch (e) {
@@ -382,6 +378,20 @@ class _AdminSettingsViewState extends ConsumerState<AdminSettingsView> {
     );
   }
 
+  Future<void> _toggleMaintenance(bool enabled) async {
+    final base = _config ?? AdminSystemConfig.defaults();
+    final updated = base.copyWith(isMaintenanceMode: enabled);
+    setState(() => _config = updated);
+    await _saveConfig(
+      override: updated,
+      audit: buildAdminAudit(
+        ref,
+        action: 'toggle_maintenance_mode',
+        details: 'Maintenance mode set to $enabled',
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
@@ -394,14 +404,14 @@ class _AdminSettingsViewState extends ConsumerState<AdminSettingsView> {
           style: TextStyle(
             fontSize: widget.isMobile ? 24 : 28,
             fontWeight: FontWeight.w700,
-            color: AddCarTheme.textPrimary,
+            color: AddCarTheme.textPrimary(context),
             height: 1.25,
           ),
         ),
         const SizedBox(height: 6),
         Text(
           l10n.adminSettingsSubtitle,
-          style: AddCarTheme.stepSubtitle.copyWith(fontSize: 14),
+          style: AddCarTheme.stepSubtitle(context).copyWith(fontSize: 14),
         ),
         const SizedBox(height: 24),
         _CategoryTabs(
@@ -424,7 +434,11 @@ class _AdminSettingsViewState extends ConsumerState<AdminSettingsView> {
         else
           _SettingsCard(
             child: switch (_category) {
-              _SettingsCategory.general => _GeneralSection(l10n: l10n),
+              _SettingsCategory.general => _GeneralSection(
+                  l10n: l10n,
+                  isMaintenanceMode: _config?.isMaintenanceMode ?? false,
+                  onToggleMaintenance: _toggleMaintenance,
+                ),
               _SettingsCategory.packages => _PackagesSection(
                   l10n: l10n,
                   boostController: _boostPriceCtrl,
@@ -479,32 +493,27 @@ class _CategoryTabs extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     final chips = _SettingsCategory.values.map((cat) {
       final isActive = cat == selected;
       return Padding(
         padding: const EdgeInsetsDirectional.only(end: 8, bottom: 8),
-        child: GestureDetector(
-          onTap: () => onSelected(cat),
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            decoration: BoxDecoration(
-              color: isActive ? AddCarTheme.textPrimary : AddCarTheme.cardBg,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: isActive ? AddCarTheme.textPrimary : AddCarTheme.border,
-              ),
-              boxShadow: isActive ? null : AddCarTheme.cardShadow,
-            ),
-            child: Text(
-              labels[cat] ?? '',
-              style: TextStyle(
-                fontSize: 13,
+        child: FilterChip(
+          label: Text(labels[cat] ?? ''),
+          selected: isActive,
+          showCheckmark: false,
+          onSelected: (_) => onSelected(cat),
+          selectedColor: scheme.secondaryContainer,
+          labelStyle: Theme.of(context).textTheme.labelLarge?.copyWith(
                 fontWeight: FontWeight.w600,
-                color: isActive ? Colors.white : AddCarTheme.textSecondary,
+                color: isActive
+                    ? scheme.onSecondaryContainer
+                    : scheme.onSurfaceVariant,
               ),
-            ),
+          side: BorderSide(
+            color: isActive ? scheme.secondaryContainer : scheme.outlineVariant,
           ),
+          materialTapTargetSize: MaterialTapTargetSize.padded,
         ),
       );
     }).toList();
@@ -523,30 +532,55 @@ class _SettingsCard extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(24),
-      decoration: AddCarTheme.cardDecoration(),
+      decoration: AddCarTheme.cardDecoration(context),
       child: child,
     );
   }
 }
 
 class _GeneralSection extends StatelessWidget {
-  const _GeneralSection({required this.l10n});
+  const _GeneralSection({
+    required this.l10n,
+    required this.isMaintenanceMode,
+    required this.onToggleMaintenance,
+  });
 
   final AppLocalizations l10n;
+  final bool isMaintenanceMode;
+  final ValueChanged<bool> onToggleMaintenance;
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(l10n.adminSettingsGeneralInfo, style: AddCarTheme.sectionTitle),
+        Text(l10n.adminSettingsGeneralInfo, style: AddCarTheme.sectionTitle(context)),
         const SizedBox(height: 20),
         _InfoRow(
           icon: Icons.directions_car_outlined,
           title: l10n.adminSettingsAppName,
           subtitle: l10n.adminSettingsAppVersion,
         ),
-        const Divider(height: 32, color: AddCarTheme.border),
+        Divider(height: 32, color: AddCarTheme.border(context)),
+        SwitchListTile(
+          value: isMaintenanceMode,
+          onChanged: onToggleMaintenance,
+          title: const Text(
+            'Platform Maintenance Mode',
+            style: TextStyle(fontWeight: FontWeight.w600),
+          ),
+          subtitle: const Text(
+            'Restricts platform access for non-admin users during system maintenance.',
+          ),
+          secondary: Icon(
+            Icons.build_circle_outlined,
+            color: isMaintenanceMode ? scheme.error : scheme.primary,
+          ),
+          activeTrackColor: scheme.error,
+        ),
+        Divider(height: 32, color: AddCarTheme.border(context)),
         _InfoRow(
           icon: Icons.language_outlined,
           title: l10n.navSettings,
@@ -576,19 +610,19 @@ class _InfoRow extends StatelessWidget {
           width: 44,
           height: 44,
           decoration: BoxDecoration(
-            color: AddCarTheme.inputFill,
+            color: AddCarTheme.inputFill(context),
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Icon(icon, color: AddCarTheme.focusBlue, size: 22),
+          child: Icon(icon, color: AddCarTheme.focus(context), size: 22),
         ),
         const SizedBox(width: 14),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title, style: AddCarTheme.sectionLabel),
+              Text(title, style: AddCarTheme.sectionLabel(context)),
               const SizedBox(height: 2),
-              Text(subtitle, style: AddCarTheme.stepSubtitle.copyWith(fontSize: 13)),
+              Text(subtitle, style: AddCarTheme.stepSubtitle(context).copyWith(fontSize: 13)),
             ],
           ),
         ),
@@ -657,7 +691,7 @@ class _CitiesSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(l10n.adminSettingsActiveCities, style: AddCarTheme.sectionTitle),
+        Text(l10n.adminSettingsActiveCities, style: AddCarTheme.sectionTitle(context)),
         const SizedBox(height: 16),
         for (var i = 0; i < cities.length; i++) ...[
           if (i > 0) const SizedBox(height: 8),
@@ -666,7 +700,7 @@ class _CitiesSection extends StatelessWidget {
             trailing: cities.length > 1
                 ? IconButton(
                     icon: const Icon(Icons.close, size: 18),
-                    color: const Color(0xFFFF3B30),
+                    color: Theme.of(context).colorScheme.error,
                     onPressed: () => onRemove(cities[i]),
                     tooltip: l10n.adminSettingsRemove,
                   )
@@ -679,8 +713,8 @@ class _CitiesSection extends StatelessWidget {
           icon: const Icon(Icons.add, size: 18),
           label: Text(l10n.adminSettingsAddCity),
           style: OutlinedButton.styleFrom(
-            foregroundColor: AddCarTheme.focusBlue,
-            side: const BorderSide(color: AddCarTheme.focusBlue),
+            foregroundColor: AddCarTheme.focus(context),
+            side: BorderSide(color: AddCarTheme.focus(context)),
             padding: const EdgeInsets.symmetric(vertical: 14),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
@@ -732,7 +766,7 @@ class _SecuritySection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(l10n.adminSettingsAdmins, style: AddCarTheme.sectionTitle),
+        Text(l10n.adminSettingsAdmins, style: AddCarTheme.sectionTitle(context)),
         const SizedBox(height: 12),
         for (var i = 0; i < admins.length; i++) ...[
           if (i > 0) const SizedBox(height: 8),
@@ -746,7 +780,7 @@ class _SecuritySection extends StatelessWidget {
             trailing: admins.length > 1
                 ? IconButton(
                     icon: const Icon(Icons.close, size: 18),
-                    color: const Color(0xFFFF3B30),
+                    color: Theme.of(context).colorScheme.error,
                     onPressed: () => onRemoveAdmin(i),
                   )
                 : null,
@@ -758,8 +792,8 @@ class _SecuritySection extends StatelessWidget {
           icon: const Icon(Icons.person_add_outlined, size: 18),
           label: Text(l10n.adminSettingsAddAdmin),
           style: OutlinedButton.styleFrom(
-            foregroundColor: AddCarTheme.focusBlue,
-            side: const BorderSide(color: AddCarTheme.focusBlue),
+            foregroundColor: AddCarTheme.focus(context),
+            side: BorderSide(color: AddCarTheme.focus(context)),
             padding: const EdgeInsets.symmetric(vertical: 14),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
@@ -768,11 +802,11 @@ class _SecuritySection extends StatelessWidget {
         ),
         const SizedBox(height: 28),
         Text(l10n.adminSettingsSystemCredentials,
-            style: AddCarTheme.sectionTitle),
+            style: AddCarTheme.sectionTitle(context)),
         const SizedBox(height: 8),
         Text(
           l10n.adminSettingsCredentialsNote,
-          style: AddCarTheme.stepSubtitle.copyWith(fontSize: 13),
+          style: AddCarTheme.stepSubtitle(context).copyWith(fontSize: 13),
         ),
         const SizedBox(height: 16),
         _SettingsField(
@@ -790,7 +824,7 @@ class _SecuritySection extends StatelessWidget {
                   ? Icons.visibility_outlined
                   : Icons.visibility_off_outlined,
               size: 20,
-              color: AddCarTheme.textSecondary,
+              color: AddCarTheme.textSecondary(context),
             ),
             onPressed: onToggleAccessKey,
           ),
@@ -806,7 +840,7 @@ class _SecuritySection extends StatelessWidget {
                   ? Icons.visibility_outlined
                   : Icons.visibility_off_outlined,
               size: 20,
-              color: AddCarTheme.textSecondary,
+              color: AddCarTheme.textSecondary(context),
             ),
             onPressed: onToggleSecretKey,
           ),
@@ -859,12 +893,12 @@ class _SettingsFieldState extends State<_SettingsField> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(widget.label, style: AddCarTheme.sectionLabel),
+        Text(widget.label, style: AddCarTheme.sectionLabel(context)),
         const SizedBox(height: 8),
         Focus(
           onFocusChange: (v) => setState(() => _focused = v),
           child: Container(
-            decoration: AddCarTheme.inputDecorationBox(focused: _focused),
+            decoration: AddCarTheme.inputDecorationBox(context, focused: _focused),
             child: TextField(
               controller: widget.controller,
               keyboardType: widget.keyboardType,
@@ -872,10 +906,10 @@ class _SettingsFieldState extends State<_SettingsField> {
               inputFormatters: widget.keyboardType == TextInputType.number
                   ? [FilteringTextInputFormatter.digitsOnly]
                   : null,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
-                color: AddCarTheme.textPrimary,
+                color: AddCarTheme.textPrimary(context),
               ),
               decoration: InputDecoration(
                 border: InputBorder.none,
@@ -906,9 +940,9 @@ class _ListItemRow extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
-        color: AddCarTheme.inputFill,
+        color: AddCarTheme.inputFill(context),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AddCarTheme.border),
+        border: Border.all(color: AddCarTheme.border(context)),
       ),
       child: Row(
         children: [
@@ -916,12 +950,12 @@ class _ListItemRow extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: AddCarTheme.sectionLabel),
+                Text(title, style: AddCarTheme.sectionLabel(context)),
                 if (subtitle != null) ...[
                   const SizedBox(height: 4),
                   Text(
                     subtitle!,
-                    style: AddCarTheme.stepSubtitle.copyWith(fontSize: 12),
+                    style: AddCarTheme.stepSubtitle(context).copyWith(fontSize: 12),
                   ),
                 ],
               ],
@@ -952,29 +986,19 @@ class _SaveButton extends StatelessWidget {
       child: FilledButton(
         onPressed: isLoading ? null : onPressed,
         style: FilledButton.styleFrom(
-          backgroundColor: AddCarTheme.textPrimary,
-          foregroundColor: Colors.white,
+          minimumSize: const Size.fromHeight(48),
           padding: const EdgeInsets.symmetric(vertical: 16),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
         ),
         child: isLoading
-            ? const SizedBox(
+            ? SizedBox(
                 width: 20,
                 height: 20,
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.onPrimary,
                 ),
               )
-            : Text(
-                label,
-                style: const TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
+            : Text(label),
       ),
     );
   }

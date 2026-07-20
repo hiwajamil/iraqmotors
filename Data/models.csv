@@ -1,0 +1,1610 @@
+﻿model_id,brand_id,brand_name_en,model_name_en,model_name_ar,model_name_ku,sort,from_year_id,to_year_id,segment_id,sub_segment_id,deleted
+253,27,Toyota,Hilux,هايلوكس,هایلۆکس,300,18,,,,False
+245,27,Toyota,Corolla,كورولا,کۆرۆلا,298,16,,,,False
+249,27,Toyota,Land Cruiser,لاندكروزر,لاند کروزەر,296,1,,,,False
+254,27,Toyota,Camry,كامري,کامری,294,32,,,,False
+933,27,Toyota,Crown,كراون,کراون,292,5,,,,False
+257,27,Toyota,RAV4,راف 4,ڕاڤ 4,290,44,,,,False
+288,27,Toyota,Land Cruiser Prado,لاندكروزر برادو,لاندكروزر پرادۆ,288,34,,,,False
+1011,27,Toyota,Corolla Cross,كورولا كروس,کۆرۆلا کرۆس,286,70,,,,False
+1184,27,Toyota,Urban Cruiser,أوربان كروزر,ئۆربان کرۆزەر,284,58,,,,False
+322,27,Toyota,Yaris,يارس,یارس,282,49,,,,False
+1468,27,Toyota,Corolla Hatchback,كورولا هاتشباك,کرۆلا هاچباک,281,69,,,,False
+1267,27,Toyota,Frontlander,فرونتلاندر,فرۆنتلاندەر,280,71,,,,False
+241,27,Toyota,Hiace,هايس,هیاس,278,17,,,,False
+934,27,Toyota,Highlander,هايلاندر,هایلاندەر,270,51,,,,False
+289,27,Toyota,Avalon,أفالون,ئەڤەلۆن,267,44,,,,False
+242,27,Toyota,Prius,بريوس,پریوس,265,47,,,,False
+286,27,Toyota,Fortuner,فورجنر,فۆرچێنەر,245,54,,,,False
+246,27,Toyota,Rush,رش,ڕەش,240,56,,,,False
+250,27,Toyota,Sequoia,سيكويا,سیکۆیا,235,51,,,,False
+1338,27,Toyota,Grand Highlander,جراند هايلاندر,گراند هایلاندەر,230,74,,,,False
+1134,27,Toyota,Land Cruiser 76,لاند كروزر 76,لاند کرۆزەر 76,225,57,,,,False
+1396,27,Toyota,Yaris iA,يارس آي أ,یاریس ئای ئەی,220,67,68,,,False
+1230,27,Toyota,Mark II,II مارك,II مارک,210,18,54,,,False
+1350,27,Toyota,Chaser,شايسر,چەیسەر,205,27,51,,,False
+938,27,Toyota,Tacoma,تاكوما,تاکۆما,195,45,,,,False
+937,27,Toyota,Sienna,سيينا,سیانا,190,48,,,,False
+940,27,Toyota,Venza,فنزا,ڤێنزا,180,59,76,,,False
+931,27,Toyota,CH-R,سي اتش ار,CH-R,170,66,,,,False
+256,27,Toyota,FJ Cruiser,إف جي كروزر,FJ کرۆزەر,100,28,74,,,False
+939,27,Toyota,Tundra,توندرا,توندرا,84,50,,,,False
+287,27,Toyota,Land Cruiser 70,لاند كروزر 70,لاند کرۆزەر 70,82,34,,,,False
+248,27,Toyota,Land Cruiser 70 Pickup,لاند كروزر 70 بيك اب,لاند کرۆزەر ٧٠ پیکاپ,80,34,,,,False
+251,27,Toyota,Avanza,افانزا,ئەڤانزا,78,65,,,,False
+928,27,Toyota,4Runner,4رنر,4رەنەر,55,34,,,,False
+1255,27,Toyota,Alphard,ألفارد,ئەلفەرد,0,52,,,,False
+1294,27,Toyota,Aristo,أريستو,ئەرستۆ,0,41,55,,,False
+255,27,Toyota,Aurion,أوريون,ئۆریۆن,0,56,67,,,False
+929,27,Toyota,Auris,اورس,ئەوریس,0,56,70,,,False
+930,27,Toyota,Avensis,افنسز,ئەڤێنسز,0,47,68,,,False
+1381,27,Toyota,bZ3,bZ3,bZ3,0,74,,,,False
+1188,27,Toyota,bZ4X,bZ4X,bZ4X,0,72,,,,False
+1697,27,Toyota,bZ5,bZ5,bZ5,0,76,,,,False
+1616,27,Toyota,Caldina,کالدینا,کالدینا,0,42,57,,,False
+1586,27,Toyota,Camry Solara,كامري سولارا,کامری سۆلارا,0,48,58,,,False
+1383,27,Toyota,Carina,كارينا,کارینا,0,20,51,,,False
+1474,27,Toyota,Celica,سيليكا,سیلیکا,0,21,56,,,False
+1418,27,Toyota,Celsior,سيلسيور,سێلسیۆر,0,39,56,,,False
+989,27,Toyota,Coaster,كوستر,کۆستەر,0,19,,,,False
+1739,27,Toyota,Corolla Fielder,كورولا فيلدر,کۆرۆلا فیڵدەر,0,50,,,,False
+1530,27,Toyota,Corolla iM,كورولا iM,کرۆلا iM,0,67,68,,,False
+932,27,Toyota,Corona,كورونا,کرۆنا,0,7,51,,,False
+1270,27,Toyota,Cresta,كريستا,کرێستا,0,30,51,,,False
+1514,27,Toyota,Crown Comfort,كراون كومفورت,کراون کۆمفۆرت,0,5,68,,,False
+1170,27,Toyota,Crown Kluger,كراون كلوجر,کراون کلوگەر,0,71,,,,False
+1574,27,Toyota,Crown Signia,كراون سيجنيا,كراون سێگنیا,0,76,,,,False
+1745,27,Toyota,Dyna,داینا,داینا,0,9,,,,False
+1260,27,Toyota,Echo,إيكو,ئیکۆ,0,49,56,,,False
+1724,27,Toyota,GR Corolla,GR كورولا,GR کۆرۆلا,0,74,,,,False
+1236,27,Toyota,GR86,GR86,GR86,0,71,,,,False
+240,27,Toyota,Granvia,جرانفيا,گرانڤیا,0,45,,,,False
+321,27,Toyota,GT 86,GT 86,GT 86,0,62,,,,False
+252,27,Toyota,Innova,انوفا,ئینۆڤا,0,54,,,,False
+1206,27,Toyota,Ipsum,إبسم,ئیپسەم,0,45,60,,,False
+935,27,Toyota,Matrix,ماتريكس,ماتریکس,0,52,64,,,False
+1444,27,Toyota,Noah,نوح,نوح,0,51,,,,False
+936,27,Toyota,Paseo,باسيو,پاسیۆ,0,41,49,,,False
+247,27,Toyota,Previa,بريفيا,پریڤیا,0,40,69,,,False
+1425,27,Toyota,Prius C,بريوس سي,پرایس سی,0,61,71,,,False
+1462,27,Toyota,Prius Prime,بريوس برايم,پرایس پرایم,0,62,,,,False
+1780,27,Toyota,Proace City,برو ايس ستي,پڕۆ ئەیس سیتی,0,70,,,,False
+1124,27,Toyota,Raize,رايز,ڕەیز,0,69,,,,False
+1211,27,Toyota,Scion tC,سايون تي سي,ساێۆن تی سی,0,54,66,,,False
+1252,27,Toyota,Scion xB,سايون xB,سایۆن xB,0,53,65,,,False
+320,27,Toyota,Supra,سوبرا,سوپرا,0,28,,,,False
+1620,27,Toyota,T100,T100,T100,0,42,48,,,False
+1221,27,Toyota,Tercel,ترسل,تێرسێل,0,28,49,,,False
+1423,27,Toyota,TownAce,تاون ايس,تاونئەیس,0,20,58,,,False
+1580,27,Toyota,ToyoAce,تويوإيس,تۆیۆئیس,0,4,76,,,False
+1427,27,Toyota,Veloz,فيلوز,ڤێلۆز,0,71,,,,False
+1408,27,Toyota,Voxy,فوكسي,ڤۆکسی,0,51,81,,,False
+991,27,Toyota,Wigo,ويجو,ویگۆ,0,64,,,,False
+1399,27,Toyota,Wish,ويش,ویش,0,53,67,,,False
+323,27,Toyota,xA,xA,xA,0,53,56,,,False
+1360,27,Toyota,Yaris Cross,ياريس كروس,یاریس کرۆس,0,70,,,,False
+243,27,Toyota,Zelas,زلاس,زێلاس,0,60,66,,,False
+39,8,Mercedes-Benz,E-Class,E-Class,E-Class,100,1,,,,False
+9,8,Mercedes-Benz,C-Class,C-Class,C-Class,98,1,,,,False
+115,8,Mercedes-Benz,S-Class,S-Class,S-Class,96,1,,,,False
+43,8,Mercedes-Benz,G-Class,G-Class,G-Class,94,30,,,,False
+199,8,Mercedes-Benz,CLS,CLS,CLS,92,56,,,,False
+56,8,Mercedes-Benz,CLA,CLA,CLA,90,63,,,,False
+46,8,Mercedes-Benz,GLE,GLE,GLE,88,65,,,,False
+32,8,Mercedes-Benz,GLS,GLS,GLS,86,66,,,,False
+15,8,Mercedes-Benz,GLC,GLC,GLC,84,66,,,,False
+29,8,Mercedes-Benz,AMG GT,AMG GT,AMG GT,82,65,,,,False
+24,8,Mercedes-Benz,A-Class,A-Class,A-Class,0,63,,,,False
+36,8,Mercedes-Benz,AMG GT 4-door Coupe,اي ام جي جي تي 4 دور كوبيه,AMG GT 4-door Coupe,0,69,,,,False
+191,8,Mercedes-Benz,B-Class,B-Class,B-Class,0,56,,,,False
+196,8,Mercedes-Benz,CL-Class,CL-Class,CL-Class,0,51,,,,False
+7,8,Mercedes-Benz,CLC-Class,سي ال سي كلاس,CLC-Class,0,59,,,,False
+1460,8,Mercedes-Benz,CLE Coupe,CLE  كوبيه,CLE  کوپ,0,76,,,,False
+4,8,Mercedes-Benz,CLK-Class,CLK-Class,CLK-Class,0,57,,,,False
+1497,8,Mercedes-Benz,EQA,EQA,EQA,0,72,,,,False
+1483,8,Mercedes-Benz,EQB,EQB,EQB,0,72,,,,False
+1453,8,Mercedes-Benz,EQE Sedan,EQE سيدان,EQE سیدان,0,74,,,,False
+1457,8,Mercedes-Benz,EQE SUV,EQE SUV,EQE SUV,0,74,,,,False
+1400,8,Mercedes-Benz,EQS,EQS,EQS,0,71,,,,False
+1289,8,Mercedes-Benz,EQV,EQV,EQV,0,70,,,,False
+33,8,Mercedes-Benz,GL-Class,جي أل-كلاس,GL-Class,0,57,,,,False
+5,8,Mercedes-Benz,GLA,GLA,GLA,0,65,,,,False
+10,8,Mercedes-Benz,GLB,GLB,GLB,0,70,,,,False
+16,8,Mercedes-Benz,GLC-Class Coupe,GLC-Class كوبيه,GLC-Class کوپ,0,67,,,,False
+1701,8,Mercedes-Benz,GLE Coupe,GLE  كوبيه,GLE  کوپ,0,65,,,,False
+17,8,Mercedes-Benz,GLK-Class,GLK-Class,GLK-Class,0,59,,,,False
+48,8,Mercedes-Benz,ML-Class,ام ال- كلاس,ML-Class,0,47,65,,,False
+1244,8,Mercedes-Benz,Ponton,بونتون,پۆنتۆن,0,,20,,,False
+197,8,Mercedes-Benz,R-Class,R-Class,R-Class,0,56,,,,False
+114,8,Mercedes-Benz,S-Class Maybach,S-Class مايباخ,S-Class مایباخ,0,52,,,,False
+1279,8,Mercedes-Benz,SEC,SEC,SEC,0,36,41,,,False
+53,8,Mercedes-Benz,SL-Class,اس ال كلاس,SL-Class,0,4,,,,False
+20,8,Mercedes-Benz,SLC-Class,إس إل سي كلاس,SLC-Class,0,21,,,,False
+22,8,Mercedes-Benz,SLK-Class,اس ال كيه كلاس,SLK-Class,0,55,,,,False
+27,8,Mercedes-Benz,SLR McLaren,إس إل آر ماكلارين,SLR ماکلارن,0,54,,,,False
+28,8,Mercedes-Benz,SLS AMG,SLS AMG,SLS AMG,0,60,,,,False
+190,8,Mercedes-Benz,Sprinter,سبرنتر,سپرینتەر,0,43,,,,False
+1069,8,Mercedes-Benz,SSK,SSK,SSK,0,75,75,,,False
+1560,8,Mercedes-Benz,T-Class,T-Class,T-Class,0,72,,,,False
+18,8,Mercedes-Benz,V-Class,V-Class,V-Class,0,46,,,,False
+1266,8,Mercedes-Benz,V-Class Maybach,في كلاس مايباخ,V-Class مایباخ,0,,,,,False
+19,8,Mercedes-Benz,Viano,فيانو,ڤیانۆ,0,54,,,,False
+13,8,Mercedes-Benz,Vito,فيتو,ڤیتۆ,0,53,,,,False
+957,8,Mercedes-Benz,X-Class,X-Class,X-Class,0,66,,,,False
+463,47,Kia,Sorento,سورينتو,سۆرینتۆ,300,52,,,,False
+768,47,Kia,Sportage,سبورتاج,سپۆرتاج,295,43,,,,False
+1511,47,Kia,K4,K4,K4,291,80,,,,False
+1385,47,Kia,Tasman,تسمان,تاسمان,287,80,,,,False
+1227,47,Kia,K3,K3,K3,285,58,,,,False
+767,47,Kia,Cerato,سيراتو,سیراتۆ,282,53,,,,False
+949,47,Kia,Forte,فورتي,فۆرتێ,280,58,,,,False
+1172,47,Kia,Forte5,5فورتي,5فۆرتێ,275,60,,,,False
+1057,47,Kia,Sonet,سونيت,سۆنێت,265,70,,,,False
+1016,47,Kia,K5,K5,K5,260,60,,,,False
+1112,47,Kia,K7,K7,K7,258,59,,,,False
+775,47,Kia,Optima,اوبتيما,ئۆپتیما,255,50,,,,False
+1139,47,Kia,K8,K8,K8,252,71,,,,False
+1144,47,Kia,Niro,نيرو,نیرۆ,250,66,,,,False
+771,47,Kia,K900,K900,K900,247,62,,,,False
+147,47,Kia,Rio,ريو,ریۆ,245,49,,,,False
+765,47,Kia,Soul,سول,سۆڵ,240,59,,,,False
+461,47,Kia,Picanto,بيكانتو,پیکانتۆ,235,54,,,,False
+774,47,Kia,Carens,كارينز,کارینس,230,57,,,,False
+770,47,Kia,Cadenza,كادينزا,کادێنزا,225,59,,,,False
+1449,47,Kia,EV5,EV5,EV5,220,74,,,,False
+1208,47,Kia,EV6,EV6,EV6,215,71,,,,False
+1320,47,Kia,EV9,EV9,EV9,210,74,,,,False
+148,47,Kia,Seltos,سلتوس,سێلتۆس,200,70,,,,False
+777,47,Kia,Mohave,موهافي,مۆهاڤی,195,59,,,,False
+462,47,Kia,Telluride,تيلوريد,تێلوراید,185,70,,,,False
+773,47,Kia,Quoris,كوريس,کۆریس,120,63,,,,False
+769,47,Kia,Carnival,كرنفال,کەرنیڤاڵ,89,48,,,,False
+776,47,Kia,Stinger,ستينغر,ستینگەر,80,68,,,,False
+1204,47,Kia,Besta,بيستا,بێستا,0,44,,,,False
+1038,47,Kia,Bongo,بونكو,بۆنگۆ,0,40,,,,False
+977,47,Kia,Ceed,سيد,سیید,0,56,,,,False
+1690,47,Kia,Concord,كونكورد,کۆنکۆرد,0,37,46,,,False
+1424,47,Kia,Credos,كريدوس,کرێدۆس,0,45,51,,,False
+1546,47,Kia,Forte Koup,فورتي كوب,فۆرتی کوپ,0,60,66,,,False
+1484,47,Kia,KX1,KX1,KX1,0,67,,,,False
+950,47,Kia,Lotze,لوتزي,لۆتزێ,0,50,,,,False
+772,47,Kia,Opirus,أوبيروس,ئۆپیرۆس,0,53,62,,,False
+146,47,Kia,Pegas,بيجاس,پێگاس,0,70,,,,False
+1341,47,Kia,Potentia,بوتينشيا,پۆتێنشیا,0,42,52,,,False
+1307,47,Kia,Pregio,بريجيو,پرێگیۆ,0,45,56,,,False
+1333,47,Kia,Pride,برايد,پراید,0,36,60,,,False
+1241,47,Kia,Ray,راي,ڕەی,0,61,,,,False
+1003,47,Kia,Sedona,سيدونا,سێدۆنا,0,48,,,,False
+1186,47,Kia,Sephia,سيفيا,سێفیا,0,44,,,,False
+1265,47,Kia,Spectra,سبكترا,سپێکترا,0,50,59,,,False
+1348,47,Kia,Stonic,ستونيك,ستۆنیک,0,67,,,,False
+1493,56,BYD,Qin Plus,Qin Plus,Qin Plus,325,71,,,,False
+1599,56,BYD,SEAL EV,سيل EV,سيل EV,300,72,,,,False
+1781,56,BYD,Ti 7,Ti 7,Ti 7,297,80,,,,False
+1598,56,BYD,ATTO 3,اتو 3,ئاتۆ 3,295,76,,,,False
+1597,56,BYD,SEAL 7,سيل 7,سيل 7,292,74,,,,False
+1596,56,BYD,SEALION 7,سيليون 7,سیڵایۆن 7,290,74,,,,False
+1595,56,BYD,HAN,هان,هان,285,70,,,,False
+1559,56,BYD,SONG PLUS,سونغ بلس,سۆنگ پڵەس,280,71,,,,False
+1662,56,BYD,Shark 6,شارك 6,شارك 6,270,76,,,,False
+1578,56,BYD,SONG PRO DM-i,‎سونغ برو DM-i,‎سۆنگ پرۆ DM-i,260,76,,,,False
+1548,56,BYD,Seal 05 DM-i,سيل 05 DM-i,سيل 05 DM-i,255,80,,,,False
+1547,56,BYD,Destroyer 05,ديستروير 05,دیسترۆیەر 05,250,72,,,,False
+1694,56,BYD,ATTO 8,اتو 8,ئاتۆ 8,0,80,,,,False
+1590,56,BYD,e2,e2,e2,0,69,,,,False
+996,56,BYD,F0,F0,F0,0,58,,,,False
+1355,56,BYD,F1,F1,F1,0,58,66,,,False
+502,56,BYD,F3,F3,F3,0,56,,,,False
+503,56,BYD,F6,F6,F6,0,58,,,,False
+1000,56,BYD,G3,G3,G3,0,60,,,,False
+1693,56,BYD,Leopard 3,ليوبارد 3,لیۆپارد 3,0,80,,,,False
+1631,56,BYD,Leopard 5,ليوبارد 5,ليۆپارد 5,0,74,,,,False
+1681,56,BYD,Leopard 7,ليوبارد 7,ليۆپارد 7,0,80,,,,False
+1683,56,BYD,Leopard 8,ليوبارد 8,لیۆپارد 8,0,80,,,,False
+1762,56,BYD,M9,M9,M9,0,80,,,,False
+1573,56,BYD,QIN L DM-i,كوين L DM-i,کوێن L DM-i,0,76,,,,False
+1476,56,BYD,S6,إس 6,ئێس 6,0,61,66,,,False
+1356,56,BYD,Seagull,سيجول,سیگوڵ,0,72,,,,False
+1633,56,BYD,Seal 6,سيل 6,سيل 6,0,76,,,,False
+1634,56,BYD,Sealion 05 DM-i,سيليون 05 DM-i,سیلیۆن 05 DM-i,0,76,,,,False
+1644,56,BYD,Sealion 06 DM-i,سيليون 06 DM-i,سیلیۆن 06 DM-i,0,80,,,,False
+1733,56,BYD,Sealion 5,سيليون 5,سيليۆن 5,0,76,,,,False
+1650,56,BYD,Song L DM-i,سونغ L DM-i,سۆنگ L DM-i,0,76,,,,False
+1744,56,BYD,Tang,تانک,تانگ,0,65,,,,False
+1664,56,BYD,Tang L,تانک L,تانگ L,0,65,,,,False
+887,81,HAVAL,H6,H6,H6,300,66,,,,False
+1131,81,HAVAL,H6 GT,جي تي H6,جى تى H6,298,71,,,,False
+980,81,HAVAL,H7,H7,H7,296,65,,,,False
+1783,81,HAVAL,V7,V7,V7,295,81,,,,False
+888,81,HAVAL,H9,H9,H9,294,66,,,,False
+1009,81,HAVAL,JOLION,جوليون,جۆلیۆن,292,68,,,,False
+1470,81,HAVAL,JOLION Pro,جوليون برو,جولیۆن پرۆ,290,72,,,,False
+1031,81,HAVAL,Dargo,دارجو,دارگۆ,0,72,,,,False
+890,81,HAVAL,H2 Crossover,H2 Crossover,H2 Crossover,0,66,,,,False
+889,81,HAVAL,H8,H8,H8,0,66,,,,False
+1734,85,GAC,GS4 Max,GS4 ماكس,GS4 ماكس,100,76,,,,False
+1164,85,GAC,EMKOO,إمكو,ئیمکۆ,99,72,,,,False
+921,85,GAC,GS8,GS8,GS8,90,67,,,,False
+1622,85,GAC,GS8 TRAVELLER,GS8 ترافلر,GS8 تراڤلەر,87,80,81,,,False
+1624,85,GAC,Aion ES,ايون ES,ئایۆن ES,86,76,81,,,False
+1109,85,GAC,Empow,إمباو,ئێمپۆو,85,71,,,,False
+1591,85,GAC,Empow R,إمباو R,ئێمپۆو R,84,74,,,,False
+917,85,GAC,GS5,GS5,GS5,80,65,,,,False
+922,85,GAC,GS3,GS3,GS3,70,68,,,,False
+1789,85,GAC,Aion V,ايون V,ئایۆن V,0,70,,,,False
+916,85,GAC,GA3,GA3,GA3,0,65,,,,False
+992,85,GAC,GA4,GA4,GA4,0,68,,,,False
+920,85,GAC,GA5,GA5,GA5,0,65,,,,False
+919,85,GAC,GA8,GA8,GA8,0,68,,,,False
+1647,85,GAC,GN6,GN6,GN6,0,69,,,,False
+1176,85,GAC,GN8,GN8,GN8,0,67,,,,False
+1439,85,GAC,Gonow GA1030,جونو GA1030,گۆنۆو GA1030,0,60,,,,False
+1243,85,GAC,Gonow GA200,جونو GA200,گۆنۆو GA200,0,55,66,,,False
+1215,85,GAC,Gonow Way M1,جونو واي M1,گۆناو وای M1,0,62,,,,False
+1177,85,GAC,GS3 EMZOOM,GS3 إمزوم,GS3 ئێمزووم,0,74,,,,False
+897,85,GAC,GS4,GS4,GS4,0,67,,,,False
+918,85,GAC,GS7,GS7,GS7,0,68,,,,False
+1372,85,GAC,M8,M8,M8,0,67,,,,False
+1710,158,OMODA,C5,C5,C5,0,72,,,,False
+1726,158,OMODA,C7,C7,C7,0,80,,,,False
+1727,159,JAECOO,J5,J5,J5,0,80,,,,False
+1716,159,JAECOO,J7,J7,J7,0,76,,,,False
+1717,159,JAECOO,J8,J8,J8,0,74,,,,False
+1110,128,TANK,300,300,300,0,50,,,,False
+1194,128,TANK,500,500,500,0,71,,,,False
+1747,128,TANK,700,700,700,0,76,,,,False
+333,26,Volkswagen,Jetta,جيتا,جێتا,100,29,,,,False
+342,26,Volkswagen,Atlas,أطلس,ئەتلەس,98,68,,,,False
+329,26,Volkswagen,Golf,جولف,گۆلف,96,24,,,,False
+341,26,Volkswagen,Passat,باسات,پاسات,94,30,,,,False
+337,26,Volkswagen,Tiguan,تيغوان,تیگوان,90,58,,,,False
+1173,26,Volkswagen,Atlas Cross Sport,أطلس كروس سبورت,ئەتڵەس کرۆس سپۆرت,88,70,,,,False
+318,26,Volkswagen,Arteon,أرتيون,ئارتیۆن,86,68,,,,False
+1077,26,Volkswagen,Taos,تاوس,تاوس,84,68,,,,False
+331,26,Volkswagen,Golf R,جولف R,گۆلف R,82,61,,,,False
+328,26,Volkswagen,Beetle,بيتل,بیتڵ,50,1,,,,False
+325,26,Volkswagen,Amarok,أماروك,ئەمارۆک,0,62,,,,False
+1094,26,Volkswagen,Bora,بورا,بۆڕا,0,49,74,,,False
+1086,26,Volkswagen,Caddy,كادي,کادی,0,30,,,,False
+1359,26,Volkswagen,e-Tharu,إي ثارو,ئی-ثارو,0,70,,,,False
+326,26,Volkswagen,Eos,ايوس,ئیۆس,0,57,,,,False
+327,26,Volkswagen,Golf Plus,کولف بلس,گۆلف پلەس,0,54,64,,,False
+1147,26,Volkswagen,ID.3,آي دي.3,ID.3,0,69,,,,False
+1116,26,Volkswagen,ID.4,آي دي.4,ID.4,0,70,,,,False
+1145,26,Volkswagen,ID.6,آي دي.6,ID.6,0,71,,,,False
+1285,26,Volkswagen,Jetta VS7,جيتا VS7,جێتا VS7,0,,,,,False
+343,26,Volkswagen,Multivan,ملتيفان,مەلتیڤان,0,53,,,,False
+1049,26,Volkswagen,Multivan Alltrack,مولتيفان اولتراك,موڵتیڤان ئۆڵتراک,0,1,,,,False
+344,26,Volkswagen,Passat CC,باسات CC,پاسات CC,0,59,,,,False
+339,26,Volkswagen,Phaeton,فايتون,فایتۆن,0,54,,,,False
+336,26,Volkswagen,Polo,بولو,پۆڵۆ,0,49,,,,False
+1373,26,Volkswagen,Routan,روتان,ڕۆوتان,0,59,64,,,False
+334,26,Volkswagen,Scirocco,شيروكو,شیرۆکۆ,0,59,,,,False
+338,26,Volkswagen,Sharan,شاران,شاران,0,50,,,,False
+1438,26,Volkswagen,T-Cross,تي-كروس,تی-کرۆس,0,76,,,,False
+1108,26,Volkswagen,T-Roc,تي روك,تی ڕۆک,0,67,,,,False
+1126,26,Volkswagen,Taigo,تايجو,تایگۆ,0,70,,,,False
+317,26,Volkswagen,Touareg,طوارق,توارگ,0,54,,,,False
+340,26,Volkswagen,Touran,توران,توران,0,53,,,,False
+1340,26,Volkswagen,Transporter,ترانسبورتر,ترانسپۆرتەر,0,,,,,False
+1518,26,Volkswagen,Vento,ڤينتو,ڤێنتۆ,0,42,49,,,False
+1500,112,Soueast,S09,S09,S09,300,76,,,,False
+1501,112,Soueast,S07,S07,S07,295,76,,,,False
+1502,112,Soueast,S06,S06,S06,290,80,,,,False
+1655,112,Soueast,S08,S08,S08,280,80,,,,False
+1390,112,Soueast,DX5,DX5,DX5,0,69,74,,,False
+1229,112,Soueast,DX8S,DX8S,DX8S,0,,,,,False
+108,4,Mitsubishi,Outlander,اوتلاندر,ئاوتلاندەر,300,53,,,,False
+1380,4,Mitsubishi,Outlander Sport,أوتلاندر سبورت,ئاوتلاندەر سپۆرت,298,61,,,,False
+110,4,Mitsubishi,L200,L200,L200,296,28,,,,False
+64,4,Mitsubishi,Eclipse Cross,إكليبس كروس,ئیکلیپس کرۆس,294,68,,,,False
+87,4,Mitsubishi,Pajero,باجيرو,پاجیرۆ,292,31,,,,False
+84,4,Mitsubishi,Pajero Sport,باجيرو سبورت,پاجیرۆ سپۆرت,290,59,,,,False
+1023,4,Mitsubishi,Xpander,اكسباندر,ئێکسپاندەر,288,67,,,,False
+1283,4,Mitsubishi,Xpander Cross,إكسباندر كروس,ئێکسپاندەر کرۆس,286,,,,,False
+61,4,Mitsubishi,Mirage,ميراج,میراج,282,28,,,,False
+63,4,Mitsubishi,ASX,ASX,ASX,280,61,,,,False
+62,4,Mitsubishi,Attrage,اتراج,ئەتراج,277,64,,,,False
+1088,4,Mitsubishi,Canter,كانتر,کانتەر,0,13,,,,False
+1273,4,Mitsubishi,Chariot,شاريوت,چاریۆت,0,33,53,,,False
+60,4,Mitsubishi,Eclipse,إكليبس,ئیکلیپس,0,59,,,,False
+1364,4,Mitsubishi,Endeavor,إنديفور,ئیندیڤۆر,0,54,61,,,False
+1626,4,Mitsubishi,Fuso Canter,فوسو كانتر,فوسۆ کانتەر,0,13,,,,False
+111,4,Mitsubishi,Galant,جالنت,گلانت,0,32,,,,False
+109,4,Mitsubishi,Grandis,جرانديس,گراندیس,0,55,,,,False
+1405,4,Mitsubishi,L300,L300,L300,0,29,,,,False
+105,4,Mitsubishi,Lancer,لانسر,لانسەر,0,23,,,,False
+106,4,Mitsubishi,Lancer Evolution,لانسر إيفولوشن,لانسەر ئیڤۆلیوشن,0,54,,,,False
+104,4,Mitsubishi,Lancer EX,لانسرEX,لانسەر EX,0,58,,,,False
+107,4,Mitsubishi,Lancer Fortis,لانسر فورتس,لانسەر فۆرتیس,0,63,,,,False
+59,4,Mitsubishi,Magna,ماجنا,ماگنا,0,47,,,,False
+1388,4,Mitsubishi,Mirage G4,ميراج G4,میراژ G4,0,63,,,,False
+1010,4,Mitsubishi,Montero,مونتيرو,مۆنتێرۆ,0,50,,,,False
+112,4,Mitsubishi,Montero Sport,مونتيرو سبورت,مۆنتێرۆ سپۆرت,0,66,,,,False
+86,4,Mitsubishi,Nativa,ناتيفا,ناتیڤا,0,50,,,,False
+1398,4,Mitsubishi,Rosa,روزا,ڕۆزا,0,10,,,,False
+1217,4,Mitsubishi,RVR,RVR,RVR,0,,,,,False
+1544,4,Mitsubishi,Sapporo,سابورو,ساپۆرۆ,0,28,34,,,False
+1570,4,Mitsubishi,Sigma,سيغما,سیگما,0,26,46,,,False
+1581,84,Geely,Cityray,ستى راى,سیتی رەی,100,80,,,,False
+1342,84,Geely,STARRAY,ستاراي,ستارەی,95,72,,,,False
+1394,84,Geely,Monjaro,مونجارو,مۆنجارۆ,90,71,,,,False
+1082,84,Geely,Coolray,كولراي,کوڵڕەی,80,68,,,,False
+1157,84,Geely,Emgrand,امجراند,ئیمگراند,75,59,,,,False
+1158,84,Geely,Okavango,أوكافانغو,ئۆکاڤانگۆ,70,74,,,,False
+1180,84,Geely,GX3,GX3,GX3,65,67,,,,False
+1182,84,Geely,GX3 Pro,برو GX3,پرۆ GX3,60,76,,,,False
+1081,84,Geely,Azkarra,أزكارا,ئەزکارا,55,69,,,,False
+1617,84,Geely,Binray,بينراي,بينراى,0,68,,,,False
+1012,84,Geely,Boyue,بويو,بۆیو,0,66,,,,False
+875,84,Geely,CK,CK,CK,0,59,66,,,False
+896,84,Geely,Emgrand EC7,امجراند EC7,ئێم گراند EC7,0,63,65,,,False
+871,84,Geely,Emgrand EC8,امجراند EC8,ئێم گراند EC8,0,60,65,,,False
+923,84,Geely,Emgrand GS,إمجراند جي إس,ئێم گراند GS,0,68,71,,,False
+872,84,Geely,Emgrand GT,امجراند جي تي,ئێم گراند GT,0,66,70,,,False
+869,84,Geely,Emgrand X7,امجراند X7,ئێم گراند X7,0,63,,,,False
+870,84,Geely,Emgrand X7 Sport,امجراند X7 سبورت,ئێم گراند X7 Sport,0,67,,,,False
+1419,84,Geely,FC,FC,FC,0,56,61,,,False
+1678,84,Geely,Galaxy L6,جالاکسي L6,گالاکسی L6,0,74,,,,False
+1677,84,Geely,Galaxy Starship 7,جالاکسي ستارشب 7,گالاکسی ستارشیپ 7,0,76,,,,False
+873,84,Geely,GC2,GC2,GC2,0,65,67,,,False
+874,84,Geely,GC6,GC6,GC6,0,65,,,,False
+894,84,Geely,GC7,GC7,GC7,0,65,69,,,False
+1471,84,Geely,Geometry C,جيومتري سي,جیۆمەتری سی,0,69,76,,,False
+876,84,Geely,GX2,GX2,GX2,0,58,,,,False
+1226,84,Geely,LC,LC,LC,0,61,66,,,False
+1198,84,Geely,MK,MK,MK,0,56,70,,,False
+1517,84,Geely,MK Cross,MK كروس,MK کرۆس,0,61,66,,,False
+1653,84,Geely,Preface,بریفیس,پریفەیس,0,70,,,,False
+1007,84,Geely,SC7,SC7,SC7,0,60,65,,,False
+1181,84,Geely,Tugella,توجيلا,توگێلا,0,69,,,,False
+778,72,Jaguar,E-Pace,إي- بيس,E-Pace,0,68,,,,False
+804,72,Jaguar,F-Pace,إف-بيس,F-Pace,0,64,,,,False
+806,72,Jaguar,F-Type,إف-تايب,F-Type,0,64,,,,False
+805,72,Jaguar,I-Pace,آي بيس,I-Pace,0,69,,,,False
+799,72,Jaguar,S-Type,إس تايب,S-Type,0,53,,,,False
+803,72,Jaguar,X-Type,إكس تايب,X-Type,0,52,,,,False
+802,72,Jaguar,XE,XE,XE,0,66,76,,,False
+796,72,Jaguar,XF,XF,XF,0,58,,,,False
+795,72,Jaguar,XJ,XJ,XJ,0,41,,,,False
+801,72,Jaguar,XK,XK,XK,0,57,,,,False
+740,77,Hyundai,Elantra,النترا,ئەلەنترا,100,41,81,,,False
+747,77,Hyundai,Sonata,سوناتا,سۆناتا,98,35,,,,False
+742,77,Hyundai,Tucson,توسان,تۆکسۆن,96,55,,,,False
+741,77,Hyundai,Santa Fe,سانتافي,سەنتافی,94,50,,,,False
+703,77,Hyundai,Accent,أكسنت,ئەکسنت,92,44,,,,False
+698,77,Hyundai,Azera,أزيرا,ازێرا,88,36,,,,False
+705,77,Hyundai,Kona,كونا,کۆنا,86,68,,,,False
+723,77,Hyundai,Palisade,باليسيد,پالیسەید,85,70,,,,False
+737,77,Hyundai,Veloster,فلوستر,ڤیلۆستەر,84,62,,,,False
+746,77,Hyundai,Genesis,جنسس,جێنسس,83,57,,,,False
+702,77,Hyundai,i20,i20,i20,82,58,,,,False
+739,77,Hyundai,i30,i30,i30,80,58,,,,False
+720,77,Hyundai,i40,i40,i40,78,61,,,,False
+699,77,Hyundai,Genesis Coupe,جينيسيس كوبيه,جێنسس کوپ,72,60,,,,False
+1504,77,Hyundai,Accent Hatchback,أكسنت هاتشباك,ئەکسنت هاچباک,0,44,,,,False
+696,77,Hyundai,Atos Prime,أتوس برايم,ئەتۆس پرایم,0,49,,,,False
+951,77,Hyundai,Avante,أفانتي,ئەڤانتی,0,35,,,,False
+1575,77,Hyundai,Bayon,بايون,بايۆن,0,71,,,,False
+1366,77,Hyundai,Casper,كاسبر,کاسپەر,0,71,,,,False
+745,77,Hyundai,Centennial,سينتينيال,سێنتیانێل,0,60,,,,False
+1545,77,Hyundai,County,كاونتي,كاونتى,0,48,,,,False
+700,77,Hyundai,Coupe,كوبيه,کوپ,0,53,,,,False
+704,77,Hyundai,Creta,كريتا,کرێتا,0,66,,,,False
+1542,77,Hyundai,Elantra Touring,‎النترا تورينج,ئەلەنترا تۆرینگ,0,58,62,,,False
+952,77,Hyundai,Entourage,انتورج,ئینتۆرەیج,0,56,,,,False
+1358,77,Hyundai,Equus,ايكوس,ئیکووس,0,49,66,,,False
+953,77,Hyundai,Excel,اكسل,ئەکسل,0,35,50,,,False
+954,77,Hyundai,Galloper,جالوبر,گالوبەر,0,40,55,,,False
+701,77,Hyundai,Getz,جيتز,گێتز,0,53,,,,False
+697,77,Hyundai,Grand i10,جراند آي 10,گراند i10,0,63,,,,False
+748,77,Hyundai,Grand Santa Fe,جراند سانتافي,گراند سەنتافی,0,64,,,,False
+1700,77,Hyundai,Grandeur,غراندور,گراندور,0,36,,,,False
+743,77,Hyundai,H-1,H-1,H-1,0,40,,,,False
+1520,77,Hyundai,H-100,H-100,H-100,0,27,,,,False
+1614,77,Hyundai,H350,H350,H350,0,64,,,,False
+1637,77,Hyundai,HD 65,HD 65,HD 65,0,44,,,,False
+695,77,Hyundai,i10,i10,i10,0,58,,,,False
+1160,77,Hyundai,Ioniq,ايونك,ئایۆنیک,0,66,,,,False
+1720,77,Hyundai,Ioniq 5,أيونيك 5,ئایۆنیك 5,0,71,,,,False
+1719,77,Hyundai,Ioniq 6,أيونيك 6,ئایۆنیك 6,0,72,,,,False
+1362,77,Hyundai,Kona Electric,كونا الكتريك,کۆنا ئەلیکتریک,0,68,,,,False
+736,77,Hyundai,Matrix,ماتريكس,ماتریکس,0,52,,,,False
+1389,77,Hyundai,Nexo,نيكسو,نێکسۆ,0,69,,,,False
+1422,77,Hyundai,Porter,بورتر,پۆرتێر,0,27,,,,False
+955,77,Hyundai,Reina,رينا,رێینا,0,67,,,,False
+1104,77,Hyundai,Santa Cruz,سانتا كروز,سانتا کروز,0,72,,,,False
+1618,77,Hyundai,Scoupe,سکوب,سکوپ,0,40,45,,,False
+1018,77,Hyundai,Starex,ستار اكس,ستاركس,0,,,,,False
+1393,77,Hyundai,Stargazer,ستار جازر,ستارگەیزەر,0,72,,,,False
+1107,77,Hyundai,Staria,ستاريا,ستاریا,0,71,,,,False
+749,77,Hyundai,Terracan,تيراكان,تێراکان,0,51,,,,False
+1464,77,Hyundai,Tiburon,تيبورون,تیبورۆن,0,46,59,,,False
+744,77,Hyundai,Trajet,تراجت,تراجێت,0,52,,,,False
+985,77,Hyundai,Venue,فينو,ڤینیو,0,69,,,,False
+722,77,Hyundai,Veracruz,فيراكروز,ڤێرە کروز,0,57,65,,,False
+1071,77,Hyundai,Verna,فيرنا,ڤێرنا,0,44,,,,False
+956,77,Hyundai,XG,XG,XG,0,47,56,,,False
+160,19,Land Rover,Range Rover Sport,رانج روفر سبورت,ڕانج ڕۆڤەر سپۆرت,100,56,,,,False
+159,19,Land Rover,Range Rover Vogue,رانج روفر فوج,ڕانج ڕۆڤەر ڤۆگ,90,20,,,,False
+163,19,Land Rover,Defender,دفندر,دیفێندەر,85,29,,,,False
+170,19,Land Rover,Range Rover Evoque,رانج روڤر إيفوك,ڕانج ڕۆڤەر ئیڤۆک,80,61,,,,False
+162,19,Land Rover,Range Rover Velar,رانج روڤر فيلار,ڕانج ڕۆڤەر ڤێلار,70,67,,,,False
+167,19,Land Rover,Discovery,ديسكوفري,دیسکۆڤەری,60,39,,,,False
+1036,19,Land Rover,Defender  Pickup,دفندر  بيك اب,دیفێندەر  پیکاپ,0,,,,,False
+164,19,Land Rover,Discovery Sport,دسکوفری سبورت,دیسکۆڤەری سپۆرت,0,64,,,,False
+165,19,Land Rover,Freelander,فريلاندر,فریلاندەر,0,51,,,,False
+166,19,Land Rover,LR2,LR2,LR2,0,58,,,,False
+168,19,Land Rover,LR3,LR3,LR3,0,55,59,,,False
+169,19,Land Rover,LR4,LR4,LR4,0,60,66,,,False
+555,51,Chevrolet,Tahoe,تاهو,تاهۆ,100,45,,,,False
+569,51,Chevrolet,Camaro,كامارو,کەمارۆ,98,16,,,,False
+559,51,Chevrolet,Malibu,ماليبو,مالیبۆ,96,14,,,,False
+552,51,Chevrolet,Silverado,سلفرادو,سلڤەرادۆ,94,48,,,,False
+570,51,Chevrolet,Corvette,كورفيت,کۆرڤێت,92,29,,,,False
+566,51,Chevrolet,Impala,امبالا,ئیمپالا,90,8,,,,False
+562,51,Chevrolet,Blazer,بليزر,بلایزەر,88,19,,,,False
+550,51,Chevrolet,Equinox,إكوينوكس,ئیکۆنۆکس,84,55,,,,False
+564,51,Chevrolet,Traverse,ترافرس,تراڤێرس,82,59,,,,False
+519,51,Chevrolet,Optra,اوبترا,ئۆپترا,5,53,,,,False
+518,51,Chevrolet,Cruze,كروز,کروز,3,60,,,,False
+1469,51,Chevrolet,Astro,أسترو,ئاسترۆ,0,35,55,,,False
+556,51,Chevrolet,Avalanche,افلانش,ئەڤەلانچی,0,58,,,,False
+574,51,Chevrolet,Aveo,أفيو,ئەڤیۆ,0,56,,,,False
+958,51,Chevrolet,Bel Air,بيل اير,بێل ئێر,0,1,32,,,False
+517,51,Chevrolet,Bolt,بولت,بۆلت,0,69,,,,False
+1531,51,Chevrolet,C/K,C/K,C/K,0,10,50,,,False
+1197,51,Chevrolet,C10,C10,C10,0,9,,,,False
+553,51,Chevrolet,Caprice,كابريس,کاپریس,0,14,67,,,False
+520,51,Chevrolet,Captiva,كابتيفا,کاپتیڤا,0,57,,,,False
+959,51,Chevrolet,Celebrity,سلبرتي,سلبرتی,0,31,41,,,False
+960,51,Chevrolet,Cobalt,كوبالت,کۆباڵت,0,54,,,,False
+557,51,Chevrolet,Colorado,كولورادو,کۆلۆرادۆ,0,58,,,,False
+1784,51,Chevrolet,Corsica,كوريسكا,کۆریسکا,0,37,46,,,False
+961,51,Chevrolet,Corvair,كورفير,کۆرڤێر,0,10,19,,,False
+567,51,Chevrolet,CSV CR8,CSV CR8,CSV CR8,0,58,,,,False
+560,51,Chevrolet,Epica,إبيكا,ئێپیکا,0,56,,,,False
+962,51,Chevrolet,Express,إكسبرس,ئێکس پرێس,0,,,,,False
+1090,51,Chevrolet,Groove,جرووف,گروڤ,0,70,,,,False
+963,51,Chevrolet,HHR,HHR,HHR,0,54,62,,,False
+1526,51,Chevrolet,K5 Blazer,بليزر K5,K5 بلایزەر,0,19,44,,,False
+561,51,Chevrolet,Lumina,لومنا,لومینا,0,39,61,,,False
+1430,51,Chevrolet,LUV D-Max,لوف دي ماكس,لوڤ دی ماکس,0,53,64,,,False
+1743,51,Chevrolet,Metro,ميترو,مێترۆ,0,39,51,,,False
+964,51,Chevrolet,Monte Carlo,مونت كارلو,مۆنتێ کارلۆ,0,,,,,False
+1558,51,Chevrolet,N300,N300,N300,0,57,62,,,False
+965,51,Chevrolet,Nova,نوفا,نۆڤا,0,,,,,False
+549,51,Chevrolet,Onix,أونيكس,ئۆنیکس,0,70,,,,False
+1200,51,Chevrolet,Orlando,اورلاندو,ئۆرلاندۆ,0,60,,,,False
+968,51,Chevrolet,Sail,سايل,سەیڵ,0,,,,,False
+1788,51,Chevrolet,Silverado EV,سيلفرادو EV,سيلڤەرادۆ EV,0,74,,,,False
+575,51,Chevrolet,Sonic,سونيك,سۆنیک,0,62,,,,False
+565,51,Chevrolet,Spark,سبارك,سپارک,0,55,,,,False
+1120,51,Chevrolet,SS,SS,SS,0,63,67,,,False
+969,51,Chevrolet,SSR,SSR,SSR,0,54,57,,,False
+554,51,Chevrolet,Suburban,سوبربان,سوبەربان,0,10,,,,False
+558,51,Chevrolet,T-Series,سلسلة تي,T-سیریەس,0,52,,,,False
+970,51,Chevrolet,Tracker,تراكر,تراکەر,0,,,,,False
+563,51,Chevrolet,Trailblazer,تريل بليزر,ترەیل بلایزەر,0,52,,,,False
+546,51,Chevrolet,Trax,تراكس,تراکس,0,64,,,,False
+551,51,Chevrolet,Uplander,ابلاندر,ئەپلاندەر,0,55,,,,False
+1365,51,Chevrolet,Venture,فنتشر,ڤێنچەر,0,47,55,,,False
+844,68,Dodge,Charger,تشارجر,چارجەر,100,16,,,,False
+846,68,Dodge,Challenger,تشالنجر,چالنجەر,98,59,74,,,False
+845,68,Dodge,Durango,دورانجو,دۆرانگۆ,96,48,,,,False
+843,68,Dodge,Ram,رام,رام,94,52,59,,,False
+972,68,Dodge,Journey,جورني,جۆرنی,92,58,70,,,False
+973,68,Dodge,Caravan,كارافان,کەرەڤان,90,34,57,,,False
+694,68,Dodge,Caliber,كاليبر,کالیبەر,88,57,62,,,False
+840,68,Dodge,Dart,دارت,دارت,86,13,66,,,False
+1228,68,Dodge,Grand Caravan,جراند كارافان,گراند کاراڤان,84,55,70,,,False
+841,68,Dodge,Neon,نيون,نیۆن,80,53,66,,,False
+849,68,Dodge,Avenger,افنجر,ئەڤێنجەر,0,58,64,,,False
+848,68,Dodge,Dakota,داكوتا,داکوتا,0,55,61,,,False
+1773,68,Dodge,Dynasty,دايناستي,دایناستی,0,37,43,,,False
+1196,68,Dodge,Hornet,هورنيت,هۆرنێت,0,72,,,,False
+1486,68,Dodge,Intrepid,إنتربيد,ئینترپید,0,43,54,,,False
+1251,68,Dodge,Magnum,ماغنوم,ماگنۆم,0,28,58,,,False
+842,68,Dodge,Nitro,نيترو,نیترۆ,0,57,62,,,False
+1660,68,Dodge,Spirit,سبيرت,سپیرت,0,39,45,,,False
+1412,68,Dodge,Stratus,ستراتوس,ستراتۆس,0,45,56,,,False
+851,68,Dodge,Viper,فايبر,ڤایپەر,0,63,67,,,False
+509,55,Cadillac,Escalade,اسكاليد,ئێسکەلەید,100,57,,,,False
+465,55,Cadillac,ATS,ATS,ATS,0,63,,,,False
+489,55,Cadillac,ATS Coupe,أي تي إس كوبيه,ATS کوپ,0,65,,,,False
+466,55,Cadillac,ATS-V,ايه تي اس-في,ATS-V,0,66,,,,False
+475,55,Cadillac,ATS-V Coupe,أي تي اس-في كوبيه,ATS-V کوپ,0,66,,,,False
+468,55,Cadillac,BLS,BLS,BLS,0,57,,,,False
+464,55,Cadillac,CT4,CT4,CT4,0,70,,,,False
+513,55,Cadillac,CT5,CT5,CT5,0,70,,,,False
+504,55,Cadillac,CT6,CT6,CT6,0,67,,,,False
+514,55,Cadillac,CTS,CTS,CTS,0,54,,,,False
+510,55,Cadillac,CTS Coupe,كوبيه سي تي إس,CTS کوپ,0,61,,,,False
+515,55,Cadillac,CTS-V,سي تي إس- في,CTS-V,0,59,,,,False
+511,55,Cadillac,CTS-V Coupe,كوبيه سي تي إس- في,CTS-V کوپ,0,61,,,,False
+1091,55,Cadillac,DeVille,ديفيل,دیڤیل,0,8,55,,,False
+505,55,Cadillac,DTS,DTS,DTS,0,56,,,,False
+1061,55,Cadillac,Eldorado,ئيلدورادو,ئێلدۆرادۆ,0,2,52,,,False
+1416,55,Cadillac,Fleetwood,فلیتوود,فلیتوود,0,27,46,,,False
+1442,55,Cadillac,Lyriq,ليريك,لیریک,0,74,,,,False
+1742,55,Cadillac,Optiq,اوبتيك,ئۆپتیک,0,76,,,,False
+1311,55,Cadillac,Seville,سيفيليا,سێڤیلیا,0,25,54,,,False
+506,55,Cadillac,SLS,SLS,SLS,0,58,,,,False
+491,55,Cadillac,SRX,SRX,SRX,0,54,,,,False
+507,55,Cadillac,STS,STS,STS,0,55,,,,False
+490,55,Cadillac,XLR,XLR,XLR,0,54,,,,False
+467,55,Cadillac,XT4,XT4,XT4,0,69,,,,False
+512,55,Cadillac,XT5,XT5,XT5,0,67,,,,False
+516,55,Cadillac,XT6,XT6,XT6,0,70,,,,False
+508,55,Cadillac,XTS,XTS,XTS,0,63,,,,False
+118,18,Lexus,LX,LX,LX,100,48,,,,False
+127,18,Lexus,CT,CT,CT,0,62,,,,False
+120,18,Lexus,ES,ES,ES,0,57,,,,False
+121,18,Lexus,GS,GS,GS,0,56,,,,False
+122,18,Lexus,GX,GX,GX,0,58,,,,False
+128,18,Lexus,IS,IS,IS,0,57,,,,False
+124,18,Lexus,IS C,IS C,IS C,0,61,,,,False
+129,18,Lexus,IS F,IS F,IS F,0,61,,,,False
+119,18,Lexus,LC,LC,LC,0,68,,,,False
+131,18,Lexus,LFA,LFA,LFA,0,61,,,,False
+117,18,Lexus,LS,LS,LS,0,40,,,,False
+130,18,Lexus,NX,NX,NX,0,65,,,,False
+125,18,Lexus,RC,RC,RC,0,65,,,,False
+126,18,Lexus,RC F,RC F,RC F,0,65,,,,False
+123,18,Lexus,RX,RX,RX,0,57,,,,False
+142,18,Lexus,SC,SC,SC,0,52,,,,False
+1300,18,Lexus,TX,TX,TX,0,74,,,,False
+144,18,Lexus,UX,UX,UX,0,69,,,,False
+758,71,Jeep,Grand Cherokee,جراند شيروكي,گراند شیرۆکی,100,43,,,,False
+759,71,Jeep,Wrangler,رانجلر,رانگلەر,90,36,,,,False
+1022,71,Jeep,Grand Cherokee L,جراند شيروكي إل,L گراند شیرۆکی,80,71,,,,False
+753,71,Jeep,Cherokee,شيروكي,شیرۆکی,70,24,,,,False
+754,71,Jeep,Compass,كومباس,کۆمپاس,60,57,,,,False
+979,71,Jeep,Asia Rocsta,اسيا,ئاسيا,0,35,,,,False
+756,71,Jeep,Commander,كوماندر,کۆماندەر,0,56,,,,False
+757,71,Jeep,Gladiator,جلاديتور,گلادیەتەر,0,70,,,,False
+1130,71,Jeep,Grand Wagoneer,جراند واجونير,گراند واگۆنیەر,0,72,,,,False
+984,71,Jeep,Liberty,ليبرتي,لیبێرتی,0,51,62,,,False
+755,71,Jeep,Patriot,باتريوت,پاتریۆت,0,57,,,,False
+763,71,Jeep,Renegade,رينيجيد,رێنێگەید,0,65,,,,False
+1428,71,Jeep,Wagoneer,واجونير,واگۆنیر,0,13,,,,False
+1195,71,Jeep,Willys,ويليز,ویلیس,0,75,2,,,False
+428,34,Skoda,Fabia,فابيا,فابیا,0,50,,,,False
+426,34,Skoda,Kodiaq,كودياك,کۆدیاک,0,68,,,,False
+1445,34,Skoda,Kushaq,كوشق,کوشەق,0,71,,,,False
+425,34,Skoda,Octavia,اوكتافيا,ئۆکتاڤیا,0,55,,,,False
+1097,34,Skoda,Rapid,رابيد,راپيد,0,62,,,,False
+424,34,Skoda,Roomster,رومستر,رومستەر,0,58,,,,False
+427,34,Skoda,Superb,سوبرب,سوپێرب,0,52,,,,False
+429,34,Skoda,Yeti,يتي,یەتی,0,62,,,,False
+75,2,Nissan,Patrol,باترول,پاترۆل,300,1,,,,False
+73,2,Nissan,X-Trail,X-Trail,X-Trail,298,50,,,,False
+383,2,Nissan,Kicks,كيكس,کیکس,296,66,,,,False
+72,2,Nissan,Sunny,صني,سەنی,294,16,,,,False
+71,2,Nissan,Sentra,سنترا,سێنترا,292,32,,,,False
+1250,2,Nissan,Sylphy,سيلفي,سیلفی,290,50,,,,False
+385,2,Nissan,Qashqai,قاشقاي,قەشقای,288,57,,,,False
+79,2,Nissan,Navara,نافارا,نەڤارا,286,58,,,,False
+69,2,Nissan,Urvan,اورفان,ئورڤان,282,53,,,,False
+81,2,Nissan,Altima,ألتيما,ئەلتیما,280,42,,,,False
+927,2,Nissan,Rogue,روج,رۆگ,278,58,,,,False
+975,2,Nissan,Rogue Sport,روج سبورت,ڕۆگ سپۆرت,276,,,,,False
+83,2,Nissan,Pathfinder,باثفايندر,پاسفایندەر,274,35,,,,False
+82,2,Nissan,Maxima,ماكسيما,مەگزیما,272,31,74,,,False
+232,2,Nissan,Murano,مورانو,مۆرانۆ,270,55,,,,False
+941,2,Nissan,Frontier,فرونتير,فرۆنتیر,268,35,,,,False
+925,2,Nissan,Versa,فيرسا,ڤێرسا,266,,,,,False
+231,2,Nissan,X-Terra,إكستيرا,ئێکستێرا,264,49,80,,,False
+77,2,Nissan,Armada,ارمادا,ئەرمادە,262,55,,,,False
+76,2,Nissan,Patrol Safari,باترول سفاري,پاترۆل سەفاری,260,1,,,,False
+1063,2,Nissan,Civilian,سيفيليان,سيڤيليان,258,,,,,False
+70,2,Nissan,Tiida,تيدا,تیدا,80,54,,,,False
+380,2,Nissan,350Z,350Z,350Z,0,54,,,,False
+378,2,Nissan,370Z,370Z,370Z,0,60,,,,False
+1506,2,Nissan,Almera,الميرا,ئەلمێرا,0,45,,,,False
+78,2,Nissan,Altima Coupe,التیما کوب,ئەلتیما  کوپ,0,58,63,,,False
+1467,2,Nissan,Ariya,آريا,Ariya,0,72,,,,False
+1722,2,Nissan,Atleon,اتليون,ئاتلیۆن,0,30,63,,,False
+1555,2,Nissan,Bluebird,‎بلوبيرد,بلوبێرد,0,9,51,,,False
+1043,2,Nissan,Cedric,سيدرك,سیدریک,0,10,54,,,False
+1516,2,Nissan,Cube,كيوب,کیوب,0,48,69,,,False
+1384,2,Nissan,Elgrand,الجراند,ئێلگراند,0,47,,,,False
+379,2,Nissan,GT-R,جي تي آر,GT-R,0,59,,,,False
+384,2,Nissan,Juke,جوك,جوک,0,60,,,,False
+1553,2,Nissan,‏Laurel Altima,لوريل التيما,لۆریل ئەلتیما,0,38,44,,,False
+381,2,Nissan,Leaf,ليف,لیف,0,68,,,,False
+1589,2,Nissan,Magnite,ماغنيت,ماگنایت,0,70,,,,False
+382,2,Nissan,Micra,ميكرا,میکرا,0,32,,,,False
+1014,2,Nissan,NP300,NP300,NP300,0,35,,,,False
+942,2,Nissan,NV,NV,NV,0,62,,,,False
+1100,2,Nissan,NV200,NV200,NV200,0,59,,,,False
+74,2,Nissan,Patrol Pickup,باترول بيك اب,پاترۆل پیکەپ,0,68,,,,False
+80,2,Nissan,Pickup,بيك اب,پیکەپ,0,35,,,,False
+1696,2,Nissan,Prairie,برايري,پرایری,0,32,54,,,False
+943,2,Nissan,Primera,بريميرا,پریمێرا,0,40,,,,False
+944,2,Nissan,Pulsar,بولسار,پولسار,0,28,,,,False
+945,2,Nissan,Quest,كويست,کوێست,0,42,,,,False
+1676,2,Nissan,Skyline GT-R,سكايلاين GT-R,سکایلاین GT-R,0,19,50,,,False
+946,2,Nissan,Teana,تيانا,تینا,0,53,,,,False
+947,2,Nissan,Terrano,تيرانو,تێرانۆ,0,36,,,,False
+948,2,Nissan,Titan,تيتان,تایتان,0,54,,,,False
+1625,2,Nissan,Vanette,فانيت,ڤانێت,0,28,44,,,False
+926,2,Nissan,Versa Note,فيرسا نوت,ڤێرسا نۆت,0,,,,,False
+1326,2,Nissan,Z,Z,Z,0,72,,,,False
+100,5,Mini,Clubman,كلبمان,کلەب مان,0,58,81,,,False
+101,5,Mini,Cooper,كوبر,کوپەر,0,52,,,,False
+102,5,Mini,Countryman,كونتريمان,کەنتری مان,0,61,,,,False
+103,5,Mini,Paceman,بيسمان,پەیس مان,0,63,66,,,False
+99,5,Mini,Roadster,رودستر,رۆدستەر,0,62,65,,,False
+91,6,MG,5,5,5,100,62,,,,False
+1437,6,MG,RX9,RX9,RX9,98,74,,,,False
+1026,6,MG,GT,GT,GT,97,64,,,,False
+1121,6,MG,3,3,3,95,58,,,,False
+98,6,MG,ZS,ZS,ZS,93,68,,,,False
+1214,6,MG,Whale,ويل,وەیل,92,74,,,,False
+1287,6,MG,7,7,7,90,57,,,,False
+95,6,MG,RX5,RX5,RX5,88,68,,,,False
+1017,6,MG,6,6,6,87,59,,,,False
+94,6,MG,HS,HS,HS,82,70,,,,False
+97,6,MG,RX8,RX8,RX8,75,70,,,,False
+1146,6,MG,One,ون,وەن,70,71,,,,False
+995,6,MG,T60,T60,T60,18,67,,,,False
+92,6,MG,350,350,350,0,62,,,,False
+974,6,MG,360,360,360,0,,,,,False
+1435,6,MG,5 Plus,5 بلس,5 پڵەس,0,71,,,,False
+93,6,MG,550,550,550,0,61,,,,False
+96,6,MG,750,750,750,0,61,,,,False
+1488,6,MG,GS,GS,GS,0,65,69,,,False
+1771,6,MG,Majestor,ماجيستور,ماجیستۆر,0,81,,,,False
+1443,6,MG,MG4 EV,إم جي 4 إي في,ئێم جی ٤ ئیڤی,0,74,,,,False
+1174,6,MG,Midget,ميدجيت,میدجێت,0,11,29,,,False
+1756,6,MG,Rakan,راكان,راكان,0,81,,,,False
+58,7,Mercury,Grand Marquis,جراند ماركيز,گراند مارکویس,0,53,,,,False
+57,7,Mercury,Mariner,مارنر,مارینەر,0,58,,,,False
+89,7,Mercury,Milan,ميلان,میلان,0,57,,,,False
+88,7,Mercury,Montego,مونتيغو,مۆنتێگۆ,0,58,,,,False
+999,7,Mercury,Monterey,مونتيري,مۆنتێرێی,0,1,,,,False
+90,7,Mercury,Mountaineer,ماونتنير,ماونتەینەر,0,52,,,,False
+1473,7,Mercury,Sable,سابل,سابڵ,0,36,59,,,False
+1321,7,Mercury,Villager,فيلاجر,ڤیلاجەر,0,42,52,,,False
+182,9,McLaren,540C Coupe,540C كوبيه,540C کوپ,0,66,,,,False
+183,9,McLaren,570GT Coupe,570 جي تي كوبيه,570GT کوپ,0,67,,,,False
+184,9,McLaren,570S Coupe,570S كوبيه,570S کوپ,0,66,,,,False
+180,9,McLaren,570S Spider,570S سبايدر,570S سپایدەر,0,68,,,,False
+185,9,McLaren,650S,650S,650S,0,65,,,,False
+179,9,McLaren,675LT,675LT,675LT,0,66,,,,False
+187,9,McLaren,720S,720S,720S,0,68,,,,False
+1140,9,McLaren,GT,GT,GT,0,69,,,,False
+189,9,McLaren,P1,P1,P1,0,64,,,,False
+222,10,Mazda,3,3,3,300,55,,,,False
+1190,10,Mazda,CX-50,CX-50,CX-50,295,72,,,,False
+224,10,Mazda,CX-5,CX-5,CX-5,290,63,,,,False
+1024,10,Mazda,CX-30,CX-30,CX-30,285,69,,,,False
+227,10,Mazda,6,6,6,280,30,,,,False
+203,10,Mazda,CX-9,CX-9,CX-9,275,58,,,,False
+1455,10,Mazda,CX-90,CX-90,CX-90,260,76,,,,False
+202,10,Mazda,MX-5,MX-5,MX-5,250,58,,,,False
+200,10,Mazda,MX-5 RF,MX-5 RF,MX-5 RF,240,67,,,,False
+223,10,Mazda,3 Sedan,3 Sedan,3 Sedan,230,65,,,,False
+1335,10,Mazda,121,121,121,0,25,52,,,False
+175,10,Mazda,2,2,2,0,61,,,,False
+176,10,Mazda,2 Sedan,2 سيدان,2 سيدان,0,64,,,,False
+1281,10,Mazda,323,323,323,0,13,53,,,False
+1074,10,Mazda,5,5,5,0,49,,,,False
+228,10,Mazda,6 Ultra,6 Ultra,6 Ultra,0,59,,,,False
+229,10,Mazda,6 Wagon,6 واغن,6 واگن,0,63,,,,False
+1155,10,Mazda,626,626,626,0,37,,,,False
+1682,10,Mazda,929,929,929,0,23,47,,,False
+226,10,Mazda,B-Series,B- سيريس,B- سيريەس,0,11,56,,,False
+1409,10,Mazda,BT-50,BT-50,BT-50,0,56,,,,False
+177,10,Mazda,CX-3,CX-3,CX-3,0,67,,,,False
+1459,10,Mazda,CX-60,CX-60,CX-60,0,72,,,,False
+225,10,Mazda,CX-7,CX-7,CX-7,0,56,,,,False
+1772,10,Mazda,CX-70,CX-70,CX-70,0,76,,,,False
+1621,10,Mazda,E2000,E2000,E2000,0,16,50,,,False
+1301,10,Mazda,MPV,MPV,MPV,0,,,,,False
+1392,10,Mazda,MX-30,MX-30,MX-30,0,71,,,,False
+1656,10,Mazda,Navajo,ناجافو,ناجاڤۆ,0,41,44,,,False
+1562,10,Mazda,Tribute,تريبيوت,ترێبیوت,0,50,61,,,False
+220,11,Maybach,57,57,57,0,56,,,,False
+221,11,Maybach,62,62,62,0,56,,,,False
+1527,12,Maxus,D60 Max,D60 ماكس,D60 ماکس,0,69,76,,,False
+219,12,Maxus,D90,D90,D90,0,70,,,,False
+218,12,Maxus,G10,G10,G10,0,66,,,,False
+1760,12,Maxus,G90,G90,G90,0,72,,,,False
+216,12,Maxus,T60 Pickup,تي 60 بيك اب,T60 پیکاپ,0,69,,,,False
+217,12,Maxus,V80,V80,V80,0,66,,,,False
+211,13,Maserati,Ghibli,جيبلي,غیبلی,0,64,,,,False
+213,13,Maserati,GranCabrio,جران كابريو,گران کابریۆ,0,60,,,,False
+214,13,Maserati,GranTurismo,جران توريزمو,گران تۆریسمۆ,0,58,,,,False
+1191,13,Maserati,Grecale,جريكال,گرێکایل,0,74,,,,False
+212,13,Maserati,Levante,ليفانتي,لێڤانتی,0,67,,,,False
+210,13,Maserati,Quattroporte,كواتروبورتي,کواترۆپۆرت,0,55,,,,False
+215,13,Maserati,Spyder,سبايدر,سپایدەر,0,52,,,,False
+138,17,Lincoln,Aviator,أفياتور,اڤیاتۆر,0,70,,,,False
+978,17,Lincoln,Continental,كونتننتال,کۆنتینێنتەڵ,0,1,,,,False
+1096,17,Lincoln,Corsair,كورسير,کۆرسەر,0,69,74,,,False
+141,17,Lincoln,MKC,MKC,MKC,0,65,,,,False
+133,17,Lincoln,MKS,MKS,MKS,0,59,,,,False
+132,17,Lincoln,MKT,MKT,MKT,0,60,,,,False
+140,17,Lincoln,MKX,MKX,MKX,0,57,,,,False
+137,17,Lincoln,MKZ,MKZ,MKZ,0,58,,,,False
+139,17,Lincoln,Nautilus,ناوتلس,ناوتیلەس,0,69,,,,False
+135,17,Lincoln,Navigator,نافيجيتور,ناڤیگەیتەر,0,53,,,,False
+136,17,Lincoln,Navigator L,نافيجاتور إل,ناڤیگەیتەر L,0,68,,,,False
+134,17,Lincoln,Town Car,تاون كار,تاون کار,0,22,61,,,False
+154,20,Lamborghini,Aventador,أفينتادور,ئەڤێنتادۆر,0,62,,,,False
+153,20,Lamborghini,Aventador Roadster,أفينتادور رودستر,ئەڤێنتادۆر رۆدستەر,0,63,,,,False
+157,20,Lamborghini,Gallardo,غالاردو,گەلاردۆ,0,54,,,,False
+155,20,Lamborghini,Huracan,هوراكان,هوراکان,0,65,,,,False
+1254,20,Lamborghini,Huracan EVO Spyder,هوراكان إيفو سبايدر,هوراکان ئیڤۆ سپایدەر,0,69,,,,False
+156,20,Lamborghini,Huracan Spyder,هوراكان سبايدر,هوراکان سپایدەر,0,66,,,,False
+1477,20,Lamborghini,Huracan STO,هوراكان STO,هوراکان STO,0,71,76,,,False
+158,20,Lamborghini,Murcielago,مورسيلاغو,مۆرشێلاگۆ,0,52,,,,False
+1757,20,Lamborghini,Temerario,تمراريو,تمراريۆ,0,80,,,,False
+152,20,Lamborghini,Urus,اوروس,ئوروس,0,69,,,,False
+396,23,Opel,Adam,ادم,ئادەم,0,64,,,,False
+390,23,Opel,Antara,انترا,ئەنتەرا,0,59,,,,False
+387,23,Opel,Astra,استرا,ئەسترا,0,35,,,,False
+388,23,Opel,Astra GTC,استرا GTC,ئەسترا GTC,0,67,,,,False
+389,23,Opel,Astra OPC,استرا OPC,ئەسترا OPC,0,64,,,,False
+1351,23,Opel,Calibra,كاليبرا,کالیبرا,0,39,47,,,False
+1025,23,Opel,Combo,كومبو,کۆمبۆ,0,36,,,,False
+398,23,Opel,Corsa,كورسا,کۆرسا,0,32,69,,,False
+397,23,Opel,Corsa OPC,كورسا أو بي سي,کۆرسا OPC,0,63,,,,False
+1343,23,Opel,Crossland,كروس لاند,کرۆسلاند,0,67,,,,False
+1013,23,Opel,Grandland X,جراند لاند إكس,گراندلاند ئێکس,0,67,,,,False
+394,23,Opel,Insignia,إنسيجنيا,ئینسیگنیا,0,63,,,,False
+1472,23,Opel,Kadett,كاديت,کادیت,0,77,45,,,False
+392,23,Opel,Meriva,ميريفا,مێریڤا,0,63,,,,False
+399,23,Opel,Mokka,موكا,مۆکا,0,65,,,,False
+1571,23,Opel,Monterey,مونتیري,مۆنتێری,0,42,48,,,False
+1059,23,Opel,Omega,أوميغا,ئۆمێگا,0,36,54,,,False
+1605,23,Opel,Senator,سيناتور,سيناتۆر,0,37,43,,,False
+393,23,Opel,Vectra,فيكترا,ڤێکترا,0,38,,,,False
+391,23,Opel,Zafira,زافرا,زافیرا,0,50,,,,False
+1475,25,Volvo,240,240,240,0,24,43,,,False
+1539,25,Volvo,244 GLE,244 GLE,244 GLE,0,29,43,,,False
+1642,25,Volvo,440,440,440,0,38,46,,,False
+1344,25,Volvo,740,740,740,0,34,42,,,False
+1165,25,Volvo,940,940,940,0,40,,,,False
+1623,25,Volvo,960,960,960,0,40,44,,,False
+292,25,Volvo,C30,C30,C30,0,58,,,,False
+304,25,Volvo,C70,C70,C70,0,57,,,,False
+298,25,Volvo,S40,S40,S40,0,55,,,,False
+297,25,Volvo,S60,S60,S60,0,51,,,,False
+299,25,Volvo,S60 Polestar,S60 بولستار,S60 پۆلستار,0,66,,,,False
+294,25,Volvo,S80,S80,S80,0,57,,,,False
+293,25,Volvo,S90,S90,S90,0,67,,,,False
+291,25,Volvo,V40,V40,V40,0,63,,,,False
+303,25,Volvo,V50,V50,V50,0,55,,,,False
+301,25,Volvo,V60,V60,V60,0,61,,,,False
+302,25,Volvo,V60 Polestar,V60 بولستار,V60 پۆلستار,0,66,,,,False
+306,25,Volvo,V70,V70,V70,0,51,,,,False
+296,25,Volvo,V90,V90,V90,0,67,,,,False
+307,25,Volvo,XC40,XC40,XC40,0,68,,,,False
+300,25,Volvo,XC60,XC60,XC60,0,59,,,,False
+305,25,Volvo,XC70,XC70,XC70,0,51,,,,False
+295,25,Volvo,XC90,XC90,XC90,0,53,,,,False
+237,28,Tesla,Cybertruck,سايبر تراك,سایبەر ترەک,0,71,,,,False
+1095,28,Tesla,Model 3,موديل 3,مۆدێل 3,0,67,,,,False
+239,28,Tesla,Model S,Model S,Model S,0,67,,,,False
+238,28,Tesla,Model X,Model X,Model X,0,67,,,,False
+1093,28,Tesla,Model Y,موديل Y,مۆدێلی Y,0,70,,,,False
+235,29,Tata,Indica,إنديكا,ئیندیکا,0,58,,,,False
+236,29,Tata,Indigo,إنديغو,ئیندیگۆ,0,58,,,,False
+1434,29,Tata,Safari,سفاري,سەفاری,0,38,,,,False
+234,29,Tata,Xenon,زينون,زینۆن,0,62,,,,False
+260,30,Suzuki,Swift,سويفت,سویفت,300,55,,,,False
+259,30,Suzuki,Dzire,ديزاير,دیزایەر,298,63,,,,False
+1296,30,Suzuki,Fronx,فرونكس,فرۆنکس,296,74,,,,False
+285,30,Suzuki,Baleno,بالينو,بالینۆ,294,67,,,,False
+275,30,Suzuki,Ciaz,سياز,سیاز,292,65,,,,False
+279,30,Suzuki,Ertiga,إرتيجا,ئەرتیگا,290,65,,,,False
+277,30,Suzuki,Grand Vitara,جراند فيتارا,گراند ڤیتیرا,286,56,,,,False
+244,30,Suzuki,Jimny,جيمني,جیمی,284,20,,,,False
+1552,30,Suzuki,S-Cross,S-کروس,S-کرۆس,277,71,,,,False
+284,30,Suzuki,Alto,التو,التۆ,0,55,,,,False
+278,30,Suzuki,APV,APV,APV,0,57,,,,False
+280,30,Suzuki,Carry,كاري,کاری,0,63,,,,False
+283,30,Suzuki,Celerio,سيليريو,سلریۆ,0,59,,,,False
+1297,30,Suzuki,Eeco,إيكو,ئیکۆ,0,,,,,False
+1276,30,Suzuki,Forenza,فورينزا,فۆرێنزا,0,56,64,,,False
+273,30,Suzuki,Ignis,إجنيس,ئیگنیس,0,52,,,,False
+258,30,Suzuki,Ignis Crossover,Ignis Crossover,Ignis Crossover,0,67,,,,False
+281,30,Suzuki,Kizashi,كيزاشي,کیزاشی,0,61,,,,False
+276,30,Suzuki,Liana,ليانا,لیانا,0,52,,,,False
+1274,30,Suzuki,Reno,رينو,ڕینۆ,0,57,,,,False
+1225,30,Suzuki,S-Presso,إس بريسو,S-پرێسۆ,0,71,,,,False
+274,30,Suzuki,SX4,SX4,SX4,0,57,,,,False
+233,30,Suzuki,Vitara,فيتارا,ڤیتارا,0,38,,,,False
+282,30,Suzuki,XL7,XL7,XL7,0,56,,,,False
+270,31,Subaru,Ascent,اسنت,اسێنت,0,69,,,,False
+272,31,Subaru,BRZ,BRZ,BRZ,0,62,,,,False
+1299,31,Subaru,Crosstrek,كروس تريك,کرۆسترەک,0,62,72,,,False
+267,31,Subaru,Forester,فورستر,فۆرێستەر,0,53,,,,False
+264,31,Subaru,Impreza,امبريزا,ئیمپرێزا,0,56,,,,False
+265,31,Subaru,Impreza WRX,امبريزا دبليو آر إكس,ئیمپرێزا WRX,0,61,,,,False
+266,31,Subaru,Impreza WRX STI,امبريزا دبليو آر إكس إس تي آي,ئیمپرێزا WRX STI,0,58,,,,False
+269,31,Subaru,Legacy,ليجاسي,لێگەسی,0,39,,,,False
+268,31,Subaru,Outback,أوت باك,ئاوتباک,0,55,,,,False
+271,31,Subaru,Tribeca,تريبيكا,ترابێکا,0,56,,,,False
+1328,31,Subaru,WRX,WRX,WRX,0,65,,,,False
+263,31,Subaru,XV,XV,XV,0,63,,,,False
+430,32,Ssangyong,Actyon,أكتيون,ئاکتیۆن,0,57,,,,False
+1791,32,Ssangyong,Chairman,شیرمان,چەیرمان,0,47,67,,,False
+261,32,Ssangyong,Korando,كوراندو,کۆراندۆ,0,41,,,,False
+347,32,Ssangyong,Kyron,كيرون,کیرۆن,0,57,,,,False
+1778,32,Ssangyong,Musso,موسو,موسۆ,0,52,,,,False
+316,32,Ssangyong,Musso Grand,موسو جراند,موسۆ گراند,0,46,,,,False
+345,32,Ssangyong,Rexton,ريكستون,رێکستۆن,0,57,,,,False
+346,32,Ssangyong,Rodius,روديوس,رۆدیەس,0,58,,,,False
+262,32,Ssangyong,Tivoli,تيفولي,تیڤۆلی,0,66,,,,False
+1224,32,Ssangyong,Torres,توريس,تۆرس,0,71,,,,False
+1189,32,Ssangyong,XLV,XLV,XLV,0,66,,,,False
+418,35,Seat,Altea,ألتيا,ئەلتیا,0,55,,,,False
+423,35,Seat,Cordoba,كوردوبا,کۆردۆبا,0,54,,,,False
+1141,35,Seat,Cupra Formentor,كوبرا فورمينتور,کوپەرا فۆرمێنتۆر,0,70,,,,False
+421,35,Seat,Exeo,إكسيو,ئەکسیۆ,0,61,,,,False
+1753,35,Seat,Inca,إنكا,ئینکا,0,46,54,,,False
+419,35,Seat,Leon,ليون,لیۆن,0,56,,,,False
+420,35,Seat,Toledo,توليدو,تۆلیدۆ,0,41,69,,,False
+1735,36,Saab,9-5,9-5,9-5,0,47,62,,,False
+417,36,Saab,9-7X,9-7X,9-7X,0,56,,,,False
+414,37,Rolls Royce,Cullinan,كولينان,کۆلینەن,0,69,,,,False
+408,37,Rolls Royce,Dawn,داون,داون,0,66,,,,False
+410,37,Rolls Royce,Drophead Coupe,دروبهيد كوبيه,درۆفید کوپ,0,58,,,,False
+411,37,Rolls Royce,Ghost,گوست,گۆست,0,60,,,,False
+412,37,Rolls Royce,Phantom,فانتوم,فانتۆم,0,54,,,,False
+413,37,Rolls Royce,Silver Seraph,سلفر سراف,سیلڤەر سێراف,0,49,,,,False
+1041,37,Rolls Royce,Silver Shadow,سلفر شادو,سیلڤەر شادۆو,0,15,37,,,False
+1032,37,Rolls Royce,Silver Wraith II,سيلفر رايث II,II سيلفر رەیت,0,1,,,,False
+1478,37,Rolls Royce,Spectre,سبيكتر,سپێکتەر,0,76,,,,False
+409,37,Rolls Royce,Wraith,ريث,رەیت,0,64,,,,False
+446,38,Renault,Megane,ميجان,مێگان,4,56,,,,False
+460,38,Renault,Symbol,سيمبل,سیمبۆل,3,59,,,,False
+450,38,Renault,Koleos,كوليوس,کۆلیۆس,2,59,,,,False
+455,38,Renault,Talisman,تلسمان,تالیسمان,1,67,,,,False
+1494,38,Renault,12,12,12,0,19,31,,,False
+1768,38,Renault,Arkana,اركانا,ئەرکانا,0,69,,,,False
+406,38,Renault,Captur,كابتشر,کاپچەر,0,65,,,,False
+431,38,Renault,Clio,Clio,Clio,0,52,,,,False
+459,38,Renault,Clio RS,Clio RS,Clio RS,0,58,,,,False
+442,38,Renault,Dokker Van,دوكر فان,دۆکەر ڤان,0,65,,,,False
+407,38,Renault,Duster,داستر,داستەر,0,62,,,,False
+451,38,Renault,Espace,اسكايب,ئیسکەیپ,0,56,,,,False
+1774,38,Renault,Express,اكسبريس,ئێکسپرێس,0,35,51,,,False
+449,38,Renault,Fluence,فلوينس,فلوێنس,0,61,,,,False
+1668,38,Renault,Fregate,فريكيت,فريگەیت,0,1,10,,,False
+1136,38,Renault,Kangoo,كانجو,کانگۆ,0,47,,,,False
+453,38,Renault,Laguna,لاجونا,لاگونا,0,56,,,,False
+452,38,Renault,Laguna Coupe,لاجونا كوبيه,لاگونا کوپ,0,60,,,,False
+1062,38,Renault,Lodgy,لودجي,لۆدجي,0,62,,,,False
+433,38,Renault,Logan,لوجان,لۆگان,0,59,,,,False
+443,38,Renault,Logan Van,لوجان فان,لۆگان ڤان,0,58,,,,False
+1448,38,Renault,Master,ماستر,ماستەر,0,30,,,,False
+445,38,Renault,Megane CC,ميجان سي سي,مێگان CC,0,61,,,,False
+447,38,Renault,Megane GT,ميجان جي تي,مێگان GT,0,68,,,,False
+448,38,Renault,Megane RS,ميجان آر إس,مێگان RS,0,64,,,,False
+1426,38,Renault,Renault 19,رينو 19,ڕێنۆ ١٩,0,38,46,,,False
+456,38,Renault,Safrane,سافران,سافران,0,59,,,,False
+434,38,Renault,Sandero,ساندرو,ساندێرۆ,0,61,,,,False
+454,38,Renault,Scenic,سينيك,سێنیک,0,56,,,,False
+988,38,Renault,Tondar90,توندار 90,توندار 90,0,,,,,False
+444,38,Renault,Trafic,ترافيك,ترافیک,0,51,,,,False
+457,38,Renault,Twizy,تويزي,تویزی,0,64,,,,False
+458,38,Renault,Zoe,زوي,زۆی,0,68,,,,False
+441,39,Ram,1200,1200,1200,0,67,,,,False
+440,39,Ram,1500,1500,1500,0,61,,,,False
+1565,39,Ram,2500,2500,2500,0,60,,,,False
+1447,39,Ram,ProMaster,بروماستر,پرۆماستەر,0,64,,,,False
+1154,39,Ram,Promaster City,بروماستر سيتي,پرۆماستەر سیتی,0,65,,,,False
+436,40,Proton,GEN-2,جين-2,GEN-2,0,57,,,,False
+1246,40,Proton,Persona,بيرسونا,پێرسۆنا,0,43,,,,False
+1219,40,Proton,Saga,ساغا,ساگا,0,,,,,False
+439,40,Proton,Savvy,سافي,ساڤی,0,57,,,,False
+437,40,Proton,Waja,واجا,واجە,0,53,,,,False
+438,40,Proton,Wira,ويرا,ویرا,0,47,,,,False
+374,41,Porsche,911,911,911,0,55,,,,False
+370,41,Porsche,911 Cabriolet,911 Cabriolet,911 Cabriolet,0,62,,,,False
+404,41,Porsche,911 GT2,911 GT2,911 GT2,0,68,,,,False
+432,41,Porsche,911 GT3,911 GT3,911 GT3,0,57,,,,False
+405,41,Porsche,911 Turbo,911 توربو,911 توربۆ,0,57,,,,False
+371,41,Porsche,911 Turbo Cabriolet,911 توربو كابريوليه,911 توربۆ کابریۆلێت,0,57,,,,False
+368,41,Porsche,Boxster,بوكستر,بۆکستەر,0,55,,,,False
+366,41,Porsche,Cayenne,كايين,کایان,0,55,,,,False
+367,41,Porsche,Cayenne Coupe,كايين كوبيه,کایان کوپ,0,70,,,,False
+435,41,Porsche,Cayman,كايمان,کەیمان,0,56,,,,False
+369,41,Porsche,Macan,ماكان,ماکان,0,65,,,,False
+365,41,Porsche,Panamera,باناميرا,پانەمێرا,0,60,,,,False
+1325,41,Porsche,Taycan,تايكان,تایکان,0,69,,,,False
+1577,41,Porsche,Taycan Sport Turismo,‎تايكان سبورت توريزمو,تایکان سپۆرت تۆریسمۆ,0,72,76,,,False
+362,43,Peugeot,2008,2008,2008,0,64,,,,False
+359,43,Peugeot,206,206,206,0,49,,,,False
+360,43,Peugeot,207,207,207,0,58,,,,False
+358,43,Peugeot,208,208,208,0,63,,,,False
+351,43,Peugeot,3008,3008,3008,0,61,,,,False
+361,43,Peugeot,301,301,301,0,63,,,,False
+990,43,Peugeot,306,306,306,0,,,,,False
+349,43,Peugeot,307,307,307,0,52,,,,False
+348,43,Peugeot,308,308,308,0,58,,,,False
+373,43,Peugeot,308 CC,308 CC,308 CC,0,60,,,,False
+1006,43,Peugeot,405,405,405,0,37,,,,False
+1105,43,Peugeot,406,406,406,0,45,54,,,False
+355,43,Peugeot,407,407,407,0,55,,,,False
+353,43,Peugeot,407 Coupe,407 كوبيه,407 کوپ,0,56,,,,False
+350,43,Peugeot,408,408,408,0,63,,,,False
+352,43,Peugeot,5008,5008,5008,0,62,,,,False
+354,43,Peugeot,508,508,508,0,62,,,,False
+356,43,Peugeot,607,607,607,0,52,,,,False
+402,43,Peugeot,Boxer,بوكسر,بۆکسەر,0,56,,,,False
+375,43,Peugeot,Expert,اكسبرت,ئێکسپێرت,0,68,,,,False
+1210,43,Peugeot,Pars,بارس,پارس,0,50,,,,False
+376,43,Peugeot,Partner,بارتنر,پارتنەر,0,53,,,,False
+357,43,Peugeot,RCZ,RCZ,RCZ,0,61,,,,False
+1076,43,Peugeot,Roa,روا,رۆوا,0,42,,,,False
+1764,43,Peugeot,Traveller,ترافلر,تراڤلەر,0,66,,,,False
+1646,46,King Long,Jinwei,جينوي,جينوی,0,45,,,,False
+149,46,King Long,Mini Van,Mini Van,Mini Van,0,63,,,,False
+1725,48,CMC,Varica,فاریکا,ڤاریکا,0,35,,,,False
+541,48,CMC,Z7,Z7,Z7,0,62,,,,False
+540,49,Citroen,C-Elysee,سي إليزيه,C-Elysee,0,64,,,,False
+536,49,Citroen,C2,C2,C2,0,54,,,,False
+538,49,Citroen,C3,C3,C3,0,53,,,,False
+530,49,Citroen,C4,C4,C4,0,54,,,,False
+532,49,Citroen,C4 Picasso,C4 بيكاسو,C4 پیکاسۆ,0,58,,,,False
+534,49,Citroen,C5,C5,C5,0,55,,,,False
+533,49,Citroen,C8,C8,C8,0,54,,,,False
+535,49,Citroen,DS3,DS3,DS3,0,64,,,,False
+531,49,Citroen,DS4,DS4,DS4,0,64,,,,False
+537,49,Citroen,DS5,DS5,DS5,0,65,,,,False
+539,49,Citroen,Saxo,ساخو,ساخۆ,0,50,,,,False
+529,49,Citroen,Xsara Picasso,كسارا بيكاسو,Xsara پیکاسۆ,0,52,,,,False
+527,50,Chrysler,300,300,300,100,55,,,,False
+524,50,Chrysler,200,200,200,0,60,67,,,False
+1413,50,Chrysler,300M,300M,300M,0,49,54,,,False
+1630,50,Chrysler,Aspen,اسبن,ئاسپین,0,57,59,,,False
+1238,50,Chrysler,Concorde,كونكورد,کۆنکۆرد,0,42,54,,,False
+528,50,Chrysler,Crossfire,كروس فاير,کرۆس فایەر,0,54,58,,,False
+1382,50,Chrysler,Grand Caravan,جراند كارافان,گراند کەرەڤان,0,46,,,,False
+523,50,Chrysler,Grand Voyager,جراند فوياجر,گراند ڤۆیاگر,0,51,,,,False
+1159,50,Chrysler,New Yorker,نيو يوركر,نیو یۆرکەر,0,75,47,,,False
+522,50,Chrysler,Pacifica,باسيفيكا,پاسیفیکا,0,54,,,,False
+521,50,Chrysler,PT Cruiser,بي تي كروزر,PT کروزەر,0,51,60,,,False
+1533,50,Chrysler,Saratoga,ساراتوجا,ساراتۆگا,0,77,45,,,False
+525,50,Chrysler,Sebring,سيبرينج,سێبرینگ,0,44,60,,,False
+1001,50,Chrysler,Town and Country,تاون آند كانتري,تاون ئاند کەنتری,0,40,66,,,False
+1414,50,Chrysler,Voyager,فوياجر,ڤۆیجەر,0,38,,,,False
+1084,52,Chery,Tiggo 7 Pro,تيجو 7 برو,تیگۆ 7 پرۆ,20,72,,,,False
+476,52,Chery,Arrizo 5,أريزو 5,ئەریزۆ 5,18,67,,,,False
+1288,52,Chery,Tiggo 7 Pro Max,تيجو 7 برو ماكس,تیگۆ ۷ پرۆ ماکس,16,74,,,,False
+481,52,Chery,Tiggo 7,تيجو 7,تیگۆ 7,14,68,,,,False
+1083,52,Chery,Tiggo 8 Pro,تيجو 8 برو,تیگۆ 8 پرۆ,12,72,,,,False
+487,52,Chery,Arrizo 3,أريزو 3,ئەریزۆ 3,10,66,,,,False
+1033,52,Chery,Arrizo 6,أريزو 6,ئەریزۆ 6,8,68,,,,False
+488,52,Chery,Arrizo 7,أريزو 7,ئەریزۆ 7,7,65,,,,False
+1034,52,Chery,Tiggo 2,تيجو 2,تیگۆ2,6,,,,,False
+1037,52,Chery,Tiggo 2 Pro,تيكو 2 برو,تیگۆ ٢ پرۆ,5,71,,,,False
+479,52,Chery,Tiggo 3,تيجو 3,تیگۆ 3,5,55,,,,False
+1085,52,Chery,Tiggo 4 Pro,تيجو4 برو,تیگۆ 4 پرۆ,4,72,,,,False
+480,52,Chery,Tiggo 5,تيجو 5,تیگۆ 5,3,65,,,,False
+1029,52,Chery,Tiggo 8,تيجو 8,تیگۆ,1,68,,,,False
+1218,52,Chery,A1,A1,A1,0,57,,,,False
+477,52,Chery,A11 Windcloud,A11 ويند كلاود,A11 ویند کلاود,0,56,,,,False
+1002,52,Chery,A3,A3,A3,0,58,,,,False
+1306,52,Chery,A5,A5,A5,0,56,60,,,False
+1008,52,Chery,A515,A515,A515,0,55,,,,False
+1248,52,Chery,A520,A520,A520,0,50,65,,,False
+1374,52,Chery,Arrizo 8,أريزو 8,ئەریزۆ 8,0,68,,,,False
+484,52,Chery,B11 Oriental Son,B11 اورنتال سن,B11 ئۆریێنتەڵ سەن,0,57,,,,False
+1240,52,Chery,Cowin,كوين,کۆوین,0,60,66,,,False
+1592,52,Chery,Cowin 1,كوين 1,كۆوین 1,0,56,63,,,False
+478,52,Chery,E5,E5,E5,0,61,66,,,False
+485,52,Chery,E8,E8,E8,0,64,,,,False
+1280,52,Chery,Eastar,إيستار,ئیستار,0,,,,,False
+1005,52,Chery,Fulwin 2,فولوين 2,فولوین 2,0,58,,,,False
+1612,52,Chery,Karry Yoki,كاري يوكي,كارى يۆکی,0,64,80,,,False
+1329,52,Chery,P10,P10,P10,0,56,,,,False
+1737,52,Chery,QQ6,QQ6,QQ6,0,56,60,,,False
+1584,52,Chery,Rely H5,ريلاي,ریلای,0,60,64,,,False
+486,52,Chery,S11 QQ,S11 QQ,S11 QQ,0,57,,,,False
+482,52,Chery,T11 Tiggo,T11 تيجو,T11 تیگۆ,0,57,,,,False
+1729,52,Chery,Tiggo 7 Pro Hybrid,تيجو 7 برو هايبرد,تیگۆ 7 پرۆ هايبرد,0,74,,,,False
+1407,52,Chery,Tiggo 8 Pro Max,تيجو 8 برو ماكس,تیگۆ ٨ پرۆ ماکس,0,74,,,,False
+1432,52,Chery,Tiggo 9,تيجو 9,تیگۆ 9,0,74,,,,False
+483,52,Chery,V5 Crossover,في 5 كروس أوفر,V5 کرۆس ئۆڤەر,0,57,,,,False
+1067,52,Chery,X1,X1,X1,0,62,,,,False
+470,53,Changan,Alsvin,السفن,ئەلسڤین,0,68,,,,False
+1064,53,Changan,CM5,CM5,CM5,0,62,,,,False
+1345,53,Changan,CS15,CS15,CS15,0,66,,,,False
+474,53,Changan,CS35,CS35,CS35,0,62,,,,False
+1482,53,Changan,CS35 Plus,CS35 بلس,CS35پلەس,0,68,,,,False
+1782,53,Changan,CS55,CS55,CS55,0,67,,,,False
+472,53,Changan,CS75,CS75,CS75,0,66,,,,False
+1303,53,Changan,CS75 Plus,CS75 بلس,CS75 پڵەس,0,69,,,,False
+1015,53,Changan,CS85,CS85,CS85,0,69,,,,False
+473,53,Changan,CS95,CS95,CS95,0,68,,,,False
+1153,53,Changan,E-Star,إي- ستار,E-Star,0,70,,,,False
+471,53,Changan,Eado,إيدو,ئێدۆ,0,62,,,,False
+1302,53,Changan,Eado Plus,إيدو بلس,ئیدۆ پڵەس,0,70,,,,False
+1027,53,Changan,Hunter,هنتر,هەنتەر,0,69,,,,False
+1601,53,Changan,Raeton,رايتون,رایتۆن,0,62,69,,,False
+1102,53,Changan,STAR 9,ستار 9,ستار 9,0,,,,,False
+1138,53,Changan,Star Truck,ستار تراك,ستار تراک,0,49,,,,False
+1065,53,Changan,UNI-K,يوني كي,UNI-K,0,70,,,,False
+1309,53,Changan,UNI-S,UNI-S,UNI-S,0,70,,,,False
+1066,53,Changan,UNI-T,يوني تي,UNI-T,0,70,,,,False
+1245,53,Changan,UNI-V,يوني في,UNI-V,0,71,,,,False
+1714,53,Changan,UNI-Z,يوني - Z,یونی -Z,0,72,,,,False
+1704,53,Changan,Victory,فیکتوري,ڤیکتۆری,0,62,,,,False
+1686,53,Changan,X5 Plus,X5 بلس,X5 پڵەس,0,72,,,,False
+500,57,Bugatti,Chiron,تشيرون,چیرون,0,67,,,,False
+501,57,Bugatti,Veyron,فيرون,ڤیرۆن,0,56,,,,False
+1150,58,Brilliance,BS2,BS2,BS2,0,58,63,,,False
+1523,58,Brilliance,BS4,BS4,BS4,0,56,,,,False
+498,58,Brilliance,FRV,FRV,FRV,0,63,,,,False
+499,58,Brilliance,FRV Cross,FRV Cross,FRV Cross,0,63,,,,False
+495,58,Brilliance,FSV,FSV,FSV,0,63,,,,False
+496,58,Brilliance,H530,H530,H530,0,63,,,,False
+497,58,Brilliance,V5,V5,V5,0,63,,,,False
+494,59,Borgward,BX5,BX5,BX5,0,68,,,,False
+493,59,Borgward,BX7,BX7,BX7,0,68,,,,False
+640,60,BMW,5-Series,الفئة 5,سیریەس 5,300,39,,,,False
+656,60,BMW,3-Series,الفئة 3,سیریەس 3,295,25,,,,False
+665,60,BMW,7-Series,الفئة 7,سیریەس 7,290,38,,,,False
+652,60,BMW,4-Series,الفئة 4,4 سیریەس,285,64,,,,False
+659,60,BMW,X3,X3,X3,280,54,,,,False
+644,60,BMW,X5,X5,X5,275,50,,,,False
+637,60,BMW,X6,X6,X6,270,58,,,,False
+691,60,BMW,X7,X7,X7,267,69,,,,False
+660,60,BMW,X4,X4,X4,265,65,,,,False
+547,60,BMW,X1,X1,X1,262,61,,,,False
+1161,60,BMW,XM,XM,XM,260,74,,,,False
+661,60,BMW,Z4,Z4,Z4,245,53,,,,False
+689,60,BMW,8-Series,8 الفئة,8 سیریەس,242,40,,,,False
+1261,60,BMW,i3,i3,i3,240,63,,,,False
+1352,60,BMW,i4,i4,i4,230,72,,,,False
+1349,60,BMW,iX1,iX1,iX1,220,72,,,,False
+578,60,BMW,i8,i8,i8,210,65,,,,False
+1347,60,BMW,i5,i5,i5,200,74,,,,False
+1510,60,BMW,iX3,iX3,iX3,150,70,,,,False
+1334,60,BMW,iX,iX,iX,100,71,,,,False
+688,60,BMW,1-Series,1 سيريس,1 سیریەس,16,55,,,,False
+577,60,BMW,2-Series,الفئة 2,سیریەس 2,15,64,,,,False
+662,60,BMW,6-Series,سيريس 6,سیریەس 6,14,54,,,,False
+492,60,BMW,X2,X2,X2,11,68,,,,False
+1529,60,BMW,Z3,Z3,Z3,0,46,52,,,False
+685,61,Bentley,Arnage,ارنج,ئارنەیج,0,55,,,,False
+679,61,Bentley,Azure,ازور,ئازور,0,57,,,,False
+687,61,Bentley,Bentayga,بينتايجا,بێنتایگا,0,67,,,,False
+681,61,Bentley,Brooklands,بروكلاندز,بروکلاندس,0,58,,,,False
+682,61,Bentley,Continental,كونتننتال,کۆنتینێناڵ,0,42,,,,False
+680,61,Bentley,Continental GT,كونتيننتال جي تي,کۆنتینێناڵ GT,0,54,,,,False
+678,61,Bentley,Continental GTC,كونتيننتال جي تي سي,کۆنتینێناڵ GTC,0,56,,,,False
+683,61,Bentley,Flying Spur,فلاينج سبير,فلاینگ سپور,0,64,,,,False
+684,61,Bentley,Mulsanne,ملسان,مولسان,0,61,,,,False
+675,62,BAIC,A1 Hatchback,A1 هاتشباك,A1 هاچباک,0,65,,,,False
+677,62,BAIC,A1 Sedan,A1 سيدان,A1 سیدان,0,65,,,,False
+1313,62,BAIC,A315,A315,A315,0,65,,,,False
+676,62,BAIC,A5 Sedan,A5 سيدان,A5 سیدان,0,65,,,,False
+1293,62,BAIC,BJ20,BJ20,BJ20,0,65,,,,False
+1688,62,BAIC,BJ30e,BJ30e,BJ30e,0,80,,,,False
+1021,62,BAIC,BJ40L,BJ40L,BJ40L,0,66,,,,False
+1695,62,BAIC,BJ60,BJ60,BJ60,0,72,,,,False
+1249,62,BAIC,BJ80,BJ80,BJ80,0,66,,,,False
+1330,62,BAIC,D20,D20,D20,0,62,,,,False
+1235,62,BAIC,D50,D50,D50,0,,,,,False
+1376,62,BAIC,Q35,Q35,Q35,0,66,,,,False
+1129,62,BAIC,Senova X65,سينوفا X65,سێنۆڤا X65,0,64,72,,,False
+1222,62,BAIC,U5 PLUS,U5 بلس,U5 پڵەس,0,70,,,,False
+1128,62,BAIC,X25,X25,X25,0,65,,,,False
+1223,62,BAIC,X3,X3,X3,0,71,,,,False
+1080,62,BAIC,X35,X35,X35,0,66,,,,False
+1357,62,BAIC,X55,X55,X55,0,65,,,,False
+1397,62,BAIC,X7,X7,X7,0,70,,,,False
+593,63,Audi,A3,A3,A3,100,54,,,,False
+587,63,Audi,A6,A6,A6,90,44,,,,False
+594,63,Audi,A7,A7,A7,80,61,,,,False
+596,63,Audi,Q7,Q7,Q7,60,57,,,,False
+597,63,Audi,Q8,Q8,Q8,50,69,,,,False
+1317,63,Audi,80,80,80,0,16,46,,,False
+591,63,Audi,A1,A1,A1,0,61,,,,False
+589,63,Audi,A4,A4,A4,0,51,,,,False
+599,63,Audi,A5,A5,A5,0,58,,,,False
+585,63,Audi,A8,A8,A8,0,54,,,,False
+673,63,Audi,Q2,Q2,Q2,0,67,,,,False
+605,63,Audi,Q3,Q3,Q3,0,62,,,,False
+1450,63,Audi,Q4 e-tron,كيو 4 إي-ترون,کیو ٤ ئی-ترۆن,0,72,,,,False
+635,63,Audi,Q5,Q5,Q5,0,59,,,,False
+668,63,Audi,R8,R8,R8,0,58,,,,False
+1567,63,Audi,RS e-tron,RS e-tron,RS e-tron,0,71,,,,False
+1687,63,Audi,RS3,RS3,RS3,0,61,,,,False
+600,63,Audi,RS5,آر إس 5,ئاڕ ئێس ٥,0,63,,,,False
+666,63,Audi,RS6,آر إس 6,ئاڕ ئێس ٦,0,52,,,,False
+1463,63,Audi,RS7,آر إس 7,ئاڕ ئێس ٧,0,64,,,,False
+1515,63,Audi,RSQ8,RSQ8,RSQ8,0,70,,,,False
+1187,63,Audi,S4,S4,S4,0,,,,,False
+601,63,Audi,S5,S5,S5,0,59,,,,False
+636,63,Audi,S6,S6,S6,0,65,,,,False
+595,63,Audi,S7,S7,S7,0,63,,,,False
+586,63,Audi,S8,S8,S8,0,57,,,,False
+1499,63,Audi,SQ5,SQ5,SQ5,0,62,,,,False
+1498,63,Audi,SQ5 Sportback,SQ5 سبورت باك,SQ5 سپۆرتباک,0,70,,,,False
+1202,63,Audi,SQ8,SQ8,SQ8,0,,,,,False
+669,63,Audi,TT,تيتي,تی تی,0,49,,,,False
+632,64,Aston Martin,DB11,DB11,DB11,0,67,,,,False
+629,64,Aston Martin,DB11 Volante,DB11 فولانتي,DB11 ڤۆلانتی,0,68,,,,False
+604,64,Aston Martin,DB7,DB7,DB7,0,45,,,,False
+579,64,Aston Martin,DB9,DB9,DB9,0,54,,,,False
+631,64,Aston Martin,DB9 Volante,DB9 فولانتي,DB9 ڤۆلانتی,0,63,,,,False
+607,64,Aston Martin,DBS,DBS,DBS,0,59,,,,False
+1242,64,Aston Martin,DBX,DBX,DBX,0,70,,,,False
+580,64,Aston Martin,One-77,ون-77,وەن 77,0,60,,,,False
+628,64,Aston Martin,Rapide,رابد,راپید,0,60,,,,False
+583,64,Aston Martin,V12 Vantage,V12 فانتج,V12  ڤانتەیج,0,60,,,,False
+581,64,Aston Martin,V12 Vantage Roadster,V12 فانتج رودستر,V12 ڤانتەیج رۆدستر,0,63,,,,False
+633,64,Aston Martin,V8 Vantage,V8 فانتج,V8 ڤانتەیج,0,56,,,,False
+582,64,Aston Martin,V8 Vantage Roadster,V8 فانتج رودستر,V8 ڤانتەیج رۆدستەر,0,59,,,,False
+1401,64,Aston Martin,V8 Vantage S,V8 Vantage S,V8 Vantage S,0,61,67,,,False
+606,64,Aston Martin,Vanquish,فانكيش,ڤانکویش,0,52,,,,False
+630,64,Aston Martin,Vanquish Volante,فانكيش فولانتي,ڤانکویش ڤۆلانتی,0,64,,,,False
+584,64,Aston Martin,Zagato,زاغاتو,زاگاتۆ,0,63,,,,False
+614,65,Alfa Romeo,147,147,147,0,55,,,,False
+621,65,Alfa Romeo,156,156,156,0,54,,,,False
+622,65,Alfa Romeo,159,159,159,0,57,,,,False
+626,65,Alfa Romeo,166,166,166,0,54,,,,False
+627,65,Alfa Romeo,4C,4C,4C,0,64,,,,False
+615,65,Alfa Romeo,Brera,Brera,Brera,0,57,,,,False
+619,65,Alfa Romeo,Giulia,Giulia,Giulia,0,67,,,,False
+620,65,Alfa Romeo,Giulia Quadrifoglio,Giulia Quadrifoglio,Giulia Quadrifoglio,0,67,,,,False
+613,65,Alfa Romeo,Giulietta,Giulietta,Giulietta,0,63,,,,False
+616,65,Alfa Romeo,Giulietta QV,Giulietta QV,Giulietta QV,0,65,,,,False
+625,65,Alfa Romeo,GT Coupe,GT Coupe,GT Coupe,0,55,,,,False
+617,65,Alfa Romeo,Mito,Mito,Mito,0,59,,,,False
+618,65,Alfa Romeo,Spider,Spider,Spider,0,58,,,,False
+623,65,Alfa Romeo,Stelvio,Stelvio,Stelvio,0,68,,,,False
+624,65,Alfa Romeo,Stelvio Quadrifoglio,Stelvio Quadrifoglio,Stelvio Quadrifoglio,0,68,,,,False
+1503,66,Acura,ILX,ILX,ILX,0,63,72,,,False
+1322,66,Acura,Integra,انتيغرا,ئینتێگرا,0,74,,,,False
+611,66,Acura,MDX,MDX,MDX,0,51,,,,False
+612,66,Acura,NSX,NSX,NSX,0,68,,,,False
+1079,66,Acura,RDX,RDX,RDX,0,56,,,,False
+610,66,Acura,TLX,TLX,TLX,0,65,,,,False
+1761,67,Daihatsu,Applause,أبلوز,ئاپلوز,0,39,50,,,False
+544,67,Daihatsu,Charade,شاريد,چەرەید,0,56,,,,False
+1730,67,Daihatsu,Feroza,فيروزا,فيرۆزا,0,39,52,,,False
+542,67,Daihatsu,Gran Max Pickup,غران ماكس بيك اب,گران ماکس پیکاپ,0,65,,,,False
+543,67,Daihatsu,Gran Max Van,جران ماكس فان,گران ماکس ڤان,0,65,,,,False
+545,67,Daihatsu,Materia,ماتيريا,ماتریا,0,58,,,,False
+634,67,Daihatsu,Sirion,سيريون,سیریۆن,0,48,,,,False
+1540,67,Daihatsu,Taft F20,تافت F20,تافت F20,0,24,34,,,False
+693,67,Daihatsu,Terios,تيريوس,تێریۆس,0,46,,,,False
+692,67,Daihatsu,YRV,YRV,YRV,0,52,,,,False
+1740,69,Dongfeng,Ace 007,ايس 007,ئەیس 007,0,76,,,,False
+1741,69,Dongfeng,Ace 008,ايس 008,ئەیس 008,0,76,,,,False
+1075,69,Dongfeng,Aeolus A30,Aeolus A30,Aeolus A30,0,50,,,,False
+1691,69,Dongfeng,Aeolus A60,ايلوس A60,ئایلۆس A60,0,61,,,,False
+1118,69,Dongfeng,Aeolus A60 MAX,Aeolus A60 MAX,Aeolus A60 MAX,0,71,,,,False
+1205,69,Dongfeng,Aeolus Huge,ايلوس هيوج,ئیلۆس هیوج,0,76,,,,False
+1073,69,Dongfeng,Aeolus Yixuan GS,Aeolus Yixuan GS,Aeolus Yixuan GS,0,50,,,,False
+983,69,Dongfeng,AX7,AX7,AX7,0,64,,,,False
+1337,69,Dongfeng,C32,C32,C32,0,59,,,,False
+1336,69,Dongfeng,C35,C35,C35,0,59,,,,False
+1314,69,Dongfeng,C37,C37,C37,0,59,,,,False
+1787,69,Dongfeng,Fengguang S560,فينكوانك S560,فینگوانگ S560,0,68,,,,False
+1512,69,Dongfeng,Forthing Friday,فورثينغ فرايداي,فۆرتینگ فڕایدەی,0,74,,,,False
+1353,69,Dongfeng,Glory,جلوري,گلۆری,0,,,,,False
+853,69,Dongfeng,H30 Cross,H30 Cross,H30 Cross,0,65,,,,False
+1142,69,Dongfeng,iX5,iX5,iX5,0,68,,,,False
+1354,69,Dongfeng,ix7,ix7,ix7,0,,,,,False
+1436,69,Dongfeng,Mage,ماج,ماج,0,74,,,,False
+1209,69,Dongfeng,Rich,ريج,ڕیچ,0,49,,,,False
+852,69,Dongfeng,S30,S30,S30,0,65,,,,False
+1368,69,Dongfeng,Shine,شاين,شاین,0,71,,,,False
+1068,69,Dongfeng,T5 EVO,T5 EVO,T5 EVO,0,70,,,,False
+1072,69,Dongfeng,T5L,T5L,T5L,0,69,,,,False
+1125,69,Dongfeng,Venucia,فينوسيا,ڤێنۆسیا,0,70,,,,False
+1272,70,FAW,Bestune B50,بيستون B50,بێستون B50,0,,,,,False
+981,70,FAW,Besturn B30,بسترن B30,بێستێرن B30,0,65,,,,False
+855,70,FAW,Besturn X40,بيستورن X40,بێستێرن X40,0,67,,,,False
+854,70,FAW,Besturn X80,بيستورن X80,بێستێرن X80,0,69,,,,False
+1524,70,FAW,Carrier,كارير,کاریەر,0,55,,,,False
+1370,70,FAW,N5,إن 5,ئێن ٥,0,59,67,,,False
+1231,70,FAW,Oley,أولي,ئۆلی,0,61,,,,False
+1479,70,FAW,V2,V2,V2,0,60,63,,,False
+1779,70,FAW,V52,V52,V52,0,49,,,,False
+1429,70,FAW,V80,V80,V80,0,61,,,,False
+1507,73,JAC,JS6,JS6,JS6,300,71,,,,False
+1346,73,JAC,J7,J7,298,298,69,,,,False
+1377,73,JAC,JS4,JS4,JS4,296,68,,,,False
+1505,73,JAC,T8,T8,T8,294,68,,,,False
+1369,73,JAC,JS3,JS3,JS3,292,63,,,,False
+793,73,JAC,J4,J4,J4,290,50,,,,False
+792,73,JAC,J6,J6,J6,288,50,,,,False
+1636,73,JAC,HFC,HFC,HFC,0,57,62,,,False
+1103,73,JAC,J3,J3,J3,0,,,,,False
+790,73,JAC,J5,J5,J5,0,50,,,,False
+791,73,JAC,M5 MPV,M5 MPV,M5 MPV,0,64,,,,False
+794,73,JAC,S3 SUV,S3 SUV,S3 SUV,0,65,,,,False
+1703,73,JAC,X200,X200,X200,0,65,,,,False
+786,74,Isuzu,D-Max,دي-ماكس,D-Max,0,53,,,,False
+1550,74,Isuzu,Elf,Elf,Elf,0,9,,,,False
+1600,74,Isuzu,Faster,فاستر,فاستەر,0,22,52,,,False
+788,74,Isuzu,MU-X,إم يو-اكس,MU-X,0,65,,,,False
+1216,74,Isuzu,Rodeo,روديو,ڕۆدیۆ,0,20,,,,False
+789,74,Isuzu,Trooper,تروبر,تروپەر,0,48,,,,False
+752,76,Infiniti,EX,EX,EX,0,58,,,,False
+715,76,Infiniti,FX,FX,FX,0,53,,,,False
+711,76,Infiniti,G,G,G,0,59,,,,False
+751,76,Infiniti,G35,G35,G35,0,55,,,,False
+782,76,Infiniti,G35 Coupe,G35 كوبيه,G35 کوپ,0,55,,,,False
+1406,76,Infiniti,G37,G37,G37,0,56,65,,,False
+718,76,Infiniti,G37 Convertible,G37كونفرتبل,G37 کۆنڤێرتەبل,0,60,,,,False
+721,76,Infiniti,G37 Coupe,G37 كوبيه,G37 کوپ,0,58,,,,False
+716,76,Infiniti,JX,JX,JX,0,63,,,,False
+712,76,Infiniti,M,M,M,0,57,,,,False
+1611,76,Infiniti,M37,M37,M37,0,61,64,,,False
+783,76,Infiniti,Q30,Q30,Q30,0,67,,,,False
+707,76,Infiniti,Q45,Q45,Q45,0,52,,,,False
+706,76,Infiniti,Q50,Q50,Q50,0,64,,,,False
+717,76,Infiniti,Q60 Convertible,Q60 المكشوفة,Q60 کۆنڤێرتەبل,0,64,,,,False
+719,76,Infiniti,Q60 Coupe,Q60 كوبيه,Q60 کوپ,0,64,,,,False
+710,76,Infiniti,Q70,Q70,Q70,0,64,,,,False
+784,76,Infiniti,QX30,QX30,QX30,0,67,,,,False
+1305,76,Infiniti,QX4,QX4,QX4,0,47,51,,,False
+779,76,Infiniti,QX50,QX50,QX50,0,64,,,,False
+1452,76,Infiniti,QX55,كيو اكس 55,کیو ئێکس 55,0,72,,,,False
+709,76,Infiniti,QX56,QX56,QX56,0,55,63,,,False
+713,76,Infiniti,QX60,QX60,QX60,0,64,,,,False
+714,76,Infiniti,QX70,QX70,QX70,0,64,,,,False
+708,76,Infiniti,QX80,QX80,QX80,0,64,,,,False
+734,78,Hummer,H2,H2,H2,0,53,,,,False
+733,78,Hummer,H3,H3,H3,0,56,,,,False
+726,79,Honda,Accord,أكورد,ئەکۆرد,0,48,,,,False
+725,79,Honda,Accord Coupe,أكورد كوبيه,ئەکۆرد کوپ,0,58,,,,False
+729,79,Honda,Accord Crosstour,أكورد كروس تور,ئەکۆرد Crosstour,0,60,,,,False
+1554,79,Honda,‏Acura TLX,أكيورا TLX,ئاکیورا TLX,0,64,,,,False
+732,79,Honda,City,سيتي,سیتی,0,53,,,,False
+893,79,Honda,Civic,سيفيك,سیڤیک,0,34,,,,False
+891,79,Honda,Civic Hatchback,سيفيك هاتشباك,سیڤیک هاچباک,0,60,,,,False
+1705,79,Honda,Civic Type R,سيفيك تايب R,سيڤيك تایپ R,0,47,,,,False
+1728,79,Honda,Concerto,كونسيرتو,کۆنسێرتۆ,0,38,42,,,False
+810,79,Honda,CR-V,سي ار في,CR-V,0,47,,,,False
+892,79,Honda,CRX,CRX,CRX,0,34,,,,False
+1480,79,Honda,e:NP1,e:NP1,e:NP1,0,71,,,,False
+1363,79,Honda,Element,إليمنت,ئێلیمێنت,0,53,61,,,False
+1133,79,Honda,eNS1,eNS1,eNS1,0,72,,,,False
+866,79,Honda,HR-V,HR-V,HR-V,0,69,,,,False
+1264,79,Honda,Insight,إنسايت,ئینسایت,0,,,,,False
+731,79,Honda,Jazz,جاز,جاز,0,56,,,,False
+724,79,Honda,Legend,لجند,لیجێند,0,40,,,,False
+728,79,Honda,MR-V,إم آر في,MR-V,0,56,,,,False
+809,79,Honda,Odyssey,اوديسي,ئۆدسی,0,55,,,,False
+750,79,Honda,Odyssey J,أوديسي جي,ئۆدسی J,0,66,,,,False
+1047,79,Honda,Passport,با سبورت,پاسپۆرت,0,42,,,,False
+727,79,Honda,Pilot,بايلوت,پایلۆت,0,59,,,,False
+1765,79,Honda,Prologue,برولوج,پرۆلۆگ,0,76,,,,False
+1658,79,Honda,Ridgeline,رجلاین,ریجلاین,0,56,80,,,False
+730,79,Honda,S2000,S2000,S2000,0,50,,,,False
+1654,79,Honda,ZR-V,ZR-V,ZR-V,0,72,,,,False
+882,82,GMC,Yukon,يوكون,یوکۆن,100,42,,,,False
+883,82,GMC,Acadia,اكاديا,ئەکادیا,0,57,,,,False
+1193,82,GMC,Canyon,كانيون,کانیۆن,0,54,,,,False
+884,82,GMC,Envoy,انفوي,ئینڤۆی,0,56,,,,False
+1292,82,GMC,Hummer EV,هامر إي في,هەمەر ئیڤی,0,72,,,,False
+1755,82,GMC,Hummer EV Pickup,همر EV بيك اب,هەمەڕ EV پیکاپ,0,76,,,,False
+1220,82,GMC,Jimmy,جيمي,جیمی,0,,,,,False
+1721,82,GMC,P3500,P3500,P3500,0,29,49,,,False
+1451,82,GMC,Safari,سفاري,سافاری,0,35,55,,,False
+1028,82,GMC,Savana,سافانا,ساڤانا,0,45,,,,False
+881,82,GMC,Sierra,سييرا,سیرا,0,31,,,,False
+1635,82,GMC,Sonoma,سونوما,سۆنۆما,0,32,54,,,False
+880,82,GMC,Terrain,تيراين,تیرەین,0,58,,,,False
+1375,82,GMC,Yukon XL,يوكون إكس إل,یوکۆن ئێکس ئێڵ,0,50,,,,False
+878,83,Genesis,G70,G70,G70,0,66,,,,False
+879,83,Genesis,G80,G80,G80,0,66,,,,False
+877,83,Genesis,G90,G90,G90,0,67,,,,False
+1402,83,Genesis,GV60,GV60,GV60,0,74,,,,False
+1058,83,Genesis,GV70,GV70,GV70,0,70,,,,False
+1111,83,Genesis,GV80,GV80,GV80,0,71,,,,False
+1588,86,Foton,Miler,مايلر,مایلەر,0,76,,,,False
+1386,86,Foton,SUP,سوب,سوپ,0,53,72,,,False
+915,86,Foton,Tunland,تونلاند,تونلاند,0,61,,,,False
+1702,86,Foton,Tunland G7,تونلاند G7,تونلاند G7,0,74,,,,False
+1509,86,Foton,View C2,ڤيو C2,ڤیو C2,0,57,,,,False
+1152,86,Foton,View CS2,فيو CS2,فيو CS2,0,60,,,,False
+1127,87,Ford,Territory,تيريتوري,ترێتۆری,300,68,,,,False
+906,87,Ford,Taurus,تورس,تۆرەس,298,36,,,,False
+837,87,Ford,F-150,إف-150,F-150,296,54,,,,False
+898,87,Ford,Expedition,إكسبيديشن,ئێکسپێدیشن,294,47,,,,False
+904,87,Ford,Everest,افرست,ئێڤێرێست,292,54,,,,False
+899,87,Ford,Ranger,رانجر,رانجر,290,57,,,,False
+867,87,Ford,F-150 Raptor,F-150 رابتور,F-150 راپتۆر,288,60,,,,False
+903,87,Ford,Explorer,إكسبلورر,ئێکسپلۆرەر,286,41,,,,False
+1040,87,Ford,Bronco,برونكو,بڕۆنکۆ,284,71,,,,False
+1035,87,Ford,Bronco Sport,برونكو سبورت,برۆنکۆ سپۆرت,280,71,,,,False
+912,87,Ford,Ecosport,إيكوسبورت,ئیکۆ سپۆرت,278,64,,,,False
+908,87,Ford,Mustang,موستانج,مۆستانگ,276,14,,,,False
+902,87,Ford,Edge,ادج,ئێدج,274,57,,,,False
+905,87,Ford,Figo,فيغو,فیگۆ,272,60,,,,False
+900,87,Ford,Fusion,فيوجن,فیوژن,270,56,,,,False
+1557,87,Ford,F-150 Lightning,F-150 لايتنينج,F-150 لایتنینگ,268,72,,,,False
+1101,87,Ford,Maverick,مافريك,ماڤیریک,266,71,,,,False
+832,87,Ford,Focus,فوكس,فۆکەس,96,48,,,,False
+833,87,Ford,Escape,إسكيب,ئێسکەیپ,95,51,,,,False
+911,87,Ford,Fiesta,فييستا,فێستا,86,26,,,,False
+1718,87,Ford,Aerostar,ايروستار,ئایرۆستار,0,35,47,,,False
+895,87,Ford,Crown Victoria,كراون فيكتوريا,کراون ڤیکتۆریا,0,46,,,,False
+1207,87,Ford,E-350,إي-350,E-350,0,,,,,False
+986,87,Ford,Econoline,إيكونولين,ئیکۆنۆلاین,0,,,,,False
+831,87,Ford,Escort,إسكورت,اسکورت,0,30,,,,False
+1685,87,Ford,Excursion,اكسكورزن,ئێکسکۆرژن,0,49,55,,,False
+1298,87,Ford,Explorer Sport Trac,إكسبلورر سبورت تراك,ئێکسپلۆرەر سپۆرت تراک,0,51,60,,,False
+1148,87,Ford,F-250,إف-250,F-250,0,49,,,,False
+993,87,Ford,F-350,إف-350,F-350,0,49,,,,False
+868,87,Ford,Five Hundred,Five Hundred,Five Hundred,0,58,,,,False
+834,87,Ford,Flex,فليكس,فلێکس,0,59,,,,False
+835,87,Ford,Freestar,فريستار,فری ستار,0,54,,,,False
+1689,87,Ford,Freestyle,فریستایل,فریستایل,0,55,59,,,False
+1487,87,Ford,Gran Torino,غران تورينو,گران تۆرینۆ,0,22,26,,,False
+910,87,Ford,GT,GT,GT,0,55,,,,False
+1332,87,Ford,Ka,كا,کا,0,46,,,,False
+901,87,Ford,Mondeo,مونديو,موندیۆ,0,43,,,,False
+1286,87,Ford,Mustang Mach-E,موستانج Mach-E,مۆستانگ Mach-E,0,71,,,,False
+1257,87,Ford,Scorpio,سكوربيو,سکۆرپیۆ,0,35,48,,,False
+1410,87,Ford,Sierra,سييرا,سیێرا,0,32,43,,,False
+1087,87,Ford,Taurus X,توروس X,توروس X,0,57,59,,,False
+997,87,Ford,Thunderbird,ثندربيرد,ثندربيرد,0,1,,,,False
+1603,87,Ford,Tourneo Courier,تورینو کورییر,تۆرینۆ کۆریێر,0,64,74,,,False
+827,87,Ford,Transit,ترانست,ترانسیت,0,28,,,,False
+987,87,Ford,Windstar,ويند ستار,ویند ستار,0,45,53,,,False
+1004,89,Fiat,124 Spider,124 سبايدر,124 سپایدەر,0,,,,,False
+823,89,Fiat,500,500,500,0,60,,,,False
+821,89,Fiat,500L,500L,500L,0,65,,,,False
+825,89,Fiat,500X,500X,500X,0,66,,,,False
+819,89,Fiat,Bravo,برافو,براڤۆ,0,60,,,,False
+818,89,Fiat,Ducato,دوكاتو,دوکاتۆ,0,51,,,,False
+817,89,Fiat,Fiorino,فيورينو,فیۆرینۆ,0,63,,,,False
+1099,89,Fiat,Freemont,فريمونت,فریمۆنت,0,61,66,,,False
+820,89,Fiat,Linea,لينيا,لینیە,0,62,,,,False
+824,89,Fiat,Punto,بونتو,پونتۆ,0,50,,,,False
+1679,89,Fiat,Tempra,تیمبرا,تێمپرا,0,40,52,,,False
+1247,89,Fiat,Tipo,تيبو,تیپۆ,0,38,50,,,False
+813,90,Ferrari,360,360,360,0,50,,,,False
+814,90,Ferrari,458,458,458,0,60,,,,False
+865,90,Ferrari,458 Spider,458 سبايدر,458 سپایدەر,0,63,,,,False
+815,90,Ferrari,488 GTB,488 GTB,488 GTB,0,66,,,,False
+838,90,Ferrari,488 Spider,488 سبايدر,488 سپایدەر,0,66,,,,False
+860,90,Ferrari,599 GTB Fiorano,599  جي تي بي فيورانو,599 GTB فیۆرانۆ,0,57,,,,False
+861,90,Ferrari,612 Scaglietti,612 سكاجليتي,612 سکاگلێتی,0,55,,,,False
+859,90,Ferrari,812 Superfast,812 سوبر فاست,812 سوپەر فاست,0,68,,,,False
+857,90,Ferrari,California,كاليفورنيا,کالیفۆرنیا,0,59,,,,False
+858,90,Ferrari,California T,كاليفورنيا تي,کالیفۆرنیا T,0,64,,,,False
+862,90,Ferrari,F12 Berlinetta,F12 بيرلينيتا,F12 بێرلینێتا,0,62,,,,False
+816,90,Ferrari,F430,F430,F430,0,55,,,,False
+836,90,Ferrari,F430 Spider,F430 سبايدر,F430 سپایدەر,0,55,,,,False
+811,90,Ferrari,F8 Tributo,F8 تريبوتو,F8 ترایبوتۆ,0,70,,,,False
+839,90,Ferrari,FF,FF,FF,0,62,,,,False
+863,90,Ferrari,GTC4Lusso,GTC4Lusso,GTC4Lusso,0,66,,,,False
+864,90,Ferrari,GTC4Lusso T,GTC4Lusso T,GTC4Lusso T,0,67,,,,False
+812,90,Ferrari,LaFerrari,لافيراري,لا فێراری,0,64,,,,False
+856,90,Ferrari,Portofino,بورتوفينو,پۆرتۆفینۆ,0,68,,,,False
+1391,90,Ferrari,Roma,روما,ڕۆما,0,70,,,,False
+1607,91,GWM,Wingle 5,وينجل 5,وینگل 5,100,60,,,,False
+886,91,GWM,Florid,فلوريد,فلۆرید,80,61,,,,False
+1060,91,GWM,Deer,دير,دير,78,46,63,,,False
+885,91,GWM,Wingle,وينجل,وینگل,75,56,,,,False
+1551,91,GWM,Haval H5,هفال H5,هەڤاڵ H5,0,58,63,,,False
+1579,91,GWM,Hover CUV,هوفر CUV,‎هۆڤەر CUV,0,55,62,,,False
+1411,91,GWM,Peri,بيري,پێری,0,57,60,,,False
+1619,91,GWM,Sing,سينغ,سینگ,0,55,58,,,False
+1441,91,GWM,SoCool,سوكول,سۆکول,0,53,60,,,False
+1290,91,GWM,Voleex C30,فوليكس سي 30,ڤۆلێکس C30,0,60,66,,,False
+1178,92,Zotye,Domy X5,دومي X5,دۆمی X5,0,65,71,,,False
+971,92,Zotye,Domy X7,دومي X7,دۆمی X7,0,66,,,,False
+1535,92,Zotye,Hunter,هونتر,هەنتەر,0,58,63,,,False
+312,92,Zotye,SR9,SR9,SR9,0,67,,,,False
+924,92,Zotye,T300,T300,T300,0,69,,,,False
+313,92,Zotye,T600,T600,T600,0,65,,,,False
+314,92,Zotye,T600 Sport,T600 Sport,T600 Sport,0,69,,,,False
+808,92,Zotye,T700,T700,T700,0,69,,,,False
+311,92,Zotye,Z100,Z100,Z100,0,65,,,,False
+1316,92,Zotye,Z300,Z300,Z300,0,62,68,,,False
+982,93,Hawtai,A25,A25,A25,0,59,,,,False
+1680,93,Hawtai,B11,B11,B11,0,60,68,,,False
+1568,93,Hawtai,Bolgheri,بولغيري,بۆلگێری,0,61,68,,,False
+1042,94,Mitsuoka,Galio,كاليو,گالیۆ,0,46,,,,False
+1119,95,UAZ,Hunter,هنتر,هەنتەر,0,53,,,,False
+1039,95,UAZ,Patriot,باتريوت,پاتریۆت,0,55,,,,False
+1030,95,UAZ,Pickup,بيك اب,پیکاپ,0,1,,,,False
+1044,96,KAWEI,K-150,ك-150,K-150,0,64,,,,False
+1045,96,KAWEI,K1,K1,K1,0,64,,,,False
+1583,97,ZX AUTO,Admiral,أدميرال,ئادمیراڵ,0,57,60,,,False
+1046,97,ZX AUTO,Grand Tiger,كراتد تايكر,گراند تایگەر,0,59,,,,False
+1122,97,ZX AUTO,Terralord,تيرالورد,تیرالۆرد,0,66,,,,False
+1749,98,Polaris,General XP 4 1000,جينيرال XP 4 1000,جێنیراڵ XP 4 1000,0,71,,,,False
+1054,98,Polaris,ProStar,برو ستار,پرۆ ستار,0,,,,,False
+1659,98,Polaris,Ranger 1000,رانجر 1000,رانجر1000,0,70,,,,False
+1051,98,Polaris,Ranger 570,رينجةر 570,رەینجەر 570,0,,,,,False
+1050,98,Polaris,Ranger Crew 1000,رينجر كرو 1000,ڕەینجەر کریو ١٠٠٠,0,,,,,False
+1052,98,Polaris,Ranger Crew 570,رينجةر كريو 570,رەینجەر کریو 570,0,,,,,False
+1048,98,Polaris,RZR,RZR,RZR,0,57,,,,False
+1606,98,Polaris,RZR PRO R,RZR برو R,RZR پڕۆ R,0,72,,,,False
+1053,98,Polaris,RZR PRO XP 4 Turbo,RZR PRO XP 4 Turbo,RZR PRO XP 4 Turbo,0,,,,,False
+1156,98,Polaris,Slingshot R,Slingshot R,Slingshot R,0,64,,,,False
+1750,98,Polaris,Slingshot SL,سلنكشوت SL,سلينگشۆت SL,0,64,,,,False
+1667,98,Polaris,SPORTSMAN XP 1000,سبورتسمان XP 1000,سپۆرتسمان XP 1000,0,64,,,,False
+1055,99,Smart,Fortwo,فورتو,فۆرتو,0,50,,,,False
+1056,99,Smart,Smart 1,سمارت 1,سمارت 1,0,72,,,,False
+1232,100,Jetour,T2,T2,T2,300,74,,,,False
+1609,100,Jetour,G700,G700,G700,296,80,81,,,False
+1485,100,Jetour,T1,T1,T1,295,76,,,,False
+1098,100,Jetour,X90 PLUS,X90 بلس,X90 پڵەس,290,69,,,,False
+1162,100,Jetour,Dashing,داشينج,داشينگ,280,72,,,,False
+1212,100,Jetour,X70 Plus,X70 بلس,X70 پڵەس,270,70,,,,False
+1070,100,Jetour,X70,X70,X70,260,68,,,,False
+1604,100,Jetour,L6,L6,L6,0,76,,,,False
+1692,100,Jetour,Traveler Starguard,ترافلر ستارکارد,تراڤلەر ستارگارد,0,74,,,,False
+1495,100,Jetour,X50,X50,X50,0,76,,,,False
+1576,101,Haima,7,7,7,0,60,70,,,False
+1078,101,Haima,8S,8S,8S,0,69,,,,False
+1213,101,Haima,Family,فاملي,فامیلی,0,53,,,,False
+1149,101,Haima,S5,S5,S5,0,64,,,,False
+1106,102,Buick,Electra,إليكترا,ئەلێکترا,0,9,40,,,False
+1310,102,Buick,Enclave,إنكليف,ئینکلیف,0,57,,,,False
+1137,102,Buick,Encore,انكور,ئینکۆر,0,62,,,,False
+1275,102,Buick,Encore GX,إنكور جي إكس,ئێنکۆر جی ئێکس,0,69,,,,False
+1291,102,Buick,Envision,إنفيجن,ئینڤیشن,0,64,,,,False
+1324,102,Buick,Envista,إنفيستا,ئینڤیستا,0,76,,,,False
+1203,102,Buick,LaCrosse,لاكروس,لاکرۆس,0,55,,,,False
+1431,102,Buick,Regal,ريجال,ڕیگال,0,23,70,,,False
+1541,102,Buick,Special,سبيشل,سپێشەڵ,0,77,19,,,False
+1698,102,Buick,Verano,فيرانو,ڤێرانۆ,0,61,67,,,False
+1113,103,Bestune,B70,B70,B70,0,56,,,,False
+1183,103,Bestune,B70S,B70S,B70S,0,52,,,,False
+1759,103,Bestune,E07,E07,E07,0,80,,,,False
+1489,103,Bestune,Pony,بوني,پۆنی,0,74,,,,False
+1185,103,Bestune,T55,T55,T55,0,71,,,,False
+1115,103,Bestune,T77,T77,T77,0,68,,,,False
+1114,103,Bestune,T99,T99,T99,0,69,,,,False
+1117,104,Pontiac,Catalina,كاتالينا,کەتەلینا,0,1,31,,,False
+1582,104,Pontiac,G5,G5,G5,0,55,60,,,False
+1167,104,Pontiac,Grand Am,جراند ام,گراند ئەی ئێم,0,23,55,,,False
+1304,104,Pontiac,Grand Prix,جراند بريكس,گراند پریکس,0,,,,,False
+1525,104,Pontiac,Montana,مونتانا,مۆنتانا,0,47,59,,,False
+1508,104,Pontiac,Solstice,سولستيس,سۆلستیس,0,56,60,,,False
+1339,104,Pontiac,Torrent,تورنت,تۆرێنت,0,55,59,,,False
+1454,104,Pontiac,Trans Sport,ترانس سبورت,ترانس سپۆرت,0,40,49,,,False
+1572,104,Pontiac,‏Vibe,فايب,ڤایب,0,53,60,,,False
+1675,105,Hongqi,E-HS9,E-HS9,E-HS9,0,70,,,,False
+1461,105,Hongqi,H5,H5,H5,0,67,,,,False
+1674,105,Hongqi,H6,H6,H6,0,74,,,,False
+1132,105,Hongqi,H9,H9,H9,0,70,,,,False
+1669,105,Hongqi,HS3,HS3,HS3,0,80,,,,False
+1672,105,Hongqi,HS5,HS5,HS5,0,80,,,,False
+1673,105,Hongqi,HS7,HS7,HS7,0,69,,,,False
+1522,105,Hongqi,Ousado,أوسادو,ئۆسادۆ,0,74,,,,False
+1143,106,Karry,Pickup,بيك اب,پیکاب,0,,,,,False
+1277,106,Karry,UU,UU,UU,0,,,,,False
+1239,107,Lifan,320,320,320,0,58,68,,,False
+1282,107,Lifan,520,520,520,0,,,,,False
+1151,107,Lifan,620,620,620,0,58,68,,,False
+1318,107,Lifan,Foison,فويسون,فۆیسۆن,0,61,,,,False
+1602,107,Lifan,X50,X50,X50,0,64,70,,,False
+1171,107,Lifan,X60,X60,X60,0,61,68,,,False
+1163,108,KAIYI,X3,X3,X3,0,,,,,False
+1513,108,KAIYI,X3 PRO,إكس 3 برو,ئێکس ٣ پڕۆ,0,72,,,,False
+1538,108,KAIYI,X7,X7,X7,0,72,,,,False
+1168,109,Saipa,131,131,131,0,31,,,,False
+1632,109,Saipa,132,132,132,0,57,,,,False
+1587,109,Saipa,141 DLX,141 DLX,141 DLX,0,44,,,,False
+1433,109,Saipa,151,151,151,0,61,,,,False
+1278,109,Saipa,Ario,أريو,ئاریۆ,0,,,,,False
+1496,109,Saipa,Saina,ساینا,ساینا,0,67,,,,False
+1166,109,Saipa,Tiba,طيبا,تیبا,0,59,,,,False
+1751,109,Saipa,Zamyad 24,زامیاد 24,زامیاد 24,0,20,76,,,False
+1536,111,Renault Samsung Motors,QM5,QM5,QM5,0,57,69,,,False
+1199,111,Renault Samsung Motors,QM6,QM6,QM6,0,66,,,,False
+1271,111,Renault Samsung Motors,SM3,SM3,SM3,0,52,,,,False
+1456,111,Renault Samsung Motors,SM5,SM5,SM5,0,48,69,,,False
+1201,111,Renault Samsung Motors,SM6,SM6,SM6,0,,,,,False
+1237,111,Renault Samsung Motors,SM7,SM7,SM7,0,,,,,False
+1234,111,Renault Samsung Motors,XM3,XM3,XM3,0,,,,,False
+1323,113,Daewoo,Cielo,سيلو,سیلۆ,0,44,47,,,False
+1312,113,Daewoo,Espero,اسبيرو,ئێسپێرۆ,0,40,49,,,False
+1361,113,Daewoo,Gentra,جينترا,جێنترا,0,55,,,,False
+1593,113,Daewoo,Gentra X,جينترا X,جێنترا X,0,58,61,,,False
+1640,113,Daewoo,Kalos,كالوس,کالۆس,0,52,58,,,False
+1295,113,Daewoo,Lacetti,لاسيتي,لەیسیتی,0,52,,,,False
+1420,113,Daewoo,Lanos,لانوس,لانۆس,0,47,52,,,False
+1417,113,Daewoo,Leganza,ليجانزا,لێگانزا,0,47,52,,,False
+1319,113,Daewoo,LeMans,ليمانس,لێمانس,0,36,66,,,False
+1403,113,Daewoo,Magnus,ماغنوس,ماگنۆس,0,50,56,,,False
+1777,113,Daewoo,Matiz,ماتيز,ماتیز,0,48,72,,,False
+1233,113,Daewoo,Nubira,نوبيرا,نوبیرا,0,47,,,,False
+1262,113,Daewoo,Prince,برنس,پرینس,0,40,48,,,False
+1492,113,Daewoo,Tacuma,تاكوما,تاکوما,0,50,61,,,False
+1723,113,Daewoo,Tosca,توسکا,تۆسکا,0,56,64,,,False
+1269,114,Iran Khodro,Arisun,أريسون,ئەریسون,0,65,,,,False
+1253,114,Iran Khodro,Dena,دينا,دێنا,0,66,,,,False
+1519,114,Iran Khodro,Runna,رونا,ڕونا,0,60,,,,False
+1256,114,Iran Khodro,Samand,سمند,سه مه ند,0,51,,,,False
+1268,114,Iran Khodro,Soren,سورين,سۆرێن,0,58,,,,False
+1708,114,Iran Khodro,Tara,تارا,تارا,0,71,,,,False
+1259,115,Ineos,Grenadier,غرينادير,گرینادیەر,0,72,,,,False
+1263,116,Zimmer,Golden Spirit,جولدين سبيريت,گۆڵدن سپیریت,0,28,,,,False
+1652,117,GAZ,69,69,69,0,3,22,,,False
+1284,117,GAZ,Volga,فولكا,ڤۆڵگا,0,,,,,False
+1736,118,Avatr,07,07,07,0,76,,,,False
+1446,118,Avatr,11,11,11,0,72,,,,False
+1308,118,Avatr,12,12,12,0,74,,,,False
+1327,119,XEV,Yoyo Pro,يويو برو,یۆیۆ پڕۆ,0,71,,,,False
+1367,120,Hafei,Minyi pickup,مينيي حمل,مینیی بارهەڵگر,0,53,,,,False
+1378,121,Jonway,A380,A380,A380,0,56,65,,,False
+1379,122,Jinbei,Haise,هايز,هەیس,0,41,80,,,False
+1395,122,Jinbei,Hercules,هرقل,هێرقل,0,56,66,,,False
+1387,123,Higer,H5F,H5F,H5F,0,54,,,,False
+1785,123,Higer,KLQ6798,KLQ6798,KLQ6798,0,67,76,,,False
+1543,123,Higer,KLQ6928,KLQ6928,KLQ6928,0,67,,,,False
+1415,125,Rox,01,01,01,0,76,,,,False
+1556,126,POER,COMMERCIAL,‎كوميرشيال,کۆمێرشال,0,69,,,,False
+998,126,POER,Double Cab,دبل كاب,دەبڵ کاب,0,69,,,,False
+1179,126,POER,KINGKONG,كينغ كونغ,کینگ کۆنگ,0,71,,,,False
+1465,126,POER,Single Cab,سنغل كاب,سینگڵ کاب,0,69,,,,False
+1192,127,ORA,Good Cat,جود كات,گود کات,0,70,,,,False
+1258,129,Polestar,Polestar 2,بولستار 2,پۆلستار 2,0,70,,,,False
+1639,130,Saturn,Ion,ايون,ئایۆن,0,53,57,,,False
+1491,130,Saturn,Vue,فيو,فیو,0,52,60,,,False
+1521,131,Lada,2106,2106,2106,0,26,56,,,False
+1770,131,Lada,Niva,نيفا,نيڤا,0,27,,,,False
+1790,132,Austin,12,12,12,0,75,77,,,False
+1528,132,Austin,A55 Cambridge,A55 كامبريدج,A55 کامبریج,0,7,11,,,False
+1752,132,Austin,Sprite,سبرايت,سپرایت,0,8,21,,,False
+1561,133,Huanghai,N1,N1,N1,0,64,,,,False
+1532,133,Huanghai,N1S,N1S,N1S,0,64,,,,False
+1549,135,Zyle Daewoo Commercial Vehicle,BS106,BS106,BS106,0,48,62,,,False
+1563,136,SWM Motors,G01 Pro,G01 برو,G01 پرۆ,0,68,,,,False
+1564,137,Dadi Auto,Smoothing,سموذينغ,سمووزینگ,0,56,62,,,False
+1569,138,Polarsun,Century,‎سينتشري,‎سێنچری,0,55,59,,,False
+1585,139,DFSK,E5 Plus,E5 بلس,E5 پڵەس,0,76,,,,False
+1594,140,Hyptec,HT,HT,HT,0,74,,,,False
+1608,141,CEVO Mobility,CEVO-C SE,CEVO-C SE,CEVO-C SE,0,69,,,,False
+1610,142,Roewe,i5,i5,i5,0,67,,,,False
+1615,143,Xiaomi,SU7,SU7,SU7,0,74,,,,False
+1758,144,Deepal,G318,G318,G318,0,76,,,,False
+1754,144,Deepal,S05,S05,S05,0,76,,,,False
+1627,144,Deepal,S07,S07,S07,0,74,,,,False
+1713,145,Vanderhall,Carmel,كارميل,کارمێل,0,69,,,,False
+1629,145,Vanderhall,Venice,فينيسيا,ڤینیسیا,0,67,,,,False
+1732,146,EXEED,Exlantix ES,إكسلانتيكس ES,ئێکسلانتیکس ES,0,74,,,,False
+1731,146,EXEED,Exlantix ET,إكسلانتيكس ET,ئێکسلانتیکس ET,0,76,,,,False
+1651,146,EXEED,LX,LX,LX,0,69,,,,False
+1715,146,EXEED,RX,RX,RX,0,72,,,,False
+1638,146,EXEED,VX,VX,VX,0,71,,,,False
+1641,147,BAW,F7 Pick up,بيك اب F7,پیکاب F7,0,74,,,,False
+1643,148,Wuling,Binguo,بینجو,بینگۆ,0,74,,,,False
+1645,149,IVECO,Daily,ديلي,دەیلی,0,28,,,,False
+1648,150,Morris,Minor,ماينر,ماينەر,0,77,21,,,False
+1665,151,DENZA,B5,B5,B5,0,80,,,,False
+1666,151,DENZA,B8,B8,B8,0,80,,,,False
+1663,152,YANGWANG,U8,U8,U8,0,74,,,,False
+1661,153,JMC,Grand Avenue,جراند افنو,گراند ئاڤینو,0,76,,,,False
+1709,154,Voyah,Courage,كورج,کۆرج,0,76,,,,False
+1707,154,Voyah,Dream,دريم,دريم,0,71,,,,False
+1706,154,Voyah,Free,فري,فری,0,71,,,,False
+1786,154,Voyah,Taishan,تايشان,تايشان,0,80,,,,False
+1670,155,MHERO,1,1,1,0,80,,,,False
+1671,155,MHERO,2,2,2,0,80,,,,False
+1767,156,Oldsmobile,Cutlass Ciera,کاتلس سیرا,کاتلس سیێرا,0,32,46,,,False
+1684,156,Oldsmobile,Delta 88,دیلتا 88,دێلتا 88,0,78,49,,,False
+1763,156,Oldsmobile,Silhouette,سيلهويت,سێلهۆیت,0,40,54,,,False
+1699,157,XPeng,P7,P7,P7,0,70,,,,False
+1738,160,Neta,L,L,L,0,76,80,,,False
+1746,161,Scion,iQ,iQ,iQ,0,58,65,,,False
+1766,161,Scion,tC,tC,tC,0,54,66,,,False
+1748,162,Kawasaki,MULE 3010,ميول 3010,میول 3010,0,38,,,,False
+1769,163,Hino,300 series,300 سيريس,300 سیریەس,0,51,,,,False
+1775,164,Forthing,Friday,فرايدي,فرایدەی,0,74,,,,False
+1776,164,Forthing,T5 EVO,T5 ايفو,T5 ئیڤۆ,0,70,,,,False
+1169,110,LYNK & CO,01,01,01,0,67,,,,False
+1657,110,LYNK & CO,900,900,900,0,80,,,,False

@@ -1,8 +1,9 @@
-import 'package:iq_motors/shared/widgets/app_cached_network_image.dart';
 import 'package:flutter/material.dart';
 
+import 'package:iq_motors/core/theme/app_theme.dart';
 import 'package:iq_motors/shared/data/dummy_brands.dart';
 import 'package:iq_motors/shared/models/car_brand.dart';
+import 'package:iq_motors/shared/widgets/brand_logo_image.dart';
 
 /// Horizontally scrollable brand logos for quick selection on home.
 class BrandHorizontalRow extends StatelessWidget {
@@ -16,11 +17,6 @@ class BrandHorizontalRow extends StatelessWidget {
   final String? selectedBrandId;
   final ValueChanged<CarBrand?> onBrandSelected;
   final VoidCallback? onViewAllTap;
-
-  static const Color _textPrimary = Color(0xFF1D1D1F);
-  static const Color _textSecondary = Color(0xFF86868B);
-  static const Color _fill = Color(0xFFE8E8ED);
-  static const Color _selectedRing = Color(0xFF1D1D1F);
 
   @override
   Widget build(BuildContext context) {
@@ -75,6 +71,7 @@ class _BrandChipState extends State<_BrandChip> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = context.colorScheme;
     return GestureDetector(
       onTapDown: (_) => setState(() => _pressed = true),
       onTapUp: (_) => setState(() => _pressed = false),
@@ -94,11 +91,11 @@ class _BrandChipState extends State<_BrandChip> {
                 width: 56,
                 height: 56,
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: colorScheme.surfaceContainerLowest,
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(
+                      color: colorScheme.shadow.withValues(
                         alpha: widget.isSelected ? 0.1 : 0.05,
                       ),
                       blurRadius: widget.isSelected ? 14 : 8,
@@ -107,35 +104,17 @@ class _BrandChipState extends State<_BrandChip> {
                   ],
                   border: Border.all(
                     color: widget.isSelected
-                        ? BrandHorizontalRow._selectedRing
-                        : BrandHorizontalRow._fill,
+                        ? colorScheme.onSurface
+                        : colorScheme.outlineVariant,
                     width: widget.isSelected ? 2 : 1,
                   ),
                 ),
                 child: ClipOval(
                   child: Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: AppCachedNetworkImage(
-                      imageUrl: widget.brand.logoUrl,
-                      fit: BoxFit.contain,
-                      memCacheLogicalWidth: 56,
-                      placeholder: (_, __) => const Center(
-                        child: SizedBox(
-                          width: 18,
-                          height: 18,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        ),
-                      ),
-                      errorWidget: (_, __, ___) => Center(
-                        child: Text(
-                          widget.brand.nameEnglish[0].toUpperCase(),
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                            color: BrandHorizontalRow._textSecondary,
-                          ),
-                        ),
-                      ),
+                    padding: const EdgeInsets.all(6),
+                    child: BrandLogoImage(
+                      brand: widget.brand,
+                      size: 44,
                     ),
                   ),
                 ),
@@ -146,13 +125,13 @@ class _BrandChipState extends State<_BrandChip> {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: context.textTheme.labelSmall?.copyWith(
                   fontSize: 11,
                   fontWeight:
                       widget.isSelected ? FontWeight.w600 : FontWeight.w500,
                   color: widget.isSelected
-                      ? BrandHorizontalRow._textPrimary
-                      : BrandHorizontalRow._textSecondary,
+                      ? colorScheme.onSurface
+                      : colorScheme.onSurfaceVariant,
                 ),
               ),
             ],
@@ -170,6 +149,7 @@ class _ViewAllChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = context.colorScheme;
     return GestureDetector(
       onTap: onTap,
       child: SizedBox(
@@ -181,22 +161,22 @@ class _ViewAllChip extends StatelessWidget {
               width: 56,
               height: 56,
               decoration: BoxDecoration(
-                color: BrandHorizontalRow._fill,
+                color: colorScheme.surfaceContainerHighest,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.apps_rounded,
                 size: 22,
-                color: BrandHorizontalRow._textSecondary,
+                color: colorScheme.onSurfaceVariant,
               ),
             ),
             const SizedBox(height: 6),
-            const Text(
+            Text(
               'هەموو',
-              style: TextStyle(
+              style: context.textTheme.labelSmall?.copyWith(
                 fontSize: 11,
                 fontWeight: FontWeight.w500,
-                color: BrandHorizontalRow._textSecondary,
+                color: colorScheme.onSurfaceVariant,
               ),
             ),
           ],

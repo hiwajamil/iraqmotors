@@ -1,0 +1,13 @@
+{
+  "make": "Tesla",
+  "models": [
+    "Model S",
+    "Roadster",
+    "Model X",
+    "Model 3",
+    "Model Y",
+    "Semi",
+    "Cybertruck",
+    "Cybercab"
+  ]
+}

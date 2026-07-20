@@ -1,0 +1,8 @@
+# Brand catalog constants intentionally use PascalCase (e.g. AudiModels).
+# Brand "9ff" cannot use a lower_case_with_underscores filename.
+include: ../../../../analysis_options.yaml
+
+linter:
+  rules:
+    constant_identifier_names: false
+    file_names: false

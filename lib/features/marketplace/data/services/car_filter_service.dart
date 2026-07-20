@@ -88,8 +88,7 @@ abstract final class CarFilterService {
   static bool matchesCar(Map<String, dynamic> car, HomeFilterState state) {
     final filters = state.filters;
 
-    if (state.brand != null &&
-        car['brandId']?.toString() != state.brand!.id) {
+    if (state.brand != null && car['brandId']?.toString() != state.brand!.id) {
       return false;
     }
 
@@ -171,7 +170,10 @@ abstract final class CarFilterService {
     return true;
   }
 
-  static bool _matchesYearRange(Map<String, dynamic> car, AdvancedFilterState filters) {
+  static bool _matchesYearRange(
+    Map<String, dynamic> car,
+    AdvancedFilterState filters,
+  ) {
     final year = int.tryParse(car['year']?.toString() ?? '');
     if (year == null) {
       return filters.fromYear == null && filters.toYear == null;
@@ -187,10 +189,11 @@ abstract final class CarFilterService {
   }
 
   static bool _matchesTrim(Map<String, dynamic> car, String trimKey) {
-    final expected = _trimKeyToStoredValue[trimKey];
-    if (expected == null) return true;
+    // Legacy generic keys map to stored values; otherwise the key is the
+    // catalogued trim name itself (e.g. 'XLE', 'GLI Limited').
+    final expected = _trimKeyToStoredValue[trimKey] ?? trimKey;
     final trim = car['trim']?.toString().trim().toLowerCase();
-    return trim == expected.toLowerCase();
+    return trim == expected.trim().toLowerCase();
   }
 
   static bool _matchesLocation(
@@ -205,6 +208,17 @@ abstract final class CarFilterService {
     }
 
     return false;
+  }
+
+  /// True when filters include fields applied only after the Firestore query.
+  static bool hasClientOnlyFilters(HomeFilterState state) {
+    final filters = state.filters;
+    return _hasPriceFilter(filters) ||
+        _hasMileageFilter(filters) ||
+        filters.fromYear != null ||
+        filters.toYear != null ||
+        filters.trimKey != null ||
+        !LocationKeys.isAllCountry(filters.selectedLocationKeys);
   }
 
   static bool _hasPriceFilter(AdvancedFilterState filters) =>
@@ -239,8 +253,12 @@ abstract final class CarFilterService {
       if (key == null) return;
       final keyMin = _minForPriceKey(key);
       final keyMax = _maxForPriceKey(key);
-      if (keyMin != null) min = min == null ? keyMin : (min! > keyMin ? min : keyMin);
-      if (keyMax != null) max = max == null ? keyMax : (max! < keyMax ? max : keyMax);
+      if (keyMin != null) {
+        min = min == null ? keyMin : (min! > keyMin ? min : keyMin);
+      }
+      if (keyMax != null) {
+        max = max == null ? keyMax : (max! < keyMax ? max : keyMax);
+      }
     }
 
     applyKey(filters.minPriceKey);
@@ -258,8 +276,12 @@ abstract final class CarFilterService {
       if (key == null) return;
       final keyMin = _minForMileageKey(key);
       final keyMax = _maxForMileageKey(key);
-      if (keyMin != null) min = min == null ? keyMin : (min! > keyMin ? min : keyMin);
-      if (keyMax != null) max = max == null ? keyMax : (max! < keyMax ? max : keyMax);
+      if (keyMin != null) {
+        min = min == null ? keyMin : (min! > keyMin ? min : keyMin);
+      }
+      if (keyMax != null) {
+        max = max == null ? keyMax : (max! < keyMax ? max : keyMax);
+      }
     }
 
     applyKey(filters.minMileageKey);
@@ -270,29 +292,29 @@ abstract final class CarFilterService {
   }
 
   static num? _minForPriceKey(String key) => switch (key) {
-        FilterOptionKeys.price100kPlus => 100000,
-        _ => null,
-      };
+    FilterOptionKeys.price100kPlus => 100000,
+    _ => null,
+  };
 
   static num? _maxForPriceKey(String key) => switch (key) {
-        FilterOptionKeys.price20k => 20000,
-        FilterOptionKeys.price50k => 50000,
-        FilterOptionKeys.price100k => 100000,
-        _ => null,
-      };
+    FilterOptionKeys.price20k => 20000,
+    FilterOptionKeys.price50k => 50000,
+    FilterOptionKeys.price100k => 100000,
+    _ => null,
+  };
 
   static num? _minForMileageKey(String key) => switch (key) {
-        FilterOptionKeys.mileage100kPlus => 100000,
-        _ => null,
-      };
+    FilterOptionKeys.mileage100kPlus => 100000,
+    _ => null,
+  };
 
   static num? _maxForMileageKey(String key) => switch (key) {
-        FilterOptionKeys.mileage0 => 0,
-        FilterOptionKeys.mileage10k => 10000,
-        FilterOptionKeys.mileage50k => 50000,
-        FilterOptionKeys.mileage100k => 100000,
-        _ => null,
-      };
+    FilterOptionKeys.mileage0 => 0,
+    FilterOptionKeys.mileage10k => 10000,
+    FilterOptionKeys.mileage50k => 50000,
+    FilterOptionKeys.mileage100k => 100000,
+    _ => null,
+  };
 
   static num? _coerceNum(dynamic value) {
     if (value == null) return null;

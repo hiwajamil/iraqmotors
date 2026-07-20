@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:iq_motors/core/localization/l10n_extensions.dart';
+import 'package:iq_motors/core/theme/app_theme.dart';
 import 'package:iq_motors/features/marketplace/presentation/providers/favorites_provider.dart';
 import 'package:iq_motors/features/marketplace/presentation/providers/filter_providers.dart';
 import 'package:iq_motors/features/marketplace/data/services/car_database_service.dart';
@@ -53,6 +54,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
       end: Offset.zero,
     ).animate(CurvedAnimation(parent: _heroController, curve: Curves.easeOut));
     _heroController.forward();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      precacheImage(
+        const AssetImage(HomeHeroSection.heroBackgroundAsset),
+        context,
+      );
+    });
   }
 
   int _rowsPerPage(double width) {
@@ -96,7 +105,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   List<Widget> _listingSlivers({
     required BuildContext context,
     required AsyncValue<List<Map<String, dynamic>>> activeAds,
-    required Set<String> favoriteIds,
     required double width,
     required bool isWide,
     required double hPadding,
@@ -127,9 +135,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               child: Text(
                 l10n.homeFeedLoadError,
                 textAlign: TextAlign.center,
-                style: const TextStyle(
+                style: context.textTheme.bodyMedium?.copyWith(
                   fontSize: 15,
-                  color: HomeScreenColors.textSecondary,
+                  color: HomeScreenColors.textSecondary(context),
                 ),
               ),
             ),
@@ -165,10 +173,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 title: l10n.homeAvailableListings,
                 trailing: Text(
                   '${cars.length}',
-                  style: const TextStyle(
+                  style: context.textTheme.titleSmall?.copyWith(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
-                    color: HomeScreenColors.textSecondary,
+                    color: HomeScreenColors.textSecondary(context),
                   ),
                 ),
               ),
@@ -191,11 +199,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                     key: ValueKey(carId ?? 'car-$index'),
                     car: car,
                     compact: !isWide,
-                    animationDelay: kIsWeb && isWide
-                        ? Duration(milliseconds: 100 * (index + 1))
-                        : Duration.zero,
-                    isWishlisted:
-                        carId != null && favoriteIds.contains(carId),
                     onTap: () {
                       Navigator.of(context).push(
                         MaterialPageRoute<void>(
@@ -209,6 +212,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                   );
                 },
                 childCount: pageCars.length,
+                addRepaintBoundaries: true,
+                addAutomaticKeepAlives: false,
                 findChildIndexCallback: (Key key) {
                   if (key is! ValueKey<String>) return null;
                   final id = key.value;
@@ -239,16 +244,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     super.dispose();
   }
 
-  Future<void> _openAdvancedFilter(
-    BuildContext context,
-    int resultCount,
-  ) async {
+  Future<void> _openAdvancedFilter(BuildContext context) async {
     final filterState = ref.read(filterStateProvider);
     final result = await AdvancedFilterScreen.show(
       context,
       initialFilters: filterState.filters,
       initialBrand: filterState.brand,
-      resultCount: resultCount,
     );
     if (result == null || !mounted) return;
     ref.read(filterStateProvider.notifier).applyAdvancedFilterResult(result);
@@ -279,7 +280,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         crossAxisCount: 2,
         mainAxisSpacing: 10,
         crossAxisSpacing: 10,
-        childAspectRatio: 0.76,
+        childAspectRatio: 0.72,
       );
     }
     return SliverGridDelegateWithFixedCrossAxisCount(
@@ -318,7 +319,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         SnackBar(
           content: Text(e.message),
           behavior: SnackBarBehavior.floating,
-          backgroundColor: const Color(0xFFFF3B30),
+          backgroundColor: context.colorScheme.error,
         ),
       );
     }
@@ -328,7 +329,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final navLinks = [l10n.navAllModels, l10n.navTuning, l10n.navShowrooms];
-    final favoriteIds = ref.watch(favoritesProvider);
     final filterState = ref.watch(filterStateProvider);
     ref.listen(filterStateProvider, (_, __) {
       if (_currentPage != 1 && mounted) {
@@ -337,10 +337,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     });
     final filterNotifier = ref.read(filterStateProvider.notifier);
     final homeCars = ref.watch(homeCarsProvider);
-    final cars = homeCars.value ?? const <Map<String, dynamic>>[];
 
     return Scaffold(
-      backgroundColor: HomeScreenColors.background,
+      backgroundColor: HomeScreenColors.background(context),
       extendBodyBehindAppBar: true,
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(HomeGlassNavBar.heightOf(context)),
@@ -393,7 +392,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                         filterValues: filterState.filters,
                         showAdvancedFilter: filterState.showAdvancedFilter,
                         onAdvancedSearchToggle: () =>
-                            _openAdvancedFilter(context, cars.length),
+                            _openAdvancedFilter(context),
                         onBrandSelected: (brand) {
                           filterNotifier.setBrand(brand);
                           if (brand != null) {
@@ -411,8 +410,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                           }
                         },
                         onClearFilters: filterNotifier.clearFilters,
-                        onShowResults: () {},
-                        resultCount: cars.length,
+                        onShowResults: filterNotifier.collapseAdvancedFilter,
                         onViewAllBrands: () async {
                           final brand =
                               await BrandSearchSheet.show(context);
@@ -425,13 +423,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                   ),
                 ),
                 HomeRecommendedSection(
-                  favoriteIds: favoriteIds,
                   onWishlistTap: _onWishlistTap,
                 ),
                 ..._listingSlivers(
                   context: context,
                   activeAds: homeCars,
-                  favoriteIds: favoriteIds,
                   width: width,
                   isWide: isWide,
                   hPadding: hPadding,

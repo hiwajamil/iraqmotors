@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'package:iq_motors/features/listings/presentation/add_car_theme.dart';
-
-/// White rounded card used for form sections in the Add Car wizard.
+/// Rounded card used for form sections in the Add Car wizard.
+///
+/// Backed by the app's [CardThemeData] (shape/color/elevation), so it always
+/// matches the current Material 3 theme without hardcoded styling here.
 class AddCarFormCard extends StatelessWidget {
   const AddCarFormCard({
     super.key,
@@ -15,11 +16,12 @@ class AddCarFormCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: padding,
-      decoration: AddCarTheme.cardDecoration(),
-      child: child,
+    return Card(
+      margin: EdgeInsets.zero,
+      child: Padding(
+        padding: padding,
+        child: SizedBox(width: double.infinity, child: child),
+      ),
     );
   }
 }

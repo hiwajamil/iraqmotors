@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 
-/// Shared colors for the home / explore screen.
+import 'package:iq_motors/core/theme/app_theme.dart';
+
+/// Shared M3 colors for the home / explore screen.
 abstract final class HomeScreenColors {
-  static const Color background = Color(0xFFF5F5F7);
-  static const Color textPrimary = Color(0xFF1D1D1F);
-  static const Color textSecondary = Color(0xFF86868B);
+  static Color background(BuildContext context) => context.colorScheme.surface;
+
+  static Color textPrimary(BuildContext context) =>
+      context.colorScheme.onSurface;
+
+  static Color textSecondary(BuildContext context) =>
+      context.colorScheme.onSurfaceVariant;
 }
 
 /// Section heading used above brand strip and listing grid on mobile.
@@ -21,18 +27,15 @@ class HomeSectionTitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 12),
+      padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 12),
       child: Row(
         children: [
           Expanded(
             child: Text(
               title,
-              style: const TextStyle(
-                fontSize: 20,
+              style: context.textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.w700,
-                letterSpacing: -0.4,
-                height: 1.2,
-                color: HomeScreenColors.textPrimary,
+                color: context.colorScheme.onSurface,
               ),
             ),
           ),

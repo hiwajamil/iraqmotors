@@ -1,10 +1,14 @@
+import 'dart:async';
+
 import 'package:iq_motors/shared/widgets/app_cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:iq_motors/core/localization/filter_l10n.dart';
 import 'package:iq_motors/core/localization/l10n_extensions.dart';
+import 'package:iq_motors/core/theme/app_theme.dart';
 import 'package:iq_motors/shared/data/car_models_by_brand.dart';
+import 'package:iq_motors/shared/data/car_trims_by_model.dart';
 import 'package:iq_motors/shared/data/dummy_brands.dart';
 import 'package:iq_motors/l10n/app_localizations.dart';
 import 'package:iq_motors/features/marketplace/domain/models/advanced_filter_state.dart';
@@ -21,18 +25,15 @@ class AdvancedFilterScreen extends ConsumerStatefulWidget {
     super.key,
     required this.initialFilters,
     this.initialBrand,
-    this.resultCount = 12928,
   });
 
   final AdvancedFilterState initialFilters;
   final CarBrand? initialBrand;
-  final int resultCount;
 
   static Future<AdvancedFilterResult?> show(
     BuildContext context, {
     required AdvancedFilterState initialFilters,
     CarBrand? initialBrand,
-    int resultCount = 12928,
   }) {
     return Navigator.of(context).push<AdvancedFilterResult>(
       MaterialPageRoute(
@@ -40,7 +41,6 @@ class AdvancedFilterScreen extends ConsumerStatefulWidget {
         builder: (_) => AdvancedFilterScreen(
           initialFilters: initialFilters,
           initialBrand: initialBrand,
-          resultCount: resultCount,
         ),
       ),
     );
@@ -52,10 +52,6 @@ class AdvancedFilterScreen extends ConsumerStatefulWidget {
 }
 
 class _AdvancedFilterScreenState extends ConsumerState<AdvancedFilterScreen> {
-  static const Color _background = Color(0xFFF5F5F7);
-  static const Color _textPrimary = Color(0xFF1D1D1F);
-  static const Color _textSecondary = Color(0xFF86868B);
-
   static const List<String> _years = [
     FilterOptionKeys.allYears,
     '2026',
@@ -84,13 +80,6 @@ class _AdvancedFilterScreenState extends ConsumerState<AdvancedFilterScreen> {
     FilterOptionKeys.mileage50k,
     FilterOptionKeys.mileage100k,
     FilterOptionKeys.mileage100kPlus,
-  ];
-
-  static const List<String> _trimKeys = [
-    FilterOptionKeys.all,
-    FilterOptionKeys.trimBase,
-    FilterOptionKeys.trimSport,
-    FilterOptionKeys.trimLuxury,
   ];
 
   static const List<String> _plateTypeKeys = [
@@ -146,21 +135,77 @@ class _AdvancedFilterScreenState extends ConsumerState<AdvancedFilterScreen> {
 
   late AdvancedFilterState _filters;
   CarBrand? _selectedBrand;
+  int _previewCount = 0;
+  bool _previewCountApproximate = false;
+  Timer? _previewCountTimer;
+  int _previewCountRequestId = 0;
 
   @override
   void initState() {
     super.initState();
     _filters = widget.initialFilters;
     _selectedBrand = widget.initialBrand;
+    _previewCountApproximate =
+        CarFilterService.hasClientOnlyFilters(_homeFilterState);
+    _schedulePreviewCountRefresh();
+  }
+
+  @override
+  void dispose() {
+    _previewCountTimer?.cancel();
+    super.dispose();
+  }
+
+  HomeFilterState get _homeFilterState => HomeFilterState(
+        brand: _selectedBrand,
+        filters: _filters,
+      );
+
+  void _schedulePreviewCountRefresh() {
+    _previewCountTimer?.cancel();
+    _previewCountTimer = Timer(const Duration(milliseconds: 250), () {
+      unawaited(_refreshPreviewCount());
+    });
+  }
+
+  Future<void> _refreshPreviewCount() async {
+    final requestId = ++_previewCountRequestId;
+    final homeFilter = _homeFilterState;
+    final query = CarFilterService.toFirestoreQuery(homeFilter);
+
+    try {
+      final count = await ref
+          .read(carDatabaseServiceProvider)
+          .countFilteredActiveCars(query);
+      if (!mounted || requestId != _previewCountRequestId) return;
+      setState(() {
+        _previewCount = count;
+        _previewCountApproximate =
+            CarFilterService.hasClientOnlyFilters(homeFilter);
+      });
+    } catch (_) {
+      // Keep last known count on failure.
+    }
+  }
+
+  void _mutateFilters(VoidCallback mutate) {
+    setState(() {
+      mutate();
+      _previewCountApproximate =
+          CarFilterService.hasClientOnlyFilters(_homeFilterState);
+    });
+    _schedulePreviewCountRefresh();
   }
 
   String _formatCount(AppLocalizations l10n, int n) {
-    if (l10n.localeName.startsWith('en')) return n.toString();
+    final prefix = _previewCountApproximate ? '~' : '';
+    if (l10n.localeName.startsWith('en')) return '$prefix$n';
     const eastern = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
-    return n.toString().split('').map((d) {
+    final digits = n.toString().split('').map((d) {
       final i = int.tryParse(d);
       return i == null ? d : eastern[i];
     }).join();
+    return '$prefix$digits';
   }
 
   String _yearLabel(AppLocalizations l10n, String key) =>
@@ -173,8 +218,23 @@ class _AdvancedFilterScreenState extends ConsumerState<AdvancedFilterScreen> {
         key;
   }
 
+  /// Trim options for the selected brand + model from the catalog database.
+  List<String> _catalogTrimKeys() {
+    final trims = CarTrimsByModel.trimsFor(
+      _selectedBrand?.id,
+      _filters.modelKey,
+    );
+    if (trims.isEmpty) return const [FilterOptionKeys.all];
+    return [FilterOptionKeys.all, ...trims];
+  }
+
+  String _trimLabel(AppLocalizations l10n, String key) {
+    if (key == FilterOptionKeys.all) return l10n.filterAll;
+    return FilterL10n.trimLabel(l10n, key);
+  }
+
   void _updateBrand(CarBrand? brand) {
-    setState(() {
+    _mutateFilters(() {
       _selectedBrand = brand;
       if (brand == null) {
         _filters = _filters.copyWith(clearModel: true, clearTrim: true);
@@ -189,14 +249,14 @@ class _AdvancedFilterScreenState extends ConsumerState<AdvancedFilterScreen> {
   }
 
   void _resetAll() {
-    setState(() {
+    _mutateFilters(() {
       _selectedBrand = null;
       _filters = _filters.cleared();
     });
   }
 
   void _clearFilters() {
-    setState(() => _filters = _filters.cleared());
+    _mutateFilters(() => _filters = _filters.cleared());
   }
 
   void _apply() {
@@ -248,11 +308,6 @@ class _AdvancedFilterScreenState extends ConsumerState<AdvancedFilterScreen> {
     final l10n = context.l10n;
     final languageCode = Localizations.localeOf(context).languageCode;
     final bottomInset = MediaQuery.paddingOf(context).bottom;
-    final allCars = ref.watch(activeAdsProvider).value ?? const [];
-    final previewCount = CarFilterService.applyClientFilters(
-      allCars,
-      HomeFilterState(brand: _selectedBrand, filters: _filters),
-    ).length;
     final modelOptionKeys =
         CarModelsByBrand.modelOptionKeysForBrand(_selectedBrand);
     final modelPickerEnabled = _selectedBrand != null &&
@@ -264,6 +319,9 @@ class _AdvancedFilterScreenState extends ConsumerState<AdvancedFilterScreen> {
             ) ??
             _filters.modelKey
         : _filters.modelKey;
+    final trimOptionKeys = _catalogTrimKeys();
+    final trimPickerEnabled =
+        _filters.modelKey != null && trimOptionKeys.length > 1;
 
     final plateCityKeys = [
       FilterOptionKeys.all,
@@ -271,7 +329,7 @@ class _AdvancedFilterScreenState extends ConsumerState<AdvancedFilterScreen> {
     ];
 
     return Scaffold(
-      backgroundColor: _background,
+      backgroundColor: context.colorScheme.surface,
       body: SafeArea(
         bottom: false,
         child: Column(
@@ -329,7 +387,7 @@ class _AdvancedFilterScreenState extends ConsumerState<AdvancedFilterScreen> {
                                             ) ??
                                             key
                                         : key);
-                            setState(() {
+                            _mutateFilters(() {
                               _filters = _filters.copyWith(
                                 modelKey: storedKey,
                                 clearModel:
@@ -343,18 +401,18 @@ class _AdvancedFilterScreenState extends ConsumerState<AdvancedFilterScreen> {
                       right: _FilterDropdownField(
                         label: l10n.filterTrim,
                         selectedLabel: _filters.trimKey != null
-                            ? FilterL10n.trimLabel(l10n, _filters.trimKey!)
+                            ? _trimLabel(l10n, _filters.trimKey!)
                             : null,
                         placeholder: l10n.filterTrim,
-                        enabled: _filters.modelKey != null,
+                        enabled: trimPickerEnabled,
                         onTap: () => _openPicker(
                           title: l10n.filterTrim,
-                          optionKeys: _trimKeys,
-                          resolveLabel: (key) => key == FilterOptionKeys.all
-                              ? l10n.filterAll
-                              : FilterL10n.trimLabel(l10n, key),
+                          searchHint: l10n.filterTrim,
+                          searchable: true,
+                          optionKeys: trimOptionKeys,
+                          resolveLabel: (key) => _trimLabel(l10n, key),
                           valueKey: _filters.trimKey,
-                          onSelected: (key) => setState(() {
+                          onSelected: (key) => _mutateFilters(() {
                             _filters = _filters.copyWith(
                               trimKey:
                                   key == FilterOptionKeys.all ? null : key,
@@ -375,7 +433,7 @@ class _AdvancedFilterScreenState extends ConsumerState<AdvancedFilterScreen> {
                           optionKeys: _years,
                           resolveLabel: (key) => _yearLabel(l10n, key),
                           valueKey: _filters.fromYear,
-                          onSelected: (key) => setState(() {
+                          onSelected: (key) => _mutateFilters(() {
                             _filters = _filters.copyWith(
                               fromYear:
                                   key == FilterOptionKeys.allYears ? null : key,
@@ -393,7 +451,7 @@ class _AdvancedFilterScreenState extends ConsumerState<AdvancedFilterScreen> {
                           optionKeys: _years,
                           resolveLabel: (key) => _yearLabel(l10n, key),
                           valueKey: _filters.toYear,
-                          onSelected: (key) => setState(() {
+                          onSelected: (key) => _mutateFilters(() {
                             _filters = _filters.copyWith(
                               toYear:
                                   key == FilterOptionKeys.allYears ? null : key,
@@ -416,7 +474,7 @@ class _AdvancedFilterScreenState extends ConsumerState<AdvancedFilterScreen> {
                           optionKeys: _priceKeys,
                           resolveLabel: (key) => FilterL10n.priceLabel(l10n, key),
                           valueKey: _filters.minPriceKey,
-                          onSelected: (key) => setState(() {
+                          onSelected: (key) => _mutateFilters(() {
                             _filters = _filters.copyWith(
                               minPriceKey:
                                   key == FilterOptionKeys.allPrices ? null : key,
@@ -436,7 +494,7 @@ class _AdvancedFilterScreenState extends ConsumerState<AdvancedFilterScreen> {
                           optionKeys: _priceKeys,
                           resolveLabel: (key) => FilterL10n.priceLabel(l10n, key),
                           valueKey: _filters.maxPriceKey,
-                          onSelected: (key) => setState(() {
+                          onSelected: (key) => _mutateFilters(() {
                             _filters = _filters.copyWith(
                               maxPriceKey:
                                   key == FilterOptionKeys.allPrices ? null : key,
@@ -463,7 +521,7 @@ class _AdvancedFilterScreenState extends ConsumerState<AdvancedFilterScreen> {
                           resolveLabel: (key) =>
                               FilterL10n.mileageLabel(l10n, key),
                           valueKey: _filters.minMileageKey,
-                          onSelected: (key) => setState(() {
+                          onSelected: (key) => _mutateFilters(() {
                             _filters = _filters.copyWith(
                               minMileageKey: key == FilterOptionKeys.allMileages
                                   ? null
@@ -489,7 +547,7 @@ class _AdvancedFilterScreenState extends ConsumerState<AdvancedFilterScreen> {
                           resolveLabel: (key) =>
                               FilterL10n.mileageLabel(l10n, key),
                           valueKey: _filters.maxMileageKey,
-                          onSelected: (key) => setState(() {
+                          onSelected: (key) => _mutateFilters(() {
                             _filters = _filters.copyWith(
                               maxMileageKey: key == FilterOptionKeys.allMileages
                                   ? null
@@ -519,7 +577,7 @@ class _AdvancedFilterScreenState extends ConsumerState<AdvancedFilterScreen> {
                               ? l10n.filterAll
                               : FilterL10n.locationLabel(l10n, key),
                           valueKey: _filters.plateCityKey,
-                          onSelected: (key) => setState(() {
+                          onSelected: (key) => _mutateFilters(() {
                             _filters = _filters.copyWith(
                               plateCityKey:
                                   key == FilterOptionKeys.all ? null : key,
@@ -544,7 +602,7 @@ class _AdvancedFilterScreenState extends ConsumerState<AdvancedFilterScreen> {
                               ? l10n.filterAll
                               : FilterL10n.plateTypeLabel(l10n, key),
                           valueKey: _filters.plateTypeKey,
-                          onSelected: (key) => setState(() {
+                          onSelected: (key) => _mutateFilters(() {
                             _filters = _filters.copyWith(
                               plateTypeKey:
                                   key == FilterOptionKeys.all ? null : key,
@@ -571,7 +629,7 @@ class _AdvancedFilterScreenState extends ConsumerState<AdvancedFilterScreen> {
                       ],
                       selectedKey:
                           _filters.conditionKey ?? FilterOptionKeys.all,
-                      onSelected: (key) => setState(() {
+                      onSelected: (key) => _mutateFilters(() {
                         _filters = _filters.copyWith(
                           conditionKey:
                               key == FilterOptionKeys.all ? null : key,
@@ -596,7 +654,7 @@ class _AdvancedFilterScreenState extends ConsumerState<AdvancedFilterScreen> {
                           resolveLabel: (key) =>
                               FilterL10n.engineSizeLabel(l10n, key),
                           valueKey: _filters.engineSizeKey,
-                          onSelected: (key) => setState(() {
+                          onSelected: (key) => _mutateFilters(() {
                             _filters = _filters.copyWith(
                               engineSizeKey:
                                   key == FilterOptionKeys.all ? null : key,
@@ -620,7 +678,7 @@ class _AdvancedFilterScreenState extends ConsumerState<AdvancedFilterScreen> {
                           resolveLabel: (key) =>
                               FilterL10n.cylindersLabel(l10n, key),
                           valueKey: _filters.cylindersKey,
-                          onSelected: (key) => setState(() {
+                          onSelected: (key) => _mutateFilters(() {
                             _filters = _filters.copyWith(
                               cylindersKey:
                                   key == FilterOptionKeys.all ? null : key,
@@ -640,7 +698,6 @@ class _AdvancedFilterScreenState extends ConsumerState<AdvancedFilterScreen> {
                             )
                           : null,
                       placeholder: l10n.filterImportCountry,
-                      fullWidth: true,
                       onTap: () => _openPicker(
                         title: l10n.filterImportCountry,
                         optionKeys: _importCountryKeys,
@@ -648,7 +705,7 @@ class _AdvancedFilterScreenState extends ConsumerState<AdvancedFilterScreen> {
                             ? l10n.filterAll
                             : FilterL10n.importCountryLabel(l10n, key),
                         valueKey: _filters.importCountryKey,
-                        onSelected: (key) => setState(() {
+                        onSelected: (key) => _mutateFilters(() {
                           _filters = _filters.copyWith(
                             importCountryKey:
                                 key == FilterOptionKeys.all ? null : key,
@@ -663,7 +720,7 @@ class _AdvancedFilterScreenState extends ConsumerState<AdvancedFilterScreen> {
                     _ColorSwatchRow(
                       colorKeys: _colorKeys,
                       selectedKey: _filters.colorKey,
-                      onSelected: (key) => setState(() {
+                      onSelected: (key) => _mutateFilters(() {
                         _filters = _filters.copyWith(
                           colorKey: key,
                           clearColor: key == null,
@@ -682,7 +739,7 @@ class _AdvancedFilterScreenState extends ConsumerState<AdvancedFilterScreen> {
                         FilterOptionKeys.engineEv => Icons.electric_bolt_outlined,
                         _ => Icons.local_gas_station_outlined,
                       },
-                      onSelected: (key) => setState(() {
+                      onSelected: (key) => _mutateFilters(() {
                         _filters = _filters.copyWith(
                           engineKey: _filters.engineKey == key ? null : key,
                           clearEngine: _filters.engineKey == key,
@@ -706,7 +763,7 @@ class _AdvancedFilterScreenState extends ConsumerState<AdvancedFilterScreen> {
                       ],
                       selectedKey:
                           _filters.transmissionKey ?? FilterOptionKeys.all,
-                      onSelected: (key) => setState(() {
+                      onSelected: (key) => _mutateFilters(() {
                         _filters = _filters.copyWith(
                           transmissionKey:
                               key == FilterOptionKeys.all ? null : key,
@@ -730,7 +787,7 @@ class _AdvancedFilterScreenState extends ConsumerState<AdvancedFilterScreen> {
                           .toList(),
                       selectedKey:
                           _filters.seatMaterialKey ?? FilterOptionKeys.all,
-                      onSelected: (key) => setState(() {
+                      onSelected: (key) => _mutateFilters(() {
                         _filters = _filters.copyWith(
                           seatMaterialKey:
                               key == FilterOptionKeys.all ? null : key,
@@ -747,7 +804,7 @@ class _AdvancedFilterScreenState extends ConsumerState<AdvancedFilterScreen> {
               bottomInset: bottomInset,
               clearLabel: l10n.clearFilters,
               showLabel: l10n.filterShowResults(
-                _formatCount(l10n, previewCount),
+                _formatCount(l10n, _previewCount),
               ),
               onClear: _clearFilters,
               onShow: _apply,
@@ -774,6 +831,7 @@ class _ScreenHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = context.colorScheme;
     return Padding(
       padding: const EdgeInsetsDirectional.fromSTEB(8, 4, 8, 8),
       child: Row(
@@ -781,17 +839,16 @@ class _ScreenHeader extends StatelessWidget {
           IconButton(
             onPressed: onReset,
             icon: const Icon(Icons.restart_alt_rounded),
-            color: _AdvancedFilterScreenState._textSecondary,
+            color: colorScheme.onSurfaceVariant,
             tooltip: resetLabel,
           ),
           Expanded(
             child: Text(
               title,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 18,
+              style: context.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.w700,
-                color: _AdvancedFilterScreenState._textPrimary,
+                color: colorScheme.onSurface,
                 letterSpacing: -0.3,
               ),
             ),
@@ -799,7 +856,7 @@ class _ScreenHeader extends StatelessWidget {
           IconButton(
             onPressed: onBack,
             icon: const Icon(Icons.arrow_forward_ios_rounded, size: 20),
-            color: _AdvancedFilterScreenState._textPrimary,
+            color: colorScheme.onSurface,
           ),
         ],
       ),
@@ -816,10 +873,9 @@ class _FilterSectionLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       label,
-      style: const TextStyle(
-        fontSize: 15,
+      style: context.textTheme.bodyMedium?.copyWith(
         fontWeight: FontWeight.w600,
-        color: _AdvancedFilterScreenState._textPrimary,
+        color: context.colorScheme.onSurface,
         letterSpacing: -0.2,
       ),
     );
@@ -875,43 +931,35 @@ class _BrandSquareCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        width: 72,
-        height: 72,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          shape: BoxShape.circle,
-          border: Border.all(
-            color: isSelected
-                ? _AdvancedFilterScreenState._textPrimary
-                : Colors.grey.shade300,
+    final colorScheme = context.colorScheme;
+    return IconButton(
+      onPressed: onTap,
+      padding: EdgeInsets.zero,
+      style: IconButton.styleFrom(
+        backgroundColor: colorScheme.surfaceContainerLowest,
+        fixedSize: const Size(72, 72),
+        elevation: isSelected ? 2 : 1,
+        shadowColor: colorScheme.shadow,
+        shape: CircleBorder(
+          side: BorderSide(
+            color: isSelected ? colorScheme.onSurface : colorScheme.outlineVariant,
             width: isSelected ? 2 : 1,
           ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: isSelected ? 0.08 : 0.04),
-              blurRadius: isSelected ? 12 : 6,
-              offset: const Offset(0, 3),
-            ),
-          ],
         ),
-        child: ClipOval(
-          child: Padding(
-            padding: const EdgeInsets.all(10),
-            child: AppCachedNetworkImage(
-              imageUrl: brand.logoUrl,
-              fit: BoxFit.contain,
-              memCacheLogicalWidth: 52,
-              errorWidget: (_, __, ___) => Center(
-                child: Text(
-                  brand.nameEnglish[0],
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w700,
-                    color: _AdvancedFilterScreenState._textSecondary,
-                  ),
+      ),
+      icon: ClipOval(
+        child: Padding(
+          padding: const EdgeInsets.all(10),
+          child: AppCachedNetworkImage(
+            imageUrl: brand.logoUrl,
+            fit: BoxFit.contain,
+            memCacheLogicalWidth: 52,
+            errorWidget: (_, __, ___) => Center(
+              child: Text(
+                brand.nameEnglish[0],
+                style: context.textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: colorScheme.onSurfaceVariant,
                 ),
               ),
             ),
@@ -929,21 +977,19 @@ class _ViewAllBrandCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 72,
-        height: 72,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          shape: BoxShape.circle,
-          border: Border.all(color: Colors.grey.shade300),
-        ),
-        child: const Icon(
-          Icons.apps_rounded,
-          color: _AdvancedFilterScreenState._textSecondary,
+    final colorScheme = context.colorScheme;
+    return IconButton(
+      onPressed: onTap,
+      padding: EdgeInsets.zero,
+      style: IconButton.styleFrom(
+        backgroundColor: colorScheme.surfaceContainerLowest,
+        foregroundColor: colorScheme.onSurfaceVariant,
+        fixedSize: const Size(72, 72),
+        shape: CircleBorder(
+          side: BorderSide(color: colorScheme.outlineVariant),
         ),
       ),
+      icon: const Icon(Icons.apps_rounded),
     );
   }
 }
@@ -966,14 +1012,13 @@ class _DropdownPair extends StatelessWidget {
   }
 }
 
-class _FilterDropdownField extends StatefulWidget {
+class _FilterDropdownField extends StatelessWidget {
   const _FilterDropdownField({
     required this.label,
     required this.onTap,
     this.selectedLabel,
     required this.placeholder,
     this.enabled = true,
-    this.fullWidth = false,
   });
 
   final String label;
@@ -981,82 +1026,62 @@ class _FilterDropdownField extends StatefulWidget {
   final String placeholder;
   final VoidCallback onTap;
   final bool enabled;
-  final bool fullWidth;
-
-  @override
-  State<_FilterDropdownField> createState() => _FilterDropdownFieldState();
-}
-
-class _FilterDropdownFieldState extends State<_FilterDropdownField> {
-  bool _pressed = false;
 
   @override
   Widget build(BuildContext context) {
-    final hasValue = widget.selectedLabel != null;
-    final textColor = widget.enabled
-        ? (hasValue
-            ? _AdvancedFilterScreenState._textPrimary
-            : _AdvancedFilterScreenState._textSecondary)
-        : _AdvancedFilterScreenState._textSecondary.withValues(alpha: 0.5);
+    final colorScheme = context.colorScheme;
+    final textTheme = context.textTheme;
+    final hasValue = selectedLabel != null;
+    final textColor = enabled
+        ? (hasValue ? colorScheme.onSurface : colorScheme.onSurfaceVariant)
+        : colorScheme.onSurfaceVariant.withValues(alpha: 0.5);
 
-    final field = GestureDetector(
-      onTapDown: widget.enabled ? (_) => setState(() => _pressed = true) : null,
-      onTapUp: widget.enabled ? (_) => setState(() => _pressed = false) : null,
-      onTapCancel:
-          widget.enabled ? () => setState(() => _pressed = false) : null,
-      onTap: widget.enabled ? widget.onTap : null,
-      child: AnimatedScale(
-        scale: _pressed ? 0.98 : 1,
-        duration: const Duration(milliseconds: 100),
-        child: Container(
-          padding: const EdgeInsetsDirectional.fromSTEB(14, 12, 10, 12),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.grey.shade300),
+    return OutlinedButton(
+      onPressed: enabled ? onTap : null,
+      style: OutlinedButton.styleFrom(
+        alignment: AlignmentDirectional.centerStart,
+        backgroundColor: colorScheme.surfaceContainerLowest,
+        side: BorderSide(color: colorScheme.outlineVariant),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        padding: const EdgeInsetsDirectional.fromSTEB(14, 12, 10, 12),
+        minimumSize: const Size.fromHeight(48),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            label,
+            style: textTheme.labelSmall?.copyWith(
+              fontWeight: FontWeight.w500,
+              color: colorScheme.onSurfaceVariant,
+            ),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+          const SizedBox(height: 4),
+          Row(
             children: [
-              Text(
-                widget.label,
-                style: TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w500,
-                  color: _AdvancedFilterScreenState._textSecondary,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      widget.selectedLabel ?? widget.placeholder,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight:
-                            hasValue ? FontWeight.w600 : FontWeight.w500,
-                        color: textColor,
-                      ),
-                    ),
-                  ),
-                  Icon(
-                    Icons.keyboard_arrow_down_rounded,
-                    size: 22,
+              Expanded(
+                child: Text(
+                  selectedLabel ?? placeholder,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: textTheme.bodyMedium?.copyWith(
+                    fontWeight: hasValue ? FontWeight.w600 : FontWeight.w500,
                     color: textColor,
                   ),
-                ],
+                ),
+              ),
+              Icon(
+                Icons.keyboard_arrow_down_rounded,
+                size: 22,
+                color: textColor,
               ),
             ],
           ),
-        ),
+        ],
       ),
     );
-
-    if (widget.fullWidth) return field;
-    return field;
   }
 }
 
@@ -1080,34 +1105,40 @@ class _FilterChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        padding: const EdgeInsetsDirectional.symmetric(
-          horizontal: 16,
-          vertical: 10,
+    final colorScheme = context.colorScheme;
+    final labelStyle = context.textTheme.bodyMedium?.copyWith(
+      fontWeight: FontWeight.w500,
+    );
+    final shape = RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(10),
+    );
+    final padding = const EdgeInsetsDirectional.symmetric(
+      horizontal: 16,
+      vertical: 10,
+    );
+
+    if (selected) {
+      return FilledButton(
+        onPressed: onTap,
+        style: FilledButton.styleFrom(
+          shape: shape,
+          padding: padding,
+          minimumSize: const Size(48, 48),
         ),
-        decoration: BoxDecoration(
-          color: selected
-              ? _AdvancedFilterScreenState._textPrimary
-              : Colors.white,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(
-            color: selected
-                ? _AdvancedFilterScreenState._textPrimary
-                : Colors.grey.shade300,
-          ),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            color: selected ? Colors.white : _AdvancedFilterScreenState._textPrimary,
-          ),
-        ),
+        child: Text(label, style: labelStyle),
+      );
+    }
+    return OutlinedButton(
+      onPressed: onTap,
+      style: OutlinedButton.styleFrom(
+        foregroundColor: colorScheme.onSurface,
+        backgroundColor: colorScheme.surfaceContainerLowest,
+        side: BorderSide(color: colorScheme.outlineVariant),
+        shape: shape,
+        padding: padding,
+        minimumSize: const Size(48, 48),
       ),
+      child: Text(label, style: labelStyle),
     );
   }
 }
@@ -1221,46 +1252,44 @@ class _FuelCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
+    final colorScheme = context.colorScheme;
+    final labelStyle = context.textTheme.bodySmall?.copyWith(
+      fontWeight: FontWeight.w500,
+    );
+    final shape = RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(12),
+    );
+    final content = Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 24),
+        const SizedBox(height: 6),
+        Text(label, style: labelStyle),
+      ],
+    );
+
+    if (selected) {
+      return FilledButton(
+        onPressed: onTap,
+        style: FilledButton.styleFrom(
+          shape: shape,
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          minimumSize: const Size(48, 48),
+        ),
+        child: content,
+      );
+    }
+    return OutlinedButton(
+      onPressed: onTap,
+      style: OutlinedButton.styleFrom(
+        foregroundColor: colorScheme.onSurface,
+        backgroundColor: colorScheme.surfaceContainerLowest,
+        side: BorderSide(color: colorScheme.outlineVariant),
+        shape: shape,
         padding: const EdgeInsets.symmetric(vertical: 14),
-        decoration: BoxDecoration(
-          color: selected
-              ? _AdvancedFilterScreenState._textPrimary
-              : Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: selected
-                ? _AdvancedFilterScreenState._textPrimary
-                : Colors.grey.shade300,
-          ),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              icon,
-              size: 24,
-              color: selected
-                  ? Colors.white
-                  : _AdvancedFilterScreenState._textPrimary,
-            ),
-            const SizedBox(height: 6),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-                color: selected
-                    ? Colors.white
-                    : _AdvancedFilterScreenState._textPrimary,
-              ),
-            ),
-          ],
-        ),
+        minimumSize: const Size(48, 48),
       ),
+      child: content,
     );
   }
 }
@@ -1276,13 +1305,15 @@ class _ColorSwatchRow extends StatelessWidget {
   final String? selectedKey;
   final ValueChanged<String?> onSelected;
 
+  /// Real-world car paint swatches; these are the intrinsic subject matter
+  /// (actual color data), not decorative UI chrome, so they stay literal.
   static Color _colorForKey(String key) {
     return switch (key) {
       FilterOptionKeys.colorRed => const Color(0xFFE53935),
       FilterOptionKeys.colorBlue => const Color(0xFF1E88E5),
       FilterOptionKeys.colorGray => const Color(0xFF9E9E9E),
       FilterOptionKeys.colorBlack => const Color(0xFF212121),
-      FilterOptionKeys.colorWhite => const Color(0xFFFAFAFA),
+      FilterOptionKeys.colorWhite => const Color(0xFFFFFFFF),
       FilterOptionKeys.colorSilver => const Color(0xFFBDBDBD),
       FilterOptionKeys.colorGreen => const Color(0xFF43A047),
       _ => Colors.transparent,
@@ -1319,27 +1350,22 @@ class _ColorPickerButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 44,
-        height: 44,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          shape: BoxShape.circle,
-          border: Border.all(
-            color: selected
-                ? _AdvancedFilterScreenState._textPrimary
-                : Colors.grey.shade300,
+    final colorScheme = context.colorScheme;
+    return IconButton(
+      onPressed: onTap,
+      padding: EdgeInsets.zero,
+      style: IconButton.styleFrom(
+        backgroundColor: colorScheme.surfaceContainerLowest,
+        foregroundColor: colorScheme.onSurfaceVariant,
+        fixedSize: const Size(44, 44),
+        shape: CircleBorder(
+          side: BorderSide(
+            color: selected ? colorScheme.onSurface : colorScheme.outlineVariant,
             width: selected ? 2 : 1,
           ),
         ),
-        child: Icon(
-          Icons.palette_outlined,
-          size: 22,
-          color: _AdvancedFilterScreenState._textSecondary,
-        ),
       ),
+      icon: const Icon(Icons.palette_outlined, size: 22),
     );
   }
 }
@@ -1357,22 +1383,21 @@ class _ColorSwatch extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 44,
-        height: 44,
-        decoration: BoxDecoration(
-          color: color,
-          shape: BoxShape.circle,
-          border: Border.all(
-            color: selected
-                ? _AdvancedFilterScreenState._textPrimary
-                : Colors.grey.shade300,
+    final colorScheme = context.colorScheme;
+    return IconButton(
+      onPressed: onTap,
+      padding: EdgeInsets.zero,
+      style: IconButton.styleFrom(
+        backgroundColor: color,
+        fixedSize: const Size(44, 44),
+        shape: CircleBorder(
+          side: BorderSide(
+            color: selected ? colorScheme.onSurface : colorScheme.outlineVariant,
             width: selected ? 2.5 : 1,
           ),
         ),
       ),
+      icon: const SizedBox.shrink(),
     );
   }
 }
@@ -1394,13 +1419,14 @@ class _StickyBottomBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = context.colorScheme;
     return Container(
       padding: EdgeInsetsDirectional.fromSTEB(20, 14, 20, 14 + bottomInset),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colorScheme.surfaceContainerLowest,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
+            color: colorScheme.shadow.withValues(alpha: 0.06),
             blurRadius: 16,
             offset: const Offset(0, -4),
           ),
@@ -1416,19 +1442,10 @@ class _StickyBottomBar extends StatelessWidget {
           TextButton(
             onPressed: onClear,
             style: TextButton.styleFrom(
-              foregroundColor: _AdvancedFilterScreenState._textSecondary,
-              padding: EdgeInsets.zero,
-              minimumSize: Size.zero,
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              foregroundColor: colorScheme.onSurfaceVariant,
+              minimumSize: const Size(48, 48),
             ),
-            child: Text(
-              clearLabel,
-              style: const TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w500,
-                decoration: TextDecoration.underline,
-              ),
-            ),
+            child: Text(clearLabel),
           ),
         ],
       ),
@@ -1436,54 +1453,32 @@ class _StickyBottomBar extends StatelessWidget {
   }
 }
 
-class _PrimaryButton extends StatefulWidget {
+class _PrimaryButton extends StatelessWidget {
   const _PrimaryButton({required this.label, required this.onTap});
 
   final String label;
   final VoidCallback onTap;
 
   @override
-  State<_PrimaryButton> createState() => _PrimaryButtonState();
-}
-
-class _PrimaryButtonState extends State<_PrimaryButton> {
-  bool _pressed = false;
-
-  @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTapDown: (_) => setState(() => _pressed = true),
-      onTapUp: (_) => setState(() => _pressed = false),
-      onTapCancel: () => setState(() => _pressed = false),
-      onTap: widget.onTap,
-      child: AnimatedScale(
-        scale: _pressed ? 0.98 : 1,
-        duration: const Duration(milliseconds: 100),
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          decoration: BoxDecoration(
-            color: _AdvancedFilterScreenState._textPrimary,
-            borderRadius: BorderRadius.circular(14),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.15),
-                blurRadius: 12,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: Text(
-            widget.label,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.w600,
-              color: Colors.white,
-            ),
-          ),
+    return FilledButton(
+      onPressed: onTap,
+      style: FilledButton.styleFrom(
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(14),
+        ),
+        elevation: 3,
+        shadowColor: context.colorScheme.shadow,
+        minimumSize: const Size.fromHeight(48),
+      ),
+      child: Text(
+        label,
+        textAlign: TextAlign.center,
+        style: context.textTheme.bodyMedium?.copyWith(
+          fontWeight: FontWeight.w600,
         ),
       ),
     );
   }
 }
-

@@ -1,0 +1,32 @@
+{
+  "make": "Buick",
+  "models": [
+    "LaCrosse",
+    "Regal",
+    "Verano",
+    "Enclave",
+    "Encore",
+    "Lucerne",
+    "Allure",
+    "Terraza",
+    "Rainier",
+    "Rendezvous",
+    "Park Avenue",
+    "LeSabre",
+    "Century",
+    "Incomplete",
+    "Riviera",
+    "Skylark",
+    "Coachbuilder",
+    "Roadmaster",
+    "Cascada",
+    "Envision",
+    "Reatta",
+    "Electra",
+    "Skyhawk",
+    "Somerset",
+    "Regal TourX",
+    "Encore GX",
+    "Envista"
+  ]
+}

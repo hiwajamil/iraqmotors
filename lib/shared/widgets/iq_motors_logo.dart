@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:iq_motors/core/config/app_image_cache.dart';
+import 'package:iq_motors/core/theme/app_theme.dart';
 
 /// IQ Motors brand logo for headers and marketing surfaces.
 class IqMotorsLogo extends StatelessWidget {
@@ -19,7 +20,9 @@ class IqMotorsLogo extends StatelessWidget {
   /// Optional width cap; use for wide wordmarks so height alone undersizes them.
   final double? width;
 
-  /// `true` = white logo for dark / hero backgrounds.
+  /// `true` = light wordmark for dark / hero backgrounds (IQ11).
+  /// `false` = dark wordmark for light surfaces (IQ33), or auto when
+  /// the ambient [ThemeData] is dark.
   final bool light;
 
   /// Icon mark only (no wordmark) for narrow layouts.
@@ -27,10 +30,17 @@ class IqMotorsLogo extends StatelessWidget {
 
   final VoidCallback? onTap;
 
-  static const String assetPath = 'assets/images/IQ33.png';
+  static const String darkOnLightAsset = 'assets/images/IQ33.png';
+  static const String lightOnDarkAsset = 'assets/images/IQ11.png';
+
+  /// Prefer [darkOnLightAsset] for light surfaces; [lightOnDarkAsset] otherwise.
+  static String assetFor({required bool light}) =>
+      light ? lightOnDarkAsset : darkOnLightAsset;
 
   @override
   Widget build(BuildContext context) {
+    final useLightMark = light || context.isDarkMode;
+    final assetPath = assetFor(light: useLightMark);
     final cacheWidth = networkImageMemCacheExtent(context, width ?? height * 2);
     final image = Image.asset(
       assetPath,

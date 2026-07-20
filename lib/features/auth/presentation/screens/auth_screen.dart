@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iq_motors/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:iq_motors/core/localization/auth_l10n.dart';
 import 'package:iq_motors/core/localization/l10n_extensions.dart';
+import 'package:iq_motors/core/theme/app_theme.dart';
 import 'package:iq_motors/core/utils/phone_auth_email.dart';
 import 'package:iq_motors/features/auth/presentation/navigation/post_auth_navigation.dart';
 import 'package:iq_motors/core/config/super_admin_config.dart';
@@ -44,14 +45,6 @@ class AuthScreen extends ConsumerStatefulWidget {
 enum _AccountType { individual, showroom }
 
 class _AuthScreenState extends ConsumerState<AuthScreen> {
-  static const Color _background = Color(0xFFF5F5F7);
-  static const Color _cardWhite = Color(0xFFFFFFFF);
-  static const Color _textPrimary = Color(0xFF1D1D1F);
-  static const Color _textSecondary = Color(0xFF86868B);
-  static const Color _toggleTrack = Color(0xFFF2F2F7);
-  static const Color _accentBlue = Color(0xFF007AFF);
-  static const Color _accentBlack = Color(0xFF000000);
-
   _AccountType _accountType = _AccountType.individual;
   late bool _isLoginMode;
   bool _isLoading = false;
@@ -422,17 +415,14 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
 
   void _showMessage(String message) {
     if (!mounted) return;
+    final colorScheme = context.colorScheme;
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(
-          message,
-          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-        ),
+        content: Text(message),
         behavior: SnackBarBehavior.floating,
         margin: const EdgeInsets.fromLTRB(16, 0, 16, 20),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        backgroundColor: _textPrimary,
+        backgroundColor: colorScheme.inverseSurface,
       ),
     );
   }
@@ -446,7 +436,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
     final isNarrow = MediaQuery.sizeOf(context).width <= 480;
 
     return Scaffold(
-      backgroundColor: _background,
+      backgroundColor: context.colorScheme.surface,
       body: SafeArea(
         child: Column(
           children: [
@@ -457,128 +447,120 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                 child: Center(
                   child: ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 480),
-                    child: Container(
-                      width: double.infinity,
-                      padding: EdgeInsets.all(isNarrow ? 20 : 40),
-                      decoration: BoxDecoration(
-                        color: _cardWhite,
+                    child: Card(
+                      margin: EdgeInsets.zero,
+                      shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(
                           isNarrow ? 20 : 24,
                         ),
-                        border: Border.all(
-                          color: Colors.black.withValues(alpha: 0.02),
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.04),
-                            blurRadius: 40,
-                            offset: const Offset(0, 10),
-                          ),
-                        ],
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          _AuthHeader(isLoginMode: _isLoginMode),
-                          const SizedBox(height: 30),
-                          if (!_isLoginMode) ...[
-                            _AccountTypeToggle(
-                              accountType: _accountType,
-                              onChanged: _switchAccountType,
+                      child: Padding(
+                        padding: EdgeInsets.all(isNarrow ? 20 : 40),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            _AuthHeader(isLoginMode: _isLoginMode),
+                            const SizedBox(height: 32),
+                            if (!_isLoginMode) ...[
+                              _AccountTypeToggle(
+                                accountType: _accountType,
+                                onChanged: _switchAccountType,
+                              ),
+                              const SizedBox(height: 32),
+                            ],
+                            AnimatedSwitcher(
+                              duration: const Duration(milliseconds: 400),
+                              switchInCurve: Curves.easeOut,
+                              switchOutCurve: Curves.easeIn,
+                              transitionBuilder: (child, animation) {
+                                return FadeTransition(
+                                  opacity: animation,
+                                  child: SlideTransition(
+                                    position: Tween<Offset>(
+                                      begin: const Offset(0, 0.04),
+                                      end: Offset.zero,
+                                    ).animate(animation),
+                                    child: child,
+                                  ),
+                                );
+                              },
+                              child: _isLoginMode
+                                  ? _LoginForm(
+                                      key: const ValueKey('login'),
+                                      formKey: _loginFormKey,
+                                      emailController: _loginEmailController,
+                                      phoneController: _loginPhoneController,
+                                      passwordController:
+                                          _loginPasswordController,
+                                      isLoading: _isLoading,
+                                      onSubmit: _onSubmit,
+                                    )
+                                  : _accountType == _AccountType.individual
+                                      ? _IndividualForm(
+                                          key: const ValueKey('individual'),
+                                          formKey: _individualFormKey,
+                                          fullNameController:
+                                              _fullNameController,
+                                          phoneController:
+                                              _individualPhoneController,
+                                          otpController:
+                                              _individualOtpController,
+                                          onSendCode: _sendVerificationCode,
+                                          isSendingCode: _isSendingCode,
+                                          isCodeSent: _isCodeSent,
+                                          resendCountdown: _resendCountdown,
+                                          passwordController:
+                                              _individualPasswordController,
+                                          isLoading: _isLoading,
+                                          onSubmit: _onSubmit,
+                                        )
+                                      : _ShowroomForm(
+                                          key: const ValueKey('showroom'),
+                                          formKey: _showroomFormKey,
+                                          showroomNameController:
+                                              _showroomNameController,
+                                          ownerNameController:
+                                              _ownerNameController,
+                                          phoneController:
+                                              _showroomPhoneController,
+                                          otpController:
+                                              _showroomOtpController,
+                                          onSendCode: _sendVerificationCode,
+                                          isSendingCode: _isSendingCode,
+                                          isCodeSent: _isCodeSent,
+                                          resendCountdown: _resendCountdown,
+                                          passwordController:
+                                              _showroomPasswordController,
+                                          selectedCity: _selectedCity,
+                                          cityKeys: _cityKeys,
+                                          isLoading: _isLoading,
+                                          onCityChanged: (city) {
+                                            setState(
+                                              () => _selectedCity = city,
+                                            );
+                                          },
+                                          onSubmit: _onSubmit,
+                                        ),
                             ),
-                            const SizedBox(height: 30),
-                          ],
-                          AnimatedSwitcher(
-                            duration: const Duration(milliseconds: 400),
-                            switchInCurve: Curves.easeOut,
-                            switchOutCurve: Curves.easeIn,
-                            transitionBuilder: (child, animation) {
-                              return FadeTransition(
-                                opacity: animation,
-                                child: SlideTransition(
-                                  position: Tween<Offset>(
-                                    begin: const Offset(0, 0.04),
-                                    end: Offset.zero,
-                                  ).animate(animation),
-                                  child: child,
-                                ),
-                              );
-                            },
-                            child: _isLoginMode
-                                ? _LoginForm(
-                                    key: const ValueKey('login'),
-                                    formKey: _loginFormKey,
-                                    emailController: _loginEmailController,
-                                    phoneController: _loginPhoneController,
-                                    passwordController:
-                                        _loginPasswordController,
-                                    isLoading: _isLoading,
-                                    onSubmit: _onSubmit,
-                                  )
-                                : _accountType == _AccountType.individual
-                                    ? _IndividualForm(
-                                        key: const ValueKey('individual'),
-                                        formKey: _individualFormKey,
-                                        fullNameController:
-                                            _fullNameController,
-                                        phoneController:
-                                            _individualPhoneController,
-                                        otpController:
-                                            _individualOtpController,
-                                        onSendCode: _sendVerificationCode,
-                                        isSendingCode: _isSendingCode,
-                                        isCodeSent: _isCodeSent,
-                                        resendCountdown: _resendCountdown,
-                                        passwordController:
-                                            _individualPasswordController,
-                                        isLoading: _isLoading,
-                                        onSubmit: _onSubmit,
-                                      )
-                                    : _ShowroomForm(
-                                        key: const ValueKey('showroom'),
-                                        formKey: _showroomFormKey,
-                                        showroomNameController:
-                                            _showroomNameController,
-                                        ownerNameController:
-                                            _ownerNameController,
-                                        phoneController:
-                                            _showroomPhoneController,
-                                        otpController: _showroomOtpController,
-                                        onSendCode: _sendVerificationCode,
-                                        isSendingCode: _isSendingCode,
-                                        isCodeSent: _isCodeSent,
-                                        resendCountdown: _resendCountdown,
-                                        passwordController:
-                                            _showroomPasswordController,
-                                        selectedCity: _selectedCity,
-                                        cityKeys: _cityKeys,
-                                        isLoading: _isLoading,
-                                        onCityChanged: (city) {
-                                          setState(
-                                            () => _selectedCity = city,
-                                          );
-                                        },
-                                        onSubmit: _onSubmit,
-                                      ),
-                          ),
-                          const SizedBox(height: 25),
-                          _AuthModeLink(
-                            isLoginMode: _isLoginMode,
-                            onToggle: _toggleAuthMode,
-                          ),
-                          if (_isLoading) ...[
-                            const SizedBox(height: 16),
-                            const Center(
-                              child: SizedBox(
-                                width: 24,
-                                height: 24,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
+                            const SizedBox(height: 24),
+                            _AuthModeLink(
+                              isLoginMode: _isLoginMode,
+                              onToggle: _toggleAuthMode,
+                            ),
+                            if (_isLoading) ...[
+                              const SizedBox(height: 16),
+                              const Center(
+                                child: SizedBox(
+                                  width: 24,
+                                  height: 24,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
                                 ),
                               ),
-                            ),
+                            ],
                           ],
-                        ],
+                        ),
                       ),
                     ),
                   ),
@@ -602,69 +584,28 @@ class _AuthTopNav extends StatelessWidget {
       padding: const EdgeInsetsDirectional.fromSTEB(20, 12, 20, 12),
       child: Row(
         children: [
-          _BackButton(onPressed: () => Navigator.pop(context)),
+          TextButton.icon(
+            onPressed: () => Navigator.pop(context),
+            style: TextButton.styleFrom(
+              minimumSize: const Size(48, 48),
+              foregroundColor: context.colorScheme.onSurface,
+            ),
+            icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 16),
+            label: Text(l10n.back),
+          ),
           Expanded(
             child: Text(
               l10n.appTitle,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 20,
+              style: context.textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.w700,
                 letterSpacing: -0.5,
-                color: _AuthScreenState._textPrimary,
+                color: context.colorScheme.onSurface,
               ),
             ),
           ),
           const SizedBox(width: 80),
         ],
-      ),
-    );
-  }
-}
-
-class _BackButton extends StatefulWidget {
-  const _BackButton({required this.onPressed});
-
-  final VoidCallback onPressed;
-
-  @override
-  State<_BackButton> createState() => _BackButtonState();
-}
-
-class _BackButtonState extends State<_BackButton> {
-  bool _hovered = false;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    return MouseRegion(
-      onEnter: (_) => setState(() => _hovered = true),
-      onExit: (_) => setState(() => _hovered = false),
-      child: GestureDetector(
-        onTap: widget.onPressed,
-        child: AnimatedOpacity(
-          duration: const Duration(milliseconds: 200),
-          opacity: _hovered ? 0.7 : 1,
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(
-                Icons.arrow_forward_ios_rounded,
-                size: 14,
-                color: _AuthScreenState._textPrimary,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                l10n.back,
-                style: const TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w500,
-                  color: _AuthScreenState._textPrimary,
-                ),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }
@@ -678,25 +619,25 @@ class _AuthHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final colorScheme = context.colorScheme;
+    final textTheme = context.textTheme;
     return Column(
       children: [
         Text(
           isLoginMode ? l10n.signIn : l10n.createAccount,
           textAlign: TextAlign.center,
-          style: const TextStyle(
-            fontSize: 28.8,
+          style: textTheme.headlineMedium?.copyWith(
             fontWeight: FontWeight.w700,
-            color: _AuthScreenState._textPrimary,
+            color: colorScheme.onSurface,
             height: 1.2,
           ),
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 8),
         Text(
           isLoginMode ? l10n.signInSubtitle : l10n.registerSubtitle,
           textAlign: TextAlign.center,
-          style: const TextStyle(
-            fontSize: 14,
-            color: _AuthScreenState._textSecondary,
+          style: textTheme.bodyMedium?.copyWith(
+            color: colorScheme.onSurfaceVariant,
             height: 1.5,
           ),
         ),
@@ -717,77 +658,28 @@ class _AccountTypeToggle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    return Container(
-      padding: const EdgeInsets.all(4),
-      decoration: BoxDecoration(
-        color: _AuthScreenState._toggleTrack,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: _ToggleButton(
-              label: l10n.accountIndividual,
-              isActive: accountType == _AccountType.individual,
-              onTap: () => onChanged(_AccountType.individual),
-            ),
+    return SizedBox(
+      width: double.infinity,
+      child: SegmentedButton<_AccountType>(
+        segments: [
+          ButtonSegment(
+            value: _AccountType.individual,
+            label: Text(l10n.accountIndividual),
           ),
-          Expanded(
-            child: _ToggleButton(
-              label: l10n.accountShowroom,
-              isActive: accountType == _AccountType.showroom,
-              onTap: () => onChanged(_AccountType.showroom),
-            ),
+          ButtonSegment(
+            value: _AccountType.showroom,
+            label: Text(l10n.accountShowroom),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _ToggleButton extends StatelessWidget {
-  const _ToggleButton({
-    required this.label,
-    required this.isActive,
-    required this.onTap,
-  });
-
-  final String label;
-  final bool isActive;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOut,
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        decoration: BoxDecoration(
-          color: isActive ? _AuthScreenState._cardWhite : Colors.transparent,
-          borderRadius: BorderRadius.circular(10),
-          boxShadow: isActive
-              ? [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.06),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ]
-              : null,
-        ),
-        alignment: Alignment.center,
-        child: Text(
-          label,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            color: isActive
-                ? _AuthScreenState._textPrimary
-                : _AuthScreenState._textSecondary,
-          ),
+        selected: {accountType},
+        onSelectionChanged: (next) {
+          if (next.isEmpty) return;
+          onChanged(next.first);
+        },
+        showSelectedIcon: false,
+        style: const ButtonStyle(
+          visualDensity: VisualDensity.standard,
+          tapTargetSize: MaterialTapTargetSize.padded,
         ),
       ),
     );
@@ -862,7 +754,7 @@ class _LoginForm extends StatelessWidget {
             validator: (v) =>
                 (v == null || v.isEmpty) ? l10n.passwordRequired : null,
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 8),
           _SubmitButton(
             label: l10n.signIn,
             isLoading: isLoading,
@@ -944,7 +836,7 @@ class _IndividualForm extends StatelessWidget {
                 ? l10n.passwordMinLength
                 : null,
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 8),
           _SubmitButton(
             label: l10n.register,
             isLoading: isLoading,
@@ -1048,7 +940,7 @@ class _ShowroomForm extends StatelessWidget {
                 ? l10n.passwordMinLength
                 : null,
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 8),
           _SubmitButton(
             label: l10n.submitShowroomRequest,
             isLoading: isLoading,
@@ -1060,7 +952,7 @@ class _ShowroomForm extends StatelessWidget {
   }
 }
 
-/// Apple-style input with blue focus ring.
+/// Apple-style input with a theme-driven focus ring.
 class _PremiumFormField extends StatefulWidget {
   const _PremiumFormField({
     required this.label,
@@ -1089,9 +981,6 @@ class _PremiumFormField extends StatefulWidget {
 }
 
 class _PremiumFormFieldState extends State<_PremiumFormField> {
-  static const Color _borderLight = Color(0xFFE5E5EA);
-  static const Color _fillIdle = Color(0xFFFAFAFA);
-
   final _focusNode = FocusNode();
   bool _focused = false;
 
@@ -1112,7 +1001,9 @@ class _PremiumFormFieldState extends State<_PremiumFormField> {
     setState(() => _focused = _focusNode.hasFocus);
   }
 
-  Widget _buildTextFormField({TextAlign? textAlign}) {
+  Widget _buildTextFormField(BuildContext context, {TextAlign? textAlign}) {
+    final colorScheme = context.colorScheme;
+    final textTheme = context.textTheme;
     return TextFormField(
       controller: widget.controller,
       focusNode: _focusNode,
@@ -1126,25 +1017,20 @@ class _PremiumFormFieldState extends State<_PremiumFormField> {
       inputFormatters: widget.showIraqCountryCode
           ? [IraqPhoneLocalInputFormatter()]
           : null,
-      style: const TextStyle(
-        fontSize: 15,
-        color: _AuthScreenState._textPrimary,
-      ),
+      style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurface),
       decoration: InputDecoration(
         hintText: widget.placeholder,
-        hintStyle: TextStyle(
-          fontSize: 15,
-          color: _AuthScreenState._textSecondary.withValues(alpha: 0.8),
+        hintStyle: textTheme.bodyMedium?.copyWith(
+          color: colorScheme.onSurfaceVariant.withValues(alpha: 0.8),
         ),
         border: InputBorder.none,
         prefixText: widget.showIraqCountryCode
             ? iraqPhoneCountryCodeDisplay
             : null,
         prefixStyle: widget.showIraqCountryCode
-            ? const TextStyle(
-                fontSize: 15,
+            ? textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w500,
-                color: _AuthScreenState._textPrimary,
+                color: colorScheme.onSurface,
               )
             : null,
         contentPadding: EdgeInsets.symmetric(
@@ -1157,6 +1043,7 @@ class _PremiumFormFieldState extends State<_PremiumFormField> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = context.colorScheme;
     return Padding(
       padding: EdgeInsets.only(bottom: widget.includeBottomPadding ? 16 : 0),
       child: Column(
@@ -1164,10 +1051,9 @@ class _PremiumFormFieldState extends State<_PremiumFormField> {
         children: [
           Text(
             widget.label,
-            style: const TextStyle(
-              fontSize: 13,
+            style: context.textTheme.labelMedium?.copyWith(
               fontWeight: FontWeight.w500,
-              color: _AuthScreenState._textPrimary,
+              color: colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: 8),
@@ -1176,31 +1062,28 @@ class _PremiumFormFieldState extends State<_PremiumFormField> {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: _focused
-                    ? _AuthScreenState._accentBlue
-                    : _borderLight,
+                color: _focused ? colorScheme.primary : colorScheme.outlineVariant,
                 width: 1,
               ),
               boxShadow: _focused
                   ? [
                       BoxShadow(
-                        color: _AuthScreenState._accentBlue
-                            .withValues(alpha: 0.1),
+                        color: colorScheme.primary.withValues(alpha: 0.1),
                         blurRadius: 0,
                         spreadRadius: 4,
                       ),
                     ]
                   : null,
               color: _focused
-                  ? _AuthScreenState._cardWhite
-                  : _fillIdle,
+                  ? colorScheme.surfaceContainerLowest
+                  : colorScheme.surfaceContainerHighest,
             ),
             child: widget.showIraqCountryCode
                 ? Directionality(
                     textDirection: TextDirection.ltr,
-                    child: _buildTextFormField(textAlign: TextAlign.left),
+                    child: _buildTextFormField(context, textAlign: TextAlign.left),
                   )
-                : _buildTextFormField(),
+                : _buildTextFormField(context),
           ),
         ],
       ),
@@ -1282,9 +1165,6 @@ class _PremiumOtpField extends StatefulWidget {
 }
 
 class _PremiumOtpFieldState extends State<_PremiumOtpField> {
-  static const Color _borderLight = Color(0xFFE5E5EA);
-  static const Color _fillIdle = Color(0xFFFAFAFA);
-
   final _focusNode = FocusNode();
   bool _focused = false;
 
@@ -1308,24 +1188,28 @@ class _PremiumOtpFieldState extends State<_PremiumOtpField> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final colorScheme = context.colorScheme;
+    final textTheme = context.textTheme;
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: _focused ? _AuthScreenState._accentBlue : _borderLight,
+          color: _focused ? colorScheme.primary : colorScheme.outlineVariant,
           width: 1,
         ),
         boxShadow: _focused
             ? [
                 BoxShadow(
-                  color: _AuthScreenState._accentBlue.withValues(alpha: 0.1),
+                  color: colorScheme.primary.withValues(alpha: 0.1),
                   blurRadius: 0,
                   spreadRadius: 4,
                 ),
               ]
             : null,
-        color: _focused ? _AuthScreenState._cardWhite : _fillIdle,
+        color: _focused
+            ? colorScheme.surfaceContainerLowest
+            : colorScheme.surfaceContainerHighest,
       ),
       child: TextFormField(
         controller: widget.controller,
@@ -1334,18 +1218,16 @@ class _PremiumOtpFieldState extends State<_PremiumOtpField> {
         textDirection: TextDirection.ltr,
         maxLength: 6,
         validator: widget.validator,
-        style: const TextStyle(
-          fontSize: 15,
-          color: _AuthScreenState._textPrimary,
+        style: textTheme.bodyMedium?.copyWith(
+          color: colorScheme.onSurface,
           letterSpacing: 2,
         ),
         decoration: InputDecoration(
           hintText: l10n.otpPlaceholder,
           counterText: '',
-          hintStyle: TextStyle(
-            fontSize: 15,
+          hintStyle: textTheme.bodyMedium?.copyWith(
             letterSpacing: 0,
-            color: _AuthScreenState._textSecondary.withValues(alpha: 0.8),
+            color: colorScheme.onSurfaceVariant.withValues(alpha: 0.8),
           ),
           border: InputBorder.none,
           contentPadding: const EdgeInsetsDirectional.symmetric(
@@ -1358,7 +1240,7 @@ class _PremiumOtpFieldState extends State<_PremiumOtpField> {
   }
 }
 
-class _SendCodeButton extends StatefulWidget {
+class _SendCodeButton extends StatelessWidget {
   const _SendCodeButton({
     required this.onPressed,
     this.isLoading = false,
@@ -1371,74 +1253,32 @@ class _SendCodeButton extends StatefulWidget {
   final bool isCodeSent;
   final int resendCountdown;
 
-  @override
-  State<_SendCodeButton> createState() => _SendCodeButtonState();
-}
-
-class _SendCodeButtonState extends State<_SendCodeButton> {
-  static const Color _buttonDark = Color(0xFF1D1D1F);
-
-  bool _hovered = false;
-
   bool get _isDisabled =>
-      widget.isLoading || (widget.isCodeSent && widget.resendCountdown > 0);
+      isLoading || (isCodeSent && resendCountdown > 0);
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    return MouseRegion(
-      onEnter: (_) => setState(() => _hovered = true),
-      onExit: (_) => setState(() => _hovered = false),
-      child: AnimatedOpacity(
-        duration: const Duration(milliseconds: 200),
-        opacity: _hovered && !_isDisabled ? 0.88 : 1,
-        child: ElevatedButton(
-          onPressed: _isDisabled ? null : () => widget.onPressed(),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: _buttonDark,
-            foregroundColor: Colors.white,
-            disabledBackgroundColor: _buttonDark.withValues(alpha: 0.7),
-            disabledForegroundColor: Colors.white70,
-            elevation: 0,
-            shadowColor: Colors.transparent,
-            padding: const EdgeInsets.symmetric(horizontal: 14),
-            minimumSize: const Size(0, 48),
-            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
-          child: widget.isLoading
-              ? const SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: Colors.white,
-                  ),
-                )
-              : widget.isCodeSent && widget.resendCountdown > 0
-                  ? Text(
-                      '${widget.resendCountdown}s',
-                      style: const TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    )
-                  : widget.isCodeSent
-                      ? const Icon(
-                          Icons.check_rounded,
-                          size: 20,
-                        )
-                      : Text(
-                          l10n.sendCode,
-                          style: const TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-        ),
+    return FilledButton(
+      onPressed: _isDisabled ? null : () => onPressed(),
+      style: FilledButton.styleFrom(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        minimumSize: const Size(48, 48),
       ),
+      child: isLoading
+          ? SizedBox(
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: context.colorScheme.onPrimary,
+              ),
+            )
+          : isCodeSent && resendCountdown > 0
+              ? Text('${resendCountdown}s')
+              : isCodeSent
+                  ? const Icon(Icons.check_rounded, size: 20)
+                  : Text(l10n.sendCode),
     );
   }
 }
@@ -1461,9 +1301,6 @@ class _PremiumCityDropdown extends StatefulWidget {
 }
 
 class _PremiumCityDropdownState extends State<_PremiumCityDropdown> {
-  static const Color _borderLight = Color(0xFFE5E5EA);
-  static const Color _fillIdle = Color(0xFFFAFAFA);
-
   final _focusNode = FocusNode();
   bool _focused = false;
 
@@ -1484,6 +1321,8 @@ class _PremiumCityDropdownState extends State<_PremiumCityDropdown> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final colorScheme = context.colorScheme;
+    final textTheme = context.textTheme;
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: Column(
@@ -1491,10 +1330,9 @@ class _PremiumCityDropdownState extends State<_PremiumCityDropdown> {
         children: [
           Text(
             widget.label,
-            style: const TextStyle(
-              fontSize: 13,
+            style: textTheme.labelMedium?.copyWith(
               fontWeight: FontWeight.w500,
-              color: _AuthScreenState._textPrimary,
+              color: colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: 8),
@@ -1503,22 +1341,19 @@ class _PremiumCityDropdownState extends State<_PremiumCityDropdown> {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: _focused
-                    ? _AuthScreenState._accentBlue
-                    : _borderLight,
+                color: _focused ? colorScheme.primary : colorScheme.outlineVariant,
               ),
               boxShadow: _focused
                   ? [
                       BoxShadow(
-                        color: _AuthScreenState._accentBlue
-                            .withValues(alpha: 0.1),
+                        color: colorScheme.primary.withValues(alpha: 0.1),
                         spreadRadius: 4,
                       ),
                     ]
                   : null,
               color: _focused
-                  ? _AuthScreenState._cardWhite
-                  : _fillIdle,
+                  ? colorScheme.surfaceContainerLowest
+                  : colorScheme.surfaceContainerHighest,
             ),
             child: DropdownButtonFormField<String>(
               key: ValueKey(widget.value ?? 'none'),
@@ -1533,20 +1368,16 @@ class _PremiumCityDropdownState extends State<_PremiumCityDropdown> {
               ),
               hint: Text(
                 l10n.selectCityHint,
-                style: TextStyle(
-                  fontSize: 15,
-                  color: _AuthScreenState._textSecondary.withValues(alpha: 0.8),
+                style: textTheme.bodyMedium?.copyWith(
+                  color: colorScheme.onSurfaceVariant.withValues(alpha: 0.8),
                 ),
               ),
-              icon: const Icon(
+              icon: Icon(
                 Icons.keyboard_arrow_down_rounded,
-                color: _AuthScreenState._textSecondary,
+                color: colorScheme.onSurfaceVariant,
               ),
-              style: const TextStyle(
-                fontSize: 15,
-                color: _AuthScreenState._textPrimary,
-              ),
-              dropdownColor: _AuthScreenState._cardWhite,
+              style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurface),
+              dropdownColor: colorScheme.surfaceContainerLowest,
               borderRadius: BorderRadius.circular(12),
               items: widget.cityKeys
                   .map(
@@ -1589,31 +1420,14 @@ class _SubmitButtonState extends State<_SubmitButton> {
     return MouseRegion(
       onEnter: (_) => setState(() => _hovered = true),
       onExit: (_) => setState(() => _hovered = false),
-      child: GestureDetector(
-        onTap: widget.isLoading ? null : widget.onPressed,
-        child: AnimatedScale(
-          scale: _hovered && !widget.isLoading ? 1.02 : 1,
-          duration: const Duration(milliseconds: 200),
-          child: AnimatedOpacity(
-            opacity: widget.isLoading ? 0.6 : 1,
-            duration: const Duration(milliseconds: 200),
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              decoration: BoxDecoration(
-                color: _AuthScreenState._accentBlack,
-                borderRadius: BorderRadius.circular(14),
-              ),
-              alignment: Alignment.center,
-              child: Text(
-                widget.label,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                ),
-              ),
-            ),
+      child: AnimatedScale(
+        scale: _hovered && !widget.isLoading ? 1.02 : 1,
+        duration: const Duration(milliseconds: 200),
+        child: SizedBox(
+          width: double.infinity,
+          child: FilledButton(
+            onPressed: widget.isLoading ? null : widget.onPressed,
+            child: Text(widget.label),
           ),
         ),
       ),
@@ -1633,27 +1447,28 @@ class _AuthModeLink extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final colorScheme = context.colorScheme;
+    final textTheme = context.textTheme;
     return Wrap(
       alignment: WrapAlignment.center,
       crossAxisAlignment: WrapCrossAlignment.center,
       children: [
         Text(
           isLoginMode ? l10n.noAccount : l10n.haveAccount,
-          style: const TextStyle(
-            fontSize: 14,
-            color: _AuthScreenState._textSecondary,
+          style: textTheme.bodyMedium?.copyWith(
+            color: colorScheme.onSurfaceVariant,
           ),
         ),
-        GestureDetector(
-          onTap: onToggle,
-          child: Text(
-            isLoginMode ? l10n.register : l10n.signIn,
-            style: const TextStyle(
-              fontSize: 14,
+        TextButton(
+          onPressed: onToggle,
+          style: TextButton.styleFrom(
+            minimumSize: const Size(48, 48),
+            foregroundColor: colorScheme.primary,
+            textStyle: textTheme.bodyMedium?.copyWith(
               fontWeight: FontWeight.w600,
-              color: _AuthScreenState._accentBlue,
             ),
           ),
+          child: Text(isLoginMode ? l10n.register : l10n.signIn),
         ),
       ],
     );
@@ -1673,9 +1488,9 @@ class _AccountNotFoundDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = context.colorScheme;
+    final textTheme = context.textTheme;
     return Dialog(
-      backgroundColor: _AuthScreenState._cardWhite,
-      elevation: 0,
       insetPadding: const EdgeInsets.symmetric(horizontal: 28),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: Padding(
@@ -1686,50 +1501,28 @@ class _AccountNotFoundDialog extends StatelessWidget {
             Text(
               message,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 16,
+              style: textTheme.bodyLarge?.copyWith(
                 fontWeight: FontWeight.w500,
-                color: _AuthScreenState._textPrimary,
+                color: colorScheme.onSurface,
                 height: 1.5,
               ),
             ),
             const SizedBox(height: 24),
             SizedBox(
               width: double.infinity,
-              child: GestureDetector(
-                onTap: () => Navigator.of(context).pop(true),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  decoration: BoxDecoration(
-                    color: _AuthScreenState._accentBlack,
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                  alignment: Alignment.center,
-                  child: Text(
-                    createAccountLabel,
-                    style: const TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
+              child: FilledButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: Text(createAccountLabel),
               ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 8),
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
               style: TextButton.styleFrom(
-                foregroundColor: _AuthScreenState._textSecondary,
+                foregroundColor: colorScheme.onSurfaceVariant,
                 padding: const EdgeInsets.symmetric(vertical: 8),
               ),
-              child: Text(
-                cancelLabel,
-                style: const TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
+              child: Text(cancelLabel),
             ),
           ],
         ),

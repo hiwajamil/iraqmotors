@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:iq_motors/core/theme/app_theme.dart';
 import 'package:iq_motors/features/marketplace/presentation/widgets/home/home_theme.dart';
 
 /// Empty-state placeholder when the home feed has no active listings.
@@ -19,16 +20,15 @@ class HomeFeedEmptyState extends StatelessWidget {
             Icon(
               Icons.directions_car_outlined,
               size: 48,
-              color: HomeScreenColors.textSecondary.withValues(alpha: 0.55),
+              color: HomeScreenColors.textSecondary(context).withValues(alpha: 0.55),
             ),
             const SizedBox(height: 16),
             Text(
               message,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 15,
+              style: context.textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w400,
-                color: HomeScreenColors.textSecondary,
+                color: HomeScreenColors.textSecondary(context),
               ),
             ),
           ],

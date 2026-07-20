@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:iq_motors/core/theme/app_theme.dart';
+
 /// Minimal landing page shown on the public production domain only.
 class ComingSoonScreen extends StatefulWidget {
   const ComingSoonScreen({super.key});
@@ -10,10 +12,6 @@ class ComingSoonScreen extends StatefulWidget {
 
 class _ComingSoonScreenState extends State<ComingSoonScreen>
     with SingleTickerProviderStateMixin {
-  static const Color _background = Colors.white;
-  static const Color _textPrimary = Color(0xFF1D1D1F);
-  static const Color _textSecondary = Color(0xFF86868B);
-
   late final AnimationController _taglineController;
   late final Animation<double> _taglineFade;
 
@@ -41,8 +39,11 @@ class _ComingSoonScreenState extends State<ComingSoonScreen>
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = context.colorScheme;
+    final textTheme = context.textTheme;
+
     return Scaffold(
-      backgroundColor: _background,
+      backgroundColor: colorScheme.surface,
       body: SafeArea(
         child: Column(
           children: [
@@ -53,22 +54,20 @@ class _ComingSoonScreenState extends State<ComingSoonScreen>
                   children: [
                     Text(
                       'IQ Motors',
-                      style: TextStyle(
-                        fontSize: 44,
+                      style: textTheme.displaySmall?.copyWith(
                         fontWeight: FontWeight.w600,
                         letterSpacing: -1.4,
-                        color: _textPrimary,
+                        color: colorScheme.onSurface,
                         height: 1.05,
                       ),
                     ),
-                    const SizedBox(height: 14),
+                    const SizedBox(height: 16),
                     Text(
                       'بەمنزیکانە...',
-                      style: TextStyle(
-                        fontSize: 24,
+                      style: textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.w400,
                         letterSpacing: -0.4,
-                        color: _textSecondary,
+                        color: colorScheme.onSurfaceVariant,
                         height: 1.25,
                       ),
                     ),
@@ -83,11 +82,9 @@ class _ComingSoonScreenState extends State<ComingSoonScreen>
                 child: Text(
                   'هێز بە شێوازێکی سادە.',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w400,
+                  style: textTheme.bodyMedium?.copyWith(
                     letterSpacing: -0.2,
-                    color: _textSecondary.withValues(alpha: 0.9),
+                    color: colorScheme.onSurfaceVariant.withValues(alpha: 0.9),
                     height: 1.45,
                   ),
                 ),

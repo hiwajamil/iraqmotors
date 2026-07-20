@@ -1,33 +1,28 @@
 import 'package:iq_motors/shared/models/localized_car_model.dart';
 
-const List<LocalizedCarModel> mclarenModels = [
-  LocalizedCarModel(
-    id: '540c_coupe',
-    ku: '540C کوپ',
-    en: '540C Coupe',
-    ar: '540C كوبيه',
-  ),
-  LocalizedCarModel(
-    id: '570gt_coupe',
-    ku: '570GT کوپ',
-    en: '570GT Coupe',
-    ar: '570GT كوبيه',
-  ),
-  LocalizedCarModel(
-    id: '570s_spider',
-    ku: '570S سپایدەر',
-    en: '570S Spider',
-    ar: '570S سبايدر',
-  ),
-  LocalizedCarModel(
-    id: '570s_coupe',
-    ku: '570S کوپ',
-    en: '570S Coupe',
-    ar: '570S كوبيه',
-  ),
+const List<LocalizedCarModel> MclarenModels = [
+  LocalizedCarModel(id: 'mclaren_540c', ku: '540C', en: '540C', ar: '540C'),
+  LocalizedCarModel(id: 'mclaren_540c_coupe', ku: '540C کوپ', en: '540C Coupe', ar: '540C كوبيه'),
+  LocalizedCarModel(id: 'mclaren_570gt', ku: '570GT', en: '570GT', ar: '570GT'),
+  LocalizedCarModel(id: 'mclaren_570gt_coupe', ku: '570GT کوپ', en: '570GT Coupe', ar: '570 جي تي كوبيه'),
+  LocalizedCarModel(id: 'mclaren_570s', ku: '570S', en: '570S', ar: '570S'),
+  LocalizedCarModel(id: 'mclaren_570s_coupe', ku: '570S کوپ', en: '570S Coupe', ar: '570S كوبيه'),
+  LocalizedCarModel(id: 'mclaren_570s_spider', ku: '570S سپایدەر', en: '570S Spider', ar: '570S سبايدر'),
+  LocalizedCarModel(id: 'mclaren_600lt', ku: '600LT', en: '600LT', ar: '600LT'),
+  LocalizedCarModel(id: 'mclaren_620r', ku: '620R', en: '620R', ar: '620R'),
+  LocalizedCarModel(id: 'mclaren_625c', ku: '625C', en: '625C', ar: '625C'),
   LocalizedCarModel(id: '650s', ku: '650S', en: '650S', ar: '650S'),
   LocalizedCarModel(id: '675lt', ku: '675LT', en: '675LT', ar: '675LT'),
   LocalizedCarModel(id: '720s', ku: '720S', en: '720S', ar: '720S'),
+  LocalizedCarModel(id: 'mclaren_750s', ku: '750S', en: '750S', ar: '750S'),
+  LocalizedCarModel(id: 'mclaren_765lt', ku: '765LT', en: '765LT', ar: '765LT'),
+  LocalizedCarModel(id: 'mclaren_artura', ku: 'ARTURA', en: 'ARTURA', ar: 'ARTURA'),
+  LocalizedCarModel(id: 'mclaren_elva', ku: 'ELVA', en: 'ELVA', ar: 'ELVA'),
   LocalizedCarModel(id: 'gt', ku: 'GT', en: 'GT', ar: 'GT'),
+  LocalizedCarModel(id: 'mclaren_gts', ku: 'GTS', en: 'GTS', ar: 'GTS'),
+  LocalizedCarModel(id: 'mclaren_luggage_trailer', ku: 'Luggage Trailer', en: 'Luggage Trailer', ar: 'Luggage Trailer'),
+  LocalizedCarModel(id: 'mclaren_mp4_12c', ku: 'MP4-12C', en: 'MP4-12C', ar: 'MP4-12C'),
   LocalizedCarModel(id: 'p1', ku: 'P1', en: 'P1', ar: 'P1'),
+  LocalizedCarModel(id: 'mclaren_senna', ku: 'SENNA', en: 'SENNA', ar: 'SENNA'),
+  LocalizedCarModel(id: 'mclaren_senna_gtr', ku: 'SENNA GTR', en: 'SENNA GTR', ar: 'SENNA GTR'),
 ];

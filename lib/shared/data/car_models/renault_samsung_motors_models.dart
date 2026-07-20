@@ -1,6 +1,11 @@
 import 'package:iq_motors/shared/models/localized_car_model.dart';
 
-const List<LocalizedCarModel> renaultSamsungMotorsModels = [
+const List<LocalizedCarModel> RenaultSamsungMotorsModels = [
+  LocalizedCarModel(id: 'renault_samsung_motors_18i', ku: '18i', en: '18i', ar: '18i'),
+  LocalizedCarModel(id: 'renault_samsung_motors_alliance', ku: 'Alliance', en: 'Alliance', ar: 'Alliance'),
+  LocalizedCarModel(id: 'renault_samsung_motors_encore', ku: 'Encore', en: 'Encore', ar: 'Encore'),
+  LocalizedCarModel(id: 'renault_samsung_motors_fuego', ku: 'Fuego', en: 'Fuego', ar: 'Fuego'),
+  LocalizedCarModel(id: 'renault_samsung_motors_lecar', ku: 'LeCar', en: 'LeCar', ar: 'LeCar'),
   LocalizedCarModel(id: 'qm5', ku: 'QM5', en: 'QM5', ar: 'QM5'),
   LocalizedCarModel(id: 'qm6', ku: 'QM6', en: 'QM6', ar: 'QM6'),
   LocalizedCarModel(id: 'sm3', ku: 'SM3', en: 'SM3', ar: 'SM3'),

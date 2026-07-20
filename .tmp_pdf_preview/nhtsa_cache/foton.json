@@ -1,0 +1,12 @@
+{
+  "make": "Foton",
+  "models": [
+    "Mini-Bus",
+    "City-bus",
+    "Interurban",
+    "Touring Coach",
+    "Special Bus",
+    "Else Bus",
+    "Passenger Car"
+  ]
+}

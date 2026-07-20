@@ -915,6 +915,31 @@ class AppLocalizationsKu extends AppLocalizations {
       'نەتوانرا ڕیکلامەکان بار بکرێن. تکایە دووبارە هەوڵ بدەرەوە.';
 
   @override
+  String get homeFeedEnd => 'هەموو ڕیکلامە بەردەستەکانت بینیوە';
+
+  @override
+  String get aiAppraisalButton => 'نرخی AI بەدەست بهێنە';
+
+  @override
+  String get aiAppraisalTitle => 'هەڵسەنگاندنی نرخ بە AI';
+
+  @override
+  String get aiAppraisalSubtitle => 'کارپێکراوی Gemini AI';
+
+  @override
+  String get aiAppraisalEstimatedRange => 'نرخی بازاڕی خەمڵێنراو';
+
+  @override
+  String get aiAppraisalConfidence => 'ئاستی دڵنیایی';
+
+  @override
+  String get aiAppraisalDisclaimer =>
+      'ئەم خەمڵێنکردنە لەلایەن AI ئامادەکراوە و تەنها بۆ ڕێنمایی دەبێت. نرخی ڕاستەقینە لەگەڵ بارودۆخ و داواکاری ناوخۆ جیاواز دەبێت.';
+
+  @override
+  String get aiAppraisalClose => 'تێگەیشتم';
+
+  @override
   String get homeBrowseBrands => 'گەڕان بەپێی براند';
 
   @override

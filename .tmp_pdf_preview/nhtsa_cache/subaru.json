@@ -1,0 +1,31 @@
+{
+  "make": "Subaru",
+  "models": [
+    "Legacy",
+    "Outback",
+    "Forester",
+    "Impreza",
+    "XV CrossTrek",
+    "WRX",
+    "BRZ",
+    "Baja",
+    "B9 Tribeca",
+    "SVX",
+    "Crosstrek",
+    "Justy",
+    "Loyale",
+    "Brat",
+    "XT",
+    "XT6",
+    "DL",
+    "GL",
+    "GL-10",
+    "RX",
+    "Standard",
+    "GLF",
+    "Ascent",
+    "Solterra",
+    "Trailseeker",
+    "Uncharted"
+  ]
+}

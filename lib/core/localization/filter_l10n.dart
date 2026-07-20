@@ -343,9 +343,11 @@ abstract final class FilterL10n {
 
   static String trimLabel(AppLocalizations l10n, String key) {
     return switch (key) {
+      FilterOptionKeys.trimBase => l10n.trimBase,
       FilterOptionKeys.trimSport => l10n.trimSport,
       FilterOptionKeys.trimLuxury => l10n.trimLuxury,
-      _ => l10n.trimBase,
+      // Catalog trim names (e.g. "XLE", "GT-Line") are stored as-is.
+      _ => key,
     };
   }
 

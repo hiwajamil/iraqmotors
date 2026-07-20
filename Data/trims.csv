@@ -1,0 +1,1442 @@
+﻿trim_id,trim_name,model_id,model_name_en,brand_id,brand_name_en,from_year_id,to_year_id,deleted
+6523,Premium Plus,593,A3,63,Audi,,,False
+5077,S-line,593,A3,63,Audi,,,False
+5074,TFSI,593,A3,63,Audi,,,False
+5067,S-Line,589,A4,63,Audi,,,False
+5068,Standard,589,A4,63,Audi,,,False
+5065,TFSI,589,A4,63,Audi,,,False
+5122,Premium Plus,599,A5,63,Audi,,,False
+5120,Standard,599,A5,63,Audi,,,False
+5861,Premium Plus,587,A6,63,Audi,,,False
+5061,S-Line,587,A6,63,Audi,,,False
+5064,TFSI,587,A6,63,Audi,,,False
+5081,S-Line,594,A7,63,Audi,,,False
+5060,TFSI,585,A8,63,Audi,,,False
+5098,S-Line,605,Q3,63,Audi,,,False
+5102,Standard,635,Q5,63,Audi,,,False
+6129,Premium Plus,596,Q7,63,Audi,,,False
+5088,S-Line,596,Q7,63,Audi,,,False
+5536,SQ7,596,Q7,63,Audi,,,False
+5087,Standard,596,Q7,63,Audi,,,False
+5962,Premium Plus S-Line,597,Q8,63,Audi,,,False
+5110,S-Line,669,TT,63,Audi,,,False
+6747,Honor,1222,U5 PLUS,62,BAIC,,,False
+6748,Luxury ,1222,U5 PLUS,62,BAIC,,,False
+6894,Elite,1397,X7,62,BAIC,,,False
+6892,Honor,1397,X7,62,BAIC,,,False
+6893,Luxury,1397,X7,62,BAIC,,,False
+4744,116i,688,1-Series,60,BMW,,,False
+4672,228i,577,2-Series,60,BMW,,,False
+4671,230i,577,2-Series,60,BMW,,,False
+4669,240i,577,2-Series,60,BMW,,,False
+4699,320i,656,3-Series,60,BMW,,,False
+4698,323i,656,3-Series,60,BMW,,,False
+4703,328i,656,3-Series,60,BMW,,,False
+5713,330e,656,3-Series,60,BMW,,,False
+4702,330i,656,3-Series,60,BMW,,,False
+4706,340i,656,3-Series,60,BMW,,,False
+6137,E36,656,3-Series,60,BMW,,,False
+4705,M3,656,3-Series,60,BMW,,,False
+5485,M340i,656,3-Series,60,BMW,,,False
+4696,428i,652,4-Series,60,BMW,,,False
+4695,430i,652,4-Series,60,BMW,,,False
+6148,430i Gran Coupe M Sport,652,4-Series,60,BMW,,,False
+4694,435i,652,4-Series,60,BMW,,,False
+4693,440i,652,4-Series,60,BMW,,,False
+4692,M4,652,4-Series,60,BMW,,,False
+4677,520i,640,5-Series,60,BMW,,,False
+4678,523i,640,5-Series,60,BMW,,,False
+6650,525Li,640,5-Series,60,BMW,,,False
+4685,525i,640,5-Series,60,BMW,,,False
+4684,528i,640,5-Series,60,BMW,,,False
+5528,530d,640,5-Series,60,BMW,,,False
+5877,530e,640,5-Series,60,BMW,,,False
+4683,530i,640,5-Series,60,BMW,,,False
+4682,535i,640,5-Series,60,BMW,,,False
+4681,540i,640,5-Series,60,BMW,,,False
+4680,550i,640,5-Series,60,BMW,,,False
+4679,M5,640,5-Series,60,BMW,,,False
+5948,M550i,640,5-Series,60,BMW,,,False
+4729,630i,662,6-Series,60,BMW,,,False
+4728,640i,662,6-Series,60,BMW,,,False
+4726,650i,662,6-Series,60,BMW,,,False
+4725,M6,662,6-Series,60,BMW,,,False
+6596,730Li ,665,7-Series,60,BMW,,,False
+4732,730i,665,7-Series,60,BMW,,,False
+4731,735i,665,7-Series,60,BMW,,,False
+4737,740i,665,7-Series,60,BMW,,,False
+4736,745,665,7-Series,60,BMW,,,False
+4735,750i,665,7-Series,60,BMW,,,False
+6118,760i,665,7-Series,60,BMW,,,False
+6123,760i xDrive Entertainment,665,7-Series,60,BMW,,,False
+4747,850i,689,8-Series,60,BMW,,,False
+5723,M8,689,8-Series,60,BMW,,,False
+5980,M850i xDrive,689,8-Series,60,BMW,,,False
+4665,sDrive20i,547,X1,60,BMW,,,False
+4667,sDrive28i,547,X1,60,BMW,,,False
+4666,xDrive28i,547,X1,60,BMW,,,False
+4663,sDrive28i,492,X2,60,BMW,,,False
+4662,xDrive 28i,492,X2,60,BMW,,,False
+6399,xDrive20i ,492,X2,60,BMW,,,False
+4711,30i,659,X3,60,BMW,,,False
+4708,X3M,659,X3,60,BMW,,,False
+6138,sDrive30i,659,X3,60,BMW,,,False
+4713,xDrive20i,659,X3,60,BMW,,,False
+6124,xDrive30i,659,X3,60,BMW,,,False
+4718,xDrive28i,660,X4,60,BMW,,,False
+4717,xDrive30i,660,X4,60,BMW,,,False
+6122,xDrive30i M Sport,660,X4,60,BMW,,,False
+4688,40i,644,X5,60,BMW,,,False
+6189,M Competition,644,X5,60,BMW,,,False
+4686,X5M,644,X5,60,BMW,,,False
+6316,sDrive40i,644,X5,60,BMW,,,False
+4690,xDrive30d,644,X5,60,BMW,,,False
+4691,xDrive30i,644,X5,60,BMW,,,False
+6162,xDrive40i,644,X5,60,BMW,,,False
+6119,xDrive40i M Sport,644,X5,60,BMW,,,False
+5775,xDrive45e,644,X5,60,BMW,,,False
+6520, M Competition,637,X6,60,BMW,,,False
+4676,M,637,X6,60,BMW,,,False
+5949,M50i,637,X6,60,BMW,,,False
+5946,M60i,637,X6,60,BMW,,,False
+5412,xDrive30d,637,X6,60,BMW,,,False
+4674,xDrive35i,637,X6,60,BMW,,,False
+4675,xDrive40i,637,X6,60,BMW,,,False
+4673,xDrive50i,637,X6,60,BMW,,,False
+4749,M50i,691,X7,60,BMW,,,False
+6080,M60i,691,X7,60,BMW,,,False
+4751,xDrive40i,691,X7,60,BMW,,,False
+6350,Label,1161,XM,60,BMW,,,False
+6526,eDrive35,1352,i4,60,BMW,,,False
+6720,eDrive40,1352,i4,60,BMW,,,False
+6113,eDrive40 M Sport package,1347,i5,60,BMW,,,False
+6580,Type 20,1598,ATTO 3,56,BYD,,,False
+6781,Type 10,1694,ATTO 8,56,BYD,,,False
+6752,Type 30 ,1694,ATTO 8,56,BYD,,,False
+6587,Flagship,1595,HAN,56,BYD,,,False
+6571,Premium,1595,HAN,56,BYD,,,False
+6578,Type 10 ,1493,Qin Plus,56,BYD,,,False
+6577,Type 20 ,1493,Qin Plus,56,BYD,,,False
+6576,Type 30 ,1493,Qin Plus,56,BYD,,,False
+6780,Type 10,1597,SEAL 7,56,BYD,,,False
+6779,Type 20,1597,SEAL 7,56,BYD,,,False
+6585,Comfort,1599,SEAL EV,56,BYD,,,False
+6584,Luxury,1599,SEAL EV,56,BYD,,,False
+6572,AWD,1596,SEALION 7,56,BYD,,,False
+6581,AWD Type 10,1559,SONG PLUS,56,BYD,,,False
+6582,Type 40,1559,SONG PLUS,56,BYD,,,False
+6953,Flagship,1548,Seal 05 DM-i,56,BYD,,,False
+6943,Type 20,1633,Seal 6,56,BYD,,,False
+6688,Flagship ,1662,Shark 6,56,BYD,,,False
+6942,Type 20,1781,Ti 7,56,BYD,,,False
+5972,Limo,1183,B70S,103,Bestune,,,False
+5973,Limousin,1185,T55,103,Bestune,,,False
+5792,Premium,1115,T77,103,Bestune,,,False
+5545,600,509,Escalade,55,Cadillac,,,False
+5330,Base,509,Escalade,55,Cadillac,,,False
+5329,ESV,509,Escalade,55,Cadillac,,,False
+5335,Platinum,509,Escalade,55,Cadillac,,,False
+5434,Platinum VIP,509,Escalade,55,Cadillac,,,False
+5527,Premium Luxury,509,Escalade,55,Cadillac,,,False
+5947,Premium Luxury Platinum,509,Escalade,55,Cadillac,,,False
+5535,Sport,509,Escalade,55,Cadillac,,,False
+5889,V,509,Escalade,55,Cadillac,,,False
+6898,STD,470,Alsvin,53,Changan,,,False
+6899,STD,1303,CS75 Plus,53,Changan,,,False
+6900,Lamore,1302,Eado Plus,53,Changan,,,False
+6082,Plus,1027,Hunter,53,Changan,,,False
+6897,STD,1065,UNI-K,53,Changan,,,False
+6196,Comfort,476,Arrizo 5,52,Chery,,,False
+6195,Luxury,476,Arrizo 5,52,Chery,,,False
+6197,Standard,476,Arrizo 5,52,Chery,,,False
+5687,Luxury,1033,Arrizo 6,52,Chery,,,False
+6216,Luxury,1374,Arrizo 8,52,Chery,,,False
+5684,Comfort,1037,Tiggo 2 Pro,52,Chery,,,False
+5682,Comfort,1085,Tiggo 4 Pro,52,Chery,,,False
+5681,Luxury,1084,Tiggo 7 Pro,52,Chery,,,False
+6831,Flagship,1729,Tiggo 7 Pro Hybrid,52,Chery,,,False
+6241,Comfort,1288,Tiggo 7 Pro Max,52,Chery,,,False
+6211,Luxury,1288,Tiggo 7 Pro Max,52,Chery,,,False
+5678,Comfort,1083,Tiggo 8 Pro,52,Chery,,,False
+5679,Luxury,1083,Tiggo 8 Pro,52,Chery,,,False
+6172,Ultimate ,1407,Tiggo 8 Pro Max,52,Chery,,,False
+5216,LTZ,556,Avalanche,51,Chevrolet,,,False
+5277,Base,574,Aveo,51,Chevrolet,,,False
+5276,LS,574,Aveo,51,Chevrolet,,,False
+5275,LT,574,Aveo,51,Chevrolet,,,False
+6004,2LT,562,Blazer,51,Chevrolet,,,False
+5916,3LT,562,Blazer,51,Chevrolet,,,False
+5241,LT,562,Blazer,51,Chevrolet,,,False
+5239,Premier,562,Blazer,51,Chevrolet,,,False
+5240,RS,562,Blazer,51,Chevrolet,,,False
+5263,LS,569,Camaro,51,Chevrolet,,,False
+5264,LT,569,Camaro,51,Chevrolet,,,False
+5267,LT RS,569,Camaro,51,Chevrolet,,,False
+5262,RS,569,Camaro,51,Chevrolet,,,False
+5261,SS,569,Camaro,51,Chevrolet,,,False
+5265,ZL1 SS,569,Camaro,51,Chevrolet,,,False
+5187,LS,520,Captiva,51,Chevrolet,,,False
+5186,LT,520,Captiva,51,Chevrolet,,,False
+5580,Premier,520,Captiva,51,Chevrolet,,,False
+5283,LT,960,Cobalt,51,Chevrolet,,,False
+5282,LTZ,960,Cobalt,51,Chevrolet,,,False
+5219,LT,557,Colorado,51,Chevrolet,,,False
+5221,Standard,557,Colorado,51,Chevrolet,,,False
+5222,WT,557,Colorado,51,Chevrolet,,,False
+6104,C8,570,Corvette,51,Chevrolet,,,False
+5271,Stingray,570,Corvette,51,Chevrolet,,,False
+5182,L,518,Cruze,51,Chevrolet,,,False
+5180,LS,518,Cruze,51,Chevrolet,,,False
+5179,LT,518,Cruze,51,Chevrolet,,,False
+5178,LT Premium,518,Cruze,51,Chevrolet,,,False
+5233,LS,560,Epica,51,Chevrolet,,,False
+5232,LT,560,Epica,51,Chevrolet,,,False
+5193,L,550,Equinox,51,Chevrolet,,,False
+5192,LS,550,Equinox,51,Chevrolet,,,False
+5191,LT,550,Equinox,51,Chevrolet,,,False
+5190,LTZ,550,Equinox,51,Chevrolet,,,False
+5194,Premier,550,Equinox,51,Chevrolet,,,False
+5997,RS,550,Equinox,51,Chevrolet,,,False
+5285,EXT,962,Express,51,Chevrolet,,,False
+5258,LT,566,Impala,51,Chevrolet,,,False
+5569,LT2,566,Impala,51,Chevrolet,,,False
+5257,LTZ,566,Impala,51,Chevrolet,,,False
+5255,Premier,566,Impala,51,Chevrolet,,,False
+5260,Standard,566,Impala,51,Chevrolet,,,False
+5235,S,561,Lumina,51,Chevrolet,,,False
+5227,LS,559,Malibu,51,Chevrolet,,,False
+5226,LT,559,Malibu,51,Chevrolet,,,False
+5225,LTZ,559,Malibu,51,Chevrolet,,,False
+5230,Premier,559,Malibu,51,Chevrolet,,,False
+5231,RS,559,Malibu,51,Chevrolet,,,False
+5184,LS,519,Optra,51,Chevrolet,,,False
+5183,LT,519,Optra,51,Chevrolet,,,False
+5199,Custom,552,Silverado,51,Chevrolet,,,False
+5202,High Country,552,Silverado,51,Chevrolet,,,False
+5198,LT,552,Silverado,51,Chevrolet,,,False
+5201,LTZ,552,Silverado,51,Chevrolet,,,False
+5197,RST,552,Silverado,51,Chevrolet,,,False
+5967,Z71,552,Silverado,51,Chevrolet,,,False
+6153,ZR2,552,Silverado,51,Chevrolet,,,False
+5278,LT,575,Sonic,51,Chevrolet,,,False
+5254,Base,565,Spark,51,Chevrolet,,,False
+5253,LS,565,Spark,51,Chevrolet,,,False
+5252,LT,565,Spark,51,Chevrolet,,,False
+5210,LT,554,Suburban,51,Chevrolet,,,False
+5208,Premier,554,Suburban,51,Chevrolet,,,False
+5821, High Country,555,Tahoe,51,Chevrolet,,,False
+5215,LS,555,Tahoe,51,Chevrolet,,,False
+5214,LT,555,Tahoe,51,Chevrolet,,,False
+5213,LTZ,555,Tahoe,51,Chevrolet,,,False
+5212,Premier,555,Tahoe,51,Chevrolet,,,False
+5663,RST,555,Tahoe,51,Chevrolet,,,False
+5508,Z71 ,555,Tahoe,51,Chevrolet,,,False
+5245,LS,563,Trailblazer,51,Chevrolet,,,False
+5244,LT,563,Trailblazer,51,Chevrolet,,,False
+5787,RS,563,Trailblazer,51,Chevrolet,,,False
+5242,SS,563,Trailblazer,51,Chevrolet,,,False
+5251,LS,564,Traverse,51,Chevrolet,,,False
+5250,LT,564,Traverse,51,Chevrolet,,,False
+5248,Premier,564,Traverse,51,Chevrolet,,,False
+6498,Z71,564,Traverse,51,Chevrolet,,,False
+6438,1RS,546,Trax,51,Chevrolet,,,False
+5826,LS ,546,Trax,51,Chevrolet,,,False
+5189,LT,546,Trax,51,Chevrolet,,,False
+5188,LTZ,546,Trax,51,Chevrolet,,,False
+5576,Premier,546,Trax,51,Chevrolet,,,False
+5396,C,524,200,50,Chrysler,,,False
+5399,LX,524,200,50,Chrysler,,,False
+5398,Limited,524,200,50,Chrysler,,,False
+5397,S,524,200,50,Chrysler,,,False
+5393,C,527,300,50,Chrysler,,,False
+5392,Limited,527,300,50,Chrysler,,,False
+5752,Platinum,527,300,50,Chrysler,,,False
+5394,S,527,300,50,Chrysler,,,False
+5459,Touring,527,300,50,Chrysler,,,False
+5591,Limited,522,Pacifica,50,Chrysler,,,False
+6561,Touring,522,Pacifica,50,Chrysler,,,False
+6588,Touring L,522,Pacifica,50,Chrysler,,,False
+6698,Flagship ,1665,B5,151,DENZA,,,False
+6700,Flagship ,1666,B8,151,DENZA,,,False
+5328,RT,849,Avenger,68,Dodge,,,False
+5326,SXT,849,Avenger,68,Dodge,,,False
+6030,SE,973,Caravan,68,Dodge,,,False
+5676,SXT,973,Caravan,68,Dodge,,,False
+5456,GT,846,Challenger,68,Dodge,,,False
+5759,GT Plus,846,Challenger,68,Dodge,,,False
+6355,Hellcat Redeye,846,Challenger,68,Dodge,,,False
+5325,RT,846,Challenger,68,Dodge,,,False
+5411,RT Shaker,846,Challenger,68,Dodge,,,False
+5324,SRT,846,Challenger,68,Dodge,,,False
+5323,SXT,846,Challenger,68,Dodge,,,False
+6254,SXT Plus,846,Challenger,68,Dodge,,,False
+5811,Scat Pack,846,Challenger,68,Dodge,,,False
+5435,Scat Pack Wide Body,846,Challenger,68,Dodge,,,False
+5800,T/A,846,Challenger,68,Dodge,,,False
+5450,Daytona,844,Charger,68,Dodge,,,False
+5409,GT,844,Charger,68,Dodge,,,False
+5407,GT Plus,844,Charger,68,Dodge,,,False
+5694,Hellcat,844,Charger,68,Dodge,,,False
+5912,Hellcat Redeye,844,Charger,68,Dodge,,,False
+5320,RT,844,Charger,68,Dodge,,,False
+5762,Rallye ,844,Charger,68,Dodge,,,False
+5517,Rallye Plus,844,Charger,68,Dodge,,,False
+5319,SE,844,Charger,68,Dodge,,,False
+5318,SRT,844,Charger,68,Dodge,,,False
+5321,SXT,844,Charger,68,Dodge,,,False
+5654,SXT Plus,844,Charger,68,Dodge,,,False
+5697,Scat Pack,844,Charger,68,Dodge,,,False
+5426,Scat Pack Wide Body,844,Charger,68,Dodge,,,False
+5577,Citadel,845,Durango,68,Dodge,,,False
+5454,GT,845,Durango,68,Dodge,,,False
+5954,GT Plus,845,Durango,68,Dodge,,,False
+5467,Limited,845,Durango,68,Dodge,,,False
+5531,R/T,845,Durango,68,Dodge,,,False
+5589,SRT,845,Durango,68,Dodge,,,False
+5653,SXT,845,Durango,68,Dodge,,,False
+6589,GT,1228,Grand Caravan,68,Dodge,,,False
+6001,GT,1196,Hornet,68,Dodge,,,False
+6234,R/T,1196,Hornet,68,Dodge,,,False
+5638,Crossroad,972,Journey,68,Dodge,,,False
+5637,GT,972,Journey,68,Dodge,,,False
+5636,SE,972,Journey,68,Dodge,,,False
+5639,SXT,972,Journey,68,Dodge,,,False
+5307,SE,842,Nitro,68,Dodge,,,False
+5313,SLT,843,Ram,68,Dodge,,,False
+6693,E2 ,1205,Aeolus Huge,69,Dongfeng,,,False
+6694,E2 ,1436,Mage,69,Dongfeng,,,False
+6909,E2,1368,Shine,69,Dongfeng,,,False
+6848,Comfort,1732,Exlantix ES,146,EXEED,,,False
+6847,Flagship,1732,Exlantix ES,146,EXEED,,,False
+6844,Comfort,1651,LX,146,EXEED,,,False
+6843,Luxury,1651,LX,146,EXEED,,,False
+6918,Comfort,1715,RX,146,EXEED,,,False
+6842,Flagship,1715,RX,146,EXEED,,,False
+6919,Comfort,1638,VX,146,EXEED,,,False
+6840,Flagship,1638,VX,146,EXEED,,,False
+5945,BADLAND,1040,Bronco,87,Ford,,,False
+6560,Black Diamond,1040,Bronco,87,Ford,,,False
+6204,HERITAGE LIMITED EDITION ,1040,Bronco,87,Ford,,,False
+6202,OUTER BANKS,1040,Bronco,87,Ford,,,False
+6201,WILDTRAK,1040,Bronco,87,Ford,,,False
+6500,Outer Banks,1035,Bronco Sport,87,Ford,,,False
+4338,SE,912,Ecosport,87,Ford,,,False
+4337,SES,912,Ecosport,87,Ford,,,False
+4311,SE,902,Edge,87,Ford,,,False
+4310,SEL,902,Edge,87,Ford,,,False
+4306,ST,902,Edge,87,Ford,,,False
+6009,ST-Line,902,Edge,87,Ford,,,False
+4308,Sport,902,Edge,87,Ford,,,False
+4307,Titanium,902,Edge,87,Ford,,,False
+6446,Active,833,Escape,87,Ford,,,False
+4271,SE,833,Escape,87,Ford,,,False
+4273,SEL,833,Escape,87,Ford,,,False
+6164,ST-Line  ,833,Escape,87,Ford,,,False
+4270,Titanium,833,Escape,87,Ford,,,False
+5710,Trend,833,Escape,87,Ford,,,False
+6057,Limited,904,Everest,87,Ford,,,False
+6110,XLS,904,Everest,87,Ford,,,False
+4289,King Ranch,898,Expedition,87,Ford,,,False
+4288,Limited,898,Expedition,87,Ford,,,False
+4287,XLT,898,Expedition,87,Ford,,,False
+6192,Active,903,Explorer,87,Ford,,,False
+4316,Base,903,Explorer,87,Ford,,,False
+4314,Limited,903,Explorer,87,Ford,,,False
+4317,Platinum,903,Explorer,87,Ford,,,False
+4318,ST,903,Explorer,87,Ford,,,False
+5825,ST-Line,903,Explorer,87,Ford,,,False
+4315,Sport,903,Explorer,87,Ford,,,False
+5744,Timberline,903,Explorer,87,Ford,,,False
+4313,XLT,903,Explorer,87,Ford,,,False
+4282,King Ranch,837,F-150,87,Ford,,,False
+4283,Lariat,837,F-150,87,Ford,,,False
+4284,Limited,837,F-150,87,Ford,,,False
+4281,Platinum,837,F-150,87,Ford,,,False
+5457,STX,837,F-150,87,Ford,,,False
+5462,Sport,837,F-150,87,Ford,,,False
+5860,Tremor,837,F-150,87,Ford,,,False
+4280,XL,837,F-150,87,Ford,,,False
+4279,XLT,837,F-150,87,Ford,,,False
+6200,XLT Sport,837,F-150,87,Ford,,,False
+6465,XLT,1557,F-150 Lightning,87,Ford,,,False
+6208,Raptor,867,F-150 Raptor,87,Ford,,,False
+5999,Raptor 37,867,F-150 Raptor,87,Ford,,,False
+5486,Raptor R,867,F-150 Raptor,87,Ford,,,False
+4957,Ambient,911,Fiesta,87,Ford,,,False
+4334,SE,911,Fiesta,87,Ford,,,False
+4656,Trend,905,Figo,87,Ford,,,False
+4268,SE,832,Focus,87,Ford,,,False
+4266,SEL,832,Focus,87,Ford,,,False
+4267,Titanium,832,Focus,87,Ford,,,False
+4300,S,900,Fusion,87,Ford,,,False
+4299,SE,900,Fusion,87,Ford,,,False
+4298,SEL,900,Fusion,87,Ford,,,False
+4297,Titanium,900,Fusion,87,Ford,,,False
+6439,Lariat,1101,Maverick,87,Ford,,,False
+6445,XL,1101,Maverick,87,Ford,,,False
+6437,XLT,1101,Maverick,87,Ford,,,False
+4331,EcoBoost,908,Mustang,87,Ford,,,False
+5436,EcoBoost Premium,908,Mustang,87,Ford,,,False
+4329,GT,908,Mustang,87,Ford,,,False
+4658,GT Premium,908,Mustang,87,Ford,,,False
+5863,Mach 1,908,Mustang,87,Ford,,,False
+5864,Shelby GT500,908,Mustang,87,Ford,,,False
+4330,V-6,908,Mustang,87,Ford,,,False
+4291,XLT,899,Ranger,87,Ford,,,False
+4323,Limited,906,Taurus,87,Ford,,,False
+4325,SE,906,Taurus,87,Ford,,,False
+4324,SEL,906,Taurus,87,Ford,,,False
+5747,Titanium,906,Taurus,87,Ford,,,False
+6193,Ambiente,1127,Territory,87,Ford,,,False
+6194,Dark Edition ,1127,Territory,87,Ford,,,False
+6100,Titanium,1127,Territory,87,Ford,,,False
+6139,Trend,1127,Territory,87,Ford,,,False
+5968,GL,1164,EMKOO,85,GAC,,,False
+6132,GE,1109,Empow,85,GAC,,,False
+6753,GS,1109,Empow,85,GAC,,,False
+6555,GL ,1591,Empow R,85,GAC,,,False
+5894,GE,992,GA4,85,GAC,,,False
+5895,GL,919,GA8,85,GAC,,,False
+6044,GB,1177,GS3 EMZOOM,85,GAC,,,False
+5939,GL,1177,GS3 EMZOOM,85,GAC,,,False
+6131,GS,1177,GS3 EMZOOM,85,GAC,,,False
+6043,R-style,1177,GS3 EMZOOM,85,GAC,,,False
+5830,GL ,897,GS4,85,GAC,,,False
+5832,GT,921,GS8,85,GAC,,,False
+5893,GX,921,GS8,85,GAC,,,False
+6803,GX (HEV),921,GS8,85,GAC,,,False
+6627,GX,1622,GS8 TRAVELLER,85,GAC,,,False
+6563,GT,1372,M8,85,GAC,,,False
+5699,AT4,883,Acadia,82,GMC,,,False
+5624,Denali,883,Acadia,82,GMC,,,False
+6947,Elevation,883,Acadia,82,GMC,,,False
+5623,SLE,883,Acadia,82,GMC,,,False
+5622,SLT,883,Acadia,82,GMC,,,False
+6074,3X,1292,Hummer EV,82,GMC,,,False
+5606,1500,881,Sierra,82,GMC,,,False
+5605,2500HD ,881,Sierra,82,GMC,,,False
+5708,AT4,881,Sierra,82,GMC,,,False
+5672,Denali,881,Sierra,82,GMC,,,False
+5812,Elevation,881,Sierra,82,GMC,,,False
+5742,SLT ,881,Sierra,82,GMC,,,False
+5910,AT4,880,Terrain,82,GMC,,,False
+6430,Denali ,880,Terrain,82,GMC,,,False
+5674,SLE,880,Terrain,82,GMC,,,False
+5696,SLT,880,Terrain,82,GMC,,,False
+5491,AT4,882,Yukon,82,GMC,,,False
+5506,Denali,882,Yukon,82,GMC,,,False
+6258,Elevation,882,Yukon,82,GMC,,,False
+5489,SLE,882,Yukon,82,GMC,,,False
+5490,SLT,882,Yukon,82,GMC,,,False
+6603,SINGLE CAB,1607,Wingle 5,91,GWM,,,False
+6604,UPGRADE,1607,Wingle 5,91,GWM,,,False
+5689,Comfort GC,1081,Azkarra,84,Geely,,,False
+5818,Luxury GL,1081,Azkarra,84,Geely,,,False
+5819,Full Option GF,1082,Coolray,84,Geely,,,False
+5942,GF,1082,Coolray,84,Geely,,,False
+5693,GF Plus,1082,Coolray,84,Geely,,,False
+5941,GK,1082,Coolray,84,Geely,,,False
+5940,GL,1082,Coolray,84,Geely,,,False
+6058,GF,1157,Emgrand,84,Geely,,,False
+5897,GK,1157,Emgrand,84,Geely,,,False
+5898,GS,1157,Emgrand,84,Geely,,,False
+6158,GF Plus,1394,Monjaro,84,Geely,,,False
+5563,Adventure,1031,Dargo,81,HAVAL,,,False
+6317,High Grade,1031,Dargo,81,HAVAL,,,False
+5562,Sport,1031,Dargo,81,HAVAL,,,False
+6869,HEV MID,887,H6,81,HAVAL,,,False
+6928,HEV TOP,887,H6,81,HAVAL,,,False
+5805,Max,887,H6,81,HAVAL,,,False
+5803,Plus,887,H6,81,HAVAL,,,False
+5509,Premium,887,H6,81,HAVAL,,,False
+5804,Pro,887,H6,81,HAVAL,,,False
+5806,Supreme,887,H6,81,HAVAL,,,False
+5808,Lux,1131,H6 GT,81,HAVAL,,,False
+5809,Ultra,1131,H6 GT,81,HAVAL,,,False
+6311,STD,980,H7,81,HAVAL,,,False
+6929,TOP,980,H7,81,HAVAL,,,False
+6916,High Grade,888,H9,81,HAVAL,,,False
+5518,Lux,888,H9,81,HAVAL,,,False
+6930,TOP,888,H9,81,HAVAL,,,False
+5519,Ultra ,888,H9,81,HAVAL,,,False
+5511,STD,1009,JOLION,81,HAVAL,,,False
+6948,HEV,1783,V7,81,HAVAL,,,False
+6949,PHEV,1783,V7,81,HAVAL,,,False
+6482,EX,726,Accord,79,Honda,,,False
+6481,EX-L,726,Accord,79,Honda,,,False
+6483,LX,726,Accord,79,Honda,,,False
+5875,Sport,726,Accord,79,Honda,,,False
+6480,Sport-L,726,Accord,79,Honda,,,False
+6479,Touring ,726,Accord,79,Honda,,,False
+6292,Sport Hybrid,810,CR-V,79,Honda,,,False
+6289,Sport Touring Hybrid,810,CR-V,79,Honda,,,False
+6294,Sport-L Hybrid,810,CR-V,79,Honda,,,False
+6670,LX,893,Civic,79,Honda,,,False
+6429,Sport,893,Civic,79,Honda,,,False
+5513,Base,734,H2,78,Hummer,,,False
+4181,Blue,703,Accent,77,Hyundai,,,False
+4924,GL,703,Accent,77,Hyundai,,,False
+4179,GLS,703,Accent,77,Hyundai,,,False
+4180,GS,703,Accent,77,Hyundai,,,False
+4225,Gamma,703,Accent,77,Hyundai,,,False
+4182,Limited,703,Accent,77,Hyundai,,,False
+4178,SE,703,Accent,77,Hyundai,,,False
+4183,SEL,703,Accent,77,Hyundai,,,False
+4484,high,703,Accent,77,Hyundai,,,False
+4256,Eco,951,Avante,77,Hyundai,,,False
+4257,Limited,951,Avante,77,Hyundai,,,False
+4259,SE,951,Avante,77,Hyundai,,,False
+4255,Sport,951,Avante,77,Hyundai,,,False
+6657,Calligraphy,698,Azera,77,Hyundai,,,False
+4173,GLS,698,Azera,77,Hyundai,,,False
+4486,High,698,Azera,77,Hyundai,,,False
+4171,Limited,698,Azera,77,Hyundai,,,False
+4187,Top grade,704,Creta,77,Hyundai,,,False
+6522,Blue,740,Elantra,77,Hyundai,,,False
+4222,ECO,740,Elantra,77,Hyundai,,,False
+4219,GL,740,Elantra,77,Hyundai,,,False
+4218,GLS,740,Elantra,77,Hyundai,,,False
+5468,GT,740,Elantra,77,Hyundai,,,False
+4224,Limited,740,Elantra,77,Hyundai,,,False
+6507,N,740,Elantra,77,Hyundai,,,False
+5625,N Line,740,Elantra,77,Hyundai,,,False
+4220,SE,740,Elantra,77,Hyundai,,,False
+4223,SEL,740,Elantra,77,Hyundai,,,False
+4221,Sport,740,Elantra,77,Hyundai,,,False
+4938,Standard,740,Elantra,77,Hyundai,,,False
+4245,Prada,746,Genesis,77,Hyundai,,,False
+4943,Royal,746,Genesis,77,Hyundai,,,False
+4228,GLS,697,Grand i10,77,Hyundai,,,False
+4191, Turbo SEL,705,Kona,77,Hyundai,,,False
+6660,ICE,705,Kona,77,Hyundai,,,False
+4190,Limited,705,Kona,77,Hyundai,,,False
+5758,N Line,705,Kona,77,Hyundai,,,False
+6614,SE,705,Kona,77,Hyundai,,,False
+6071,SEL,705,Kona,77,Hyundai,,,False
+6056,SEL Plus,705,Kona,77,Hyundai,,,False
+4189,Ultimate,705,Kona,77,Hyundai,,,False
+5993,Calligraphy,723,Palisade,77,Hyundai,,,False
+6661,GLS,723,Palisade,77,Hyundai,,,False
+4196,Limited,723,Palisade,77,Hyundai,,,False
+4494,Premium,723,Palisade,77,Hyundai,,,False
+4198,SE,723,Palisade,77,Hyundai,,,False
+4197,SEL,723,Palisade,77,Hyundai,,,False
+6442,XRT,723,Palisade,77,Hyundai,,,False
+5740,Limited ,1104,Santa Cruz,77,Hyundai,,,False
+4231,Base AWD,741,Santa Fe,77,Hyundai,,,False
+5981,Calligraphy,741,Santa Fe,77,Hyundai,,,False
+4232,GDI Mid,741,Santa Fe,77,Hyundai,,,False
+4940,GL,741,Santa Fe,77,Hyundai,,,False
+4939,GLS,741,Santa Fe,77,Hyundai,,,False
+4489,High AWD,741,Santa Fe,77,Hyundai,,,False
+4235,Limited,741,Santa Fe,77,Hyundai,,,False
+4490,Mid AWD,741,Santa Fe,77,Hyundai,,,False
+4237,SE,741,Santa Fe,77,Hyundai,,,False
+4236,SEL,741,Santa Fe,77,Hyundai,,,False
+5414,Sport,741,Santa Fe,77,Hyundai,,,False
+4234,Ultimate,741,Santa Fe,77,Hyundai,,,False
+6616,XRT,741,Santa Fe,77,Hyundai,,,False
+4249,GDI Base,747,Sonata,77,Hyundai,,,False
+4492,GDI Mid,747,Sonata,77,Hyundai,,,False
+4491,GDI Top,747,Sonata,77,Hyundai,,,False
+4253,GLS,747,Sonata,77,Hyundai,,,False
+4251,Limited,747,Sonata,77,Hyundai,,,False
+5558,N Line,747,Sonata,77,Hyundai,,,False
+4252,SE,747,Sonata,77,Hyundai,,,False
+4250,SEL,747,Sonata,77,Hyundai,,,False
+6154,SEL Plus,747,Sonata,77,Hyundai,,,False
+4254,Sport,747,Sonata,77,Hyundai,,,False
+4944,Standard,747,Sonata,77,Hyundai,,,False
+4483,Base,742,Tucson,77,Hyundai,,,False
+6659,Comfort ,742,Tucson,77,Hyundai,,,False
+4243,Eco,742,Tucson,77,Hyundai,,,False
+4482,GDI Basic,742,Tucson,77,Hyundai,,,False
+4480,GDI Full option,742,Tucson,77,Hyundai,,,False
+4242,GLS,742,Tucson,77,Hyundai,,,False
+4240,Limited,742,Tucson,77,Hyundai,,,False
+4481,Mid,742,Tucson,77,Hyundai,,,False
+6016,N Line,742,Tucson,77,Hyundai,,,False
+4238,NU,742,Tucson,77,Hyundai,,,False
+6658,Premium ,742,Tucson,77,Hyundai,,,False
+4241,SE,742,Tucson,77,Hyundai,,,False
+5730,SEL,742,Tucson,77,Hyundai,,,False
+4239,Sport,742,Tucson,77,Hyundai,,,False
+4931,GLS,737,Veloster,77,Hyundai,,,False
+4935,GLS Turbo,737,Veloster,77,Hyundai,,,False
+6591,N,737,Veloster,77,Hyundai,,,False
+4933,Sport,737,Veloster,77,Hyundai,,,False
+4934,Standard,737,Veloster,77,Hyundai,,,False
+5746,SEL,985,Venue,77,Hyundai,,,False
+4193,Limited,722,Veracruz,77,Hyundai,,,False
+4194,SE,722,Veracruz,77,Hyundai,,,False
+4165,S,695,i10,77,Hyundai,,,False
+4164,SE,695,i10,77,Hyundai,,,False
+6459,35,715,FX,76,Infiniti,,,False
+6422,Luxe,706,Q50,76,Infiniti,,,False
+6617,Red Sport 400,706,Q50,76,Infiniti,,,False
+6495,LUXE,713,QX60,76,Infiniti,,,False
+6494,PURE,713,QX60,76,Infiniti,,,False
+6492,Autograph,708,QX80,76,Infiniti,,,False
+6493,Sensory,708,QX80,76,Infiniti,,,False
+6388,Flagship,1346,J7,73,JAC,,,False
+6387,Luxury,1346,J7,73,JAC,,,False
+6389,Flagship,1369,JS3,73,JAC,,,False
+6828,Flagship,1716,J7,159,JAECOO,,,False
+6914,Luxury,1716,J7,159,JAECOO,,,False
+5124,Standard,778,E-Pace,72,Jaguar,,,False
+6859,R-Dynamic S,804,F-Pace,72,Jaguar,,,False
+5164,R-Sport,804,F-Pace,72,Jaguar,,,False
+5166,S,804,F-Pace,72,Jaguar,,,False
+5532,SVR,804,F-Pace,72,Jaguar,,,False
+5175,First Edition,806,F-Type,72,Jaguar,,,False
+5587,R-Dynamic,806,F-Type,72,Jaguar,,,False
+6078,P250,802,XE,72,Jaguar,,,False
+5711,R-Sport,802,XE,72,Jaguar,,,False
+5146,Luxury,796,XF,72,Jaguar,,,False
+5140,S,796,XF,72,Jaguar,,,False
+5138,Luxury,795,XJ,72,Jaguar,,,False
+5135,Portfolio,795,XJ,72,Jaguar,,,False
+5134,Super,795,XJ,72,Jaguar,,,False
+5363,Altitude,753,Cherokee,71,Jeep,,,False
+5359,Laredo,753,Cherokee,71,Jeep,,,False
+5362,Latitude,753,Cherokee,71,Jeep,,,False
+5919,Latitude Plus,753,Cherokee,71,Jeep,,,False
+5358,Limited,753,Cherokee,71,Jeep,,,False
+5357,Overland,753,Cherokee,71,Jeep,,,False
+5361,Trailhawk,753,Cherokee,71,Jeep,,,False
+6558,X,753,Cherokee,71,Jeep,,,False
+5367,Latitude,754,Compass,71,Jeep,,,False
+5365,Limited,754,Compass,71,Jeep,,,False
+5430,Longitude,754,Compass,71,Jeep,,,False
+5366,Sport,754,Compass,71,Jeep,,,False
+5364,Trailhawk,754,Compass,71,Jeep,,,False
+5659,Overland ,757,Gladiator,71,Jeep,,,False
+5540,Rubicon,757,Gladiator,71,Jeep,,,False
+5544,Sport,757,Gladiator,71,Jeep,,,False
+5911,TEXAS TRAIL,757,Gladiator,71,Jeep,,,False
+5995,Willys,757,Gladiator,71,Jeep,,,False
+5502,80 Th Anniversary,758,Grand Cherokee,71,Jeep,,,False
+5722,Altitude ,758,Grand Cherokee,71,Jeep,,,False
+5779,High Altitude,758,Grand Cherokee,71,Jeep,,,False
+5378,Laredo,758,Grand Cherokee,71,Jeep,,,False
+5377,Limited,758,Grand Cherokee,71,Jeep,,,False
+6264,Limited 4xe,758,Grand Cherokee,71,Jeep,,,False
+5431,Limited X,758,Grand Cherokee,71,Jeep,,,False
+5376,Overland,758,Grand Cherokee,71,Jeep,,,False
+6266,Overland 4xe,758,Grand Cherokee,71,Jeep,,,False
+5442,S,758,Grand Cherokee,71,Jeep,,,False
+5380,SRT,758,Grand Cherokee,71,Jeep,,,False
+5381,Summit,758,Grand Cherokee,71,Jeep,,,False
+6502,Summit Reserve,758,Grand Cherokee,71,Jeep,,,False
+5443,Trackhawk,758,Grand Cherokee,71,Jeep,,,False
+5379,Trailhawk,758,Grand Cherokee,71,Jeep,,,False
+6265,Trailhawk 4xe,758,Grand Cherokee,71,Jeep,,,False
+5712,Altitude,1022,Grand Cherokee L,71,Jeep,,,False
+5523,Laredo,1022,Grand Cherokee L,71,Jeep,,,False
+5524,Limited,1022,Grand Cherokee L,71,Jeep,,,False
+5525,Overland,1022,Grand Cherokee L,71,Jeep,,,False
+5526,Summit,1022,Grand Cherokee L,71,Jeep,,,False
+6503,Summit Reserve,1022,Grand Cherokee L,71,Jeep,,,False
+6010,Latitude,755,Patriot,71,Jeep,,,False
+5391,Latitude,763,Renegade,71,Jeep,,,False
+5388,Limited,763,Renegade,71,Jeep,,,False
+5389,Sport,763,Renegade,71,Jeep,,,False
+5390,Trailhawk,763,Renegade,71,Jeep,,,False
+6506,Series II,1428,Wagoneer,71,Jeep,,,False
+5909, Willys,759,Wrangler,71,Jeep,,,False
+6008,High Altitude 4xe,759,Wrangler,71,Jeep,,,False
+5386,Rubicon,759,Wrangler,71,Jeep,,,False
+5761,Rubicon 392,759,Wrangler,71,Jeep,,,False
+5724,Rubicon 4xe,759,Wrangler,71,Jeep,,,False
+5385,Sahara,759,Wrangler,71,Jeep,,,False
+6594,Sahara 4xe,759,Wrangler,71,Jeep,,,False
+5383,Sport,759,Wrangler,71,Jeep,,,False
+5387,Unlimited,759,Wrangler,71,Jeep,,,False
+5814,Unlimited 4xe,759,Wrangler,71,Jeep,,,False
+5992,Unlimited Sport,759,Wrangler,71,Jeep,,,False
+6368,Comfort,1162,Dashing,100,Jetour,,,False
+6367,Luxury,1162,Dashing,100,Jetour,,,False
+6619,Luxury PHEV,1609,G700,100,Jetour,,,False
+6624,Premium PHEV,1609,G700,100,Jetour,,,False
+6798,Rally PHEV,1609,G700,100,Jetour,,,False
+6631,Comfort,1485,T1,100,Jetour,,,False
+6363,Luxury,1485,T1,100,Jetour,,,False
+6834,i-DM,1485,T1,100,Jetour,,,False
+6362,Comfort,1232,T2,100,Jetour,,,False
+6360,Luxury,1232,T2,100,Jetour,,,False
+6361,Luxury Plus,1232,T2,100,Jetour,,,False
+6359,Luxury i-DM,1232,T2,100,Jetour,,,False
+6800,PHEV Luxury,1232,T2,100,Jetour,,,False
+6369,Luxury,1495,X50,100,Jetour,,,False
+6542,Comfort ,1070,X70,100,Jetour,,,False
+6370,Luxury,1070,X70,100,Jetour,,,False
+6366,Comfort,1212,X70 Plus,100,Jetour,,,False
+6365,Luxury,1212,X70 Plus,100,Jetour,,,False
+6364,Luxury,1098,X90 PLUS,100,Jetour,,,False
+4600,Base,770,Cadenza,47,Kia,,,False
+4122,GDI Mid,770,Cadenza,47,Kia,,,False
+4573,GDI Top,770,Cadenza,47,Kia,,,False
+4910,LX,770,Cadenza,47,Kia,,,False
+4911,STD,770,Cadenza,47,Kia,,,False
+4599,Top,770,Cadenza,47,Kia,,,False
+4132,2,774,Carens,47,Kia,,,False
+4130,4,774,Carens,47,Kia,,,False
+5847,High Grade,774,Carens,47,Kia,,,False
+6685,KY,774,Carens,47,Kia,,,False
+5849,Mid Grade,774,Carens,47,Kia,,,False
+4575,GDI EX,769,Carnival,47,Kia,,,False
+4576,GDI L,769,Carnival,47,Kia,,,False
+4574,GDI SXL,769,Carnival,47,Kia,,,False
+6613,LX,769,Carnival,47,Kia,,,False
+5882,SX,769,Carnival,47,Kia,,,False
+4111,EX,767,Cerato,47,Kia,,,False
+5840,High Grade,767,Cerato,47,Kia,,,False
+4907,L,767,Cerato,47,Kia,,,False
+4113,LX,767,Cerato,47,Kia,,,False
+5839,Low Grade,767,Cerato,47,Kia,,,False
+5842,Mid Grade,767,Cerato,47,Kia,,,False
+4112,S,767,Cerato,47,Kia,,,False
+4908,SX,767,Cerato,47,Kia,,,False
+5841,Top Grade,767,Cerato,47,Kia,,,False
+6251,Air,1449,EV5,47,Kia,,,False
+6557,GT-Line,1320,EV9,47,Kia,,,False
+6094,Top Grade,1320,EV9,47,Kia,,,False
+4148,EX,949,Forte,47,Kia,,,False
+4151,FE,949,Forte,47,Kia,,,False
+5760,GT,949,Forte,47,Kia,,,False
+5471,GT-Line,949,Forte,47,Kia,,,False
+4149,LX,949,Forte,47,Kia,,,False
+4150,LXS,949,Forte,47,Kia,,,False
+4146,S,949,Forte,47,Kia,,,False
+4147,SX,949,Forte,47,Kia,,,False
+6809,EX,1227,K3,47,Kia,,,False
+6412,G-Grade,1511,K4,47,Kia,,,False
+6457,GT‑Line,1511,K4,47,Kia,,,False
+6810,High Grade,1511,K4,47,Kia,,,False
+5739,EX,1016,K5,47,Kia,,,False
+6227,GT ,1016,K5,47,Kia,,,False
+5548,GT-Line,1016,K5,47,Kia,,,False
+5851,High Grade,1016,K5,47,Kia,,,False
+5748,LXS,1016,K5,47,Kia,,,False
+5854,Low Grade,1016,K5,47,Kia,,,False
+5853,Mid Grade,1016,K5,47,Kia,,,False
+5852,Top Grade,1016,K5,47,Kia,,,False
+5828,High Grade,1139,K8,47,Kia,,,False
+5827,Top Grade,1139,K8,47,Kia,,,False
+4126,Premium,771,K900,47,Kia,,,False
+4144,EX,777,Mohave,47,Kia,,,False
+4143,LTD,777,Mohave,47,Kia,,,False
+4145,LX,777,Mohave,47,Kia,,,False
+4579,Top,777,Mohave,47,Kia,,,False
+6607,EX,1144,Niro,47,Kia,,,False
+5944,High Grade,1144,Niro,47,Kia,,,False
+4134,EX,775,Optima,47,Kia,,,False
+5573,FE,775,Optima,47,Kia,,,False
+4601,GDI,775,Optima,47,Kia,,,False
+4581,GDI Si,775,Optima,47,Kia,,,False
+4136,LX,775,Optima,47,Kia,,,False
+4138,S,775,Optima,47,Kia,,,False
+4135,SX,775,Optima,47,Kia,,,False
+4137,SXL,775,Optima,47,Kia,,,False
+4582,T-GDI GT,775,Optima,47,Kia,,,False
+5888,High Grade,146,Pegas,47,Kia,,,False
+4597,MPI Top,146,Pegas,47,Kia,,,False
+4584,Base,461,Picanto,47,Kia,,,False
+4901,LX,461,Picanto,47,Kia,,,False
+4583,Top,461,Picanto,47,Kia,,,False
+4127,Luxury,773,Quoris,47,Kia,,,False
+4900,EX,147,Rio,47,Kia,,,False
+4100,LX,147,Rio,47,Kia,,,False
+4586,MPI,147,Rio,47,Kia,,,False
+4101,S,147,Rio,47,Kia,,,False
+5446,LX,1003,Sedona,47,Kia,,,False
+4103,EX,148,Seltos,47,Kia,,,False
+5844,High Grade,148,Seltos,47,Kia,,,False
+4104,LX,148,Seltos,47,Kia,,,False
+5846,Mid Grade,148,Seltos,47,Kia,,,False
+4105,S,148,Seltos,47,Kia,,,False
+4102,SX,148,Seltos,47,Kia,,,False
+5845,Top Grade,148,Seltos,47,Kia,,,False
+5629,GT,1057,Sonet,47,Kia,,,False
+5630,High Grade,1057,Sonet,47,Kia,,,False
+4589,Base ,463,Sorento,47,Kia,,,False
+4157,EX,463,Sorento,47,Kia,,,False
+5542,GT-Line,463,Sorento,47,Kia,,,False
+5834,High Grade 2.5L,463,Sorento,47,Kia,,,False
+6026,High Grade 3.5L,463,Sorento,47,Kia,,,False
+4161,L,463,Sorento,47,Kia,,,False
+4159,LX,463,Sorento,47,Kia,,,False
+5838,Low Grade,463,Sorento,47,Kia,,,False
+5837,Mid Grade,463,Sorento,47,Kia,,,False
+4588,Mid Option,463,Sorento,47,Kia,,,False
+4160,S,463,Sorento,47,Kia,,,False
+4158,SX,463,Sorento,47,Kia,,,False
+6516,SX Prestige,463,Sorento,47,Kia,,,False
+5869,SX T-GDI,463,Sorento,47,Kia,,,False
+5953,SXL,463,Sorento,47,Kia,,,False
+4587,Top Grade,463,Sorento,47,Kia,,,False
+6517,X-Line EX,463,Sorento,47,Kia,,,False
+4121,Base,765,Soul,47,Kia,,,False
+4906,EX,765,Soul,47,Kia,,,False
+4119,Exclaim,765,Soul,47,Kia,,,False
+5943,GT Line,765,Soul,47,Kia,,,False
+4905,LX,765,Soul,47,Kia,,,False
+4120,Plus,765,Soul,47,Kia,,,False
+6142,S,765,Soul,47,Kia,,,False
+4904,SX,765,Soul,47,Kia,,,False
+4590,Top,765,Soul,47,Kia,,,False
+5579,X-Line,765,Soul,47,Kia,,,False
+4594,Base,768,Sportage,47,Kia,,,False
+4117,EX,768,Sportage,47,Kia,,,False
+5458,GT-Line,768,Sportage,47,Kia,,,False
+5836,High Grade,768,Sportage,47,Kia,,,False
+4118,LX,768,Sportage,47,Kia,,,False
+5835,Low Grade,768,Sportage,47,Kia,,,False
+4593,Mid Grade,768,Sportage,47,Kia,,,False
+4115,S,768,Sportage,47,Kia,,,False
+4116,SX,768,Sportage,47,Kia,,,False
+6524,SX Prestige,768,Sportage,47,Kia,,,False
+4592,Top Grade,768,Sportage,47,Kia,,,False
+4114,Turbo Mid,768,Sportage,47,Kia,,,False
+4591,Turbo Top,768,Sportage,47,Kia,,,False
+5773,X-Line,768,Sportage,47,Kia,,,False
+6006,X-Pro,768,Sportage,47,Kia,,,False
+4604,Base,776,Stinger,47,Kia,,,False
+4603,Full Option,776,Stinger,47,Kia,,,False
+4141,GT,776,Stinger,47,Kia,,,False
+4142,GT-Line,776,Stinger,47,Kia,,,False
+4140,GT1,776,Stinger,47,Kia,,,False
+4139,GT2,776,Stinger,47,Kia,,,False
+7045,High grade,1385,Tasman,47,Kia,,,False
+6592,LX,1385,Tasman,47,Kia,,,False
+6863,Low grade,1385,Tasman,47,Kia,,,False
+6145,X-Line,1385,Tasman,47,Kia,,,False
+6146,X-Pro,1385,Tasman,47,Kia,,,False
+4108,EX,462,Telluride,47,Kia,,,False
+5970,EX X-Line,462,Telluride,47,Kia,,,False
+6069,GT Line,462,Telluride,47,Kia,,,False
+6021,High Grade,462,Telluride,47,Kia,,,False
+4110,LX,462,Telluride,47,Kia,,,False
+4109,S,462,Telluride,47,Kia,,,False
+4107,SX,462,Telluride,47,Kia,,,False
+6157,SX X-Line,462,Telluride,47,Kia,,,False
+6867,SE,152,Urus,20,Lamborghini,,,False
+4780,HSE,163,Defender,19,Land Rover,,,False
+6801,Octa,163,Defender,19,Land Rover,,,False
+4782,S,163,Defender,19,Land Rover,,,False
+4781,SE,163,Defender,19,Land Rover,,,False
+6448,V8,163,Defender,19,Land Rover,,,False
+4777,X,163,Defender,19,Land Rover,,,False
+5990,X-Dynamic,163,Defender,19,Land Rover,,,False
+6235,X-Dynamic SE,163,Defender,19,Land Rover,,,False
+6484,X‑Dynamic HSE,163,Defender,19,Land Rover,,,False
+4787,HSE,167,Discovery,19,Land Rover,,,False
+4790,HSE Luxury,167,Discovery,19,Land Rover,,,False
+5833,R-Dynamic,167,Discovery,19,Land Rover,,,False
+4789,S,167,Discovery,19,Land Rover,,,False
+4788,SE,167,Discovery,19,Land Rover,,,False
+6549,HSE,164,Discovery Sport,19,Land Rover,,,False
+6550,HSE Luxury,164,Discovery Sport,19,Land Rover,,,False
+6548,SE,164,Discovery Sport,19,Land Rover,,,False
+4786,SE,166,LR2,19,Land Rover,,,False
+4792,SE,168,LR3,19,Land Rover,,,False
+4794,HSE,169,LR4,19,Land Rover,,,False
+4800,Dynamic ,170,Range Rover Evoque,19,Land Rover,,,False
+4799,Prestige,170,Range Rover Evoque,19,Land Rover,,,False
+4808,R-Dynamic HSE,170,Range Rover Evoque,19,Land Rover,,,False
+4806,R-Dynamic S,170,Range Rover Evoque,19,Land Rover,,,False
+4809,R-Dynamic SE,170,Range Rover Evoque,19,Land Rover,,,False
+4805,S,170,Range Rover Evoque,19,Land Rover,,,False
+4773,Autobiography,160,Range Rover Sport,19,Land Rover,,,False
+4772,Autobiography Dynamic,160,Range Rover Sport,19,Land Rover,,,False
+6476,DYNAMIC SE,160,Range Rover Sport,19,Land Rover,,,False
+4768,HSE,160,Range Rover Sport,19,Land Rover,,,False
+4767,HSE Dynamic,160,Range Rover Sport,19,Land Rover,,,False
+4763,HST,160,Range Rover Sport,19,Land Rover,,,False
+6475,P525 Autobiography,160,Range Rover Sport,19,Land Rover,,,False
+5938,P525 HSE,160,Range Rover Sport,19,Land Rover,,,False
+6472,S,160,Range Rover Sport,19,Land Rover,,,False
+4762,SE,160,Range Rover Sport,19,Land Rover,,,False
+6477,SV,160,Range Rover Sport,19,Land Rover,,,False
+4770,SVR,160,Range Rover Sport,19,Land Rover,,,False
+4760,Supercharged,160,Range Rover Sport,19,Land Rover,,,False
+6531,Dynamic SE,162,Range Rover Velar,19,Land Rover,,,False
+4776,HSE,162,Range Rover Velar,19,Land Rover,,,False
+6536,R-Dynamic HSE,162,Range Rover Velar,19,Land Rover,,,False
+6534,R-Dynamic S,162,Range Rover Velar,19,Land Rover,,,False
+6535,R-Dynamic SE,162,Range Rover Velar,19,Land Rover,,,False
+4774,SE,162,Range Rover Velar,19,Land Rover,,,False
+4756,Autobiography,159,Range Rover Vogue,19,Land Rover,,,False
+5583,Autobiography L,159,Range Rover Vogue,19,Land Rover,,,False
+4755,HSE,159,Range Rover Vogue,19,Land Rover,,,False
+4759,SE,159,Range Rover Vogue,19,Land Rover,,,False
+5464,250,120,ES,18,Lexus,,,False
+5661,300h,120,ES,18,Lexus,,,False
+5415,350,120,ES,18,Lexus,,,False
+5355,F-Sport,120,ES,18,Lexus,,,False
+5354,Luxury,120,ES,18,Lexus,,,False
+6655,Platinum ,120,ES,18,Lexus,,,False
+5353,Ultra Luxury,120,ES,18,Lexus,,,False
+5352,GX 460,122,GX,18,Lexus,,,False
+5350,GX 460 Luxury,122,GX,18,Lexus,,,False
+6432,GX 550 PREMIUM Plus,122,GX,18,Lexus,,,False
+5677,350,128,IS,18,Lexus,,,False
+6586,500,128,IS,18,Lexus,,,False
+5340,F-Sport,117,LS,18,Lexus,,,False
+6955,500d,118,LX,18,Lexus,,,False
+5405,570,118,LX,18,Lexus,,,False
+5581,600,118,LX,18,Lexus,,,False
+6345,600 F Sport Full,118,LX,18,Lexus,,,False
+6343,600 Platinum,118,LX,18,Lexus,,,False
+6342,600 Prestige,118,LX,18,Lexus,,,False
+6348,700h,118,LX,18,Lexus,,,False
+6861,700h F Sport,118,LX,18,Lexus,,,False
+6775,700h OVERTRAIL,118,LX,18,Lexus,,,False
+6349,700h Platinum,118,LX,18,Lexus,,,False
+6346,VIP-Black Edition,118,LX,18,Lexus,,,False
+5753,300,130,NX,18,Lexus,,,False
+5721,300h,130,NX,18,Lexus,,,False
+5714,350,130,NX,18,Lexus,,,False
+5428,350,123,RX,18,Lexus,,,False
+6337,350 Prestige,123,RX,18,Lexus,,,False
+6340,350h Platinum,123,RX,18,Lexus,,,False
+5664,450h,123,RX,18,Lexus,,,False
+5955,500h,123,RX,18,Lexus,,,False
+5547,F-Sport,123,RX,18,Lexus,,,False
+6383,500h,1300,TX,18,Lexus,,,False
+5996,UX250h,144,UX,18,Lexus,,,False
+6224,COM,1121,3,6,MG,,,False
+6223,LUX,1121,3,6,MG,,,False
+6225,STD,1121,3,6,MG,,,False
+5494,COM,91,5,6,MG,,,False
+5492,LUX,91,5,6,MG,,,False
+5493,STD,91,5,6,MG,,,False
+6213,COM,1435,5 Plus,6,MG,,,False
+5626,LUX,1017,6,6,MG,,,False
+6066,COM,1287,7,6,MG,,,False
+6067,LUX,1287,7,6,MG,,,False
+5641,COM,1026,GT,6,MG,,,False
+5640,LUX,1026,GT,6,MG,,,False
+5642,STD,1026,GT,6,MG,,,False
+6609,DEL,94,HS,6,MG,,,False
+5920,LUX 1.5T,94,HS,6,MG,,,False
+5921,LUX 2.0T,94,HS,6,MG,,,False
+6233,LUX,1443,MG4 EV,6,MG,,,False
+5923,LUX,95,RX5,6,MG,,,False
+5924,STD,95,RX5,6,MG,,,False
+5925,LUX,97,RX8,6,MG,,,False
+5926,COM,995,T60,6,MG,,,False
+6028,LUX,1214,Whale,6,MG,,,False
+6396,COM,98,ZS,6,MG,,,False
+5495,LUX,98,ZS,6,MG,,,False
+5496,STD,98,ZS,6,MG,,,False
+5497,ZST,98,ZS,6,MG,,,False
+6718,Flagship ,1670,1,155,MHERO,,,False
+6719,Flagship ,1671,2,155,MHERO,,,False
+6633,2.5 S Select Sport,222,3,10,Mazda,,,False
+6356,Carbon Edition,222,3,10,Mazda,,,False
+6064,Touring,222,3,10,Mazda,,,False
+6956,Premium Plus,223,3 Sedan,10,Mazda,,,False
+6638,ELITE,1024,CX-30,10,Mazda,,,False
+6640,TREND,1024,CX-30,10,Mazda,,,False
+6639,URBANE,1024,CX-30,10,Mazda,,,False
+6644,TREND PLUS,224,CX-5,10,Mazda,,,False
+6230,Preferred Plus,1190,CX-50,10,Mazda,,,False
+6649,Preferred Plus,1455,CX-90,10,Mazda,,,False
+6648,Premium,1455,CX-90,10,Mazda,,,False
+6647,Premium Plus,1455,CX-90,10,Mazda,,,False
+4605,A200,24,A-Class,8,Mercedes-Benz,,,False
+4380,A220,24,A-Class,8,Mercedes-Benz,,,False
+6940,GT 43,29,AMG GT,8,Mercedes-Benz,,,False
+4624,AMG53,36,AMG GT 4-door Coupe,8,Mercedes-Benz,,,False
+4362,AMG 43,9,C-Class,8,Mercedes-Benz,,,False
+5473,AMG 63S,9,C-Class,8,Mercedes-Benz,,,False
+4361,C180,9,C-Class,8,Mercedes-Benz,,,False
+4360,C200,9,C-Class,8,Mercedes-Benz,,,False
+4358,C300,9,C-Class,8,Mercedes-Benz,,,False
+5667,C43,9,C-Class,8,Mercedes-Benz,,,False
+4983,200,56,CLA,8,Mercedes-Benz,,,False
+4423,250,56,CLA,8,Mercedes-Benz,,,False
+4447,350,199,CLS,8,Mercedes-Benz,,,False
+4633,450,199,CLS,8,Mercedes-Benz,,,False
+4444,550,199,CLS,8,Mercedes-Benz,,,False
+4448,AMG53,199,CLS,8,Mercedes-Benz,,,False
+6559, AMG 63 S,39,E-Class,8,Mercedes-Benz,,,False
+5520,190 E,39,E-Class,8,Mercedes-Benz,,,False
+6324,230 E,39,E-Class,8,Mercedes-Benz,,,False
+6499,260E,39,E-Class,8,Mercedes-Benz,,,False
+6426,300D ,39,E-Class,8,Mercedes-Benz,,,False
+4397,E200,39,E-Class,8,Mercedes-Benz,,,False
+6950,E200 Coupe,39,E-Class,8,Mercedes-Benz,,,False
+6793,E200 Exclusive ,39,E-Class,8,Mercedes-Benz,,,False
+6608,E220d,39,E-Class,8,Mercedes-Benz,,,False
+4396,E250,39,E-Class,8,Mercedes-Benz,,,False
+5705,E280,39,E-Class,8,Mercedes-Benz,,,False
+4395,E300,39,E-Class,8,Mercedes-Benz,,,False
+4974,E320,39,E-Class,8,Mercedes-Benz,,,False
+4394,E350,39,E-Class,8,Mercedes-Benz,,,False
+4398,E400,39,E-Class,8,Mercedes-Benz,,,False
+6723,E420,39,E-Class,8,Mercedes-Benz,,,False
+4609,E450,39,E-Class,8,Mercedes-Benz,,,False
+6374,300 4MATIC,1483,EQB,8,Mercedes-Benz,,,False
+6161,450 Plus,1400,EQS,8,Mercedes-Benz,,,False
+6188,580 4MATIC,1400,EQS,8,Mercedes-Benz,,,False
+4403,AMG63,43,G-Class,8,Mercedes-Benz,,,False
+4406,G500,43,G-Class,8,Mercedes-Benz,,,False
+6256,G580,43,G-Class,8,Mercedes-Benz,,,False
+4392,450,33,GL-Class,8,Mercedes-Benz,,,False
+4973,500,33,GL-Class,8,Mercedes-Benz,,,False
+4391,550,33,GL-Class,8,Mercedes-Benz,,,False
+4351,250,5,GLA,8,Mercedes-Benz,,,False
+4364,250,10,GLB,8,Mercedes-Benz,,,False
+4618,AMG35,10,GLB,8,Mercedes-Benz,,,False
+5465,200,15,GLC,8,Mercedes-Benz,,,False
+4370,300,15,GLC,8,Mercedes-Benz,,,False
+4369,AMG43,15,GLC,8,Mercedes-Benz,,,False
+5886,200,16,GLC-Class Coupe,8,Mercedes-Benz,,,False
+4412,350,46,GLE,8,Mercedes-Benz,,,False
+4410,450,46,GLE,8,Mercedes-Benz,,,False
+5404,AMG53,46,GLE,8,Mercedes-Benz,,,False
+6756,450 4MATIC,1701,GLE Coupe,8,Mercedes-Benz,,,False
+6755,AMG 53 ,1701,GLE Coupe,8,Mercedes-Benz,,,False
+6754,AMG 63 S,1701,GLE Coupe,8,Mercedes-Benz,,,False
+4371,350,17,GLK-Class,8,Mercedes-Benz,,,False
+4389,450,32,GLS,8,Mercedes-Benz,,,False
+4972,500,32,GLS,8,Mercedes-Benz,,,False
+5559,580,32,GLS,8,Mercedes-Benz,,,False
+4619,Maybach 600,32,GLS,8,Mercedes-Benz,,,False
+4415,350,48,ML-Class,8,Mercedes-Benz,,,False
+4978,300 SE,115,S-Class,8,Mercedes-Benz,,,False
+6034,380 SEL,115,S-Class,8,Mercedes-Benz,,,False
+6036,420 SEL,115,S-Class,8,Mercedes-Benz,,,False
+4976,560 SEL,115,S-Class,8,Mercedes-Benz,,,False
+4424,AMG63,115,S-Class,8,Mercedes-Benz,,,False
+4431,S320,115,S-Class,8,Mercedes-Benz,,,False
+4430,S350,115,S-Class,8,Mercedes-Benz,,,False
+4428,S500,115,S-Class,8,Mercedes-Benz,,,False
+4427,S550,115,S-Class,8,Mercedes-Benz,,,False
+4426,S560,115,S-Class,8,Mercedes-Benz,,,False
+5543,S580,115,S-Class,8,Mercedes-Benz,,,False
+6623,S580e,115,S-Class,8,Mercedes-Benz,,,False
+5614,S580,114,S-Class Maybach,8,Mercedes-Benz,,,False
+5706,S680,114,S-Class Maybach,8,Mercedes-Benz,,,False
+4614,Standard,18,V-Class,8,Mercedes-Benz,,,False
+4366,Progressive,13,Vito,8,Mercedes-Benz,,,False
+4367,Pure,13,Vito,8,Mercedes-Benz,,,False
+6760,JHON COOPER WORKS,100,Clubman,5,Mini,,,False
+6767, S  EXCLUSIVE,101,Cooper,5,Mini,,,False
+6771,S JCW,101,Cooper,5,Mini,,,False
+6769,S ALL4,102,Countryman,5,Mini,,,False
+6027,FULL PLUS,63,ASX,4,Mitsubishi,,,False
+6602,GLX,64,Eclipse Cross,4,Mitsubishi,,,False
+6600,GL,110,L200,4,Mitsubishi,,,False
+6018,Sportero,110,L200,4,Mitsubishi,,,False
+6011,SE,61,Mirage,4,Mitsubishi,,,False
+6222,ES,1388,Mirage G4,4,Mitsubishi,,,False
+6032,GLS,112,Montero Sport,4,Mitsubishi,,,False
+5991,ES,108,Outlander,4,Mitsubishi,,,False
+5565,GT,108,Outlander,4,Mitsubishi,,,False
+5566,SE,108,Outlander,4,Mitsubishi,,,False
+6478,SEL,108,Outlander,4,Mitsubishi,,,False
+5553,Limited,84,Pajero Sport,4,Mitsubishi,,,False
+6812,GLX,1023,Xpander,4,Mitsubishi,,,False
+4537,NISMO,378,370Z,2,Nissan,,,False
+4011,S,81,Altima,2,Nissan,,,False
+4009,SL,81,Altima,2,Nissan,,,False
+4012,SR,81,Altima,2,Nissan,,,False
+6333,SR VC-Turbo,81,Altima,2,Nissan,,,False
+4010,SV,81,Altima,2,Nissan,,,False
+4877,LE,77,Armada,2,Nissan,,,False
+5451,Nismo,77,Armada,2,Nissan,,,False
+4054,Platinium,77,Armada,2,Nissan,,,False
+4055,SL,77,Armada,2,Nissan,,,False
+4057,SV,77,Armada,2,Nissan,,,False
+4060,PRO-4X,941,Frontier,2,Nissan,,,False
+4063,S,941,Frontier,2,Nissan,,,False
+4062,SV,941,Frontier,2,Nissan,,,False
+4039,S,384,Juke,2,Nissan,,,False
+4038,SV,384,Juke,2,Nissan,,,False
+4035,S,383,Kicks,2,Nissan,,,False
+4544,SL,383,Kicks,2,Nissan,,,False
+4033,SR,383,Kicks,2,Nissan,,,False
+4034,SV,383,Kicks,2,Nissan,,,False
+6544,SV,1589,Magnite,2,Nissan,,,False
+4013,Platinium,82,Maxima,2,Nissan,,,False
+4017,S,82,Maxima,2,Nissan,,,False
+4883,SE,82,Maxima,2,Nissan,,,False
+4015,SL,82,Maxima,2,Nissan,,,False
+4014,SR,82,Maxima,2,Nissan,,,False
+4016,SV,82,Maxima,2,Nissan,,,False
+4032,S,382,Micra,2,Nissan,,,False
+4891,LE,232,Murano,2,Nissan,,,False
+4027,SL,232,Murano,2,Nissan,,,False
+4028,SV,232,Murano,2,Nissan,,,False
+4881,LE,79,Navara,2,Nissan,,,False
+4880,SE,79,Navara,2,Nissan,,,False
+4879,XE,79,Navara,2,Nissan,,,False
+4884,LE,83,Pathfinder,2,Nissan,,,False
+4024,Platinium,83,Pathfinder,2,Nissan,,,False
+6072,Rock Creek,83,Pathfinder,2,Nissan,,,False
+4023,S,83,Pathfinder,2,Nissan,,,False
+4885,SE,83,Pathfinder,2,Nissan,,,False
+4018,SL,83,Pathfinder,2,Nissan,,,False
+4025,SV,83,Pathfinder,2,Nissan,,,False
+5950,LE,75,Patrol,2,Nissan,,,False
+4557,LE Platinum City,75,Patrol,2,Nissan,,,False
+5716,PLATINUM ,75,Patrol,2,Nissan,,,False
+5461,SE,75,Patrol,2,Nissan,,,False
+4551,SE Platinum,75,Patrol,2,Nissan,,,False
+4570,SE Titanium,75,Patrol,2,Nissan,,,False
+6046,TITANIUM,75,Patrol,2,Nissan,,,False
+4553,XE,75,Patrol,2,Nissan,,,False
+4563,Gazelle X,76,Patrol Safari,2,Nissan,,,False
+4561,Safari,76,Patrol Safari,2,Nissan,,,False
+4560,Super Safari,76,Patrol Safari,2,Nissan,,,False
+4897,SE,385,Qashqai,2,Nissan,,,False
+4041,SV,385,Qashqai,2,Nissan,,,False
+4070,S,945,Quest,2,Nissan,,,False
+5551,Platinum ,927,Rogue,2,Nissan,,,False
+4052,S,927,Rogue,2,Nissan,,,False
+4050,SL,927,Rogue,2,Nissan,,,False
+4051,SV,927,Rogue,2,Nissan,,,False
+5499,S,975,Rogue Sport,2,Nissan,,,False
+5501,SL,975,Rogue Sport,2,Nissan,,,False
+5500,SV,975,Rogue Sport,2,Nissan,,,False
+6170,NISMO,71,Sentra,2,Nissan,,,False
+3961,S,71,Sentra,2,Nissan,,,False
+3959,SR,71,Sentra,2,Nissan,,,False
+3960,SV,71,Sentra,2,Nissan,,,False
+4867,Base,72,Sunny,2,Nissan,,,False
+4866,EX,72,Sunny,2,Nissan,,,False
+6813,Full option,72,Sunny,2,Nissan,,,False
+4535,S,72,Sunny,2,Nissan,,,False
+4865,SE,72,Sunny,2,Nissan,,,False
+4533,SL,72,Sunny,2,Nissan,,,False
+4868,SU,72,Sunny,2,Nissan,,,False
+4534,SV,72,Sunny,2,Nissan,,,False
+4536,SV Comfort,72,Sunny,2,Nissan,,,False
+3954,S,70,Tiida,2,Nissan,,,False
+4858,SE,70,Tiida,2,Nissan,,,False
+3956,SL,70,Tiida,2,Nissan,,,False
+3955,SV,70,Tiida,2,Nissan,,,False
+4076,SV,948,Titan,2,Nissan,,,False
+5484,A/T,69,Urvan,2,Nissan,,,False
+4046,S,925,Versa,2,Nissan,,,False
+4043,SR,925,Versa,2,Nissan,,,False
+4045,SV,925,Versa,2,Nissan,,,False
+6519,Platinum,231,X-Terra,2,Nissan,,,False
+4888,SE,231,X-Terra,2,Nissan,,,False
+5541,Titanium,231,X-Terra,2,Nissan,,,False
+3964,S,73,X-Trail,2,Nissan,,,False
+4871,SE,73,X-Trail,2,Nissan,,,False
+3962,SL,73,X-Trail,2,Nissan,,,False
+3963,SV,73,X-Trail,2,Nissan,,,False
+4870,XE,73,X-Trail,2,Nissan,,,False
+6821,Comfort,1710,C5,158,OMODA,,,False
+6822,Luxury,1710,C5,158,OMODA,,,False
+6415,Deluxe,998,Double Cab,126,POER,,,False
+6300,Gasoline Version,998,Double Cab,126,POER,,,False
+6298,Gasoline Engine,1179,KINGKONG,126,POER,,,False
+6083,Platinum Edition,366,Cayenne,41,Porsche,,,False
+5616,4,365,Panamera,41,Porsche,,,False
+5617,Turbo,365,Panamera,41,Porsche,,,False
+6384, Lone Star,440,1500,39,Ram,,,False
+5720,Big Horn,440,1500,39,Ram,,,False
+5907,Built to Serve,440,1500,39,Ram,,,False
+5764,Classic,440,1500,39,Ram,,,False
+7044,Classic Warlock,440,1500,39,Ram,,,False
+5726,Laramie,440,1500,39,Ram,,,False
+5728,Limited,440,1500,39,Ram,,,False
+5729,Longhorn,440,1500,39,Ram,,,False
+6413,RHO,440,1500,39,Ram,,,False
+5727,Rebel,440,1500,39,Ram,,,False
+6939,Rebel GT,440,1500,39,Ram,,,False
+6469,SLT,440,1500,39,Ram,,,False
+5652,Sport,440,1500,39,Ram,,,False
+6954,Sport GT,440,1500,39,Ram,,,False
+5736,TRX,440,1500,39,Ram,,,False
+6505,Tungsten ,440,1500,39,Ram,,,False
+5648,PE,407,Duster,38,Renault,,,False
+5647,SE,407,Duster,38,Renault,,,False
+5645,LE,450,Koleos,38,Renault,,,False
+5646,PE,450,Koleos,38,Renault,,,False
+5650,SE,446,Megane,38,Renault,,,False
+5643,PE,460,Symbol,38,Renault,,,False
+5644,SE,460,Symbol,38,Renault,,,False
+5731,Black Badge ,414,Cullinan,37,Rolls Royce,,,False
+6177,6-seat version,1415,01,125,Rox,,,False
+6428,Comfort,1502,S06,112,Soueast,,,False
+6795,DM,1502,S06,112,Soueast,,,False
+6441,Luxury,1502,S06,112,Soueast,,,False
+6440,Premium,1502,S06,112,Soueast,,,False
+6378,Comfort,1501,S07,112,Soueast,,,False
+6377,Luxury,1501,S07,112,Soueast,,,False
+6379,Premium,1501,S07,112,Soueast,,,False
+6796,DM,1655,S08,112,Soueast,,,False
+6376,Luxury,1500,S09,112,Soueast,,,False
+6797,Premium,1500,S09,112,Soueast,,,False
+5778,DLX,345,Rexton,32,Ssangyong,,,False
+5782,STD,345,Rexton,32,Ssangyong,,,False
+5780,DLX,262,Tivoli,32,Ssangyong,,,False
+5781,STD,262,Tivoli,32,Ssangyong,,,False
+6097,Premium,1328,WRX,31,Subaru,,,False
+5979,GLX,285,Baleno,30,Suzuki,,,False
+6732,GL,275,Ciaz,30,Suzuki,,,False
+5975,GLX,275,Ciaz,30,Suzuki,,,False
+5974,GLX,259,Dzire,30,Suzuki,,,False
+5978,GLX,279,Ertiga,30,Suzuki,,,False
+6736,GLX,1296,Fronx,30,Suzuki,,,False
+6734,GLX,277,Grand Vitara,30,Suzuki,,,False
+5976,GLX,260,Swift,30,Suzuki,,,False
+6320,HEV,1110,300,128,TANK,,,False
+6319,High Grade,1110,300,128,TANK,,,False
+6917,Elite  Black Edition,1194,500,128,TANK,,,False
+6321,STD,1194,500,128,TANK,,,False
+6868,STD,1747,700,128,TANK,,,False
+6406,Cyberbeast,237,Cybertruck,28,Tesla,,,False
+6135,Long Range AWD,1095,Model 3,28,Tesla,,,False
+6136,Long Range RWD,1095,Model 3,28,Tesla,,,False
+6134,Performance AWD,1095,Model 3,28,Tesla,,,False
+6404,Plaid,239,Model S,28,Tesla,,,False
+6403,Long Range AWD,238,Model X,28,Tesla,,,False
+6402,Plaid,238,Model X,28,Tesla,,,False
+6629,AWD Performance ,1093,Model Y,28,Tesla,,,False
+6401,Long Range AWD,1093,Model Y,28,Tesla,,,False
+6400,Long Range RWD,1093,Model Y,28,Tesla,,,False
+4842,Limited,928,4Runner,27,Toyota,,,False
+4477,SR5,928,4Runner,27,Toyota,,,False
+5994,TRD Off-Road,928,4Runner,27,Toyota,,,False
+5989,TRD Sport,928,4Runner,27,Toyota,,,False
+4000,Limited,289,Avalon,27,Toyota,,,False
+4833,SE,289,Avalon,27,Toyota,,,False
+5410,Touring,289,Avalon,27,Toyota,,,False
+4836,XL,289,Avalon,27,Toyota,,,False
+4002,XLE,289,Avalon,27,Toyota,,,False
+4001,XSE,289,Avalon,27,Toyota,,,False
+4530,GX,931,CH-R,27,Toyota,,,False
+4080,Limited,931,CH-R,27,Toyota,,,False
+6128,E Plus,254,Camry,27,Toyota,,,False
+3988,GLE,254,Camry,27,Toyota,,,False
+6191,GLE HEV LIMITED,254,Camry,27,Toyota,,,False
+4816,GLI,254,Camry,27,Toyota,,,False
+4814,GLX,254,Camry,27,Toyota,,,False
+5904,Grande,254,Camry,27,Toyota,,,False
+6182,High Grade (Hybrid),254,Camry,27,Toyota,,,False
+3989,LE,254,Camry,27,Toyota,,,False
+6178,Mid Grade (Hybrid),254,Camry,27,Toyota,,,False
+3986,SE,254,Camry,27,Toyota,,,False
+5556,TRD,254,Camry,27,Toyota,,,False
+3987,XLE,254,Camry,27,Toyota,,,False
+3985,XSE,254,Camry,27,Toyota,,,False
+4853,GLI,245,Corolla,27,Toyota,,,False
+6260,High Grade (Hybrid),245,Corolla,27,Toyota,,,False
+3953,L,245,Corolla,27,Toyota,,,False
+3970,LE,245,Corolla,27,Toyota,,,False
+4504,Limited,245,Corolla,27,Toyota,,,False
+6261,Mid Grade (Gasoline),245,Corolla,27,Toyota,,,False
+6262,Mid Grade (Hybrid),245,Corolla,27,Toyota,,,False
+4854,S,245,Corolla,27,Toyota,,,False
+3968,SE,245,Corolla,27,Toyota,,,False
+4503,Sport,245,Corolla,27,Toyota,,,False
+4852,Standard ,245,Corolla,27,Toyota,,,False
+3969,XLE,245,Corolla,27,Toyota,,,False
+4527,XLI,245,Corolla,27,Toyota,,,False
+3967,XSE,245,Corolla,27,Toyota,,,False
+5866,High Grade,1011,Corolla Cross,27,Toyota,,,False
+5749,LE,1011,Corolla Cross,27,Toyota,,,False
+5478,Mid Grade,1011,Corolla Cross,27,Toyota,,,False
+5735,XLE,1011,Corolla Cross,27,Toyota,,,False
+6530,XSE,1011,Corolla Cross,27,Toyota,,,False
+6308,Nightshade,1468,Corolla Hatchback,27,Toyota,,,False
+6309,SE,1468,Corolla Hatchback,27,Toyota,,,False
+6269,High Grade (Hybrid),933,Crown,27,Toyota,,,False
+6263,High Grade Turbo (Two-Tone),933,Crown,27,Toyota,,,False
+6037,Limited,933,Crown,27,Toyota,,,False
+5913,Majesta,933,Crown,27,Toyota,,,False
+6070,Platinum,933,Crown,27,Toyota,,,False
+6168,Royal,933,Crown,27,Toyota,,,False
+6612,XLE,933,Crown,27,Toyota,,,False
+6510,XLE,1574,Crown Signia,27,Toyota,,,False
+5964,Final Edition,256,FJ Cruiser,27,Toyota,,,False
+4471,GXR,256,FJ Cruiser,27,Toyota,,,False
+4452,EXR,286,Fortuner,27,Toyota,,,False
+5657,GX,286,Fortuner,27,Toyota,,,False
+4079,GXR,286,Fortuner,27,Toyota,,,False
+4830,SR5,286,Fortuner,27,Toyota,,,False
+4829,TRD,286,Fortuner,27,Toyota,,,False
+4078,VXR,286,Fortuner,27,Toyota,,,False
+6271,Automatic,1236,GR86,27,Toyota,,,False
+6270,Manual,1236,GR86,27,Toyota,,,False
+6726,Premium ,1236,GR86,27,Toyota,,,False
+6615,Limited,1338,Grand Highlander,27,Toyota,,,False
+6228,Platinum,1338,Grand Highlander,27,Toyota,,,False
+6106,XLE,1338,Grand Highlander,27,Toyota,,,False
+6284,Commuter,241,Hiace,27,Toyota,,,False
+4506,Commuter High Roof ,241,Hiace,27,Toyota,,,False
+4508,GL ,241,Hiace,27,Toyota,,,False
+6791,Van,241,Hiace,27,Toyota,,,False
+5734,GLE ,934,Highlander,27,Toyota,,,False
+6511,High Grade ,934,Highlander,27,Toyota,,,False
+4086,LE,934,Highlander,27,Toyota,,,False
+4084,Limited,934,Highlander,27,Toyota,,,False
+4083,Platinium,934,Highlander,27,Toyota,,,False
+4085,XLE,934,Highlander,27,Toyota,,,False
+5655,XSE,934,Highlander,27,Toyota,,,False
+5406,Adventure,253,Hilux,27,Toyota,,,False
+3983,Double Cab 4x2,253,Hilux,27,Toyota,,,False
+3982,Double Cab 4x4,253,Hilux,27,Toyota,,,False
+5793,Double Cab 4x4 ( V6),253,Hilux,27,Toyota,,,False
+5615,GR Sport,253,Hilux,27,Toyota,,,False
+3984,Single Cab 4x2,253,Hilux,27,Toyota,,,False
+4509,TRD(V6),253,Hilux,27,Toyota,,,False
+6281,HEV,252,Innova,27,Toyota,,,False
+6127,V,252,Innova,27,Toyota,,,False
+6512, GR HEV,249,Land Cruiser,27,Toyota,,,False
+3972,EX.R,249,Land Cruiser,27,Toyota,,,False
+5477,G-XR Twin-Turbo,249,Land Cruiser,27,Toyota,,,False
+6049,G-XR Twin-Turbo LIMITED,249,Land Cruiser,27,Toyota,,,False
+5592,GR,249,Land Cruiser,27,Toyota,,,False
+5771,GR Twin Turbo,249,Land Cruiser,27,Toyota,,,False
+3977,GX,249,Land Cruiser,27,Toyota,,,False
+3976,GX.R ,249,Land Cruiser,27,Toyota,,,False
+5765,GX.R  Full Option ,249,Land Cruiser,27,Toyota,,,False
+5472,GX.R Grand Touring,249,Land Cruiser,27,Toyota,,,False
+5766,GX.R Limited,249,Land Cruiser,27,Toyota,,,False
+5438,GX.R.i,249,Land Cruiser,27,Toyota,,,False
+6242,VX,249,Land Cruiser,27,Toyota,,,False
+5767,VX  Full Option ,249,Land Cruiser,27,Toyota,,,False
+5769,VX 3.5L Twin Turbo,249,Land Cruiser,27,Toyota,,,False
+5475,VX 3.5L Twin-Turbo,249,Land Cruiser,27,Toyota,,,False
+6565,VX HEV ,249,Land Cruiser,27,Toyota,,,False
+5768,VX Limited ,249,Land Cruiser,27,Toyota,,,False
+6518,VX Twin Turbo Limited,249,Land Cruiser,27,Toyota,,,False
+3974,VX.R ,249,Land Cruiser,27,Toyota,,,False
+6427,VX.R Grand Touring,249,Land Cruiser,27,Toyota,,,False
+6566,VX.R HEV ,249,Land Cruiser,27,Toyota,,,False
+5770,VX.R Twin Turbo,249,Land Cruiser,27,Toyota,,,False
+3973,VX.S,249,Land Cruiser,27,Toyota,,,False
+4472,Double Cabin,287,Land Cruiser 70,27,Toyota,,,False
+4473,Single Cabin,287,Land Cruiser 70,27,Toyota,,,False
+4511,Hard Top,248,Land Cruiser 70 Pickup,27,Toyota,,,False
+6174,A4 Adventure,288,Land Cruiser Prado,27,Toyota,,,False
+6079,Adventure,288,Land Cruiser Prado,27,Toyota,,,False
+6277,All Rounder,288,Land Cruiser Prado,27,Toyota,,,False
+4832,GX,288,Land Cruiser Prado,27,Toyota,,,False
+4514,GXR,288,Land Cruiser Prado,27,Toyota,,,False
+6951,R2,288,Land Cruiser Prado,27,Toyota,,,False
+6382,R3,288,Land Cruiser Prado,27,Toyota,,,False
+6278,Standard,288,Land Cruiser Prado,27,Toyota,,,False
+4053,TX,288,Land Cruiser Prado,27,Toyota,,,False
+3999,TXL,288,Land Cruiser Prado,27,Toyota,,,False
+3998,TXS,288,Land Cruiser Prado,27,Toyota,,,False
+3997,VX,288,Land Cruiser Prado,27,Toyota,,,False
+5427,VX.R,288,Land Cruiser Prado,27,Toyota,,,False
+4513,VXL,288,Land Cruiser Prado,27,Toyota,,,False
+4515,SE,247,Previa,27,Toyota,,,False
+4518,L Eco,242,Prius,27,Toyota,,,False
+6936,GX,1780,Proace City,27,Toyota,,,False
+5958, XLE HEV (High) ,257,RAV4,27,Toyota,,,False
+6786, XLE HEV (Mid) ,257,RAV4,27,Toyota,,,False
+4520,Adventure,257,RAV4,27,Toyota,,,False
+4521,GXR ,257,RAV4,27,Toyota,,,False
+6169,HEV,257,RAV4,27,Toyota,,,False
+3993,High Grade,257,RAV4,27,Toyota,,,False
+3992,LE,257,RAV4,27,Toyota,,,False
+5957,LE HEV,257,RAV4,27,Toyota,,,False
+3990,Limited,257,RAV4,27,Toyota,,,False
+5960,Limited HEV,257,RAV4,27,Toyota,,,False
+3994,Mid Grade,257,RAV4,27,Toyota,,,False
+4824,SE,257,RAV4,27,Toyota,,,False
+5961,SE Hybrid,257,RAV4,27,Toyota,,,False
+6007,Woodland Edition,257,RAV4,27,Toyota,,,False
+3991,XLE,257,RAV4,27,Toyota,,,False
+6143,XLE Premium,257,RAV4,27,Toyota,,,False
+5439,XSE,257,RAV4,27,Toyota,,,False
+5959,XSE HEV,257,RAV4,27,Toyota,,,False
+4524,EX,246,Rush,27,Toyota,,,False
+4457,Limited,250,Sequoia,27,Toyota,,,False
+4456,Platinum,250,Sequoia,27,Toyota,,,False
+4458,TRD,250,Sequoia,27,Toyota,,,False
+5936,TRD Off-Road ,250,Sequoia,27,Toyota,,,False
+6059,TRD Pro,250,Sequoia,27,Toyota,,,False
+5884,LE,937,Sienna,27,Toyota,,,False
+6002,XLE,937,Sienna,27,Toyota,,,False
+6354,XSE,937,Sienna,27,Toyota,,,False
+4528,GR,320,Supra,27,Toyota,,,False
+4093,SR,938,Tacoma,27,Toyota,,,False
+4092,SR5,938,Tacoma,27,Toyota,,,False
+4089,TRD Pro,938,Tacoma,27,Toyota,,,False
+4091,TRD Sport,938,Tacoma,27,Toyota,,,False
+4095,1794 Edition,939,Tundra,27,Toyota,,,False
+4097,Limited,939,Tundra,27,Toyota,,,False
+4096,Platinium,939,Tundra,27,Toyota,,,False
+5534,TRD Sport,939,Tundra,27,Toyota,,,False
+6273,GLX,1184,Urban Cruiser,27,Toyota,,,False
+6790,High grade,1184,Urban Cruiser,27,Toyota,,,False
+6048,Limited,940,Venza,27,Toyota,,,False
+6000,XLE,940,Venza,27,Toyota,,,False
+4837,Basic,322,Yaris,27,Toyota,,,False
+5440,E,322,Yaris,27,Toyota,,,False
+5507,G,322,Yaris,27,Toyota,,,False
+4005,LE,322,Yaris,27,Toyota,,,False
+4838,Mid Grade,322,Yaris,27,Toyota,,,False
+4839,S,322,Yaris,27,Toyota,,,False
+4526,SE,322,Yaris,27,Toyota,,,False
+4840,Sport,322,Yaris,27,Toyota,,,False
+4990,R-Line,318,Arteon,26,Volkswagen,,,False
+5872,SEL Premium R-Line,318,Arteon,26,Volkswagen,,,False
+6255,Peak Edition SE with Technology,342,Atlas,26,Volkswagen,,,False
+5521,R-Line,342,Atlas,26,Volkswagen,,,False
+5048,SE,342,Atlas,26,Volkswagen,,,False
+5047,SEL,342,Atlas,26,Volkswagen,,,False
+6961,SEL Peak Edition,342,Atlas,26,Volkswagen,,,False
+5817,SEL Premium,342,Atlas,26,Volkswagen,,,False
+5906,SEL Premium R-Line,342,Atlas,26,Volkswagen,,,False
+5857,SEL R-Line,342,Atlas,26,Volkswagen,,,False
+5934,SE,1173,Atlas Cross Sport,26,Volkswagen,,,False
+6226,SE R-Line,1173,Atlas Cross Sport,26,Volkswagen,,,False
+5933,SEL,1173,Atlas Cross Sport,26,Volkswagen,,,False
+5931,SEL Premium,1173,Atlas Cross Sport,26,Volkswagen,,,False
+5930,SEL Premium R-Line,1173,Atlas Cross Sport,26,Volkswagen,,,False
+5932,SEL R-Line,1173,Atlas Cross Sport,26,Volkswagen,,,False
+5003,S,328,Beetle,26,Volkswagen,,,False
+5004,Standard,328,Beetle,26,Volkswagen,,,False
+4997,Turbo S,328,Beetle,26,Volkswagen,,,False
+5009,GTI,329,Golf,26,Volkswagen,,,False
+5707,GTI Clubsport,329,Golf,26,Volkswagen,,,False
+5008,R-line,329,Golf,26,Volkswagen,,,False
+5013,SE,329,Golf,26,Volkswagen,,,False
+5012,SEL,329,Golf,26,Volkswagen,,,False
+5776,Crozz,1116,ID.4,26,Volkswagen,,,False
+6606,Pro S,1116,ID.4,26,Volkswagen,,,False
+5881,X,1116,ID.4,26,Volkswagen,,,False
+6709,Crozz,1145,ID.6,26,Volkswagen,,,False
+6024,Pro,1145,ID.6,26,Volkswagen,,,False
+5016,Comfortline,333,Jetta,26,Volkswagen,,,False
+5017,GLI,333,Jetta,26,Volkswagen,,,False
+6250,GLI Autobahn,333,Jetta,26,Volkswagen,,,False
+5423,R-Line,333,Jetta,26,Volkswagen,,,False
+5020,S,333,Jetta,26,Volkswagen,,,False
+5019,SE,333,Jetta,26,Volkswagen,,,False
+5018,SEL,333,Jetta,26,Volkswagen,,,False
+5498,SEL Premium,333,Jetta,26,Volkswagen,,,False
+5413,tsi,333,Jetta,26,Volkswagen,,,False
+5883,Limited Edition,341,Passat,26,Volkswagen,,,False
+5044,R-line,341,Passat,26,Volkswagen,,,False
+5043,S,341,Passat,26,Volkswagen,,,False
+5042,SE,341,Passat,26,Volkswagen,,,False
+5041,SEL,341,Passat,26,Volkswagen,,,False
+5054,Luxury ,344,Passat CC,26,Volkswagen,,,False
+5053,Sport,344,Passat CC,26,Volkswagen,,,False
+6088,S,1077,Taos,26,Volkswagen,,,False
+5737,SE,1077,Taos,26,Volkswagen,,,False
+5952,SEL,1077,Taos,26,Volkswagen,,,False
+5031,R-Line,337,Tiguan,26,Volkswagen,,,False
+5034,S,337,Tiguan,26,Volkswagen,,,False
+5033,SE,337,Tiguan,26,Volkswagen,,,False
+6005,SE R-Line Black,337,Tiguan,26,Volkswagen,,,False
+6330,R-Design,297,S60,25,Volvo,,,False
+5561,T5 R,297,S60,25,Volvo,,,False
+6784,Luxury ,1707,Dream,154,Voyah,,,False
+6782,4WD,1706,Free,154,Voyah,,,False
+5791,Economy,1122,Terralord,97,ZX AUTO,,,False

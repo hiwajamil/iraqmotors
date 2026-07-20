@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 
 import 'package:iq_motors/core/utils/bid_display.dart';
 import 'package:iq_motors/core/localization/l10n_extensions.dart';
+import 'package:iq_motors/core/theme/app_theme.dart';
 import 'package:iq_motors/shared/data/add_car_form_options.dart';
 import 'package:iq_motors/features/marketplace/domain/models/car_bid_record.dart';
 import 'package:iq_motors/features/storage/presentation/providers/storage_providers.dart';
@@ -29,7 +30,7 @@ class CarBidHistoryDialog extends ConsumerStatefulWidget {
   }) {
     return showDialog<void>(
       context: context,
-      barrierColor: Colors.black.withValues(alpha: 0.35),
+      barrierColor: context.colorScheme.scrim.withValues(alpha: 0.35),
       builder: (_) => CarBidHistoryDialog(
         carId: carId,
         carTitle: carTitle,
@@ -44,10 +45,6 @@ class CarBidHistoryDialog extends ConsumerStatefulWidget {
 }
 
 class _CarBidHistoryDialogState extends ConsumerState<CarBidHistoryDialog> {
-  static const Color _textPrimary = Color(0xFF1D1D1F);
-  static const Color _textSecondary = Color(0xFF86868B);
-  static const Color _surface = Color(0xFFF5F5F7);
-
   Future<List<CarBidRecord>>? _bidsFuture;
 
   Future<List<CarBidRecord>> _loadBids(WidgetRef ref) {
@@ -71,11 +68,13 @@ class _CarBidHistoryDialogState extends ConsumerState<CarBidHistoryDialog> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final colorScheme = context.colorScheme;
+    final textTheme = context.textTheme;
 
     return AlertDialog(
-      backgroundColor: Colors.white,
+      backgroundColor: colorScheme.surfaceContainerHigh,
       elevation: 24,
-      shadowColor: Colors.black.withValues(alpha: 0.12),
+      shadowColor: colorScheme.shadow.withValues(alpha: 0.12),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
       ),
@@ -97,14 +96,14 @@ class _CarBidHistoryDialogState extends ConsumerState<CarBidHistoryDialog> {
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: _surface,
+                      color: colorScheme.surfaceContainerHighest,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     alignment: Alignment.center,
-                    child: const Icon(
+                    child: Icon(
                       Icons.gavel_rounded,
                       size: 20,
-                      color: _textPrimary,
+                      color: colorScheme.onSurface,
                     ),
                   ),
                   const SizedBox(width: 14),
@@ -114,11 +113,11 @@ class _CarBidHistoryDialogState extends ConsumerState<CarBidHistoryDialog> {
                       children: [
                         Text(
                           l10n.bidHistoryTitle,
-                          style: const TextStyle(
+                          style: textTheme.titleMedium?.copyWith(
                             fontSize: 18,
                             fontWeight: FontWeight.w700,
                             letterSpacing: -0.3,
-                            color: _textPrimary,
+                            color: colorScheme.onSurface,
                           ),
                         ),
                         const SizedBox(height: 2),
@@ -126,9 +125,9 @@ class _CarBidHistoryDialogState extends ConsumerState<CarBidHistoryDialog> {
                           widget.carTitle,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
+                          style: textTheme.bodySmall?.copyWith(
                             fontSize: 13,
-                            color: _textSecondary,
+                            color: colorScheme.onSurfaceVariant,
                           ),
                         ),
                       ],
@@ -137,7 +136,7 @@ class _CarBidHistoryDialogState extends ConsumerState<CarBidHistoryDialog> {
                   IconButton(
                     onPressed: () => Navigator.of(context).pop(),
                     icon: const Icon(Icons.close_rounded, size: 22),
-                    color: _textSecondary,
+                    color: colorScheme.onSurfaceVariant,
                   ),
                 ],
               ),
@@ -166,9 +165,9 @@ class _CarBidHistoryDialogState extends ConsumerState<CarBidHistoryDialog> {
                       child: Text(
                         snapshot.error.toString(),
                         textAlign: TextAlign.center,
-                        style: const TextStyle(
+                        style: textTheme.bodyMedium?.copyWith(
                           fontSize: 14,
-                          color: Color(0xFFFF3B30),
+                          color: colorScheme.error,
                         ),
                       ),
                     );
@@ -184,25 +183,26 @@ class _CarBidHistoryDialogState extends ConsumerState<CarBidHistoryDialog> {
                           Container(
                             width: 72,
                             height: 72,
-                            decoration: const BoxDecoration(
-                              color: _surface,
+                            decoration: BoxDecoration(
+                              color: colorScheme.surfaceContainerHighest,
                               shape: BoxShape.circle,
                             ),
                             alignment: Alignment.center,
                             child: Icon(
                               Icons.receipt_long_outlined,
                               size: 32,
-                              color: _textSecondary.withValues(alpha: 0.7),
+                              color: colorScheme.onSurfaceVariant
+                                  .withValues(alpha: 0.7),
                             ),
                           ),
                           const SizedBox(height: 16),
                           Text(
                             l10n.bidHistoryEmpty,
                             textAlign: TextAlign.center,
-                            style: const TextStyle(
+                            style: textTheme.bodyMedium?.copyWith(
                               fontSize: 15,
                               fontWeight: FontWeight.w500,
-                              color: _textSecondary,
+                              color: colorScheme.onSurfaceVariant,
                               height: 1.45,
                             ),
                           ),
@@ -263,22 +263,24 @@ class _BidHistoryTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = context.colorScheme;
+    final textTheme = context.textTheme;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: isTopBid
-            ? const Color(0xFF1D1D1F).withValues(alpha: 0.04)
-            : const Color(0xFFF5F5F7),
+            ? colorScheme.onSurface.withValues(alpha: 0.04)
+            : colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: isTopBid
-              ? const Color(0xFF1D1D1F).withValues(alpha: 0.12)
-              : Colors.black.withValues(alpha: 0.04),
+              ? colorScheme.onSurface.withValues(alpha: 0.12)
+              : colorScheme.shadow.withValues(alpha: 0.04),
         ),
         boxShadow: isTopBid
             ? [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.06),
+                  color: colorScheme.shadow.withValues(alpha: 0.06),
                   blurRadius: 12,
                   offset: const Offset(0, 4),
                 ),
@@ -297,21 +299,23 @@ class _BidHistoryTile extends StatelessWidget {
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   color: isTopBid
-                      ? const Color(0xFF1D1D1F)
-                      : Colors.white,
+                      ? colorScheme.inverseSurface
+                      : colorScheme.surfaceContainerLowest,
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
                     color: isTopBid
                         ? Colors.transparent
-                        : Colors.black.withValues(alpha: 0.06),
+                        : colorScheme.shadow.withValues(alpha: 0.06),
                   ),
                 ),
                 child: Text(
                   '$rank',
-                  style: TextStyle(
+                  style: textTheme.labelSmall?.copyWith(
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
-                    color: isTopBid ? Colors.white : const Color(0xFF86868B),
+                    color: isTopBid
+                        ? colorScheme.onInverseSurface
+                        : colorScheme.onSurfaceVariant,
                   ),
                 ),
               ),
@@ -322,10 +326,10 @@ class _BidHistoryTile extends StatelessWidget {
                   children: [
                     Text(
                       nameLabel,
-                      style: const TextStyle(
+                      style: textTheme.labelSmall?.copyWith(
                         fontSize: 11,
                         fontWeight: FontWeight.w500,
-                        color: Color(0xFF86868B),
+                        color: colorScheme.onSurfaceVariant,
                       ),
                     ),
                     const SizedBox(height: 3),
@@ -333,10 +337,10 @@ class _BidHistoryTile extends StatelessWidget {
                       bid.bidderName.isNotEmpty ? bid.bidderName : '—',
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
+                      style: textTheme.bodyMedium?.copyWith(
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
-                        color: Color(0xFF1D1D1F),
+                        color: colorScheme.onSurface,
                       ),
                     ),
                   ],
@@ -347,15 +351,15 @@ class _BidHistoryTile extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF1D1D1F),
+                  color: colorScheme.inverseSurface,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
                   amountLabel,
-                  style: const TextStyle(
+                  style: textTheme.bodyMedium?.copyWith(
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
-                    color: Colors.white,
+                    color: colorScheme.onInverseSurface,
                     letterSpacing: -0.2,
                   ),
                 ),
@@ -400,15 +404,17 @@ class _InlineField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = context.colorScheme;
+    final textTheme = context.textTheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
-          style: const TextStyle(
+          style: textTheme.labelSmall?.copyWith(
             fontSize: 11,
             fontWeight: FontWeight.w500,
-            color: Color(0xFF86868B),
+            color: colorScheme.onSurfaceVariant,
           ),
         ),
         const SizedBox(height: 3),
@@ -416,10 +422,10 @@ class _InlineField extends StatelessWidget {
           value,
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
-          style: TextStyle(
+          style: textTheme.bodySmall?.copyWith(
             fontSize: 13,
             fontWeight: FontWeight.w500,
-            color: const Color(0xFF1D1D1F),
+            color: colorScheme.onSurface,
             fontFeatures:
                 monospace ? const [FontFeature.tabularFigures()] : null,
           ),

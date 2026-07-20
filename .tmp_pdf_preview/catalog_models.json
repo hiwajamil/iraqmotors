@@ -1,0 +1,6650 @@
+{
+  "toyota": [
+    {
+      "id": "toyota_hilux",
+      "en": "Hilux"
+    },
+    {
+      "id": "toyota_corolla",
+      "en": "Corolla"
+    },
+    {
+      "id": "toyota_land_cruiser",
+      "en": "Land Cruiser"
+    },
+    {
+      "id": "toyota_camry",
+      "en": "Camry"
+    },
+    {
+      "id": "toyota_crown",
+      "en": "Crown"
+    },
+    {
+      "id": "toyota_rav4",
+      "en": "RAV4"
+    },
+    {
+      "id": "toyota_land_cruiser_prado",
+      "en": "Land Cruiser Prado"
+    },
+    {
+      "id": "toyota_corolla_cross",
+      "en": "Corolla Cross"
+    },
+    {
+      "id": "toyota_urban_cruiser",
+      "en": "Urban Cruiser"
+    },
+    {
+      "id": "toyota_yaris",
+      "en": "Yaris"
+    },
+    {
+      "id": "toyota_corolla_hatchback",
+      "en": "Corolla Hatchback"
+    },
+    {
+      "id": "toyota_frontlander",
+      "en": "Frontlander"
+    },
+    {
+      "id": "toyota_hiace",
+      "en": "Hiace"
+    },
+    {
+      "id": "toyota_highlander",
+      "en": "Highlander"
+    },
+    {
+      "id": "toyota_avalon",
+      "en": "Avalon"
+    },
+    {
+      "id": "toyota_aurion",
+      "en": "Aurion"
+    },
+    {
+      "id": "toyota_prius",
+      "en": "Prius"
+    },
+    {
+      "id": "toyota_fortuner",
+      "en": "Fortuner"
+    },
+    {
+      "id": "toyota_rush",
+      "en": "Rush"
+    },
+    {
+      "id": "toyota_sequoia",
+      "en": "Sequoia"
+    },
+    {
+      "id": "toyota_grand_highlander",
+      "en": "Grand Highlander"
+    },
+    {
+      "id": "toyota_land_cruiser_76",
+      "en": "Land Cruiser 76"
+    },
+    {
+      "id": "toyota_yaris_ia",
+      "en": "Yaris iA"
+    },
+    {
+      "id": "toyota_mark_ii",
+      "en": "Mark II"
+    },
+    {
+      "id": "toyota_chaser",
+      "en": "Chaser"
+    },
+    {
+      "id": "toyota_tacoma",
+      "en": "Tacoma"
+    },
+    {
+      "id": "toyota_sienna",
+      "en": "Sienna"
+    },
+    {
+      "id": "toyota_venza",
+      "en": "Venza"
+    },
+    {
+      "id": "toyota_chr",
+      "en": "C-HR"
+    },
+    {
+      "id": "toyota_fj_cruiser",
+      "en": "FJ Cruiser"
+    },
+    {
+      "id": "toyota_tundra",
+      "en": "Tundra"
+    },
+    {
+      "id": "toyota_land_cruiser_70",
+      "en": "Land Cruiser 70"
+    },
+    {
+      "id": "toyota_land_cruiser_70_pickup",
+      "en": "Land Cruiser 70 Pickup"
+    },
+    {
+      "id": "toyota_avanza",
+      "en": "Avanza"
+    },
+    {
+      "id": "toyota_4runner",
+      "en": "4Runner"
+    },
+    {
+      "id": "toyota_bz3",
+      "en": "bZ3"
+    },
+    {
+      "id": "toyota_bz4x",
+      "en": "bZ4X"
+    },
+    {
+      "id": "toyota_bz5",
+      "en": "bZ5"
+    },
+    {
+      "id": "toyota_gr_corolla",
+      "en": "GR Corolla"
+    },
+    {
+      "id": "toyota_gr86",
+      "en": "GR86"
+    },
+    {
+      "id": "toyota_gt86",
+      "en": "GT86"
+    },
+    {
+      "id": "toyota_t100",
+      "en": "T100"
+    },
+    {
+      "id": "toyota_xa",
+      "en": "xA"
+    },
+    {
+      "id": "toyota_aristo",
+      "en": "Aristo"
+    },
+    {
+      "id": "toyota_avensis",
+      "en": "Avensis"
+    },
+    {
+      "id": "toyota_alphard",
+      "en": "Alphard"
+    },
+    {
+      "id": "toyota_auris",
+      "en": "Auris"
+    },
+    {
+      "id": "toyota_orion",
+      "en": "Orion"
+    },
+    {
+      "id": "toyota_ipsum",
+      "en": "Ipsum"
+    },
+    {
+      "id": "toyota_echo",
+      "en": "Echo"
+    },
+    {
+      "id": "toyota_innova",
+      "en": "Innova"
+    },
+    {
+      "id": "toyota_passo",
+      "en": "Passo"
+    },
+    {
+      "id": "toyota_prius_prime",
+      "en": "Prius Prime"
+    },
+    {
+      "id": "toyota_prius_c",
+      "en": "Prius c"
+    },
+    {
+      "id": "toyota_previa",
+      "en": "Previa"
+    },
+    {
+      "id": "toyota_townace",
+      "en": "Townace"
+    },
+    {
+      "id": "toyota_toyois",
+      "en": "Toyois"
+    },
+    {
+      "id": "toyota_tercel",
+      "en": "Tercel"
+    },
+    {
+      "id": "toyota_dyna",
+      "en": "Dyna"
+    },
+    {
+      "id": "toyota_zelas",
+      "en": "Zelas"
+    },
+    {
+      "id": "toyota_raize",
+      "en": "Raize"
+    },
+    {
+      "id": "toyota_scion_xb",
+      "en": "Scion xB"
+    },
+    {
+      "id": "toyota_scion_tc",
+      "en": "Scion tC"
+    },
+    {
+      "id": "toyota_supra",
+      "en": "Supra"
+    },
+    {
+      "id": "toyota_celica",
+      "en": "Celica"
+    },
+    {
+      "id": "toyota_celsior",
+      "en": "Celsior"
+    },
+    {
+      "id": "toyota_voxy",
+      "en": "Voxy"
+    },
+    {
+      "id": "toyota_veloz",
+      "en": "Veloz"
+    },
+    {
+      "id": "toyota_crown_signia",
+      "en": "Crown Signia"
+    },
+    {
+      "id": "toyota_carina",
+      "en": "Carina"
+    },
+    {
+      "id": "toyota_caldina",
+      "en": "Caldina"
+    },
+    {
+      "id": "toyota_camry_solara",
+      "en": "Camry Solara"
+    },
+    {
+      "id": "toyota_crown_kluger",
+      "en": "Crown Kluger"
+    },
+    {
+      "id": "toyota_crown_comfort",
+      "en": "Crown Comfort"
+    },
+    {
+      "id": "toyota_corolla_im",
+      "en": "Corolla iM"
+    },
+    {
+      "id": "toyota_corona",
+      "en": "Corona"
+    },
+    {
+      "id": "toyota_cresta",
+      "en": "Cresta"
+    },
+    {
+      "id": "toyota_corolla_fielder",
+      "en": "Corolla Fielder"
+    },
+    {
+      "id": "toyota_coaster",
+      "en": "Coaster"
+    },
+    {
+      "id": "toyota_granvia",
+      "en": "Granvia"
+    },
+    {
+      "id": "toyota_matrix",
+      "en": "Matrix"
+    },
+    {
+      "id": "toyota_noah",
+      "en": "Noah"
+    },
+    {
+      "id": "toyota_wish",
+      "en": "Wish"
+    },
+    {
+      "id": "toyota_vigo",
+      "en": "Vigo"
+    },
+    {
+      "id": "toyota_yaris_cross",
+      "en": "Yaris Cross"
+    }
+  ],
+  "mercedes_benz": [
+    {
+      "id": "mb_e_class",
+      "en": "E-Class"
+    },
+    {
+      "id": "mb_c_class",
+      "en": "C-Class"
+    },
+    {
+      "id": "mb_s_class",
+      "en": "S-Class"
+    },
+    {
+      "id": "mb_g_class",
+      "en": "G-Class"
+    },
+    {
+      "id": "mb_cls",
+      "en": "CLS"
+    },
+    {
+      "id": "mb_cla",
+      "en": "CLA"
+    },
+    {
+      "id": "mb_gle",
+      "en": "GLE"
+    },
+    {
+      "id": "mb_gls",
+      "en": "GLS"
+    },
+    {
+      "id": "mb_glc",
+      "en": "GLC"
+    },
+    {
+      "id": "mb_amg_gt",
+      "en": "AMG GT"
+    },
+    {
+      "id": "mb_a_class",
+      "en": "A-Class"
+    },
+    {
+      "id": "mb_amg_gt_4d",
+      "en": "AMG GT 4-door Coupe"
+    },
+    {
+      "id": "mb_b_class",
+      "en": "B-Class"
+    },
+    {
+      "id": "mb_cl_class",
+      "en": "CL-Class"
+    },
+    {
+      "id": "mb_clc_class",
+      "en": "CLC-Class"
+    },
+    {
+      "id": "mb_cle_coupe",
+      "en": "CLE Coupe"
+    },
+    {
+      "id": "mb_clk_class",
+      "en": "CLK-Class"
+    },
+    {
+      "id": "mb_eqa",
+      "en": "EQA"
+    },
+    {
+      "id": "mb_eqb",
+      "en": "EQB"
+    },
+    {
+      "id": "mb_eqe_suv",
+      "en": "EQE SUV"
+    },
+    {
+      "id": "mb_eqe_sedan",
+      "en": "EQE Sedan"
+    },
+    {
+      "id": "mb_eqs",
+      "en": "EQS"
+    },
+    {
+      "id": "mb_eqv",
+      "en": "EQV"
+    },
+    {
+      "id": "mb_gl_class",
+      "en": "GL-Class"
+    },
+    {
+      "id": "mb_glb",
+      "en": "GLB"
+    },
+    {
+      "id": "mb_gla",
+      "en": "GLA"
+    },
+    {
+      "id": "mb_glc_coupe",
+      "en": "GLC-Class Coupe"
+    },
+    {
+      "id": "mb_gle_coupe",
+      "en": "GLE Coupe"
+    },
+    {
+      "id": "mb_glk_class",
+      "en": "GLK-Class"
+    },
+    {
+      "id": "mb_ml_class",
+      "en": "ML-Class"
+    },
+    {
+      "id": "mb_r_class",
+      "en": "R-Class"
+    },
+    {
+      "id": "mb_s_maybach",
+      "en": "S-Class Maybach"
+    },
+    {
+      "id": "mb_sec",
+      "en": "SEC"
+    },
+    {
+      "id": "mb_sl_class",
+      "en": "SL-Class"
+    },
+    {
+      "id": "mb_slc_class",
+      "en": "SLC-Class"
+    },
+    {
+      "id": "mb_slk_class",
+      "en": "SLK-Class"
+    },
+    {
+      "id": "mb_slr_mclaren",
+      "en": "SLR McLaren"
+    },
+    {
+      "id": "mb_sls_amg",
+      "en": "SLS AMG"
+    },
+    {
+      "id": "mb_ssk",
+      "en": "SSK"
+    },
+    {
+      "id": "mb_t_class",
+      "en": "T-Class"
+    },
+    {
+      "id": "mb_v_class",
+      "en": "V-Class"
+    },
+    {
+      "id": "mb_v_maybach",
+      "en": "V-Class Maybach"
+    },
+    {
+      "id": "mb_x_class",
+      "en": "X-Class"
+    },
+    {
+      "id": "mb_ponton",
+      "en": "Ponton"
+    },
+    {
+      "id": "mb_sprinter",
+      "en": "Sprinter"
+    },
+    {
+      "id": "mb_viano",
+      "en": "Viano"
+    },
+    {
+      "id": "mb_vito",
+      "en": "Vito"
+    }
+  ],
+  "kia": [
+    {
+      "id": "kia_sorento",
+      "en": "Sorento"
+    },
+    {
+      "id": "kia_sportage",
+      "en": "Sportage"
+    },
+    {
+      "id": "kia_k4",
+      "en": "K4"
+    },
+    {
+      "id": "kia_tasman",
+      "en": "Tasman"
+    },
+    {
+      "id": "kia_k3",
+      "en": "K3"
+    },
+    {
+      "id": "kia_cerato",
+      "en": "Cerato"
+    },
+    {
+      "id": "kia_forte",
+      "en": "Forte"
+    },
+    {
+      "id": "kia_forte5",
+      "en": "Forte5"
+    },
+    {
+      "id": "kia_sonet",
+      "en": "Sonet"
+    },
+    {
+      "id": "kia_k5",
+      "en": "K5"
+    },
+    {
+      "id": "kia_k7",
+      "en": "K7"
+    },
+    {
+      "id": "kia_optima",
+      "en": "Optima"
+    },
+    {
+      "id": "kia_k8",
+      "en": "K8"
+    },
+    {
+      "id": "kia_niro",
+      "en": "Niro"
+    },
+    {
+      "id": "kia_k900",
+      "en": "K900"
+    },
+    {
+      "id": "kia_rio",
+      "en": "Rio"
+    },
+    {
+      "id": "kia_soul",
+      "en": "Soul"
+    },
+    {
+      "id": "kia_picanto",
+      "en": "Picanto"
+    },
+    {
+      "id": "kia_carens",
+      "en": "Carens"
+    },
+    {
+      "id": "kia_cadenza",
+      "en": "Cadenza"
+    },
+    {
+      "id": "kia_ev5",
+      "en": "EV5"
+    },
+    {
+      "id": "kia_ev6",
+      "en": "EV6"
+    },
+    {
+      "id": "kia_ev9",
+      "en": "EV9"
+    },
+    {
+      "id": "kia_seltos",
+      "en": "Seltos"
+    },
+    {
+      "id": "kia_mohave",
+      "en": "Mohave"
+    },
+    {
+      "id": "kia_telluride",
+      "en": "Telluride"
+    },
+    {
+      "id": "kia_koris",
+      "en": "Koris"
+    },
+    {
+      "id": "kia_carnival",
+      "en": "Carnival"
+    },
+    {
+      "id": "kia_stinger",
+      "en": "Stinger"
+    },
+    {
+      "id": "kia_kx1",
+      "en": "KX1"
+    },
+    {
+      "id": "kia_opirus",
+      "en": "Opirus"
+    },
+    {
+      "id": "kia_bongo",
+      "en": "Bongo"
+    },
+    {
+      "id": "kia_bestas",
+      "en": "Besta"
+    },
+    {
+      "id": "kia_pride",
+      "en": "Pride"
+    },
+    {
+      "id": "kia_pregio",
+      "en": "Pregio"
+    },
+    {
+      "id": "kia_potentia",
+      "en": "Potentia"
+    },
+    {
+      "id": "kia_pegas",
+      "en": "Pegas"
+    },
+    {
+      "id": "kia_ray",
+      "en": "Ray"
+    },
+    {
+      "id": "kia_spectra",
+      "en": "Spectra"
+    },
+    {
+      "id": "kia_stonic",
+      "en": "Stonic"
+    },
+    {
+      "id": "kia_ceed",
+      "en": "Ceed"
+    },
+    {
+      "id": "kia_sedona",
+      "en": "Sedona"
+    },
+    {
+      "id": "kia_sephia",
+      "en": "Sephia"
+    },
+    {
+      "id": "kia_forte_coupe",
+      "en": "Forte Coupe"
+    },
+    {
+      "id": "kia_credos",
+      "en": "Credos"
+    },
+    {
+      "id": "kia_concord",
+      "en": "Concord"
+    },
+    {
+      "id": "kia_lotze",
+      "en": "Lotze"
+    }
+  ],
+  "kawei": [
+    {
+      "id": "k_150",
+      "en": "K-150"
+    },
+    {
+      "id": "k1",
+      "en": "K1"
+    }
+  ],
+  "kaiyi": [
+    {
+      "id": "x3",
+      "en": "X3"
+    },
+    {
+      "id": "x7",
+      "en": "X7"
+    },
+    {
+      "id": "x3_pro",
+      "en": "X3 Pro"
+    }
+  ],
+  "karry": [
+    {
+      "id": "uu",
+      "en": "UU"
+    },
+    {
+      "id": "pickup",
+      "en": "Pickup"
+    }
+  ],
+  "kawasaki": [
+    {
+      "id": "mule_3010",
+      "en": "Mule 3010"
+    }
+  ],
+  "byd": [
+    {
+      "id": "byd_qin_plus",
+      "en": "Qin Plus"
+    },
+    {
+      "id": "byd_seal_ev",
+      "en": "Seal EV"
+    },
+    {
+      "id": "byd_atto_3",
+      "en": "Atto 3"
+    },
+    {
+      "id": "byd_seal_7",
+      "en": "Seal 7"
+    },
+    {
+      "id": "byd_sealion_7",
+      "en": "Sealion 7"
+    },
+    {
+      "id": "byd_han",
+      "en": "Han"
+    },
+    {
+      "id": "byd_song_plus",
+      "en": "Song Plus"
+    },
+    {
+      "id": "byd_shark_6",
+      "en": "Shark 6"
+    },
+    {
+      "id": "byd_song_pro_dmi",
+      "en": "Song Pro DM-i"
+    },
+    {
+      "id": "byd_seal_05_dmi",
+      "en": "Seal 05 DM-i"
+    },
+    {
+      "id": "byd_destroyer_05",
+      "en": "Destroyer 05"
+    },
+    {
+      "id": "byd_e2",
+      "en": "e2"
+    },
+    {
+      "id": "byd_f0",
+      "en": "F0"
+    },
+    {
+      "id": "byd_f1",
+      "en": "F1"
+    },
+    {
+      "id": "byd_f3",
+      "en": "F3"
+    },
+    {
+      "id": "byd_f6",
+      "en": "F6"
+    },
+    {
+      "id": "byd_g3",
+      "en": "G3"
+    },
+    {
+      "id": "byd_m9",
+      "en": "M9"
+    },
+    {
+      "id": "byd_atto_8",
+      "en": "Atto 8"
+    },
+    {
+      "id": "byd_es6",
+      "en": "ES 6"
+    },
+    {
+      "id": "byd_tang",
+      "en": "Tang"
+    },
+    {
+      "id": "byd_tang_l",
+      "en": "Tang L"
+    },
+    {
+      "id": "byd_song_l_dmi",
+      "en": "Song L DM-i"
+    },
+    {
+      "id": "byd_seal_06_dmi",
+      "en": "Seal 06 DM-i"
+    },
+    {
+      "id": "byd_sealion_5",
+      "en": "Sealion 5"
+    },
+    {
+      "id": "byd_seagull",
+      "en": "Seagull"
+    },
+    {
+      "id": "byd_sealion_05_dmi",
+      "en": "Sealion 05 DM-i"
+    },
+    {
+      "id": "byd_sealion_06_dmi",
+      "en": "Sealion 06 DM-i"
+    },
+    {
+      "id": "byd_qin_l_dmi",
+      "en": "Qin L DM-i"
+    },
+    {
+      "id": "byd_leopard_5",
+      "en": "Leopard 5"
+    },
+    {
+      "id": "byd_leopard_7",
+      "en": "Leopard 7"
+    },
+    {
+      "id": "byd_leopard_3",
+      "en": "Leopard 3"
+    },
+    {
+      "id": "byd_leopard_8",
+      "en": "Leopard 8"
+    }
+  ],
+  "hafei": [
+    {
+      "id": "mini_truck",
+      "en": "Mini Truck"
+    }
+  ],
+  "higer": [
+    {
+      "id": "h5f",
+      "en": "H5F"
+    },
+    {
+      "id": "klq6928",
+      "en": "KLQ6928"
+    }
+  ],
+  "hino": [
+    {
+      "id": "hino_300_series",
+      "en": "300 Series"
+    }
+  ],
+  "haima": [
+    {
+      "id": "haima_7",
+      "en": "7"
+    },
+    {
+      "id": "8s",
+      "en": "8S"
+    },
+    {
+      "id": "s5",
+      "en": "S5"
+    },
+    {
+      "id": "family",
+      "en": "Family"
+    }
+  ],
+  "haval": [
+    {
+      "id": "haval_h6",
+      "en": "H6"
+    },
+    {
+      "id": "haval_gt_h6",
+      "en": "GT H6"
+    },
+    {
+      "id": "haval_h7",
+      "en": "H7"
+    },
+    {
+      "id": "haval_h9",
+      "en": "H9"
+    },
+    {
+      "id": "haval_jolion",
+      "en": "Jolion"
+    },
+    {
+      "id": "haval_jolion_pro",
+      "en": "Jolion Pro"
+    },
+    {
+      "id": "haval_h2_crossover",
+      "en": "H2 Crossover"
+    },
+    {
+      "id": "haval_h8",
+      "en": "H8"
+    },
+    {
+      "id": "haval_dargo",
+      "en": "Dargo"
+    }
+  ],
+  "hawtai": [
+    {
+      "id": "a25",
+      "en": "A25"
+    },
+    {
+      "id": "b11",
+      "en": "B11"
+    },
+    {
+      "id": "boliger",
+      "en": "Boliger"
+    }
+  ],
+  "soueast": [
+    {
+      "id": "s09",
+      "en": "S09"
+    },
+    {
+      "id": "s07",
+      "en": "S07"
+    },
+    {
+      "id": "s06",
+      "en": "S06"
+    },
+    {
+      "id": "s08",
+      "en": "S08"
+    },
+    {
+      "id": "dx5",
+      "en": "DX5"
+    },
+    {
+      "id": "dx8s",
+      "en": "DX8S"
+    }
+  ],
+  "omoda": [
+    {
+      "id": "c5",
+      "en": "C5"
+    },
+    {
+      "id": "c7",
+      "en": "C7"
+    }
+  ],
+  "oldsmobile": [
+    {
+      "id": "delta_88",
+      "en": "Delta 88"
+    },
+    {
+      "id": "silhouette",
+      "en": "Silhouette"
+    },
+    {
+      "id": "cutlass_ciera",
+      "en": "Cutlass Ciera"
+    }
+  ],
+  "jaecoo": [
+    {
+      "id": "j5",
+      "en": "J5"
+    },
+    {
+      "id": "j7",
+      "en": "J7"
+    },
+    {
+      "id": "j8",
+      "en": "J8"
+    }
+  ],
+  "jetour": [
+    {
+      "id": "t2",
+      "en": "T2"
+    },
+    {
+      "id": "g700",
+      "en": "G700"
+    },
+    {
+      "id": "t1",
+      "en": "T1"
+    },
+    {
+      "id": "x90_plus",
+      "en": "X90 Plus"
+    },
+    {
+      "id": "dashing",
+      "en": "Dashing"
+    },
+    {
+      "id": "x70_plus",
+      "en": "X70 Plus"
+    },
+    {
+      "id": "x70",
+      "en": "X70"
+    },
+    {
+      "id": "l6",
+      "en": "L6"
+    },
+    {
+      "id": "x50",
+      "en": "X50"
+    },
+    {
+      "id": "traveller_stargard",
+      "en": "Traveller Stargard"
+    }
+  ],
+  "jonway": [
+    {
+      "id": "a380",
+      "en": "A380"
+    }
+  ],
+  "jinbei": [
+    {
+      "id": "haice",
+      "en": "Haice"
+    },
+    {
+      "id": "hercules",
+      "en": "Hercules"
+    }
+  ],
+  "volkswagen": [
+    {
+      "id": "jetta",
+      "en": "Jetta"
+    },
+    {
+      "id": "atlas",
+      "en": "Atlas"
+    },
+    {
+      "id": "golf",
+      "en": "Golf"
+    },
+    {
+      "id": "passat",
+      "en": "Passat"
+    },
+    {
+      "id": "tiguan",
+      "en": "Tiguan"
+    },
+    {
+      "id": "atlas_cross_sport",
+      "en": "Atlas Cross Sport"
+    },
+    {
+      "id": "arteon",
+      "en": "Arteon"
+    },
+    {
+      "id": "taos",
+      "en": "Taos"
+    },
+    {
+      "id": "golf_r",
+      "en": "Golf R"
+    },
+    {
+      "id": "beetle",
+      "en": "Beetle"
+    },
+    {
+      "id": "id_3",
+      "en": "ID.3"
+    },
+    {
+      "id": "id_4",
+      "en": "ID.4"
+    },
+    {
+      "id": "id_6",
+      "en": "ID.6"
+    },
+    {
+      "id": "amarok",
+      "en": "Amarok"
+    },
+    {
+      "id": "e_tharu",
+      "en": "e-Tharu"
+    },
+    {
+      "id": "eos",
+      "en": "Eos"
+    },
+    {
+      "id": "bora",
+      "en": "Bora"
+    },
+    {
+      "id": "passat_cc",
+      "en": "Passat CC"
+    },
+    {
+      "id": "polo",
+      "en": "Polo"
+    },
+    {
+      "id": "taigo",
+      "en": "Taigo"
+    },
+    {
+      "id": "transporter",
+      "en": "Transporter"
+    },
+    {
+      "id": "touareg",
+      "en": "Touareg"
+    },
+    {
+      "id": "touran",
+      "en": "Touran"
+    },
+    {
+      "id": "t_roc",
+      "en": "T-Roc"
+    },
+    {
+      "id": "t_cross",
+      "en": "T-Cross"
+    },
+    {
+      "id": "jetta_vs7",
+      "en": "Jetta VS7"
+    },
+    {
+      "id": "routan",
+      "en": "Routan"
+    },
+    {
+      "id": "sharan",
+      "en": "Sharan"
+    },
+    {
+      "id": "scirocco",
+      "en": "Scirocco"
+    },
+    {
+      "id": "phaeton",
+      "en": "Phaeton"
+    },
+    {
+      "id": "vento",
+      "en": "Vento"
+    },
+    {
+      "id": "caddy",
+      "en": "Caddy"
+    },
+    {
+      "id": "golf_plus",
+      "en": "Golf Plus"
+    },
+    {
+      "id": "multivan",
+      "en": "Multivan"
+    },
+    {
+      "id": "multivan_alltrack",
+      "en": "Multivan Alltrack"
+    }
+  ],
+  "chevrolet": [
+    {
+      "id": "tahoe",
+      "en": "Tahoe"
+    },
+    {
+      "id": "camaro",
+      "en": "Camaro"
+    },
+    {
+      "id": "malibu",
+      "en": "Malibu"
+    },
+    {
+      "id": "silverado",
+      "en": "Silverado"
+    },
+    {
+      "id": "silverado_ev",
+      "en": "Silverado EV"
+    },
+    {
+      "id": "corvette",
+      "en": "Corvette"
+    },
+    {
+      "id": "impala",
+      "en": "Impala"
+    },
+    {
+      "id": "blazer",
+      "en": "Blazer"
+    },
+    {
+      "id": "equinox",
+      "en": "Equinox"
+    },
+    {
+      "id": "traverse",
+      "en": "Traverse"
+    },
+    {
+      "id": "optra",
+      "en": "Optra"
+    },
+    {
+      "id": "cruze",
+      "en": "Cruze"
+    },
+    {
+      "id": "c_k",
+      "en": "C/K"
+    },
+    {
+      "id": "c10",
+      "en": "C10"
+    },
+    {
+      "id": "csv_cr8",
+      "en": "CSV CR8"
+    },
+    {
+      "id": "hhr",
+      "en": "HHR"
+    },
+    {
+      "id": "k5_blazer",
+      "en": "K5 Blazer"
+    },
+    {
+      "id": "n300",
+      "en": "N300"
+    },
+    {
+      "id": "ss",
+      "en": "SS"
+    },
+    {
+      "id": "ssr",
+      "en": "SSR"
+    },
+    {
+      "id": "t_series",
+      "en": "T-Series"
+    },
+    {
+      "id": "astro",
+      "en": "Astro"
+    },
+    {
+      "id": "uplander",
+      "en": "Uplander"
+    },
+    {
+      "id": "avalanche",
+      "en": "Avalanche"
+    },
+    {
+      "id": "aveo",
+      "en": "Aveo"
+    },
+    {
+      "id": "orlando",
+      "en": "Orlando"
+    },
+    {
+      "id": "onix",
+      "en": "Onix"
+    },
+    {
+      "id": "epica",
+      "en": "Epica"
+    },
+    {
+      "id": "onix_plus",
+      "en": "Onix Plus"
+    },
+    {
+      "id": "bolt",
+      "en": "Bolt"
+    },
+    {
+      "id": "bel_air",
+      "en": "Bel Air"
+    },
+    {
+      "id": "trax",
+      "en": "Trax"
+    },
+    {
+      "id": "tracker",
+      "en": "Tracker"
+    },
+    {
+      "id": "trailblazer",
+      "en": "Trailblazer"
+    },
+    {
+      "id": "spark",
+      "en": "Spark"
+    },
+    {
+      "id": "celebrity",
+      "en": "Celebrity"
+    },
+    {
+      "id": "sail",
+      "en": "Sail"
+    },
+    {
+      "id": "suburban",
+      "en": "Suburban"
+    },
+    {
+      "id": "sonic",
+      "en": "Sonic"
+    },
+    {
+      "id": "venture",
+      "en": "Venture"
+    },
+    {
+      "id": "captiva",
+      "en": "Captiva"
+    },
+    {
+      "id": "caprice",
+      "en": "Caprice"
+    },
+    {
+      "id": "cobalt",
+      "en": "Cobalt"
+    },
+    {
+      "id": "colorado",
+      "en": "Colorado"
+    },
+    {
+      "id": "groove",
+      "en": "Groove"
+    },
+    {
+      "id": "luv_d_max",
+      "en": "Luv D-Max"
+    },
+    {
+      "id": "lumina",
+      "en": "Lumina"
+    },
+    {
+      "id": "monte_carlo",
+      "en": "Monte Carlo"
+    },
+    {
+      "id": "metro",
+      "en": "Metro"
+    },
+    {
+      "id": "nova",
+      "en": "Nova"
+    }
+  ],
+  "gac_motor": [
+    {
+      "id": "gs4",
+      "en": "GS4"
+    },
+    {
+      "id": "gs5",
+      "en": "GS5"
+    },
+    {
+      "id": "gs8",
+      "en": "GS8"
+    },
+    {
+      "id": "gs8_traveller",
+      "en": "GS8 Traveller"
+    },
+    {
+      "id": "empow",
+      "en": "Empow"
+    },
+    {
+      "id": "empow_r",
+      "en": "Empow R"
+    },
+    {
+      "id": "emkoo",
+      "en": "Emkoo"
+    },
+    {
+      "id": "gs3",
+      "en": "GS3"
+    },
+    {
+      "id": "ga3",
+      "en": "GA3"
+    },
+    {
+      "id": "ga4",
+      "en": "GA4"
+    },
+    {
+      "id": "ga5",
+      "en": "GA5"
+    },
+    {
+      "id": "ga8",
+      "en": "GA8"
+    },
+    {
+      "id": "gn6",
+      "en": "GN6"
+    },
+    {
+      "id": "gn8",
+      "en": "GN8"
+    },
+    {
+      "id": "gs3_emzoom",
+      "en": "GS3 Emzoom"
+    },
+    {
+      "id": "gs4_max",
+      "en": "GS4 Max"
+    },
+    {
+      "id": "gs7",
+      "en": "GS7"
+    },
+    {
+      "id": "m8",
+      "en": "M8"
+    },
+    {
+      "id": "aion_es",
+      "en": "Aion ES"
+    },
+    {
+      "id": "gonow_way_m1",
+      "en": "Gonow Way M1"
+    },
+    {
+      "id": "gonow_ga1030",
+      "en": "Gonow GA1030"
+    },
+    {
+      "id": "gonow_ga200",
+      "en": "Gonow GA200"
+    }
+  ],
+  "gaz": [
+    {
+      "id": "gaz_69",
+      "en": "69"
+    },
+    {
+      "id": "volga",
+      "en": "Volga"
+    }
+  ],
+  "mitsubishi": [
+    {
+      "id": "outlander",
+      "en": "Outlander"
+    },
+    {
+      "id": "outlander_sport",
+      "en": "Outlander Sport"
+    },
+    {
+      "id": "l200",
+      "en": "L200"
+    },
+    {
+      "id": "eclipse_cross",
+      "en": "Eclipse Cross"
+    },
+    {
+      "id": "pajero",
+      "en": "Pajero"
+    },
+    {
+      "id": "pajero_sport",
+      "en": "Pajero Sport"
+    },
+    {
+      "id": "xpander",
+      "en": "Xpander"
+    },
+    {
+      "id": "xpander_cross",
+      "en": "Xpander Cross"
+    },
+    {
+      "id": "mirage",
+      "en": "Mirage"
+    },
+    {
+      "id": "asx",
+      "en": "ASX"
+    },
+    {
+      "id": "attrage",
+      "en": "Attrage"
+    },
+    {
+      "id": "l300",
+      "en": "L300"
+    },
+    {
+      "id": "rvr",
+      "en": "RVR"
+    },
+    {
+      "id": "eclipse",
+      "en": "Eclipse"
+    },
+    {
+      "id": "endeavor",
+      "en": "Endeavor"
+    },
+    {
+      "id": "chariot",
+      "en": "Chariot"
+    },
+    {
+      "id": "rosa",
+      "en": "Rosa"
+    },
+    {
+      "id": "sapporo",
+      "en": "Sapporo"
+    },
+    {
+      "id": "sigma",
+      "en": "Sigma"
+    },
+    {
+      "id": "fuso_canter",
+      "en": "Fuso Canter"
+    },
+    {
+      "id": "canter",
+      "en": "Canter"
+    },
+    {
+      "id": "grandis",
+      "en": "Grandis"
+    },
+    {
+      "id": "galant",
+      "en": "Galant"
+    },
+    {
+      "id": "lancer",
+      "en": "Lancer"
+    },
+    {
+      "id": "lancer_ex",
+      "en": "Lancer EX"
+    },
+    {
+      "id": "lancer_evolution",
+      "en": "Lancer Evolution"
+    },
+    {
+      "id": "lancer_fortis",
+      "en": "Lancer Fortis"
+    },
+    {
+      "id": "magna",
+      "en": "Magna"
+    },
+    {
+      "id": "montero",
+      "en": "Montero"
+    },
+    {
+      "id": "montero_sport",
+      "en": "Montero Sport"
+    },
+    {
+      "id": "mirage_g4",
+      "en": "Mirage G4"
+    },
+    {
+      "id": "nativa",
+      "en": "Nativa"
+    }
+  ],
+  "mitsuoka": [
+    {
+      "id": "galue",
+      "en": "Galue"
+    }
+  ],
+  "morris": [
+    {
+      "id": "minor",
+      "en": "Minor"
+    }
+  ],
+  "geely": [
+    {
+      "id": "cityray",
+      "en": "Cityray"
+    },
+    {
+      "id": "starray",
+      "en": "Starray"
+    },
+    {
+      "id": "monjaro",
+      "en": "Monjaro"
+    },
+    {
+      "id": "coolray",
+      "en": "Coolray"
+    },
+    {
+      "id": "emgrand",
+      "en": "Emgrand"
+    },
+    {
+      "id": "okavango",
+      "en": "Okavango"
+    },
+    {
+      "id": "gx3",
+      "en": "GX3"
+    },
+    {
+      "id": "gx3_pro",
+      "en": "GX3 Pro"
+    },
+    {
+      "id": "azkarra",
+      "en": "Azkarra"
+    },
+    {
+      "id": "ck",
+      "en": "CK"
+    },
+    {
+      "id": "fc",
+      "en": "FC"
+    },
+    {
+      "id": "gc2",
+      "en": "GC2"
+    },
+    {
+      "id": "gc6",
+      "en": "GC6"
+    },
+    {
+      "id": "gc7",
+      "en": "GC7"
+    },
+    {
+      "id": "gx2",
+      "en": "GX2"
+    },
+    {
+      "id": "lc",
+      "en": "LC"
+    },
+    {
+      "id": "mk",
+      "en": "MK"
+    },
+    {
+      "id": "mk_cross",
+      "en": "MK Cross"
+    },
+    {
+      "id": "sc7",
+      "en": "SC7"
+    },
+    {
+      "id": "emgrand_ec7",
+      "en": "Emgrand EC7"
+    },
+    {
+      "id": "emgrand_ec8",
+      "en": "Emgrand EC8"
+    },
+    {
+      "id": "emgrand_gs",
+      "en": "Emgrand GS"
+    },
+    {
+      "id": "emgrand_gt",
+      "en": "Emgrand GT"
+    },
+    {
+      "id": "emgrand_x7",
+      "en": "Emgrand X7"
+    },
+    {
+      "id": "emgrand_x7_sport",
+      "en": "Emgrand X7 Sport"
+    },
+    {
+      "id": "boyue",
+      "en": "Boyue"
+    },
+    {
+      "id": "binray",
+      "en": "Binray"
+    },
+    {
+      "id": "preface",
+      "en": "Preface"
+    },
+    {
+      "id": "tugella",
+      "en": "Tugella"
+    },
+    {
+      "id": "geometry_c",
+      "en": "Geometry C"
+    },
+    {
+      "id": "galaxy_l6",
+      "en": "Galaxy L6"
+    },
+    {
+      "id": "galaxy_starship_7",
+      "en": "Galaxy Starship 7"
+    }
+  ],
+  "genesis": [
+    {
+      "id": "g70",
+      "en": "G70"
+    },
+    {
+      "id": "g80",
+      "en": "G80"
+    },
+    {
+      "id": "g90",
+      "en": "G90"
+    },
+    {
+      "id": "gv60",
+      "en": "GV60"
+    },
+    {
+      "id": "gv70",
+      "en": "GV70"
+    },
+    {
+      "id": "gv80",
+      "en": "GV80"
+    }
+  ],
+  "gmc": [
+    {
+      "id": "yukon",
+      "en": "Yukon"
+    },
+    {
+      "id": "p3500",
+      "en": "P3500"
+    },
+    {
+      "id": "acadia",
+      "en": "Acadia"
+    },
+    {
+      "id": "envoy",
+      "en": "Envoy"
+    },
+    {
+      "id": "terrain",
+      "en": "Terrain"
+    },
+    {
+      "id": "jimmy",
+      "en": "Jimmy"
+    },
+    {
+      "id": "safari",
+      "en": "Safari"
+    },
+    {
+      "id": "savana",
+      "en": "Savana"
+    },
+    {
+      "id": "sonoma",
+      "en": "Sonoma"
+    },
+    {
+      "id": "sierra",
+      "en": "Sierra"
+    },
+    {
+      "id": "canyon",
+      "en": "Canyon"
+    },
+    {
+      "id": "hummer_ev",
+      "en": "Hummer EV"
+    },
+    {
+      "id": "hummer_ev_pickup",
+      "en": "Hummer EV Pickup"
+    },
+    {
+      "id": "yukon_xl",
+      "en": "Yukon XL"
+    }
+  ],
+  "great_wall": [
+    {
+      "id": "wingle_5",
+      "en": "Wingle 5"
+    },
+    {
+      "id": "florid",
+      "en": "Florid"
+    },
+    {
+      "id": "deer",
+      "en": "Deer"
+    },
+    {
+      "id": "wingle",
+      "en": "Wingle"
+    },
+    {
+      "id": "peri",
+      "en": "Peri"
+    },
+    {
+      "id": "socool",
+      "en": "Socool"
+    },
+    {
+      "id": "sing",
+      "en": "Sing"
+    },
+    {
+      "id": "voleex_c30",
+      "en": "Voleex C30"
+    },
+    {
+      "id": "h5_haval",
+      "en": "H5 Haval"
+    },
+    {
+      "id": "cuv_hover",
+      "en": "CUV Hover"
+    }
+  ],
+  "gwm_tank": [
+    {
+      "id": "tank_300",
+      "en": "300"
+    },
+    {
+      "id": "tank_500",
+      "en": "500"
+    },
+    {
+      "id": "tank_700",
+      "en": "700"
+    }
+  ],
+  "jaguar": [
+    {
+      "id": "e_pace",
+      "en": "E-Pace"
+    },
+    {
+      "id": "f_pace",
+      "en": "F-Pace"
+    },
+    {
+      "id": "f_type",
+      "en": "F-Type"
+    },
+    {
+      "id": "i_pace",
+      "en": "I-Pace"
+    },
+    {
+      "id": "s_type",
+      "en": "S-Type"
+    },
+    {
+      "id": "x_type",
+      "en": "X-Type"
+    },
+    {
+      "id": "xe",
+      "en": "XE"
+    },
+    {
+      "id": "xf",
+      "en": "XF"
+    },
+    {
+      "id": "xj",
+      "en": "XJ"
+    },
+    {
+      "id": "xk",
+      "en": "XK"
+    }
+  ],
+  "hyundai": [
+    {
+      "id": "elantra",
+      "en": "Elantra"
+    },
+    {
+      "id": "sonata",
+      "en": "Sonata"
+    },
+    {
+      "id": "tucson",
+      "en": "Tucson"
+    },
+    {
+      "id": "santa_fe",
+      "en": "Santa Fe"
+    },
+    {
+      "id": "accent",
+      "en": "Accent"
+    },
+    {
+      "id": "azera",
+      "en": "Azera"
+    },
+    {
+      "id": "kona",
+      "en": "Kona"
+    },
+    {
+      "id": "palisade",
+      "en": "Palisade"
+    },
+    {
+      "id": "veloster",
+      "en": "Veloster"
+    },
+    {
+      "id": "genesis",
+      "en": "Genesis"
+    },
+    {
+      "id": "i20",
+      "en": "i20"
+    },
+    {
+      "id": "i30",
+      "en": "i30"
+    },
+    {
+      "id": "i40",
+      "en": "i40"
+    },
+    {
+      "id": "genesis_coupe",
+      "en": "Genesis Coupe"
+    },
+    {
+      "id": "h1",
+      "en": "H-1"
+    },
+    {
+      "id": "h100",
+      "en": "H-100"
+    },
+    {
+      "id": "h350",
+      "en": "H350"
+    },
+    {
+      "id": "hd65",
+      "en": "HD 65"
+    },
+    {
+      "id": "i10",
+      "en": "i10"
+    },
+    {
+      "id": "xg",
+      "en": "XG"
+    },
+    {
+      "id": "ioniq_5",
+      "en": "Ioniq 5"
+    },
+    {
+      "id": "ioniq_6",
+      "en": "Ioniq 6"
+    },
+    {
+      "id": "ioniq",
+      "en": "Ioniq"
+    },
+    {
+      "id": "atos_prime",
+      "en": "Atos Prime"
+    },
+    {
+      "id": "avante",
+      "en": "Avante"
+    },
+    {
+      "id": "excel",
+      "en": "Excel"
+    },
+    {
+      "id": "accent_hatchback",
+      "en": "Accent Hatchback"
+    },
+    {
+      "id": "elantra_touring",
+      "en": "Elantra Touring"
+    },
+    {
+      "id": "equus",
+      "en": "Equus"
+    },
+    {
+      "id": "entourage",
+      "en": "Entourage"
+    },
+    {
+      "id": "bayon",
+      "en": "Bayon"
+    },
+    {
+      "id": "porter",
+      "en": "Porter"
+    },
+    {
+      "id": "trajet",
+      "en": "Trajet"
+    },
+    {
+      "id": "tiburon",
+      "en": "Tiburon"
+    },
+    {
+      "id": "terracan",
+      "en": "Terracan"
+    },
+    {
+      "id": "reina",
+      "en": "Reina"
+    },
+    {
+      "id": "santa_cruz",
+      "en": "Santa Cruz"
+    },
+    {
+      "id": "starex",
+      "en": "Starex"
+    },
+    {
+      "id": "stargazer",
+      "en": "Stargazer"
+    },
+    {
+      "id": "staria",
+      "en": "Staria"
+    },
+    {
+      "id": "scoupe",
+      "en": "Scoupe"
+    },
+    {
+      "id": "centennial",
+      "en": "Centennial"
+    },
+    {
+      "id": "venue",
+      "en": "Venue"
+    },
+    {
+      "id": "verna",
+      "en": "Verna"
+    },
+    {
+      "id": "veracruz",
+      "en": "Veracruz"
+    },
+    {
+      "id": "county",
+      "en": "County"
+    },
+    {
+      "id": "casper",
+      "en": "Casper"
+    },
+    {
+      "id": "creta",
+      "en": "Creta"
+    },
+    {
+      "id": "coupe",
+      "en": "Coupe"
+    },
+    {
+      "id": "kona_electric",
+      "en": "Kona Electric"
+    },
+    {
+      "id": "galloper",
+      "en": "Galloper"
+    },
+    {
+      "id": "grand_i10",
+      "en": "Grand i10"
+    },
+    {
+      "id": "grand_santa_fe",
+      "en": "Grand Santa Fe"
+    },
+    {
+      "id": "grandeur",
+      "en": "Grandeur"
+    },
+    {
+      "id": "getz",
+      "en": "Getz"
+    },
+    {
+      "id": "matrix",
+      "en": "Matrix"
+    },
+    {
+      "id": "nexo",
+      "en": "Nexo"
+    }
+  ],
+  "hyptec": [
+    {
+      "id": "ht",
+      "en": "HT"
+    }
+  ],
+  "land_rover": [
+    {
+      "id": "range_rover_sport",
+      "en": "Range Rover Sport"
+    },
+    {
+      "id": "range_rover_vogue",
+      "en": "Range Rover Vogue"
+    },
+    {
+      "id": "defender",
+      "en": "Defender"
+    },
+    {
+      "id": "range_rover_evoque",
+      "en": "Range Rover Evoque"
+    },
+    {
+      "id": "range_rover_velar",
+      "en": "Range Rover Velar"
+    },
+    {
+      "id": "discovery",
+      "en": "Discovery"
+    },
+    {
+      "id": "lr2",
+      "en": "LR2"
+    },
+    {
+      "id": "lr3",
+      "en": "LR3"
+    },
+    {
+      "id": "lr4",
+      "en": "LR4"
+    },
+    {
+      "id": "discovery_sport",
+      "en": "Discovery Sport"
+    },
+    {
+      "id": "defender_pickup",
+      "en": "Defender Pickup"
+    },
+    {
+      "id": "freelander",
+      "en": "Freelander"
+    }
+  ],
+  "dodge": [
+    {
+      "id": "charger",
+      "en": "Charger"
+    },
+    {
+      "id": "challenger",
+      "en": "Challenger"
+    },
+    {
+      "id": "durango",
+      "en": "Durango"
+    },
+    {
+      "id": "ram",
+      "en": "Ram"
+    },
+    {
+      "id": "journey",
+      "en": "Journey"
+    },
+    {
+      "id": "caravan",
+      "en": "Caravan"
+    },
+    {
+      "id": "caliber",
+      "en": "Caliber"
+    },
+    {
+      "id": "dart",
+      "en": "Dart"
+    },
+    {
+      "id": "grand_caravan",
+      "en": "Grand Caravan"
+    },
+    {
+      "id": "neon",
+      "en": "Neon"
+    },
+    {
+      "id": "avenger",
+      "en": "Avenger"
+    },
+    {
+      "id": "intrepid",
+      "en": "Intrepid"
+    },
+    {
+      "id": "dakota",
+      "en": "Dakota"
+    },
+    {
+      "id": "dynasty",
+      "en": "Dynasty"
+    },
+    {
+      "id": "spirit",
+      "en": "Spirit"
+    },
+    {
+      "id": "stratus",
+      "en": "Stratus"
+    },
+    {
+      "id": "viper",
+      "en": "Viper"
+    },
+    {
+      "id": "magnum",
+      "en": "Magnum"
+    },
+    {
+      "id": "nitro",
+      "en": "Nitro"
+    },
+    {
+      "id": "hornet",
+      "en": "Hornet"
+    }
+  ],
+  "cadillac": [
+    {
+      "id": "escalade",
+      "en": "Escalade"
+    },
+    {
+      "id": "ats",
+      "en": "ATS"
+    },
+    {
+      "id": "ats_coupe",
+      "en": "ATS Coupe"
+    },
+    {
+      "id": "ats_v",
+      "en": "ATS-V"
+    },
+    {
+      "id": "ats_v_coupe",
+      "en": "ATS-V Coupe"
+    },
+    {
+      "id": "bls",
+      "en": "BLS"
+    },
+    {
+      "id": "ct4",
+      "en": "CT4"
+    },
+    {
+      "id": "ct5",
+      "en": "CT5"
+    },
+    {
+      "id": "ct6",
+      "en": "CT6"
+    },
+    {
+      "id": "cts",
+      "en": "CTS"
+    },
+    {
+      "id": "cts_coupe",
+      "en": "CTS Coupe"
+    },
+    {
+      "id": "cts_v",
+      "en": "CTS-V"
+    },
+    {
+      "id": "cts_v_coupe",
+      "en": "CTS-V Coupe"
+    },
+    {
+      "id": "dts",
+      "en": "DTS"
+    },
+    {
+      "id": "sls",
+      "en": "SLS"
+    },
+    {
+      "id": "srx",
+      "en": "SRX"
+    },
+    {
+      "id": "sts",
+      "en": "STS"
+    },
+    {
+      "id": "xlr",
+      "en": "XLR"
+    },
+    {
+      "id": "xt4",
+      "en": "XT4"
+    },
+    {
+      "id": "xt5",
+      "en": "XT5"
+    },
+    {
+      "id": "xt6",
+      "en": "XT6"
+    },
+    {
+      "id": "xts",
+      "en": "XTS"
+    },
+    {
+      "id": "optiq",
+      "en": "Optiq"
+    },
+    {
+      "id": "eldorado",
+      "en": "Eldorado"
+    },
+    {
+      "id": "deville",
+      "en": "De Ville"
+    },
+    {
+      "id": "seville",
+      "en": "Seville"
+    },
+    {
+      "id": "fleetwood",
+      "en": "Fleetwood"
+    },
+    {
+      "id": "lyriq",
+      "en": "Lyriq"
+    }
+  ],
+  "cevo_mobility": [
+    {
+      "id": "cevo_c_se",
+      "en": "CEVO-C SE"
+    }
+  ],
+  "lexus": [
+    {
+      "id": "lx",
+      "en": "LX"
+    },
+    {
+      "id": "ct",
+      "en": "CT"
+    },
+    {
+      "id": "es",
+      "en": "ES"
+    },
+    {
+      "id": "gs",
+      "en": "GS"
+    },
+    {
+      "id": "gx",
+      "en": "GX"
+    },
+    {
+      "id": "is",
+      "en": "IS"
+    },
+    {
+      "id": "is_c",
+      "en": "IS C"
+    },
+    {
+      "id": "is_f",
+      "en": "IS F"
+    },
+    {
+      "id": "lc",
+      "en": "LC"
+    },
+    {
+      "id": "lfa",
+      "en": "LFA"
+    },
+    {
+      "id": "ls",
+      "en": "LS"
+    },
+    {
+      "id": "nx",
+      "en": "NX"
+    },
+    {
+      "id": "rc",
+      "en": "RC"
+    },
+    {
+      "id": "rc_f",
+      "en": "RC F"
+    },
+    {
+      "id": "rx",
+      "en": "RX"
+    },
+    {
+      "id": "sc",
+      "en": "SC"
+    },
+    {
+      "id": "tx",
+      "en": "TX"
+    },
+    {
+      "id": "ux",
+      "en": "UX"
+    }
+  ],
+  "lifan": [
+    {
+      "id": "lifan_320",
+      "en": "320"
+    },
+    {
+      "id": "lifan_520",
+      "en": "520"
+    },
+    {
+      "id": "lifan_620",
+      "en": "620"
+    },
+    {
+      "id": "x50",
+      "en": "X50"
+    },
+    {
+      "id": "x60",
+      "en": "X60"
+    },
+    {
+      "id": "foison",
+      "en": "Foison"
+    }
+  ],
+  "lynk_and_co": [
+    {
+      "id": "lynk_and_co_01",
+      "en": "01"
+    },
+    {
+      "id": "lynk_and_co_900",
+      "en": "900"
+    }
+  ],
+  "jeep": [
+    {
+      "id": "grand_cherokee",
+      "en": "Grand Cherokee"
+    },
+    {
+      "id": "wrangler",
+      "en": "Wrangler"
+    },
+    {
+      "id": "grand_cherokee_l",
+      "en": "Grand Cherokee L"
+    },
+    {
+      "id": "cherokee",
+      "en": "Cherokee"
+    },
+    {
+      "id": "compass",
+      "en": "Compass"
+    },
+    {
+      "id": "asia",
+      "en": "Asia"
+    },
+    {
+      "id": "patriot",
+      "en": "Patriot"
+    },
+    {
+      "id": "renegade",
+      "en": "Renegade"
+    },
+    {
+      "id": "commander",
+      "en": "Commander"
+    },
+    {
+      "id": "grand_wagoneer",
+      "en": "Grand Wagoneer"
+    },
+    {
+      "id": "gladiator",
+      "en": "Gladiator"
+    },
+    {
+      "id": "liberty",
+      "en": "Liberty"
+    },
+    {
+      "id": "wagoneer",
+      "en": "Wagoneer"
+    },
+    {
+      "id": "willys",
+      "en": "Willys"
+    }
+  ],
+  "skoda": [
+    {
+      "id": "octavia",
+      "en": "Octavia"
+    },
+    {
+      "id": "rapid",
+      "en": "Rapid"
+    },
+    {
+      "id": "roomster",
+      "en": "Roomster"
+    },
+    {
+      "id": "superb",
+      "en": "Superb"
+    },
+    {
+      "id": "fabia",
+      "en": "Fabia"
+    },
+    {
+      "id": "kushaq",
+      "en": "Kushaq"
+    },
+    {
+      "id": "kodiaq",
+      "en": "Kodiaq"
+    },
+    {
+      "id": "yeti",
+      "en": "Yeti"
+    }
+  ],
+  "smart": [
+    {
+      "id": "smart_1",
+      "en": "Smart #1"
+    },
+    {
+      "id": "fortwo",
+      "en": "Fortwo"
+    }
+  ],
+  "nissan": [
+    {
+      "id": "patrol",
+      "en": "Patrol"
+    },
+    {
+      "id": "x_trail",
+      "en": "X-Trail"
+    },
+    {
+      "id": "kicks",
+      "en": "Kicks"
+    },
+    {
+      "id": "sunny",
+      "en": "Sunny"
+    },
+    {
+      "id": "sentra",
+      "en": "Sentra"
+    },
+    {
+      "id": "sylphy",
+      "en": "Sylphy"
+    },
+    {
+      "id": "qashqai",
+      "en": "Qashqai"
+    },
+    {
+      "id": "navara",
+      "en": "Navara"
+    },
+    {
+      "id": "urvan",
+      "en": "Urvan"
+    },
+    {
+      "id": "altima",
+      "en": "Altima"
+    },
+    {
+      "id": "rogue",
+      "en": "Rogue"
+    },
+    {
+      "id": "rogue_sport",
+      "en": "Rogue Sport"
+    },
+    {
+      "id": "pathfinder",
+      "en": "Pathfinder"
+    },
+    {
+      "id": "maxima",
+      "en": "Maxima"
+    },
+    {
+      "id": "murano",
+      "en": "Murano"
+    },
+    {
+      "id": "frontier",
+      "en": "Frontier"
+    },
+    {
+      "id": "versa",
+      "en": "Versa"
+    },
+    {
+      "id": "xterra",
+      "en": "Xterra"
+    },
+    {
+      "id": "armada",
+      "en": "Armada"
+    },
+    {
+      "id": "patrol_safari",
+      "en": "Patrol Safari"
+    },
+    {
+      "id": "civilian",
+      "en": "Civilian"
+    },
+    {
+      "id": "tiida",
+      "en": "Tiida"
+    },
+    {
+      "id": "350z",
+      "en": "350Z"
+    },
+    {
+      "id": "370z",
+      "en": "370Z"
+    },
+    {
+      "id": "ariya",
+      "en": "Ariya"
+    },
+    {
+      "id": "gt_r",
+      "en": "GT-R"
+    },
+    {
+      "id": "np300",
+      "en": "NP300"
+    },
+    {
+      "id": "nv",
+      "en": "NV"
+    },
+    {
+      "id": "nv200",
+      "en": "NV200"
+    },
+    {
+      "id": "z",
+      "en": "Z"
+    },
+    {
+      "id": "atleon",
+      "en": "Atleon"
+    },
+    {
+      "id": "altima_coupe",
+      "en": "Altima Coupe"
+    },
+    {
+      "id": "almera",
+      "en": "Almera"
+    },
+    {
+      "id": "elgrand",
+      "en": "Elgrand"
+    },
+    {
+      "id": "bluebird",
+      "en": "Bluebird"
+    },
+    {
+      "id": "patrol_pickup",
+      "en": "Patrol Pickup"
+    },
+    {
+      "id": "prairie",
+      "en": "Prairie"
+    },
+    {
+      "id": "primera",
+      "en": "Primera"
+    },
+    {
+      "id": "pulsar",
+      "en": "Pulsar"
+    },
+    {
+      "id": "pickup",
+      "en": "Pickup"
+    },
+    {
+      "id": "titan",
+      "en": "Titan"
+    },
+    {
+      "id": "teana",
+      "en": "Teana"
+    },
+    {
+      "id": "terrano",
+      "en": "Terrano"
+    },
+    {
+      "id": "juke",
+      "en": "Juke"
+    },
+    {
+      "id": "skyline_gt_r",
+      "en": "Skyline GT-R"
+    },
+    {
+      "id": "cedric",
+      "en": "Cedric"
+    },
+    {
+      "id": "vanette",
+      "en": "Vanette"
+    },
+    {
+      "id": "versa_note",
+      "en": "Versa Note"
+    },
+    {
+      "id": "quest",
+      "en": "Quest"
+    },
+    {
+      "id": "cube",
+      "en": "Cube"
+    },
+    {
+      "id": "laurel_altima",
+      "en": "Laurel Altima"
+    },
+    {
+      "id": "leaf",
+      "en": "Leaf"
+    },
+    {
+      "id": "magnite",
+      "en": "Magnite"
+    },
+    {
+      "id": "micra",
+      "en": "Micra"
+    }
+  ],
+  "neta": [
+    {
+      "id": "neta_l",
+      "en": "L"
+    }
+  ],
+  "mg": [
+    {
+      "id": "mg_5",
+      "en": "5"
+    },
+    {
+      "id": "rx9",
+      "en": "RX9"
+    },
+    {
+      "id": "gt",
+      "en": "GT"
+    },
+    {
+      "id": "mg_3",
+      "en": "3"
+    },
+    {
+      "id": "zs",
+      "en": "ZS"
+    },
+    {
+      "id": "one",
+      "en": "One"
+    },
+    {
+      "id": "mg_7",
+      "en": "7"
+    },
+    {
+      "id": "rx5",
+      "en": "RX5"
+    },
+    {
+      "id": "mg_6",
+      "en": "6"
+    },
+    {
+      "id": "hs",
+      "en": "HS"
+    },
+    {
+      "id": "rx8",
+      "en": "RX8"
+    },
+    {
+      "id": "van",
+      "en": "Van"
+    },
+    {
+      "id": "t60",
+      "en": "T60"
+    },
+    {
+      "id": "mg_350",
+      "en": "350"
+    },
+    {
+      "id": "mg_360",
+      "en": "360"
+    },
+    {
+      "id": "mg_5_plus",
+      "en": "5 Plus"
+    },
+    {
+      "id": "mg_550",
+      "en": "550"
+    },
+    {
+      "id": "mg_750",
+      "en": "750"
+    },
+    {
+      "id": "gs",
+      "en": "GS"
+    },
+    {
+      "id": "mg_4_ev",
+      "en": "MG 4 EV"
+    },
+    {
+      "id": "rakan",
+      "en": "Rakan"
+    },
+    {
+      "id": "magister",
+      "en": "Magister"
+    },
+    {
+      "id": "midget",
+      "en": "Midget"
+    }
+  ],
+  "m_hero": [
+    {
+      "id": "m_hero_1",
+      "en": "1"
+    },
+    {
+      "id": "m_hero_2",
+      "en": "2"
+    }
+  ],
+  "mini": [
+    {
+      "id": "paceman",
+      "en": "Paceman"
+    },
+    {
+      "id": "roadster",
+      "en": "Roadster"
+    },
+    {
+      "id": "clubman",
+      "en": "Clubman"
+    },
+    {
+      "id": "countryman",
+      "en": "Countryman"
+    },
+    {
+      "id": "cooper",
+      "en": "Cooper"
+    }
+  ],
+  "mercury": [
+    {
+      "id": "sable",
+      "en": "Sable"
+    },
+    {
+      "id": "villager",
+      "en": "Villager"
+    },
+    {
+      "id": "grand_marquis",
+      "en": "Grand Marquis"
+    },
+    {
+      "id": "mariner",
+      "en": "Mariner"
+    },
+    {
+      "id": "mountaineer",
+      "en": "Mountaineer"
+    },
+    {
+      "id": "monterey",
+      "en": "Monterey"
+    },
+    {
+      "id": "montego",
+      "en": "Montego"
+    },
+    {
+      "id": "milan",
+      "en": "Milan"
+    }
+  ],
+  "mclaren": [
+    {
+      "id": "540c_coupe",
+      "en": "540C Coupe"
+    },
+    {
+      "id": "570gt_coupe",
+      "en": "570GT Coupe"
+    },
+    {
+      "id": "570s_spider",
+      "en": "570S Spider"
+    },
+    {
+      "id": "570s_coupe",
+      "en": "570S Coupe"
+    },
+    {
+      "id": "650s",
+      "en": "650S"
+    },
+    {
+      "id": "675lt",
+      "en": "675LT"
+    },
+    {
+      "id": "720s",
+      "en": "720S"
+    },
+    {
+      "id": "gt",
+      "en": "GT"
+    },
+    {
+      "id": "p1",
+      "en": "P1"
+    }
+  ],
+  "mazda": [
+    {
+      "id": "mazda_3",
+      "en": "3"
+    },
+    {
+      "id": "cx_50",
+      "en": "CX-50"
+    },
+    {
+      "id": "cx_5",
+      "en": "CX-5"
+    },
+    {
+      "id": "cx_30",
+      "en": "CX-30"
+    },
+    {
+      "id": "mazda_6",
+      "en": "6"
+    },
+    {
+      "id": "cx_9",
+      "en": "CX-9"
+    },
+    {
+      "id": "cx_90",
+      "en": "CX-90"
+    },
+    {
+      "id": "mx_5",
+      "en": "MX-5"
+    },
+    {
+      "id": "mx_5_rf",
+      "en": "MX-5 RF"
+    },
+    {
+      "id": "sedan_3",
+      "en": "Sedan 3"
+    },
+    {
+      "id": "mazda_121",
+      "en": "121"
+    },
+    {
+      "id": "mazda_2",
+      "en": "2"
+    },
+    {
+      "id": "mazda_2_sedan",
+      "en": "2 Sedan"
+    },
+    {
+      "id": "mazda_323",
+      "en": "323"
+    },
+    {
+      "id": "mazda_5",
+      "en": "5"
+    },
+    {
+      "id": "ultra_6",
+      "en": "Ultra 6"
+    },
+    {
+      "id": "mazda_6_wagon",
+      "en": "6 Wagon"
+    },
+    {
+      "id": "mazda_626",
+      "en": "626"
+    },
+    {
+      "id": "mazda_929",
+      "en": "929"
+    },
+    {
+      "id": "b_series",
+      "en": "B-Series"
+    },
+    {
+      "id": "bt_50",
+      "en": "BT-50"
+    },
+    {
+      "id": "cx_3",
+      "en": "CX-3"
+    },
+    {
+      "id": "cx_60",
+      "en": "CX-60"
+    },
+    {
+      "id": "cx_7",
+      "en": "CX-7"
+    },
+    {
+      "id": "cx_70",
+      "en": "CX-70"
+    },
+    {
+      "id": "e2000",
+      "en": "E2000"
+    },
+    {
+      "id": "mpv",
+      "en": "MPV"
+    },
+    {
+      "id": "mx_30",
+      "en": "MX-30"
+    },
+    {
+      "id": "tribute",
+      "en": "Tribute"
+    },
+    {
+      "id": "navajo",
+      "en": "Navajo"
+    }
+  ],
+  "maxus": [
+    {
+      "id": "d60_max",
+      "en": "D60 Max"
+    },
+    {
+      "id": "d90",
+      "en": "D90"
+    },
+    {
+      "id": "g10",
+      "en": "G10"
+    },
+    {
+      "id": "g90",
+      "en": "G90"
+    },
+    {
+      "id": "t60_pickup",
+      "en": "T60 Pickup"
+    },
+    {
+      "id": "v80",
+      "en": "V80"
+    }
+  ],
+  "maserati": [
+    {
+      "id": "spider",
+      "en": "Spider"
+    },
+    {
+      "id": "ghibli",
+      "en": "Ghibli"
+    },
+    {
+      "id": "quattroporte",
+      "en": "Quattroporte"
+    },
+    {
+      "id": "granturismo",
+      "en": "GranTurismo"
+    },
+    {
+      "id": "grancabrio",
+      "en": "GranCabrio"
+    },
+    {
+      "id": "grecale",
+      "en": "Grecale"
+    },
+    {
+      "id": "levante",
+      "en": "Levante"
+    }
+  ],
+  "lincoln": [
+    {
+      "id": "mkc",
+      "en": "MKC"
+    },
+    {
+      "id": "mks",
+      "en": "MKS"
+    },
+    {
+      "id": "mkt",
+      "en": "MKT"
+    },
+    {
+      "id": "mkx",
+      "en": "MKX"
+    },
+    {
+      "id": "mkz",
+      "en": "MKZ"
+    },
+    {
+      "id": "aviator",
+      "en": "Aviator"
+    },
+    {
+      "id": "town_car",
+      "en": "Town Car"
+    },
+    {
+      "id": "corsair",
+      "en": "Corsair"
+    },
+    {
+      "id": "continental",
+      "en": "Continental"
+    },
+    {
+      "id": "navigator",
+      "en": "Navigator"
+    },
+    {
+      "id": "navigator_l",
+      "en": "Navigator L"
+    },
+    {
+      "id": "nautilus",
+      "en": "Nautilus"
+    }
+  ],
+  "lada": [
+    {
+      "id": "lada_2106",
+      "en": "2106"
+    },
+    {
+      "id": "niva",
+      "en": "Niva"
+    }
+  ],
+  "lamborghini": [
+    {
+      "id": "aventador",
+      "en": "Aventador"
+    },
+    {
+      "id": "aventador_roadster",
+      "en": "Aventador Roadster"
+    },
+    {
+      "id": "urus",
+      "en": "Urus"
+    },
+    {
+      "id": "temerario",
+      "en": "Temerario"
+    },
+    {
+      "id": "gallardo",
+      "en": "Gallardo"
+    },
+    {
+      "id": "murcielago",
+      "en": "Murcielago"
+    },
+    {
+      "id": "huracan",
+      "en": "Huracan"
+    },
+    {
+      "id": "huracan_sto",
+      "en": "Huracan STO"
+    },
+    {
+      "id": "huracan_evo_spyder",
+      "en": "Huracan EVO Spyder"
+    },
+    {
+      "id": "huracan_spyder",
+      "en": "Huracan Spyder"
+    }
+  ],
+  "opel": [
+    {
+      "id": "adam",
+      "en": "Adam"
+    },
+    {
+      "id": "astra",
+      "en": "Astra"
+    },
+    {
+      "id": "astra_gtc",
+      "en": "Astra GTC"
+    },
+    {
+      "id": "astra_opc",
+      "en": "Astra OPC"
+    },
+    {
+      "id": "antara",
+      "en": "Antara"
+    },
+    {
+      "id": "omega",
+      "en": "Omega"
+    },
+    {
+      "id": "insignia",
+      "en": "Insignia"
+    },
+    {
+      "id": "zafira",
+      "en": "Zafira"
+    },
+    {
+      "id": "senator",
+      "en": "Senator"
+    },
+    {
+      "id": "vectra",
+      "en": "Vectra"
+    },
+    {
+      "id": "kadett",
+      "en": "Kadett"
+    },
+    {
+      "id": "calibra",
+      "en": "Calibra"
+    },
+    {
+      "id": "crossland",
+      "en": "Crossland"
+    },
+    {
+      "id": "corsa",
+      "en": "Corsa"
+    },
+    {
+      "id": "corsa_opc",
+      "en": "Corsa OPC"
+    },
+    {
+      "id": "combo",
+      "en": "Combo"
+    },
+    {
+      "id": "grandland_x",
+      "en": "Grandland X"
+    },
+    {
+      "id": "mokka",
+      "en": "Mokka"
+    },
+    {
+      "id": "monterey",
+      "en": "Monterey"
+    },
+    {
+      "id": "meriva",
+      "en": "Meriva"
+    }
+  ],
+  "ora": [
+    {
+      "id": "good_cat",
+      "en": "Good Cat"
+    }
+  ],
+  "volvo": [
+    {
+      "id": "volvo_240",
+      "en": "240"
+    },
+    {
+      "id": "gle_244",
+      "en": "GLE 244"
+    },
+    {
+      "id": "volvo_440",
+      "en": "440"
+    },
+    {
+      "id": "volvo_740",
+      "en": "740"
+    },
+    {
+      "id": "volvo_940",
+      "en": "940"
+    },
+    {
+      "id": "volvo_960",
+      "en": "960"
+    },
+    {
+      "id": "c30",
+      "en": "C30"
+    },
+    {
+      "id": "c70",
+      "en": "C70"
+    },
+    {
+      "id": "s40",
+      "en": "S40"
+    },
+    {
+      "id": "s60",
+      "en": "S60"
+    },
+    {
+      "id": "s60_polestar",
+      "en": "S60 Polestar"
+    },
+    {
+      "id": "s80",
+      "en": "S80"
+    },
+    {
+      "id": "s90",
+      "en": "S90"
+    },
+    {
+      "id": "v40",
+      "en": "V40"
+    },
+    {
+      "id": "v50",
+      "en": "V50"
+    },
+    {
+      "id": "v60",
+      "en": "V60"
+    },
+    {
+      "id": "v60_polestar",
+      "en": "V60 Polestar"
+    },
+    {
+      "id": "v70",
+      "en": "V70"
+    },
+    {
+      "id": "v90",
+      "en": "V90"
+    },
+    {
+      "id": "xc40",
+      "en": "XC40"
+    },
+    {
+      "id": "xc60",
+      "en": "XC60"
+    },
+    {
+      "id": "xc70",
+      "en": "XC70"
+    },
+    {
+      "id": "xc90",
+      "en": "XC90"
+    }
+  ],
+  "voyah": [
+    {
+      "id": "dream",
+      "en": "Dream"
+    },
+    {
+      "id": "free",
+      "en": "Free"
+    },
+    {
+      "id": "courage",
+      "en": "Courage"
+    }
+  ],
+  "wuling": [
+    {
+      "id": "bingo",
+      "en": "Bingo"
+    }
+  ],
+  "tesla": [
+    {
+      "id": "model_s",
+      "en": "Model S"
+    },
+    {
+      "id": "model_x",
+      "en": "Model X"
+    },
+    {
+      "id": "cybertruck",
+      "en": "Cybertruck"
+    },
+    {
+      "id": "model_3",
+      "en": "Model 3"
+    },
+    {
+      "id": "model_y",
+      "en": "Model Y"
+    }
+  ],
+  "tata": [
+    {
+      "id": "indica",
+      "en": "Indica"
+    },
+    {
+      "id": "indigo",
+      "en": "Indigo"
+    },
+    {
+      "id": "xenon",
+      "en": "Xenon"
+    },
+    {
+      "id": "safari",
+      "en": "Safari"
+    }
+  ],
+  "suzuki": [
+    {
+      "id": "swift",
+      "en": "Swift"
+    },
+    {
+      "id": "dzire",
+      "en": "Dzire"
+    },
+    {
+      "id": "fronx",
+      "en": "Fronx"
+    },
+    {
+      "id": "baleno",
+      "en": "Baleno"
+    },
+    {
+      "id": "ciaz",
+      "en": "Ciaz"
+    },
+    {
+      "id": "ertiga",
+      "en": "Ertiga"
+    },
+    {
+      "id": "grand_vitara",
+      "en": "Grand Vitara"
+    },
+    {
+      "id": "jimny",
+      "en": "Jimny"
+    },
+    {
+      "id": "s_cross",
+      "en": "S-Cross"
+    },
+    {
+      "id": "apv",
+      "en": "APV"
+    },
+    {
+      "id": "ignis_crossover",
+      "en": "Ignis Crossover"
+    },
+    {
+      "id": "s_presso",
+      "en": "S-Presso"
+    },
+    {
+      "id": "sx4",
+      "en": "SX4"
+    },
+    {
+      "id": "xl7",
+      "en": "XL7"
+    },
+    {
+      "id": "eeco",
+      "en": "Eeco"
+    },
+    {
+      "id": "ignis",
+      "en": "Ignis"
+    },
+    {
+      "id": "alto",
+      "en": "Alto"
+    },
+    {
+      "id": "reno",
+      "en": "Reno"
+    },
+    {
+      "id": "celerio",
+      "en": "Celerio"
+    },
+    {
+      "id": "forenza",
+      "en": "Forenza"
+    },
+    {
+      "id": "vitara",
+      "en": "Vitara"
+    },
+    {
+      "id": "carry",
+      "en": "Carry"
+    },
+    {
+      "id": "kizashi",
+      "en": "Kizashi"
+    },
+    {
+      "id": "liana",
+      "en": "Liana"
+    }
+  ],
+  "swm_motors": [
+    {
+      "id": "g01_pro",
+      "en": "G01 Pro"
+    }
+  ],
+  "subaru": [
+    {
+      "id": "brz",
+      "en": "BRZ"
+    },
+    {
+      "id": "wrx",
+      "en": "WRX"
+    },
+    {
+      "id": "xv",
+      "en": "XV"
+    },
+    {
+      "id": "outback",
+      "en": "Outback"
+    },
+    {
+      "id": "impreza",
+      "en": "Impreza"
+    },
+    {
+      "id": "impreza_wrx",
+      "en": "Impreza WRX"
+    },
+    {
+      "id": "impreza_wrx_sti",
+      "en": "Impreza WRX STI"
+    },
+    {
+      "id": "ascent",
+      "en": "Ascent"
+    },
+    {
+      "id": "tribeca",
+      "en": "Tribeca"
+    },
+    {
+      "id": "forester",
+      "en": "Forester"
+    },
+    {
+      "id": "crosstrek",
+      "en": "Crosstrek"
+    },
+    {
+      "id": "legacy",
+      "en": "Legacy"
+    }
+  ],
+  "ssangyong": [
+    {
+      "id": "xlv",
+      "en": "XLV"
+    },
+    {
+      "id": "actyon",
+      "en": "Actyon"
+    },
+    {
+      "id": "torres",
+      "en": "Torres"
+    },
+    {
+      "id": "tivoli",
+      "en": "Tivoli"
+    },
+    {
+      "id": "rodius",
+      "en": "Rodius"
+    },
+    {
+      "id": "rexton",
+      "en": "Rexton"
+    },
+    {
+      "id": "korando",
+      "en": "Korando"
+    },
+    {
+      "id": "kyron",
+      "en": "Kyron"
+    },
+    {
+      "id": "musso_grand",
+      "en": "Musso Grand"
+    }
+  ],
+  "seat": [
+    {
+      "id": "exeo",
+      "en": "Exeo"
+    },
+    {
+      "id": "altea",
+      "en": "Altea"
+    },
+    {
+      "id": "inca",
+      "en": "Inca"
+    },
+    {
+      "id": "toledo",
+      "en": "Toledo"
+    },
+    {
+      "id": "cupra_formentor",
+      "en": "Cupra Formentor"
+    },
+    {
+      "id": "cordoba",
+      "en": "Cordoba"
+    },
+    {
+      "id": "leon",
+      "en": "Leon"
+    }
+  ],
+  "scion": [
+    {
+      "id": "iq",
+      "en": "iQ"
+    },
+    {
+      "id": "tc",
+      "en": "tC"
+    }
+  ],
+  "saab": [
+    {
+      "id": "9_5",
+      "en": "9-5"
+    },
+    {
+      "id": "9_7x",
+      "en": "9-7X"
+    }
+  ],
+  "saipa": [
+    {
+      "id": "saipa_131",
+      "en": "131"
+    },
+    {
+      "id": "saipa_132",
+      "en": "132"
+    },
+    {
+      "id": "dlx_141",
+      "en": "DLX 141"
+    },
+    {
+      "id": "saipa_151",
+      "en": "151"
+    },
+    {
+      "id": "ario",
+      "en": "Ario"
+    },
+    {
+      "id": "tiba",
+      "en": "Tiba"
+    },
+    {
+      "id": "zamyad_24",
+      "en": "Zamyad 24"
+    },
+    {
+      "id": "saina",
+      "en": "Saina"
+    }
+  ],
+  "saturn": [
+    {
+      "id": "ion",
+      "en": "Ion"
+    },
+    {
+      "id": "vue",
+      "en": "Vue"
+    }
+  ],
+  "rolls_royce": [
+    {
+      "id": "silver_wraith",
+      "en": "Silver Wraith"
+    },
+    {
+      "id": "dawn",
+      "en": "Dawn"
+    },
+    {
+      "id": "drophead_coupe",
+      "en": "Drophead Coupe"
+    },
+    {
+      "id": "wraith",
+      "en": "Wraith"
+    },
+    {
+      "id": "spectre",
+      "en": "Spectre"
+    },
+    {
+      "id": "silver_seraph",
+      "en": "Silver Seraph"
+    },
+    {
+      "id": "silver_shadow",
+      "en": "Silver Shadow"
+    },
+    {
+      "id": "phantom",
+      "en": "Phantom"
+    },
+    {
+      "id": "cullinan",
+      "en": "Cullinan"
+    },
+    {
+      "id": "ghost",
+      "en": "Ghost"
+    }
+  ],
+  "rox": [
+    {
+      "id": "rox_01",
+      "en": "01"
+    }
+  ],
+  "roewe": [
+    {
+      "id": "i5",
+      "en": "i5"
+    }
+  ],
+  "renault": [
+    {
+      "id": "megane",
+      "en": "Megane"
+    },
+    {
+      "id": "symbol",
+      "en": "Symbol"
+    },
+    {
+      "id": "koleos",
+      "en": "Koleos"
+    },
+    {
+      "id": "talisman",
+      "en": "Talisman"
+    },
+    {
+      "id": "renault_12",
+      "en": "12"
+    },
+    {
+      "id": "clio",
+      "en": "Clio"
+    },
+    {
+      "id": "clio_rs",
+      "en": "Clio RS"
+    },
+    {
+      "id": "arkana",
+      "en": "Arkana"
+    },
+    {
+      "id": "espace",
+      "en": "Espace"
+    },
+    {
+      "id": "trafic",
+      "en": "Trafic"
+    },
+    {
+      "id": "tondar_90",
+      "en": "Tondar 90"
+    },
+    {
+      "id": "twizy",
+      "en": "Twizy"
+    },
+    {
+      "id": "duster",
+      "en": "Duster"
+    },
+    {
+      "id": "dokker_van",
+      "en": "Dokker Van"
+    },
+    {
+      "id": "zoe",
+      "en": "Zoe"
+    },
+    {
+      "id": "renault_19",
+      "en": "Renault 19"
+    },
+    {
+      "id": "safrane",
+      "en": "Safrane"
+    },
+    {
+      "id": "sandero",
+      "en": "Sandero"
+    },
+    {
+      "id": "scenic",
+      "en": "Scenic"
+    },
+    {
+      "id": "fregate",
+      "en": "Frégate"
+    },
+    {
+      "id": "fluence",
+      "en": "Fluence"
+    },
+    {
+      "id": "captur",
+      "en": "Captur"
+    },
+    {
+      "id": "kangoo",
+      "en": "Kangoo"
+    },
+    {
+      "id": "laguna",
+      "en": "Laguna"
+    },
+    {
+      "id": "laguna_coupe",
+      "en": "Laguna Coupe"
+    },
+    {
+      "id": "lodgy",
+      "en": "Lodgy"
+    },
+    {
+      "id": "logan",
+      "en": "Logan"
+    },
+    {
+      "id": "logan_van",
+      "en": "Logan Van"
+    },
+    {
+      "id": "master",
+      "en": "Master"
+    },
+    {
+      "id": "megane_cc",
+      "en": "Megane CC"
+    },
+    {
+      "id": "megane_gt",
+      "en": "Megane GT"
+    },
+    {
+      "id": "megane_rs",
+      "en": "Megane RS"
+    }
+  ],
+  "renault_samsung_motors": [
+    {
+      "id": "qm5",
+      "en": "QM5"
+    },
+    {
+      "id": "qm6",
+      "en": "QM6"
+    },
+    {
+      "id": "sm3",
+      "en": "SM3"
+    },
+    {
+      "id": "sm5",
+      "en": "SM5"
+    },
+    {
+      "id": "sm6",
+      "en": "SM6"
+    },
+    {
+      "id": "sm7",
+      "en": "SM7"
+    },
+    {
+      "id": "xm3",
+      "en": "XM3"
+    }
+  ],
+  "ram": [
+    {
+      "id": "ram_1200",
+      "en": "1200"
+    },
+    {
+      "id": "ram_1500",
+      "en": "1500"
+    },
+    {
+      "id": "ram_2500",
+      "en": "2500"
+    },
+    {
+      "id": "promaster",
+      "en": "ProMaster"
+    },
+    {
+      "id": "promaster_city",
+      "en": "ProMaster City"
+    }
+  ],
+  "proton": [
+    {
+      "id": "gen_2",
+      "en": "GEN-2"
+    },
+    {
+      "id": "persona",
+      "en": "Persona"
+    },
+    {
+      "id": "savvy",
+      "en": "Savvy"
+    },
+    {
+      "id": "saga",
+      "en": "Saga"
+    },
+    {
+      "id": "waja",
+      "en": "Waja"
+    },
+    {
+      "id": "wira",
+      "en": "Wira"
+    }
+  ],
+  "porsche": [
+    {
+      "id": "911",
+      "en": "911"
+    },
+    {
+      "id": "911_cabriolet",
+      "en": "911 Cabriolet"
+    },
+    {
+      "id": "911_gt2",
+      "en": "911 GT2"
+    },
+    {
+      "id": "911_gt3",
+      "en": "911 GT3"
+    },
+    {
+      "id": "911_turbo",
+      "en": "911 Turbo"
+    },
+    {
+      "id": "911_turbo_cabriolet",
+      "en": "911 Turbo Cabriolet"
+    },
+    {
+      "id": "boxster",
+      "en": "Boxster"
+    },
+    {
+      "id": "panamera",
+      "en": "Panamera"
+    },
+    {
+      "id": "taycan",
+      "en": "Taycan"
+    },
+    {
+      "id": "taycan_sport_turismo",
+      "en": "Taycan Sport Turismo"
+    },
+    {
+      "id": "cayenne",
+      "en": "Cayenne"
+    },
+    {
+      "id": "cayenne_coupe",
+      "en": "Cayenne Coupe"
+    },
+    {
+      "id": "cayman",
+      "en": "Cayman"
+    },
+    {
+      "id": "macan",
+      "en": "Macan"
+    }
+  ],
+  "peugeot": [
+    {
+      "id": "peugeot_2008",
+      "en": "2008"
+    },
+    {
+      "id": "peugeot_206",
+      "en": "206"
+    },
+    {
+      "id": "peugeot_207",
+      "en": "207"
+    },
+    {
+      "id": "peugeot_208",
+      "en": "208"
+    },
+    {
+      "id": "peugeot_3008",
+      "en": "3008"
+    },
+    {
+      "id": "peugeot_301",
+      "en": "301"
+    },
+    {
+      "id": "peugeot_306",
+      "en": "306"
+    },
+    {
+      "id": "peugeot_307",
+      "en": "307"
+    },
+    {
+      "id": "peugeot_308",
+      "en": "308"
+    },
+    {
+      "id": "peugeot_308_cc",
+      "en": "308 CC"
+    },
+    {
+      "id": "peugeot_405",
+      "en": "405"
+    },
+    {
+      "id": "peugeot_406",
+      "en": "406"
+    },
+    {
+      "id": "peugeot_407",
+      "en": "407"
+    },
+    {
+      "id": "peugeot_407_coupe",
+      "en": "407 Coupe"
+    },
+    {
+      "id": "peugeot_408",
+      "en": "408"
+    },
+    {
+      "id": "peugeot_5008",
+      "en": "5008"
+    },
+    {
+      "id": "peugeot_508",
+      "en": "508"
+    },
+    {
+      "id": "peugeot_607",
+      "en": "607"
+    },
+    {
+      "id": "rcz",
+      "en": "RCZ"
+    },
+    {
+      "id": "expert",
+      "en": "Expert"
+    },
+    {
+      "id": "boxer",
+      "en": "Boxer"
+    },
+    {
+      "id": "partner",
+      "en": "Partner"
+    },
+    {
+      "id": "pars",
+      "en": "Pars"
+    },
+    {
+      "id": "traveller",
+      "en": "Traveller"
+    },
+    {
+      "id": "rifter",
+      "en": "Rifter"
+    }
+  ],
+  "polaris": [
+    {
+      "id": "rzr",
+      "en": "RZR"
+    },
+    {
+      "id": "rzr_pro_xp_4_turbo",
+      "en": "RZR PRO XP 4 Turbo"
+    },
+    {
+      "id": "rzr_pro_r",
+      "en": "RZR Pro R"
+    },
+    {
+      "id": "slingshot_r",
+      "en": "Slingshot R"
+    },
+    {
+      "id": "pro_star",
+      "en": "Pro Star"
+    },
+    {
+      "id": "general_xp_4_1000",
+      "en": "General XP 4 1000"
+    },
+    {
+      "id": "ranger_1000",
+      "en": "Ranger 1000"
+    },
+    {
+      "id": "ranger_570",
+      "en": "Ranger 570"
+    },
+    {
+      "id": "ranger_crew_570",
+      "en": "Ranger Crew 570"
+    },
+    {
+      "id": "ranger_crew_1000",
+      "en": "Ranger Crew 1000"
+    },
+    {
+      "id": "sportsman_xp_1000",
+      "en": "Sportsman XP 1000"
+    },
+    {
+      "id": "slingshot_sl",
+      "en": "Slingshot SL"
+    }
+  ],
+  "polarsun": [
+    {
+      "id": "century",
+      "en": "Century"
+    }
+  ],
+  "pontiac": [
+    {
+      "id": "g5",
+      "en": "G5"
+    },
+    {
+      "id": "trans_sport",
+      "en": "Trans Sport"
+    },
+    {
+      "id": "torrent",
+      "en": "Torrent"
+    },
+    {
+      "id": "solstice",
+      "en": "Solstice"
+    },
+    {
+      "id": "vibe",
+      "en": "Vibe"
+    },
+    {
+      "id": "catalina",
+      "en": "Catalina"
+    },
+    {
+      "id": "grand_am",
+      "en": "Grand Am"
+    },
+    {
+      "id": "grand_prix",
+      "en": "Grand Prix"
+    },
+    {
+      "id": "montana",
+      "en": "Montana"
+    }
+  ],
+  "poer": [
+    {
+      "id": "double_cab",
+      "en": "Double Cab"
+    },
+    {
+      "id": "single_cab",
+      "en": "Single Cab"
+    },
+    {
+      "id": "commercial",
+      "en": "Commercial"
+    },
+    {
+      "id": "king_kong",
+      "en": "King Kong"
+    }
+  ],
+  "polestar": [
+    {
+      "id": "polestar_2",
+      "en": "Polestar 2"
+    }
+  ],
+  "king_long": [
+    {
+      "id": "mini_van",
+      "en": "Mini Van"
+    },
+    {
+      "id": "kinwin",
+      "en": "Kinwin"
+    }
+  ],
+  "cmc": [
+    {
+      "id": "z7",
+      "en": "Z7"
+    },
+    {
+      "id": "varica",
+      "en": "Varica"
+    }
+  ],
+  "citro_n": [
+    {
+      "id": "c_elysee",
+      "en": "C-Elysee"
+    },
+    {
+      "id": "c2",
+      "en": "C2"
+    },
+    {
+      "id": "c3",
+      "en": "C3"
+    },
+    {
+      "id": "c4",
+      "en": "C4"
+    },
+    {
+      "id": "c4_picasso",
+      "en": "C4 Picasso"
+    },
+    {
+      "id": "c5",
+      "en": "C5"
+    },
+    {
+      "id": "c8",
+      "en": "C8"
+    },
+    {
+      "id": "ds3",
+      "en": "DS3"
+    },
+    {
+      "id": "ds4",
+      "en": "DS4"
+    },
+    {
+      "id": "ds5",
+      "en": "DS5"
+    },
+    {
+      "id": "xsara_picasso",
+      "en": "Xsara Picasso"
+    },
+    {
+      "id": "saxo",
+      "en": "Saxo"
+    }
+  ],
+  "chrysler": [
+    {
+      "id": "chrysler_300",
+      "en": "300"
+    },
+    {
+      "id": "chrysler_200",
+      "en": "200"
+    },
+    {
+      "id": "chrysler_300m",
+      "en": "300M"
+    },
+    {
+      "id": "pt_cruiser",
+      "en": "PT Cruiser"
+    },
+    {
+      "id": "aspen",
+      "en": "Aspen"
+    },
+    {
+      "id": "pacifica",
+      "en": "Pacifica"
+    },
+    {
+      "id": "town_and_country",
+      "en": "Town & Country"
+    },
+    {
+      "id": "saratoga",
+      "en": "Saratoga"
+    },
+    {
+      "id": "sebring",
+      "en": "Sebring"
+    },
+    {
+      "id": "voyager",
+      "en": "Voyager"
+    },
+    {
+      "id": "crossfire",
+      "en": "Crossfire"
+    },
+    {
+      "id": "concorde",
+      "en": "Concorde"
+    },
+    {
+      "id": "grand_voyager",
+      "en": "Grand Voyager"
+    },
+    {
+      "id": "grand_caravan",
+      "en": "Grand Caravan"
+    },
+    {
+      "id": "new_yorker",
+      "en": "New Yorker"
+    }
+  ],
+  "chery": [
+    {
+      "id": "tiggo_7_pro",
+      "en": "Tiggo 7 Pro"
+    },
+    {
+      "id": "arrizo_5",
+      "en": "Arrizo 5"
+    },
+    {
+      "id": "tiggo_7_pro_max",
+      "en": "Tiggo 7 Pro Max"
+    },
+    {
+      "id": "tiggo_7",
+      "en": "Tiggo 7"
+    },
+    {
+      "id": "tiggo_8_pro",
+      "en": "Tiggo 8 Pro"
+    },
+    {
+      "id": "arrizo_3",
+      "en": "Arrizo 3"
+    },
+    {
+      "id": "arrizo_6",
+      "en": "Arrizo 6"
+    },
+    {
+      "id": "arrizo_7",
+      "en": "Arrizo 7"
+    },
+    {
+      "id": "tiggo_2",
+      "en": "Tiggo 2"
+    },
+    {
+      "id": "tiggo_2_pro",
+      "en": "Tiggo 2 Pro"
+    },
+    {
+      "id": "tiggo_3",
+      "en": "Tiggo 3"
+    },
+    {
+      "id": "tiggo_4_pro",
+      "en": "Tiggo 4 Pro"
+    },
+    {
+      "id": "tiggo_5",
+      "en": "Tiggo 5"
+    },
+    {
+      "id": "tiggo",
+      "en": "Tiggo"
+    },
+    {
+      "id": "a1",
+      "en": "A1"
+    },
+    {
+      "id": "a11_windcloud",
+      "en": "A11 Windcloud"
+    },
+    {
+      "id": "a3",
+      "en": "A3"
+    },
+    {
+      "id": "a5",
+      "en": "A5"
+    },
+    {
+      "id": "a515",
+      "en": "A515"
+    },
+    {
+      "id": "a520",
+      "en": "A520"
+    },
+    {
+      "id": "b11_oriental_son",
+      "en": "B11 Oriental Son"
+    },
+    {
+      "id": "e5",
+      "en": "E5"
+    },
+    {
+      "id": "e8",
+      "en": "E8"
+    },
+    {
+      "id": "p10",
+      "en": "P10"
+    },
+    {
+      "id": "qq6",
+      "en": "QQ6"
+    },
+    {
+      "id": "s11_qq",
+      "en": "S11 QQ"
+    },
+    {
+      "id": "t11_tiggo",
+      "en": "T11 Tiggo"
+    },
+    {
+      "id": "v5_crossover",
+      "en": "V5 Crossover"
+    },
+    {
+      "id": "x1",
+      "en": "X1"
+    },
+    {
+      "id": "arrizo_8",
+      "en": "Arrizo 8"
+    },
+    {
+      "id": "eastar",
+      "en": "Eastar"
+    },
+    {
+      "id": "tiggo_7_pro_hybrid",
+      "en": "Tiggo 7 Pro Hybrid"
+    },
+    {
+      "id": "tiggo_8_pro_max",
+      "en": "Tiggo 8 Pro Max"
+    },
+    {
+      "id": "tiggo_9",
+      "en": "Tiggo 9"
+    },
+    {
+      "id": "rely",
+      "en": "Rely"
+    },
+    {
+      "id": "fulwin_2",
+      "en": "Fulwin 2"
+    },
+    {
+      "id": "karry_youki",
+      "en": "Karry Youki"
+    },
+    {
+      "id": "cowin_1",
+      "en": "Cowin 1"
+    },
+    {
+      "id": "cowin",
+      "en": "Cowin"
+    }
+  ],
+  "changan": [
+    {
+      "id": "cm5",
+      "en": "CM5"
+    },
+    {
+      "id": "cs15",
+      "en": "CS15"
+    },
+    {
+      "id": "cs35",
+      "en": "CS35"
+    },
+    {
+      "id": "cs35_plus",
+      "en": "CS35 Plus"
+    },
+    {
+      "id": "cs75",
+      "en": "CS75"
+    },
+    {
+      "id": "cs75_plus",
+      "en": "CS75 Plus"
+    },
+    {
+      "id": "cs85",
+      "en": "CS85"
+    },
+    {
+      "id": "cs95",
+      "en": "CS95"
+    },
+    {
+      "id": "e_star",
+      "en": "E-Star"
+    },
+    {
+      "id": "uni_k",
+      "en": "UNI-K"
+    },
+    {
+      "id": "uni_s",
+      "en": "UNI-S"
+    },
+    {
+      "id": "uni_t",
+      "en": "UNI-T"
+    },
+    {
+      "id": "uni_v",
+      "en": "UNI-V"
+    },
+    {
+      "id": "x5_plus",
+      "en": "X5 Plus"
+    },
+    {
+      "id": "alsvin",
+      "en": "Alsvin"
+    },
+    {
+      "id": "eado_plus",
+      "en": "Eado Plus"
+    },
+    {
+      "id": "eado",
+      "en": "Eado"
+    },
+    {
+      "id": "raeton",
+      "en": "Raeton"
+    },
+    {
+      "id": "star_9",
+      "en": "Star 9"
+    },
+    {
+      "id": "star_truck",
+      "en": "Star Truck"
+    },
+    {
+      "id": "victory",
+      "en": "Victory"
+    },
+    {
+      "id": "hunter",
+      "en": "Hunter"
+    },
+    {
+      "id": "uni_z",
+      "en": "UNI-Z"
+    }
+  ],
+  "brilliance": [
+    {
+      "id": "bs2",
+      "en": "BS2"
+    },
+    {
+      "id": "bs4",
+      "en": "BS4"
+    },
+    {
+      "id": "frv",
+      "en": "FRV"
+    },
+    {
+      "id": "frv_cross",
+      "en": "FRV Cross"
+    },
+    {
+      "id": "fsv",
+      "en": "FSV"
+    },
+    {
+      "id": "h530",
+      "en": "H530"
+    },
+    {
+      "id": "v5",
+      "en": "V5"
+    }
+  ],
+  "borgward": [
+    {
+      "id": "bx5",
+      "en": "BX5"
+    },
+    {
+      "id": "bx7",
+      "en": "BX7"
+    }
+  ],
+  "bmw": [
+    {
+      "id": "series_5",
+      "en": "5 Series"
+    },
+    {
+      "id": "series_3",
+      "en": "3 Series"
+    },
+    {
+      "id": "series_7",
+      "en": "7 Series"
+    },
+    {
+      "id": "series_4",
+      "en": "4 Series"
+    },
+    {
+      "id": "x3",
+      "en": "X3"
+    },
+    {
+      "id": "x5",
+      "en": "X5"
+    },
+    {
+      "id": "x6",
+      "en": "X6"
+    },
+    {
+      "id": "x7",
+      "en": "X7"
+    },
+    {
+      "id": "x4",
+      "en": "X4"
+    },
+    {
+      "id": "x1",
+      "en": "X1"
+    },
+    {
+      "id": "xm",
+      "en": "XM"
+    },
+    {
+      "id": "z4",
+      "en": "Z4"
+    },
+    {
+      "id": "series_8",
+      "en": "8 Series"
+    },
+    {
+      "id": "i3",
+      "en": "i3"
+    },
+    {
+      "id": "i4",
+      "en": "i4"
+    },
+    {
+      "id": "ix1",
+      "en": "iX1"
+    },
+    {
+      "id": "i8",
+      "en": "i8"
+    },
+    {
+      "id": "i5",
+      "en": "i5"
+    },
+    {
+      "id": "ix3",
+      "en": "iX3"
+    },
+    {
+      "id": "ix",
+      "en": "iX"
+    },
+    {
+      "id": "series_1",
+      "en": "1 Series"
+    },
+    {
+      "id": "series_2",
+      "en": "2 Series"
+    },
+    {
+      "id": "series_6",
+      "en": "6 Series"
+    },
+    {
+      "id": "x2",
+      "en": "X2"
+    },
+    {
+      "id": "z3",
+      "en": "Z3"
+    }
+  ],
+  "bugatti": [
+    {
+      "id": "chiron",
+      "en": "Chiron"
+    },
+    {
+      "id": "veyron",
+      "en": "Veyron"
+    }
+  ],
+  "buick": [
+    {
+      "id": "electra",
+      "en": "Electra"
+    },
+    {
+      "id": "envista",
+      "en": "Envista"
+    },
+    {
+      "id": "envision",
+      "en": "Envision"
+    },
+    {
+      "id": "enclave",
+      "en": "Enclave"
+    },
+    {
+      "id": "encore",
+      "en": "Encore"
+    },
+    {
+      "id": "encore_gx",
+      "en": "Encore GX"
+    },
+    {
+      "id": "regal",
+      "en": "Regal"
+    },
+    {
+      "id": "special",
+      "en": "Special"
+    },
+    {
+      "id": "verano",
+      "en": "Verano"
+    },
+    {
+      "id": "lacrosse",
+      "en": "LaCrosse"
+    }
+  ],
+  "bentley": [
+    {
+      "id": "arnage",
+      "en": "Arnage"
+    },
+    {
+      "id": "azure",
+      "en": "Azure"
+    },
+    {
+      "id": "brooklands",
+      "en": "Brooklands"
+    },
+    {
+      "id": "bentayga",
+      "en": "Bentayga"
+    },
+    {
+      "id": "flying_spur",
+      "en": "Flying Spur"
+    },
+    {
+      "id": "continental",
+      "en": "Continental"
+    },
+    {
+      "id": "continental_gt",
+      "en": "Continental GT"
+    },
+    {
+      "id": "continental_gtc",
+      "en": "Continental GTC"
+    },
+    {
+      "id": "mulsanne",
+      "en": "Mulsanne"
+    }
+  ],
+  "bestune": [
+    {
+      "id": "b70",
+      "en": "B70"
+    },
+    {
+      "id": "b70s",
+      "en": "B70S"
+    },
+    {
+      "id": "e07",
+      "en": "E07"
+    },
+    {
+      "id": "t55",
+      "en": "T55"
+    },
+    {
+      "id": "t77",
+      "en": "T77"
+    },
+    {
+      "id": "t99",
+      "en": "T99"
+    },
+    {
+      "id": "pony",
+      "en": "Pony"
+    }
+  ],
+  "baic": [
+    {
+      "id": "a1_sedan",
+      "en": "A1 Sedan"
+    },
+    {
+      "id": "a1_hatchback",
+      "en": "A1 Hatchback"
+    },
+    {
+      "id": "a315",
+      "en": "A315"
+    },
+    {
+      "id": "a5_sedan",
+      "en": "A5 Sedan"
+    },
+    {
+      "id": "bj20",
+      "en": "BJ20"
+    },
+    {
+      "id": "bj30e",
+      "en": "BJ30e"
+    },
+    {
+      "id": "bj40l",
+      "en": "BJ40L"
+    },
+    {
+      "id": "bj60",
+      "en": "BJ60"
+    },
+    {
+      "id": "bj80",
+      "en": "BJ80"
+    },
+    {
+      "id": "d20",
+      "en": "D20"
+    },
+    {
+      "id": "d50",
+      "en": "D50"
+    },
+    {
+      "id": "q35",
+      "en": "Q35"
+    },
+    {
+      "id": "u5_plus",
+      "en": "U5 Plus"
+    },
+    {
+      "id": "x25",
+      "en": "X25"
+    },
+    {
+      "id": "x3",
+      "en": "X3"
+    },
+    {
+      "id": "x35",
+      "en": "X35"
+    },
+    {
+      "id": "x55",
+      "en": "X55"
+    },
+    {
+      "id": "x7",
+      "en": "X7"
+    },
+    {
+      "id": "senova_x65",
+      "en": "Senova X65"
+    }
+  ],
+  "baw": [
+    {
+      "id": "pickup_f7",
+      "en": "Pickup F7"
+    }
+  ],
+  "audi": [
+    {
+      "id": "a3",
+      "en": "A3"
+    },
+    {
+      "id": "a6",
+      "en": "A6"
+    },
+    {
+      "id": "a7",
+      "en": "A7"
+    },
+    {
+      "id": "q7",
+      "en": "Q7"
+    },
+    {
+      "id": "q8",
+      "en": "Q8"
+    },
+    {
+      "id": "audi_80",
+      "en": "80"
+    },
+    {
+      "id": "a1",
+      "en": "A1"
+    },
+    {
+      "id": "a4",
+      "en": "A4"
+    },
+    {
+      "id": "a5",
+      "en": "A5"
+    },
+    {
+      "id": "a8",
+      "en": "A8"
+    },
+    {
+      "id": "q2",
+      "en": "Q2"
+    },
+    {
+      "id": "q3",
+      "en": "Q3"
+    },
+    {
+      "id": "q5",
+      "en": "Q5"
+    },
+    {
+      "id": "r8",
+      "en": "R8"
+    },
+    {
+      "id": "rs_e_tron",
+      "en": "RS e-tron"
+    },
+    {
+      "id": "rs3",
+      "en": "RS3"
+    },
+    {
+      "id": "rsq8",
+      "en": "RS Q8"
+    },
+    {
+      "id": "s4",
+      "en": "S4"
+    },
+    {
+      "id": "s5",
+      "en": "S5"
+    },
+    {
+      "id": "s6",
+      "en": "S6"
+    },
+    {
+      "id": "s7",
+      "en": "S7"
+    },
+    {
+      "id": "s8",
+      "en": "S8"
+    },
+    {
+      "id": "sq5",
+      "en": "SQ5"
+    },
+    {
+      "id": "sq5_sportback",
+      "en": "SQ5 Sportback"
+    },
+    {
+      "id": "sq8",
+      "en": "SQ8"
+    },
+    {
+      "id": "rs5",
+      "en": "RS 5"
+    },
+    {
+      "id": "rs6",
+      "en": "RS 6"
+    },
+    {
+      "id": "rs7",
+      "en": "RS 7"
+    },
+    {
+      "id": "tt",
+      "en": "TT"
+    },
+    {
+      "id": "q4_e_tron",
+      "en": "Q4 e-tron"
+    }
+  ],
+  "austin": [
+    {
+      "id": "a55_cambridge",
+      "en": "A55 Cambridge"
+    },
+    {
+      "id": "sprite",
+      "en": "Sprite"
+    }
+  ],
+  "avatr": [
+    {
+      "id": "avatr_07",
+      "en": "07"
+    },
+    {
+      "id": "avatr_11",
+      "en": "11"
+    },
+    {
+      "id": "avatr_12",
+      "en": "12"
+    }
+  ],
+  "aston_martin": [
+    {
+      "id": "db11",
+      "en": "DB11"
+    },
+    {
+      "id": "db11_volante",
+      "en": "DB11 Volante"
+    },
+    {
+      "id": "db7",
+      "en": "DB7"
+    },
+    {
+      "id": "db9",
+      "en": "DB9"
+    },
+    {
+      "id": "db9_volante",
+      "en": "DB9 Volante"
+    },
+    {
+      "id": "dbs",
+      "en": "DBS"
+    },
+    {
+      "id": "dbx",
+      "en": "DBX"
+    },
+    {
+      "id": "v12_vantage",
+      "en": "V12 Vantage"
+    },
+    {
+      "id": "v12_vantage_roadster",
+      "en": "V12 Vantage Roadster"
+    },
+    {
+      "id": "v8_vantage_s",
+      "en": "V8 Vantage S"
+    },
+    {
+      "id": "v8_vantage",
+      "en": "V8 Vantage"
+    },
+    {
+      "id": "v8_vantage_roadster",
+      "en": "V8 Vantage Roadster"
+    },
+    {
+      "id": "rapide",
+      "en": "Rapide"
+    },
+    {
+      "id": "zagato",
+      "en": "Zagato"
+    },
+    {
+      "id": "vanquish",
+      "en": "Vanquish"
+    },
+    {
+      "id": "vanquish_volante",
+      "en": "Vanquish Volante"
+    },
+    {
+      "id": "one_77",
+      "en": "One-77"
+    }
+  ],
+  "alfa_romeo": [
+    {
+      "id": "alfa_147",
+      "en": "147"
+    },
+    {
+      "id": "alfa_156",
+      "en": "156"
+    },
+    {
+      "id": "alfa_159",
+      "en": "159"
+    },
+    {
+      "id": "alfa_166",
+      "en": "166"
+    },
+    {
+      "id": "4c",
+      "en": "4C"
+    },
+    {
+      "id": "brera",
+      "en": "Brera"
+    },
+    {
+      "id": "giulia",
+      "en": "Giulia"
+    },
+    {
+      "id": "giulia_quadrifoglio",
+      "en": "Giulia Quadrifoglio"
+    },
+    {
+      "id": "giulietta",
+      "en": "Giulietta"
+    },
+    {
+      "id": "giulietta_qv",
+      "en": "Giulietta QV"
+    },
+    {
+      "id": "gt_coupe",
+      "en": "GT Coupe"
+    },
+    {
+      "id": "mito",
+      "en": "Mito"
+    },
+    {
+      "id": "spider",
+      "en": "Spider"
+    },
+    {
+      "id": "stelvio",
+      "en": "Stelvio"
+    },
+    {
+      "id": "stelvio_quadrifoglio",
+      "en": "Stelvio Quadrifoglio"
+    }
+  ],
+  "acura": [
+    {
+      "id": "ilx",
+      "en": "ILX"
+    },
+    {
+      "id": "mdx",
+      "en": "MDX"
+    },
+    {
+      "id": "nsx",
+      "en": "NSX"
+    },
+    {
+      "id": "rdx",
+      "en": "RDX"
+    },
+    {
+      "id": "tlx",
+      "en": "TLX"
+    },
+    {
+      "id": "integra",
+      "en": "Integra"
+    }
+  ],
+  "dadi_auto": [
+    {
+      "id": "smoothing",
+      "en": "Smoothing"
+    }
+  ],
+  "daewoo": [
+    {
+      "id": "espero",
+      "en": "Espero"
+    },
+    {
+      "id": "prince",
+      "en": "Prince"
+    },
+    {
+      "id": "tacuma",
+      "en": "Tacuma"
+    },
+    {
+      "id": "tosca",
+      "en": "Tosca"
+    },
+    {
+      "id": "gentra",
+      "en": "Gentra"
+    },
+    {
+      "id": "gentra_x",
+      "en": "Gentra X"
+    },
+    {
+      "id": "cielo",
+      "en": "Cielo"
+    },
+    {
+      "id": "kalos",
+      "en": "Kalos"
+    },
+    {
+      "id": "lanos",
+      "en": "Lanos"
+    },
+    {
+      "id": "lacetti",
+      "en": "Lacetti"
+    },
+    {
+      "id": "leganza",
+      "en": "Leganza"
+    },
+    {
+      "id": "lemans",
+      "en": "Lemans"
+    },
+    {
+      "id": "magnus",
+      "en": "Magnus"
+    },
+    {
+      "id": "nubira",
+      "en": "Nubira"
+    }
+  ],
+  "deepal": [
+    {
+      "id": "g318",
+      "en": "G318"
+    },
+    {
+      "id": "s05",
+      "en": "S05"
+    },
+    {
+      "id": "s07",
+      "en": "S07"
+    }
+  ],
+  "denza": [
+    {
+      "id": "b5",
+      "en": "B5"
+    },
+    {
+      "id": "b8",
+      "en": "B8"
+    }
+  ],
+  "daihatsu": [
+    {
+      "id": "yrv",
+      "en": "YRV"
+    },
+    {
+      "id": "applause",
+      "en": "Applause"
+    },
+    {
+      "id": "taft_f20",
+      "en": "Taft F20"
+    },
+    {
+      "id": "terios",
+      "en": "Terios"
+    },
+    {
+      "id": "charade",
+      "en": "Charade"
+    },
+    {
+      "id": "sirion",
+      "en": "Sirion"
+    },
+    {
+      "id": "feroza",
+      "en": "Feroza"
+    },
+    {
+      "id": "gran_max_pickup",
+      "en": "Gran Max Pickup"
+    },
+    {
+      "id": "gran_max_van",
+      "en": "Gran Max Van"
+    },
+    {
+      "id": "materia",
+      "en": "Materia"
+    }
+  ],
+  "dfsk": [
+    {
+      "id": "e5_plus",
+      "en": "E5 Plus"
+    }
+  ],
+  "dongfeng": [
+    {
+      "id": "aeolus_a30",
+      "en": "Aeolus A30"
+    },
+    {
+      "id": "aeolus_a60_max",
+      "en": "Aeolus A60 MAX"
+    },
+    {
+      "id": "aeolus_yixuan_gs",
+      "en": "Aeolus Yixuan GS"
+    },
+    {
+      "id": "ax7",
+      "en": "AX7"
+    },
+    {
+      "id": "c32",
+      "en": "C32"
+    },
+    {
+      "id": "c35",
+      "en": "C35"
+    },
+    {
+      "id": "c37",
+      "en": "C37"
+    },
+    {
+      "id": "h30_cross",
+      "en": "H30 Cross"
+    },
+    {
+      "id": "ix5",
+      "en": "iX5"
+    },
+    {
+      "id": "ix7",
+      "en": "ix7"
+    },
+    {
+      "id": "s30",
+      "en": "S30"
+    },
+    {
+      "id": "t5_evo",
+      "en": "T5 EVO"
+    },
+    {
+      "id": "t5l",
+      "en": "T5L"
+    },
+    {
+      "id": "aeolus_a60",
+      "en": "Aeolus A60"
+    },
+    {
+      "id": "aeolus_007",
+      "en": "Aeolus 007"
+    },
+    {
+      "id": "aeolus_008",
+      "en": "Aeolus 008"
+    },
+    {
+      "id": "aeolus_huge",
+      "en": "Aeolus Huge"
+    },
+    {
+      "id": "rich",
+      "en": "Rich"
+    },
+    {
+      "id": "shine",
+      "en": "Shine"
+    },
+    {
+      "id": "forthing_friday",
+      "en": "Forthing Friday"
+    },
+    {
+      "id": "venucia",
+      "en": "Venucia"
+    },
+    {
+      "id": "glory",
+      "en": "Glory"
+    },
+    {
+      "id": "mage",
+      "en": "Mage"
+    }
+  ],
+  "faw": [
+    {
+      "id": "v2",
+      "en": "V2"
+    },
+    {
+      "id": "v80",
+      "en": "V80"
+    },
+    {
+      "id": "oley",
+      "en": "Oley"
+    },
+    {
+      "id": "n5",
+      "en": "N5"
+    },
+    {
+      "id": "besturn_b50",
+      "en": "Besturn B50"
+    },
+    {
+      "id": "besturn_b30",
+      "en": "Besturn B30"
+    },
+    {
+      "id": "besturn_x40",
+      "en": "Besturn X40"
+    },
+    {
+      "id": "besturn_x80",
+      "en": "Besturn X80"
+    },
+    {
+      "id": "carrier",
+      "en": "Carrier"
+    }
+  ],
+  "exeed": [
+    {
+      "id": "lx",
+      "en": "LX"
+    },
+    {
+      "id": "rx",
+      "en": "RX"
+    },
+    {
+      "id": "vx",
+      "en": "VX"
+    },
+    {
+      "id": "exlantix_es",
+      "en": "Exlantix ES"
+    },
+    {
+      "id": "exlantix_et",
+      "en": "Exlantix ET"
+    }
+  ],
+  "ferrari": [
+    {
+      "id": "ferrari_360",
+      "en": "360"
+    },
+    {
+      "id": "458",
+      "en": "458"
+    },
+    {
+      "id": "458_spider",
+      "en": "458 Spider"
+    },
+    {
+      "id": "488_gtb",
+      "en": "488 GTB"
+    },
+    {
+      "id": "488_spider",
+      "en": "488 Spider"
+    },
+    {
+      "id": "599_gtb_fiorano",
+      "en": "599 GTB Fiorano"
+    },
+    {
+      "id": "612_scaglietti",
+      "en": "612 Scaglietti"
+    },
+    {
+      "id": "812_superfast",
+      "en": "812 Superfast"
+    },
+    {
+      "id": "f12_berlinetta",
+      "en": "F12 Berlinetta"
+    },
+    {
+      "id": "f430",
+      "en": "F430"
+    },
+    {
+      "id": "f430_spider",
+      "en": "F430 Spider"
+    },
+    {
+      "id": "f8_tributo",
+      "en": "F8 Tributo"
+    },
+    {
+      "id": "ff",
+      "en": "FF"
+    },
+    {
+      "id": "gtc4lusso",
+      "en": "GTC4Lusso"
+    },
+    {
+      "id": "gtc4lusso_t",
+      "en": "GTC4Lusso T"
+    },
+    {
+      "id": "portofino",
+      "en": "Portofino"
+    },
+    {
+      "id": "roma",
+      "en": "Roma"
+    },
+    {
+      "id": "california",
+      "en": "California"
+    },
+    {
+      "id": "california_t",
+      "en": "California T"
+    },
+    {
+      "id": "laferrari",
+      "en": "LaFerrari"
+    }
+  ],
+  "fiat": [
+    {
+      "id": "124_spider",
+      "en": "124 Spider"
+    },
+    {
+      "id": "500",
+      "en": "500"
+    },
+    {
+      "id": "500l",
+      "en": "500L"
+    },
+    {
+      "id": "500x",
+      "en": "500X"
+    },
+    {
+      "id": "bravo",
+      "en": "Bravo"
+    },
+    {
+      "id": "punto",
+      "en": "Punto"
+    },
+    {
+      "id": "tipo",
+      "en": "Tipo"
+    },
+    {
+      "id": "tempra",
+      "en": "Tempra"
+    },
+    {
+      "id": "ducato",
+      "en": "Ducato"
+    },
+    {
+      "id": "freemont",
+      "en": "Freemont"
+    },
+    {
+      "id": "fiorino",
+      "en": "Fiorino"
+    },
+    {
+      "id": "linea",
+      "en": "Linea"
+    }
+  ],
+  "ford": [
+    {
+      "id": "territory",
+      "en": "Territory"
+    },
+    {
+      "id": "taurus",
+      "en": "Taurus"
+    },
+    {
+      "id": "f_150",
+      "en": "F-150"
+    },
+    {
+      "id": "expedition",
+      "en": "Expedition"
+    },
+    {
+      "id": "everest",
+      "en": "Everest"
+    },
+    {
+      "id": "ranger",
+      "en": "Ranger"
+    },
+    {
+      "id": "f_150_raptor",
+      "en": "F-150 Raptor"
+    },
+    {
+      "id": "explorer",
+      "en": "Explorer"
+    },
+    {
+      "id": "bronco",
+      "en": "Bronco"
+    },
+    {
+      "id": "bronco_sport",
+      "en": "Bronco Sport"
+    },
+    {
+      "id": "ecosport",
+      "en": "EcoSport"
+    },
+    {
+      "id": "mustang",
+      "en": "Mustang"
+    },
+    {
+      "id": "edge",
+      "en": "Edge"
+    },
+    {
+      "id": "figo",
+      "en": "Figo"
+    },
+    {
+      "id": "fusion",
+      "en": "Fusion"
+    },
+    {
+      "id": "f_150_lightning",
+      "en": "F-150 Lightning"
+    },
+    {
+      "id": "maverick",
+      "en": "Maverick"
+    },
+    {
+      "id": "focus",
+      "en": "Focus"
+    },
+    {
+      "id": "escape",
+      "en": "Escape"
+    },
+    {
+      "id": "fiesta",
+      "en": "Fiesta"
+    },
+    {
+      "id": "e_350",
+      "en": "E-350"
+    },
+    {
+      "id": "f_250",
+      "en": "F-250"
+    },
+    {
+      "id": "f_350",
+      "en": "F-350"
+    },
+    {
+      "id": "five_hundred",
+      "en": "Five Hundred"
+    },
+    {
+      "id": "gt",
+      "en": "GT"
+    },
+    {
+      "id": "aerostar",
+      "en": "Aerostar"
+    },
+    {
+      "id": "econoline",
+      "en": "Econoline"
+    },
+    {
+      "id": "explorer_sport_trac",
+      "en": "Explorer Sport Trac"
+    },
+    {
+      "id": "excursion",
+      "en": "Excursion"
+    },
+    {
+      "id": "escort",
+      "en": "Escort"
+    },
+    {
+      "id": "transit",
+      "en": "Transit"
+    },
+    {
+      "id": "taurus_x",
+      "en": "Taurus X"
+    },
+    {
+      "id": "torino_courier",
+      "en": "Torino Courier"
+    },
+    {
+      "id": "thunderbird",
+      "en": "Thunderbird"
+    },
+    {
+      "id": "scorpio",
+      "en": "Scorpio"
+    },
+    {
+      "id": "sierra",
+      "en": "Sierra"
+    },
+    {
+      "id": "freestar",
+      "en": "Freestar"
+    },
+    {
+      "id": "freestyle",
+      "en": "Freestyle"
+    },
+    {
+      "id": "flex",
+      "en": "Flex"
+    },
+    {
+      "id": "ka",
+      "en": "Ka"
+    },
+    {
+      "id": "crown_victoria",
+      "en": "Crown Victoria"
+    },
+    {
+      "id": "gran_torino",
+      "en": "Gran Torino"
+    },
+    {
+      "id": "mondeo",
+      "en": "Mondeo"
+    },
+    {
+      "id": "mustang_mach_e",
+      "en": "Mustang Mach-E"
+    },
+    {
+      "id": "windstar",
+      "en": "Windstar"
+    }
+  ],
+  "foton": [
+    {
+      "id": "tunland",
+      "en": "Tunland"
+    },
+    {
+      "id": "tunland_g7",
+      "en": "Tunland G7"
+    },
+    {
+      "id": "sup",
+      "en": "Sup"
+    },
+    {
+      "id": "view_cs2",
+      "en": "View CS2"
+    },
+    {
+      "id": "view_c2",
+      "en": "View C2"
+    },
+    {
+      "id": "miler",
+      "en": "Miler"
+    }
+  ],
+  "jac": [
+    {
+      "id": "js6",
+      "en": "JS6"
+    },
+    {
+      "id": "jac_298",
+      "en": "298"
+    },
+    {
+      "id": "js4",
+      "en": "JS4"
+    },
+    {
+      "id": "t8",
+      "en": "T8"
+    },
+    {
+      "id": "js3",
+      "en": "JS3"
+    },
+    {
+      "id": "j4",
+      "en": "J4"
+    },
+    {
+      "id": "j6",
+      "en": "J6"
+    },
+    {
+      "id": "hfc",
+      "en": "HFC"
+    },
+    {
+      "id": "j3",
+      "en": "J3"
+    },
+    {
+      "id": "j5",
+      "en": "J5"
+    },
+    {
+      "id": "m5_mpv",
+      "en": "M5 MPV"
+    },
+    {
+      "id": "s3_suv",
+      "en": "S3 SUV"
+    },
+    {
+      "id": "x200",
+      "en": "X200"
+    }
+  ],
+  "jmc": [
+    {
+      "id": "grand_avenue",
+      "en": "Grand Avenue"
+    }
+  ],
+  "isuzu": [
+    {
+      "id": "d_max",
+      "en": "D-Max"
+    },
+    {
+      "id": "elf",
+      "en": "Elf"
+    },
+    {
+      "id": "mu_x",
+      "en": "MU-X"
+    },
+    {
+      "id": "trooper",
+      "en": "Trooper"
+    },
+    {
+      "id": "rodeo",
+      "en": "Rodeo"
+    },
+    {
+      "id": "faster",
+      "en": "Faster"
+    }
+  ],
+  "iveco": [
+    {
+      "id": "daily",
+      "en": "Daily"
+    }
+  ],
+  "infiniti": [
+    {
+      "id": "ex",
+      "en": "EX"
+    },
+    {
+      "id": "fx",
+      "en": "FX"
+    },
+    {
+      "id": "g",
+      "en": "G"
+    },
+    {
+      "id": "g35",
+      "en": "G35"
+    },
+    {
+      "id": "g35_coupe",
+      "en": "G35 Coupe"
+    },
+    {
+      "id": "g37",
+      "en": "G37"
+    },
+    {
+      "id": "g37_coupe",
+      "en": "G37 Coupe"
+    },
+    {
+      "id": "g37_convertible",
+      "en": "G37 Convertible"
+    },
+    {
+      "id": "jx",
+      "en": "JX"
+    },
+    {
+      "id": "m",
+      "en": "M"
+    },
+    {
+      "id": "m37",
+      "en": "M37"
+    },
+    {
+      "id": "q30",
+      "en": "Q30"
+    },
+    {
+      "id": "q45",
+      "en": "Q45"
+    },
+    {
+      "id": "q50",
+      "en": "Q50"
+    },
+    {
+      "id": "q60_coupe",
+      "en": "Q60 Coupe"
+    },
+    {
+      "id": "q60_convertible",
+      "en": "Q60 Convertible"
+    },
+    {
+      "id": "q70",
+      "en": "Q70"
+    },
+    {
+      "id": "qx30",
+      "en": "QX30"
+    },
+    {
+      "id": "qx4",
+      "en": "QX4"
+    },
+    {
+      "id": "qx50",
+      "en": "QX50"
+    },
+    {
+      "id": "qx56",
+      "en": "QX56"
+    },
+    {
+      "id": "qx60",
+      "en": "QX60"
+    },
+    {
+      "id": "qx70",
+      "en": "QX70"
+    },
+    {
+      "id": "qx80",
+      "en": "QX80"
+    },
+    {
+      "id": "qx55",
+      "en": "QX55"
+    }
+  ],
+  "ikco": [
+    {
+      "id": "arisun",
+      "en": "Arisun"
+    },
+    {
+      "id": "tara",
+      "en": "Tara"
+    },
+    {
+      "id": "dena",
+      "en": "Dena"
+    },
+    {
+      "id": "runna",
+      "en": "Runna"
+    },
+    {
+      "id": "samand",
+      "en": "Samand"
+    },
+    {
+      "id": "soren",
+      "en": "Soren"
+    }
+  ],
+  "ineos": [
+    {
+      "id": "grenadier",
+      "en": "Grenadier"
+    }
+  ],
+  "hummer": [
+    {
+      "id": "h2",
+      "en": "H2"
+    },
+    {
+      "id": "h3",
+      "en": "H3"
+    }
+  ],
+  "honda": [
+    {
+      "id": "acura_tlx",
+      "en": "Acura TLX"
+    },
+    {
+      "id": "accord",
+      "en": "Accord"
+    },
+    {
+      "id": "accord_crosstour",
+      "en": "Accord Crosstour"
+    },
+    {
+      "id": "accord_coupe",
+      "en": "Accord Coupe"
+    },
+    {
+      "id": "odyssey",
+      "en": "Odyssey"
+    },
+    {
+      "id": "odyssey_l",
+      "en": "Odyssey L"
+    },
+    {
+      "id": "insight",
+      "en": "Insight"
+    },
+    {
+      "id": "element",
+      "en": "Element"
+    },
+    {
+      "id": "cr_v",
+      "en": "CR-V"
+    },
+    {
+      "id": "crx",
+      "en": "CRX"
+    },
+    {
+      "id": "e_np1",
+      "en": "e:NP1"
+    },
+    {
+      "id": "ens1",
+      "en": "eNS1"
+    },
+    {
+      "id": "hr_v",
+      "en": "HR-V"
+    },
+    {
+      "id": "mr_v",
+      "en": "MR-V"
+    },
+    {
+      "id": "s2000",
+      "en": "S2000"
+    },
+    {
+      "id": "zr_v",
+      "en": "ZR-V"
+    },
+    {
+      "id": "passport",
+      "en": "Passport"
+    },
+    {
+      "id": "pilot",
+      "en": "Pilot"
+    },
+    {
+      "id": "prologue",
+      "en": "Prologue"
+    },
+    {
+      "id": "jazz",
+      "en": "Jazz"
+    },
+    {
+      "id": "ridgeline",
+      "en": "Ridgeline"
+    },
+    {
+      "id": "civic_type_r",
+      "en": "Civic Type R"
+    },
+    {
+      "id": "city",
+      "en": "City"
+    },
+    {
+      "id": "civic",
+      "en": "Civic"
+    },
+    {
+      "id": "civic_hatchback",
+      "en": "Civic Hatchback"
+    },
+    {
+      "id": "concerto",
+      "en": "Concerto"
+    },
+    {
+      "id": "legend",
+      "en": "Legend"
+    }
+  ],
+  "hongqi": [
+    {
+      "id": "e_hs9",
+      "en": "E-HS9"
+    },
+    {
+      "id": "h5",
+      "en": "H5"
+    },
+    {
+      "id": "h6",
+      "en": "H6"
+    },
+    {
+      "id": "h9",
+      "en": "H9"
+    },
+    {
+      "id": "hs3",
+      "en": "HS3"
+    },
+    {
+      "id": "hs5",
+      "en": "HS5"
+    },
+    {
+      "id": "hs7",
+      "en": "HS7"
+    },
+    {
+      "id": "oshado",
+      "en": "Oshado"
+    }
+  ],
+  "huanghai": [
+    {
+      "id": "n1",
+      "en": "N1"
+    },
+    {
+      "id": "n1s",
+      "en": "N1S"
+    }
+  ],
+  "zotye": [
+    {
+      "id": "sr9",
+      "en": "SR9"
+    },
+    {
+      "id": "t300",
+      "en": "T300"
+    },
+    {
+      "id": "t600",
+      "en": "T600"
+    },
+    {
+      "id": "t600_sport",
+      "en": "T600 Sport"
+    },
+    {
+      "id": "t700",
+      "en": "T700"
+    },
+    {
+      "id": "z100",
+      "en": "Z100"
+    },
+    {
+      "id": "z300",
+      "en": "Z300"
+    },
+    {
+      "id": "domy_x5",
+      "en": "Domy X5"
+    },
+    {
+      "id": "domy_x7",
+      "en": "Domy X7"
+    },
+    {
+      "id": "hunter",
+      "en": "Hunter"
+    }
+  ],
+  "uaz": [
+    {
+      "id": "patriot",
+      "en": "Patriot"
+    },
+    {
+      "id": "pickup",
+      "en": "Pickup"
+    },
+    {
+      "id": "hunter",
+      "en": "Hunter"
+    }
+  ],
+  "vanderhall": [
+    {
+      "id": "venice",
+      "en": "Venice"
+    },
+    {
+      "id": "carmel",
+      "en": "Carmel"
+    }
+  ],
+  "zx_auto": [
+    {
+      "id": "admiral",
+      "en": "Admiral"
+    },
+    {
+      "id": "terralord",
+      "en": "Terralord"
+    },
+    {
+      "id": "grand_tiger",
+      "en": "Grand Tiger"
+    }
+  ],
+  "zimmer": [
+    {
+      "id": "golden_spirit",
+      "en": "Golden Spirit"
+    }
+  ],
+  "xev": [
+    {
+      "id": "yoyo_pro",
+      "en": "Yoyo Pro"
+    }
+  ],
+  "xiaomi": [
+    {
+      "id": "su7",
+      "en": "SU7"
+    }
+  ],
+  "xpeng": [
+    {
+      "id": "p7",
+      "en": "P7"
+    }
+  ],
+  "yangwang": [
+    {
+      "id": "u8",
+      "en": "U8"
+    }
+  ],
+  "zyle_daewoo_commercial_vehicles": [
+    {
+      "id": "bs106",
+      "en": "BS106"
+    }
+  ]
+}

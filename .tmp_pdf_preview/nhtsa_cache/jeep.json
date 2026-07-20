@@ -1,0 +1,29 @@
+{
+  "make": "Jeep",
+  "models": [
+    "Wrangler",
+    "Liberty",
+    "Cherokee",
+    "Compass",
+    "Patriot",
+    "Commander",
+    "Grand Cherokee",
+    "Renegade",
+    "Grand Wagoneer",
+    "Comanche",
+    "Wagoneer",
+    "J-10",
+    "J-20",
+    "CJ-7",
+    "CJ-8 Scrambler",
+    "CJ-5",
+    "CJ-6",
+    "Wrangler JK",
+    "Gladiator",
+    "Grand Cherokee L",
+    "Wagoneer L",
+    "Grand Wagoneer L",
+    "Wagoneer S",
+    "Recon"
+  ]
+}

@@ -11,7 +11,7 @@ class AppImageCacheManager {
     Config(
       _cacheKey,
       stalePeriod: const Duration(days: 7),
-      maxNrOfCacheObjects: 60,
+      maxNrOfCacheObjects: 300,
     ),
   );
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:iq_motors/core/localization/filter_l10n.dart';
 import 'package:iq_motors/core/localization/l10n_extensions.dart';
+import 'package:iq_motors/core/theme/app_theme.dart';
 
 /// Multi-select location picker — search, checkboxes, Apply.
 Future<Set<String>?> showLocationPickerSheet(
@@ -26,10 +27,6 @@ class _LocationPickerSheet extends StatefulWidget {
 }
 
 class _LocationPickerSheetState extends State<_LocationPickerSheet> {
-  static const Color _textPrimary = Color(0xFF1D1D1F);
-  static const Color _fill = Color(0xFFE8E8ED);
-  static const Color _accent = Color(0xFF1D1D1F);
-
   late Set<String> _draft;
   final _searchController = TextEditingController();
   String _query = '';
@@ -121,6 +118,8 @@ class _LocationPickerSheetState extends State<_LocationPickerSheet> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final colorScheme = context.colorScheme;
+    final textTheme = context.textTheme;
     final bottomInset = MediaQuery.viewInsetsOf(context).bottom;
     final maxHeight = MediaQuery.sizeOf(context).height * 0.88;
 
@@ -131,8 +130,8 @@ class _LocationPickerSheetState extends State<_LocationPickerSheet> {
         child: ConstrainedBox(
           constraints: BoxConstraints(maxHeight: maxHeight),
           child: Material(
-            color: Colors.white,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+            color: colorScheme.surface,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
             clipBehavior: Clip.antiAlias,
             child: SafeArea(
               top: false,
@@ -144,7 +143,7 @@ class _LocationPickerSheetState extends State<_LocationPickerSheet> {
                     width: 36,
                     height: 4,
                     decoration: BoxDecoration(
-                      color: _fill,
+                      color: colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
@@ -152,11 +151,9 @@ class _LocationPickerSheetState extends State<_LocationPickerSheet> {
                     padding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
                     child: Text(
                       l10n.selectCity,
-                      style: const TextStyle(
-                        fontSize: 18,
+                      style: textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w600,
-                        color: _textPrimary,
-                        letterSpacing: -0.3,
+                        color: colorScheme.onSurface,
                       ),
                     ),
                   ),
@@ -168,7 +165,7 @@ class _LocationPickerSheetState extends State<_LocationPickerSheet> {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  const Divider(height: 1, color: Color(0xFFE5E5EA)),
+                  Divider(height: 1, color: colorScheme.outlineVariant),
                   Flexible(
                     child: ListView.builder(
                       shrinkWrap: true,
@@ -184,27 +181,23 @@ class _LocationPickerSheetState extends State<_LocationPickerSheet> {
                       },
                     ),
                   ),
-                  const Divider(height: 1, color: Color(0xFFE5E5EA)),
+                  Divider(height: 1, color: colorScheme.outlineVariant),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
                     child: SizedBox(
                       width: double.infinity,
-                      height: 50,
+                      height: 48,
                       child: FilledButton(
                         onPressed: () =>
                             Navigator.pop(context, _appliedSelection()),
                         style: FilledButton.styleFrom(
-                          backgroundColor: _accent,
-                          foregroundColor: Colors.white,
-                          elevation: 0,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
                         child: Text(
                           l10n.locationApply,
-                          style: const TextStyle(
-                            fontSize: 16,
+                          style: textTheme.titleSmall?.copyWith(
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -232,30 +225,31 @@ class _SearchField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = context.colorScheme;
+    final textTheme = context.textTheme;
+
     return TextField(
       controller: controller,
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: const TextStyle(
-          color: Color(0xFF86868B),
-          fontSize: 16,
+        hintStyle: textTheme.bodyMedium?.copyWith(
+          color: colorScheme.onSurfaceVariant,
         ),
-        prefixIcon: const Icon(
-          Icons.search,
-          color: Color(0xFF86868B),
-          size: 22,
+        prefixIcon: Icon(
+          Icons.search_rounded,
+          color: colorScheme.onSurfaceVariant,
+          size: 20,
         ),
         filled: true,
-        fillColor: const Color(0xFFE8E8ED),
+        fillColor: colorScheme.surfaceContainerHighest,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide.none,
         ),
         contentPadding: const EdgeInsets.symmetric(vertical: 12),
       ),
-      style: const TextStyle(
-        fontSize: 16,
-        color: Color(0xFF1D1D1F),
+      style: textTheme.bodyLarge?.copyWith(
+        color: colorScheme.onSurface,
       ),
     );
   }
@@ -274,6 +268,9 @@ class _LocationCheckRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = context.colorScheme;
+    final textTheme = context.textTheme;
+
     return InkWell(
       onTap: onChanged,
       child: Padding(
@@ -288,10 +285,9 @@ class _LocationCheckRow extends StatelessWidget {
                 ),
                 child: Text(
                   label,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w400,
-                    color: Color(0xFF1D1D1F),
+                  style: textTheme.bodyLarge?.copyWith(
+                    fontWeight: checked ? FontWeight.w600 : FontWeight.w400,
+                    color: colorScheme.onSurface,
                   ),
                 ),
               ),
@@ -299,8 +295,8 @@ class _LocationCheckRow extends StatelessWidget {
             Checkbox(
               value: checked,
               onChanged: (_) => onChanged(),
-              activeColor: const Color(0xFF1D1D1F),
-              side: const BorderSide(color: Color(0xFFC7C7CC), width: 1.5),
+              activeColor: colorScheme.primary,
+              side: BorderSide(color: colorScheme.outlineVariant, width: 1.5),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(4),
               ),

@@ -11,13 +11,14 @@ Future<void> showModerationErrorDialog(
       ? reason.trim()
       : 'وێنەکە قبوڵ نەکرا. تکایە وێنەیەکی تر هەڵبژێرە.';
 
+  final scheme = Theme.of(context).colorScheme;
+
   return showDialog<void>(
     context: context,
-    barrierColor: Colors.black.withValues(alpha: 0.35),
+    barrierColor: scheme.scrim.withValues(alpha: 0.35),
     builder: (dialogContext) => AlertDialog(
-      backgroundColor: AddCarTheme.cardBg,
-      elevation: 24,
-      shadowColor: Colors.black.withValues(alpha: 0.12),
+      backgroundColor: AddCarTheme.cardBg(context),
+      elevation: 2,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
       ),
@@ -31,26 +32,26 @@ Future<void> showModerationErrorDialog(
             width: 56,
             height: 56,
             decoration: BoxDecoration(
-              color: const Color(0xFFFF9500).withValues(alpha: 0.12),
+              color: scheme.tertiaryContainer,
               shape: BoxShape.circle,
             ),
-            child: const Icon(
+            child: Icon(
               Icons.warning_amber_rounded,
               size: 32,
-              color: Color(0xFFFF9500),
+              color: scheme.onTertiaryContainer,
             ),
           ),
           const SizedBox(height: 20),
           Text(
             'تکایە وێنەکان چاک بکە',
             textAlign: TextAlign.center,
-            style: AddCarTheme.sectionTitle.copyWith(fontSize: 20),
+            style: AddCarTheme.sectionTitle(context),
           ),
           const SizedBox(height: 12),
           Text(
             message,
             textAlign: TextAlign.center,
-            style: AddCarTheme.stepSubtitle.copyWith(fontSize: 16),
+            style: AddCarTheme.stepSubtitle(context),
           ),
         ],
       ),
@@ -60,19 +61,19 @@ Future<void> showModerationErrorDialog(
           child: FilledButton(
             onPressed: () => Navigator.of(dialogContext).pop(),
             style: FilledButton.styleFrom(
-              backgroundColor: AddCarTheme.primaryBlack,
-              foregroundColor: Colors.white,
+              backgroundColor: scheme.primary,
+              foregroundColor: scheme.onPrimary,
               padding: const EdgeInsets.symmetric(vertical: 14),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
-            child: const Text(
+            child: Text(
               'تێگەیشتم',
-              style: TextStyle(
-                fontSize: 17,
-                fontWeight: FontWeight.w600,
-              ),
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: scheme.onPrimary,
+                  ),
             ),
           ),
         ),

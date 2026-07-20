@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:iq_motors/core/theme/app_theme.dart';
 import 'package:iq_motors/core/utils/activity_actions.dart';
 import 'package:iq_motors/core/localization/iraq_location_l10n.dart';
 import 'package:iq_motors/core/localization/l10n_extensions.dart';
@@ -22,9 +23,6 @@ class AdminActivityLogsView extends ConsumerStatefulWidget {
 }
 
 class _AdminActivityLogsViewState extends ConsumerState<AdminActivityLogsView> {
-  static const Color _textPrimary = Color(0xFF1D1D1F);
-  static const Color _textSecondary = Color(0xFF86868B);
-
   late Future<List<ActivityLog>> _logsFuture;
   final _searchController = TextEditingController();
   String _query = '';
@@ -84,52 +82,53 @@ class _AdminActivityLogsViewState extends ConsumerState<AdminActivityLogsView> {
     };
   }
 
-  static _ActivityVisual _visualForAction(String action) {
+  static _ActivityVisual _visualForAction(BuildContext context, String action) {
+    final scheme = Theme.of(context).colorScheme;
     return switch (action) {
-      ActivityActions.approvedAd => const _ActivityVisual(
+      ActivityActions.approvedAd => _ActivityVisual(
           Icons.check_circle_outline,
-          Color(0xFF34C759),
-          Color(0xFFE8F8ED),
+          scheme.tertiary,
+          scheme.tertiaryContainer,
         ),
-      ActivityActions.rejectedAd => const _ActivityVisual(
+      ActivityActions.rejectedAd => _ActivityVisual(
           Icons.cancel_outlined,
-          Color(0xFFFF3B30),
-          Color(0xFFFFEBEA),
+          scheme.error,
+          scheme.errorContainer,
         ),
-      ActivityActions.deletedAd => const _ActivityVisual(
+      ActivityActions.deletedAd => _ActivityVisual(
           Icons.delete_outline,
-          Color(0xFFFF3B30),
-          Color(0xFFFFEBEA),
+          scheme.error,
+          scheme.errorContainer,
         ),
-      ActivityActions.updatedPackagePrice => const _ActivityVisual(
+      ActivityActions.updatedPackagePrice => _ActivityVisual(
           Icons.payments_outlined,
-          Color(0xFF007AFF),
-          Color(0xFFE8F2FF),
+          scheme.primary,
+          scheme.primaryContainer,
         ),
-      ActivityActions.addedCity => const _ActivityVisual(
+      ActivityActions.addedCity => _ActivityVisual(
           Icons.location_city_outlined,
-          Color(0xFF5856D6),
-          Color(0xFFEEEDFA),
+          scheme.secondary,
+          scheme.secondaryContainer,
         ),
-      ActivityActions.removedCity => const _ActivityVisual(
+      ActivityActions.removedCity => _ActivityVisual(
           Icons.location_off_outlined,
-          Color(0xFFFF9500),
-          Color(0xFFFFF4E5),
+          scheme.secondary,
+          scheme.secondaryContainer,
         ),
-      ActivityActions.addedAdmin => const _ActivityVisual(
+      ActivityActions.addedAdmin => _ActivityVisual(
           Icons.person_add_outlined,
-          Color(0xFF007AFF),
-          Color(0xFFE8F2FF),
+          scheme.primary,
+          scheme.primaryContainer,
         ),
-      ActivityActions.updatedCredentials => const _ActivityVisual(
+      ActivityActions.updatedCredentials => _ActivityVisual(
           Icons.vpn_key_outlined,
-          Color(0xFF86868B),
-          Color(0xFFF2F2F7),
+          scheme.onSurfaceVariant,
+          scheme.surfaceContainerHighest,
         ),
-      _ => const _ActivityVisual(
+      _ => _ActivityVisual(
           Icons.history,
-          Color(0xFF86868B),
-          Color(0xFFF2F2F7),
+          scheme.onSurfaceVariant,
+          scheme.surfaceContainerHighest,
         ),
     };
   }
@@ -143,25 +142,29 @@ class _AdminActivityLogsViewState extends ConsumerState<AdminActivityLogsView> {
       children: [
         Text(
           l10n.navActivity,
-          style: TextStyle(
-            fontSize: widget.isMobile ? 24 : 28,
+          style: context.textTheme.headlineMedium?.copyWith(
             fontWeight: FontWeight.w700,
-            color: _textPrimary,
+            color: AddCarTheme.textPrimary(context),
             height: 1.25,
           ),
         ),
         const SizedBox(height: 6),
         Text(
           l10n.adminActivitySubtitle,
-          style: const TextStyle(fontSize: 14, color: _textSecondary),
+          style: AddCarTheme.stepSubtitle(context).copyWith(fontSize: 14),
         ),
         const SizedBox(height: 24),
         TextField(
           controller: _searchController,
           decoration: AddCarTheme.textFieldDecoration(
+            context,
             hintText: l10n.adminActivitySearchHint,
           ).copyWith(
-            prefixIcon: const Icon(Icons.search, color: _textSecondary, size: 20),
+            prefixIcon: Icon(
+              Icons.search,
+              color: AddCarTheme.textSecondary(context),
+              size: 20,
+            ),
           ),
         ),
         const SizedBox(height: 20),
@@ -205,7 +208,7 @@ class _AdminActivityLogsViewState extends ConsumerState<AdminActivityLogsView> {
                     return _ActivityLogRow(
                       log: log,
                       actionLabel: _localizedAction(log.action, l10n),
-                      visual: _visualForAction(log.action),
+                      visual: _visualForAction(context, log.action),
                       timeLabel: log.timestamp != null
                           ? formatRelativeTime(log.timestamp!, l10n)
                           : '—',
@@ -258,15 +261,8 @@ class _ActivityLogRow extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(isMobile ? 14 : 18),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.colorScheme.surfaceContainerLowest,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 16,
-            offset: const Offset(0, 4),
-          ),
-        ],
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -290,18 +286,16 @@ class _ActivityLogRow extends StatelessWidget {
                     Expanded(
                       child: Text(
                         actionLabel,
-                        style: const TextStyle(
-                          fontSize: 15,
+                        style: context.textTheme.titleSmall?.copyWith(
                           fontWeight: FontWeight.w600,
-                          color: Color(0xFF1D1D1F),
+                          color: context.colorScheme.onSurface,
                         ),
                       ),
                     ),
                     Text(
                       timeLabel,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: Color(0xFF86868B),
+                      style: context.textTheme.labelSmall?.copyWith(
+                        color: context.colorScheme.onSurfaceVariant,
                       ),
                     ),
                   ],
@@ -309,18 +303,16 @@ class _ActivityLogRow extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   '$performedByLabel: $adminLabel',
-                  style: const TextStyle(
-                    fontSize: 13,
-                    color: Color(0xFF86868B),
+                  style: context.textTheme.bodySmall?.copyWith(
+                    color: context.colorScheme.onSurfaceVariant,
                   ),
                 ),
                 if (log.details.isNotEmpty) ...[
                   const SizedBox(height: 6),
                   Text(
                     IraqLocationL10n.localizeActivityDetails(l10n, log.details),
-                    style: const TextStyle(
-                      fontSize: 13,
-                      color: Color(0xFF1D1D1F),
+                    style: context.textTheme.bodySmall?.copyWith(
+                      color: context.colorScheme.onSurface,
                       height: 1.4,
                     ),
                   ),
@@ -348,12 +340,14 @@ class _EmptyState extends StatelessWidget {
           Icon(
             Icons.history,
             size: 48,
-            color: const Color(0xFF86868B).withValues(alpha: 0.5),
+            color: context.colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
           ),
           const SizedBox(height: 16),
           Text(
             message,
-            style: const TextStyle(fontSize: 14, color: Color(0xFF86868B)),
+            style: context.textTheme.bodyMedium?.copyWith(
+              color: context.colorScheme.onSurfaceVariant,
+            ),
             textAlign: TextAlign.center,
           ),
         ],

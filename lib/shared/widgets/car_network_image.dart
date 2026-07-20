@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:iq_motors/core/config/app_image_cache.dart';
+import 'package:iq_motors/core/theme/app_theme.dart';
 
 /// Network car photo with memory-cache sizing on all platforms.
 ///
@@ -35,13 +36,14 @@ class CarNetworkImage extends StatelessWidget {
   final ImageErrorWidgetBuilder? errorBuilder;
   final double cacheLogicalWidth;
 
-  static const Color _placeholderColor = Color(0xFFF5F5F7);
-
   double? _resolveExtent(double? value, double constraintMax) {
     if (value != null && value.isFinite && value > 0) return value;
     if (constraintMax.isFinite && constraintMax > 0) return constraintMax;
     return null;
   }
+
+  Color _placeholder(BuildContext context) =>
+      context.colorScheme.surfaceContainerHighest;
 
   @override
   Widget build(BuildContext context) {
@@ -50,6 +52,8 @@ class CarNetworkImage extends StatelessWidget {
       return errorBuilder?.call(context, Object(), StackTrace.current) ??
           const SizedBox.shrink();
     }
+
+    final placeholderColor = _placeholder(context);
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -93,7 +97,7 @@ class CarNetworkImage extends StatelessWidget {
                   null,
                 );
               }
-              return const ColoredBox(color: _placeholderColor);
+              return ColoredBox(color: placeholderColor);
             },
             errorWidget: (context, error, stackTrace) {
               return errorBuilder?.call(
@@ -101,14 +105,14 @@ class CarNetworkImage extends StatelessWidget {
                     error,
                     stackTrace is StackTrace ? stackTrace : StackTrace.current,
                   ) ??
-                  const ColoredBox(color: _placeholderColor);
+                  ColoredBox(color: placeholderColor);
             },
           );
         }
 
         if (resolvedWidth != null && resolvedHeight != null) {
           return ColoredBox(
-            color: _placeholderColor,
+            color: placeholderColor,
             child: SizedBox(
               width: resolvedWidth,
               height: resolvedHeight,
@@ -117,7 +121,7 @@ class CarNetworkImage extends StatelessWidget {
           );
         }
 
-        return ColoredBox(color: _placeholderColor, child: image);
+        return ColoredBox(color: placeholderColor, child: image);
       },
     );
   }

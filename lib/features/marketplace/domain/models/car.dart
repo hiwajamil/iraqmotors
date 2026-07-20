@@ -72,11 +72,8 @@ class Car {
     final brandId = data['brandId']?.toString();
     if (brandId == null || brandId.isEmpty) return '';
 
-    for (final brand in dummyBrands) {
-      if (brand.id == brandId) {
-        return brand.displayName('en');
-      }
-    }
+    final brand = dummyBrandsById[brandId];
+    if (brand != null) return brand.displayName('en');
     return brandId;
   }
 
@@ -88,19 +85,17 @@ class Car {
     final modelKey = data['modelKey']?.toString();
     if (brandId == null || modelKey == null) return '';
 
-    for (final brand in dummyBrands) {
-      if (brand.id == brandId) {
-        final label = CarModelsByBrand.labelForModel(brand, modelKey, 'en');
-        if (label != null && label.isNotEmpty) {
-          final year = data['year']?.toString();
-          final trim = data['trim']?.toString();
-          return [
-            label,
-            if (year != null && year.isNotEmpty) year,
-            if (trim != null && trim.isNotEmpty) trim,
-          ].join(' ');
-        }
-        break;
+    final brand = dummyBrandsById[brandId];
+    if (brand != null) {
+      final label = CarModelsByBrand.labelForModel(brand, modelKey, 'en');
+      if (label != null && label.isNotEmpty) {
+        final year = data['year']?.toString();
+        final trim = data['trim']?.toString();
+        return [
+          label,
+          if (year != null && year.isNotEmpty) year,
+          if (trim != null && trim.isNotEmpty) trim,
+        ].join(' ');
       }
     }
 

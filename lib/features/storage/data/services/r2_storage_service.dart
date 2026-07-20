@@ -7,6 +7,7 @@ import 'package:mime/mime.dart';
 import 'package:minio/minio.dart';
 
 import 'package:iq_motors/core/platform/image_upload_bytes.dart';
+import 'package:iq_motors/core/services/firebase_performance_service.dart';
 import 'package:iq_motors/features/storage/domain/models/r2_config.dart';
 import 'package:iq_motors/features/storage/data/services/cloudflare_upload_service.dart';
 
@@ -75,63 +76,69 @@ class R2StorageService {
     required String fileName,
     String? contentType,
   }) async {
-    if (bytes.isEmpty) {
-      throw R2StorageException(
-        'Image byte array is empty! Cannot upload 0 bytes.',
-      );
-    }
+    return FirebasePerformanceService.instance.traceAsync(
+      'r2_uploadImageBytes',
+      () async {
+        if (bytes.isEmpty) {
+          throw R2StorageException(
+            'Image byte array is empty! Cannot upload 0 bytes.',
+          );
+        }
 
-    final prepared = await prepareImageBytesForUpload(bytes);
-    if (prepared.isEmpty) {
-      throw R2StorageException(
-        'Image byte array is empty! Cannot upload 0 bytes.',
-      );
-    }
+        final prepared = await prepareImageBytesForUpload(bytes);
+        if (prepared.isEmpty) {
+          throw R2StorageException(
+            'Image byte array is empty! Cannot upload 0 bytes.',
+          );
+        }
 
-    final safeName = _jpegFileName(_sanitizeFileName(fileName));
-    final objectKey = '$_objectPrefix/$safeName';
-    const mime = 'image/jpeg';
+        final safeName = _jpegFileName(_sanitizeFileName(fileName));
+        final objectKey = '$_objectPrefix/$safeName';
+        const mime = 'image/jpeg';
 
-    // ignore: avoid_print
-    print('Uploading image of size: ${prepared.lengthInBytes} bytes');
-
-    if (kIsWeb) {
-      try {
-        final url = await _webUpload.uploadImageToCloudflare(prepared, safeName);
         // ignore: avoid_print
-        print('Successfully uploaded via worker: $url');
-        return url;
-      } on ImageModerationException {
-        rethrow;
-      } catch (e) {
-        // ignore: avoid_print
-        print('Error during web image upload: $e');
-        throw R2StorageException('Upload failed: $e');
-      }
-    }
+        print('Uploading image of size: ${prepared.lengthInBytes} bytes');
 
-    try {
-      await _minio.putObject(
-        _bucket,
-        objectKey,
-        Stream<Uint8List>.value(prepared),
-        size: prepared.length,
-        metadata: {'Content-Type': mime},
-      );
-      final url = '$_publicBaseUrl/$objectKey';
-      // ignore: avoid_print
-      print('Successfully uploaded to R2: $url');
-      return url;
-    } on MinioError catch (e) {
-      // ignore: avoid_print
-      print('Error during image upload: $e');
-      throw R2StorageException('Upload failed: ${e.message ?? e}');
-    } catch (e) {
-      // ignore: avoid_print
-      print('Error during image upload: $e');
-      if (e is R2StorageException) rethrow;
-      throw R2StorageException('Upload failed: $e');
-    }
+        if (kIsWeb) {
+          try {
+            final url = await _webUpload.uploadImageToCloudflare(prepared, safeName);
+            // ignore: avoid_print
+            print('Successfully uploaded via worker: $url');
+            return url;
+          } on ImageModerationException {
+            rethrow;
+          } catch (e) {
+            // ignore: avoid_print
+            print('Error during web image upload: $e');
+            throw R2StorageException('Upload failed: $e');
+          }
+        }
+
+        try {
+          await _minio.putObject(
+            _bucket,
+            objectKey,
+            Stream<Uint8List>.value(prepared),
+            size: prepared.length,
+            metadata: {'Content-Type': mime},
+          );
+          final url = '$_publicBaseUrl/$objectKey';
+          // ignore: avoid_print
+          print('Successfully uploaded to R2: $url');
+          return url;
+        } on MinioError catch (e) {
+          // ignore: avoid_print
+          print('Error during image upload: $e');
+          throw R2StorageException('Upload failed: ${e.message ?? e}');
+        } catch (e) {
+          // ignore: avoid_print
+          print('Error during image upload: $e');
+          if (e is R2StorageException) rethrow;
+          throw R2StorageException('Upload failed: $e');
+        }
+      },
+      metrics: {'upload_bytes': bytes.length},
+    );
   }
 
   /// Uploads a local [filePath] to R2 and returns the public object URL.

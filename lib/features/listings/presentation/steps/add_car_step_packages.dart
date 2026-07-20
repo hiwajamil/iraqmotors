@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:iq_motors/core/localization/l10n_extensions.dart';
 import 'package:iq_motors/shared/data/add_car_option_keys.dart';
 import 'package:iq_motors/features/admin/domain/models/admin_system_config.dart';
+import 'package:iq_motors/core/theme/app_theme.dart';
 import 'package:iq_motors/features/listings/presentation/add_car_theme.dart';
 import 'package:iq_motors/features/listings/presentation/widgets/add_car_step_header.dart';
 
@@ -153,11 +154,11 @@ class _PackageCardState extends State<_PackageCard> {
           duration: const Duration(milliseconds: 220),
           curve: Curves.easeOutCubic,
           padding: const EdgeInsetsDirectional.all(20),
-          decoration: AddCarTheme.cardDecoration().copyWith(
+          decoration: AddCarTheme.cardDecoration(context).copyWith(
             border: Border.all(
               color: widget.selected
-                  ? AddCarTheme.textPrimary
-                  : AddCarTheme.border,
+                  ? AddCarTheme.primary(context)
+                  : AddCarTheme.border(context),
               width: widget.selected ? 2 : 1,
             ),
           ),
@@ -170,11 +171,9 @@ class _PackageCardState extends State<_PackageCard> {
                   Expanded(
                     child: Text(
                       widget.title,
-                      style: const TextStyle(
-                        fontSize: 20,
+                      style: context.textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.w700,
-                        letterSpacing: -0.3,
-                        color: AddCarTheme.textPrimary,
+                        color: AddCarTheme.textPrimary(context),
                       ),
                     ),
                   ),
@@ -185,15 +184,14 @@ class _PackageCardState extends State<_PackageCard> {
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: AddCarTheme.textPrimary,
+                        color: AddCarTheme.primary(context),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
                         widget.badgeLabel!,
-                        style: const TextStyle(
-                          fontSize: 11,
+                        style: context.textTheme.labelSmall?.copyWith(
                           fontWeight: FontWeight.w700,
-                          color: Colors.white,
+                          color: context.colorScheme.onPrimary,
                         ),
                       ),
                     ),
@@ -205,11 +203,9 @@ class _PackageCardState extends State<_PackageCard> {
                 children: [
                   Text(
                     widget.price,
-                    style: const TextStyle(
-                      fontSize: 28,
+                    style: context.textTheme.headlineMedium?.copyWith(
                       fontWeight: FontWeight.w800,
-                      letterSpacing: -0.8,
-                      color: AddCarTheme.textPrimary,
+                      color: AddCarTheme.textPrimary(context),
                     ),
                   ),
                   const SizedBox(width: 6),
@@ -217,10 +213,9 @@ class _PackageCardState extends State<_PackageCard> {
                     padding: const EdgeInsets.only(bottom: 4),
                     child: Text(
                       widget.priceSuffix,
-                      style: const TextStyle(
-                        fontSize: 15,
+                      style: context.textTheme.titleSmall?.copyWith(
                         fontWeight: FontWeight.w600,
-                        color: AddCarTheme.textSecondary,
+                        color: AddCarTheme.textSecondary(context),
                       ),
                     ),
                   ),
@@ -232,20 +227,20 @@ class _PackageCardState extends State<_PackageCard> {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: widget.selected
-                          ? AddCarTheme.textPrimary
+                          ? AddCarTheme.primary(context)
                           : Colors.transparent,
                       border: Border.all(
                         color: widget.selected
-                            ? AddCarTheme.textPrimary
-                            : AddCarTheme.border,
+                            ? AddCarTheme.primary(context)
+                            : AddCarTheme.border(context),
                         width: 2,
                       ),
                     ),
                     child: widget.selected
-                        ? const Icon(
+                        ? Icon(
                             Icons.check_rounded,
                             size: 16,
-                            color: Colors.white,
+                            color: context.colorScheme.onPrimary,
                           )
                         : null,
                   ),
@@ -254,11 +249,10 @@ class _PackageCardState extends State<_PackageCard> {
               const SizedBox(height: 12),
               Text(
                 widget.subtitle,
-                style: const TextStyle(
-                  fontSize: 15,
+                style: context.textTheme.titleSmall?.copyWith(
                   fontWeight: FontWeight.w400,
                   height: 1.45,
-                  color: AddCarTheme.textSecondary,
+                  color: AddCarTheme.textSecondary(context),
                 ),
               ),
             ],

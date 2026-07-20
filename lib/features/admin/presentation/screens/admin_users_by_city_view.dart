@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:iq_motors/core/localization/iraq_location_l10n.dart';
 import 'package:iq_motors/core/localization/l10n_extensions.dart';
+import 'package:iq_motors/core/theme/app_theme.dart';
 import 'package:iq_motors/features/admin/presentation/providers/admin_settings_provider.dart';
 import 'package:iq_motors/features/storage/presentation/providers/storage_providers.dart';
 import 'package:iq_motors/features/admin/data/services/admin_database_service.dart';
@@ -23,9 +24,6 @@ class AdminUsersByCityView extends ConsumerStatefulWidget {
 }
 
 class _AdminUsersByCityViewState extends ConsumerState<AdminUsersByCityView> {
-  static const Color _textPrimary = Color(0xFF1D1D1F);
-  static const Color _textSecondary = Color(0xFF86868B);
-
   late Future<Map<String, int>> _userCountsFuture;
 
   @override
@@ -60,6 +58,7 @@ class _AdminUsersByCityViewState extends ConsumerState<AdminUsersByCityView> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final scheme = context.colorScheme;
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -79,17 +78,16 @@ class _AdminUsersByCityViewState extends ConsumerState<AdminUsersByCityView> {
               children: [
                 Text(
                   l10n.navUsers,
-                  style: TextStyle(
-                    fontSize: widget.isMobile ? 24 : 28,
+                  style: context.textTheme.headlineMedium?.copyWith(
                     fontWeight: FontWeight.w700,
-                    color: _textPrimary,
+                    color: scheme.onSurface,
                     height: 1.25,
                   ),
                 ),
                 const SizedBox(height: 6),
                 Text(
                   l10n.adminUsersByCitySubtitle,
-                  style: const TextStyle(fontSize: 14, color: _textSecondary),
+                  style: TextStyle(fontSize: 14, color: scheme.onSurfaceVariant),
                 ),
                 const SizedBox(height: 28),
                 if (snapshot.hasError)
@@ -144,15 +142,11 @@ class _UserCityCard extends StatelessWidget {
   final String userCountLabel;
   final VoidCallback onTap;
 
-  static const Color _cardWhite = Color(0xFFFFFFFF);
-  static const Color _textPrimary = Color(0xFF1D1D1F);
-  static const Color _textSecondary = Color(0xFF86868B);
-  static const Color _accentBlue = Color(0xFF007AFF);
-
   @override
   Widget build(BuildContext context) {
     final cityLabel =
         IraqLocationL10n.provinceLabel(context.l10n, cityKey);
+    final scheme = context.colorScheme;
 
     return Material(
       color: Colors.transparent,
@@ -161,16 +155,9 @@ class _UserCityCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         child: Ink(
           decoration: BoxDecoration(
-            color: _cardWhite,
+            color: scheme.surfaceContainerLowest,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Colors.black.withValues(alpha: 0.03)),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.04),
-                blurRadius: 24,
-                offset: const Offset(0, 6),
-              ),
-            ],
+            border: Border.all(color: scheme.outlineVariant),
           ),
           child: Stack(
             children: [
@@ -180,7 +167,7 @@ class _UserCityCard extends StatelessWidget {
                 child: Icon(
                   Icons.people_outline,
                   size: 52,
-                  color: _textPrimary.withValues(alpha: 0.05),
+                  color: scheme.onSurface.withValues(alpha: 0.05),
                 ),
               ),
               Padding(
@@ -190,10 +177,10 @@ class _UserCityCard extends StatelessWidget {
                   children: [
                     Text(
                       cityLabel,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w700,
-                        color: _textPrimary,
+                        color: scheme.onSurface,
                         letterSpacing: -0.3,
                       ),
                     ),
@@ -204,13 +191,13 @@ class _UserCityCard extends StatelessWidget {
                           width: 40,
                           height: 40,
                           decoration: BoxDecoration(
-                            color: const Color(0xFFE8F2FF),
+                            color: scheme.primaryContainer,
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          child: const Icon(
+                          child: Icon(
                             Icons.person_outline,
                             size: 22,
-                            color: _accentBlue,
+                            color: scheme.onPrimaryContainer,
                           ),
                         ),
                         const SizedBox(width: 14),
@@ -219,19 +206,19 @@ class _UserCityCard extends StatelessWidget {
                           children: [
                             Text(
                               '$userCount',
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 28,
                                 fontWeight: FontWeight.w700,
-                                color: _textPrimary,
+                                color: scheme.onSurface,
                                 height: 1,
                               ),
                             ),
                             const SizedBox(height: 2),
                             Text(
                               userCountLabel,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 13,
-                                color: _textSecondary,
+                                color: scheme.onSurfaceVariant,
                               ),
                             ),
                           ],
@@ -268,7 +255,7 @@ class _UserCitySkeletonGrid extends StatelessWidget {
       itemCount: AdminDatabaseService.trackedCities.length,
       itemBuilder: (_, __) => Container(
         decoration: BoxDecoration(
-          color: const Color(0xFFFFFFFF),
+          color: context.colorScheme.surfaceContainerLowest,
           borderRadius: BorderRadius.circular(16),
         ),
         alignment: Alignment.center,
@@ -291,22 +278,23 @@ class _ErrorBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final scheme = context.colorScheme;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFFFFEBEA),
+        color: scheme.errorContainer,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
         children: [
-          const Icon(Icons.error_outline, color: Color(0xFFFF3B30), size: 20),
+          Icon(Icons.error_outline, color: scheme.error, size: 20),
           const SizedBox(width: 10),
           Expanded(
             child: Text(
               message,
-              style: const TextStyle(fontSize: 13, color: Color(0xFF1D1D1F)),
+              style: TextStyle(fontSize: 13, color: scheme.onErrorContainer),
             ),
           ),
           TextButton(onPressed: onRetry, child: Text(l10n.adminRetry)),

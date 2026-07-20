@@ -20,9 +20,9 @@ class AddCarStepHeader extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(title, style: AddCarTheme.stepTitle),
+        Text(title, style: AddCarTheme.stepTitle(context)),
         const SizedBox(height: 10),
-        Text(subtitle, style: AddCarTheme.stepSubtitle),
+        Text(subtitle, style: AddCarTheme.stepSubtitle(context)),
         if (trailing != null) ...[
           const SizedBox(height: 8),
           trailing!,

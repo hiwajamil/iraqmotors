@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:iq_motors/core/theme/app_theme.dart';
 import 'package:iq_motors/shared/widgets/car_network_image.dart';
 
 /// Compact saved-listing card for the user dashboard wishlist grid.
@@ -19,11 +20,6 @@ class WishlistCarCard extends StatefulWidget {
   final VoidCallback? onTap;
   final VoidCallback? onRemove;
 
-  static const Color cardWhite = Color(0xFFFFFFFF);
-  static const Color textPrimary = Color(0xFF1D1D1F);
-  static const Color textSecondary = Color(0xFF86868B);
-  static const Color accentRed = Color(0xFFFF3B30);
-
   @override
   State<WishlistCarCard> createState() => _WishlistCarCardState();
 }
@@ -33,6 +29,9 @@ class _WishlistCarCardState extends State<WishlistCarCard> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = context.colorScheme;
+    final textTheme = context.textTheme;
+
     return MouseRegion(
       onEnter: (_) => setState(() => _hovered = true),
       onExit: (_) => setState(() => _hovered = false),
@@ -46,12 +45,12 @@ class _WishlistCarCardState extends State<WishlistCarCard> {
           transform: Matrix4.translationValues(0, _hovered ? -5 : 0, 0),
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: WishlistCarCard.cardWhite,
+            color: colorScheme.surfaceContainerLowest,
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: Colors.black.withValues(alpha: 0.02)),
+            border: Border.all(color: colorScheme.outlineVariant),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.03),
+                color: colorScheme.shadow.withValues(alpha: 0.08),
                 blurRadius: 20,
                 offset: const Offset(0, 4),
               ),
@@ -71,12 +70,12 @@ class _WishlistCarCardState extends State<WishlistCarCard> {
                         imageUrl: widget.imageUrl,
                         fit: BoxFit.cover,
                         errorBuilder: (_, __, ___) => Container(
-                          color: const Color(0xFFF5F5F7),
+                          color: colorScheme.surfaceContainerHighest,
                           alignment: Alignment.center,
                           child: Icon(
                             Icons.directions_car_outlined,
                             size: 40,
-                            color: Colors.black.withValues(alpha: 0.12),
+                            color: colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
                           ),
                         ),
                       ),
@@ -89,25 +88,22 @@ class _WishlistCarCardState extends State<WishlistCarCard> {
                   ),
                 ),
               ),
-              const SizedBox(height: 15),
+              const SizedBox(height: 16),
               Text(
                 widget.title,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  fontSize: 19.2,
-                  fontWeight: FontWeight.w600,
-                  color: WishlistCarCard.textPrimary,
+                style: textTheme.titleMedium?.copyWith(
+                  color: colorScheme.onSurface,
                   height: 1.2,
                 ),
               ),
               const SizedBox(height: 4),
               Text(
                 widget.price,
-                style: const TextStyle(
-                  fontSize: 17.6,
+                style: textTheme.titleSmall?.copyWith(
                   fontWeight: FontWeight.w500,
-                  color: WishlistCarCard.textSecondary,
+                  color: colorScheme.onSurfaceVariant,
                   height: 1.2,
                 ),
               ),
@@ -126,19 +122,20 @@ class _RemoveButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = context.colorScheme;
     return Material(
-      color: Colors.white.withValues(alpha: 0.9),
+      color: colorScheme.surface.withValues(alpha: 0.9),
       shape: const CircleBorder(),
       child: InkWell(
         customBorder: const CircleBorder(),
         onTap: onTap,
-        child: const SizedBox(
+        child: SizedBox(
           width: 32,
           height: 32,
           child: Icon(
             Icons.close,
             size: 18,
-            color: WishlistCarCard.accentRed,
+            color: colorScheme.error,
           ),
         ),
       ),

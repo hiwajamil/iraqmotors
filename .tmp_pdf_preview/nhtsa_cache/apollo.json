@@ -1,0 +1,24 @@
+{
+  "make": "Apollo",
+  "models": [
+    "Aegis",
+    "Frame",
+    "Nemesis",
+    "Roadster",
+    "Special Edition",
+    "Other",
+    "Zeus",
+    "Chaos",
+    "TRI-GODS",
+    "Hydra",
+    "X9",
+    "APOLLO TRAILER COMPANY",
+    "Street Bike",
+    "Base",
+    "Roadbike",
+    "Trike",
+    "On road Motorcycle",
+    "Scooter",
+    "Apollo Bikes"
+  ]
+}

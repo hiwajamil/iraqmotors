@@ -91,12 +91,30 @@ class UserMessageService {
 
   /// Count of unread messages for sidebar / tab badges.
   Stream<int> watchUnreadCount(String userId) {
+    if (userId.isEmpty) return Stream.value(0);
+
     return _firestore
         .collection(collection)
         .where(recipientIdField, isEqualTo: userId)
         .where(isReadField, isEqualTo: false)
         .snapshots()
         .map((snapshot) => snapshot.docs.length);
+  }
+
+  /// Fast one-time server count for unread messages without streaming document bodies.
+  Future<int> fetchUnreadCount(String userId) async {
+    if (userId.isEmpty) return 0;
+    try {
+      final snapshot = await _firestore
+          .collection(collection)
+          .where(recipientIdField, isEqualTo: userId)
+          .where(isReadField, isEqualTo: false)
+          .count()
+          .get();
+      return snapshot.count ?? 0;
+    } catch (_) {
+      return 0;
+    }
   }
 
   /// Marks a single message as read when the user opens it.

@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 
 import 'package:iq_motors/core/localization/filter_l10n.dart';
 import 'package:iq_motors/core/localization/l10n_extensions.dart';
+import 'package:iq_motors/core/theme/app_theme.dart';
 import 'package:iq_motors/shared/data/car_models_by_brand.dart';
 import 'package:iq_motors/l10n/app_localizations.dart';
 import 'package:iq_motors/features/marketplace/domain/models/advanced_filter_state.dart';
 import 'package:iq_motors/shared/models/car_brand.dart';
 import 'package:iq_motors/shared/widgets/filter_option_picker_dialog.dart';
-import 'package:iq_motors/shared/widgets/location_picker_sheet.dart';
 
 /// Location + advanced search title row above the brands strip.
 class AdvancedFilterHeader extends StatelessWidget {
@@ -45,10 +45,6 @@ class AdvancedFilterWidget extends StatelessWidget {
     required this.onChanged,
     required this.onClear,
     required this.onShowResults,
-    required this.resultCount,
-    this.onLocationTap,
-    this.onAdvancedSearchTap,
-    this.showHeader = true,
   });
 
   final CarBrand? selectedBrand;
@@ -56,15 +52,6 @@ class AdvancedFilterWidget extends StatelessWidget {
   final ValueChanged<AdvancedFilterState> onChanged;
   final VoidCallback onClear;
   final VoidCallback onShowResults;
-  final int resultCount;
-  final VoidCallback? onLocationTap;
-  final VoidCallback? onAdvancedSearchTap;
-  final bool showHeader;
-
-  static const Color _background = Color(0xFFF5F5F7);
-  static const Color _fill = Color(0xFFE8E8ED);
-  static const Color _textPrimary = Color(0xFF1D1D1F);
-  static const Color _textSecondary = Color(0xFF86868B);
 
   static const List<String> _years = [
     FilterOptionKeys.allYears,
@@ -105,16 +92,6 @@ class AdvancedFilterWidget extends StatelessWidget {
     FilterOptionKeys.engineHybrid,
   ];
 
-  static String _formatCount(AppLocalizations l10n, int n) {
-    if (l10n.localeName.startsWith('en')) {
-      return n.toString();
-    }
-    const eastern = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
-    return n.toString().split('').map((d) {
-      final i = int.tryParse(d);
-      return i == null ? d : eastern[i];
-    }).join();
-  }
 
   String _modelLabel(AppLocalizations l10n, String key, String languageCode) {
     if (key == CarModelsByBrand.allModelsSentinel) {
@@ -131,6 +108,7 @@ class AdvancedFilterWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final colorScheme = context.colorScheme;
     final languageCode = Localizations.localeOf(context).languageCode;
     final width = MediaQuery.sizeOf(context).width;
     final columns = width >= 640 ? 3 : 2;
@@ -149,11 +127,11 @@ class AdvancedFilterWidget extends StatelessWidget {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: _background,
+        color: colorScheme.surfaceContainerHigh,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
+            color: colorScheme.shadow.withValues(alpha: 0.04),
             blurRadius: 24,
             offset: const Offset(0, 8),
           ),
@@ -164,14 +142,6 @@ class AdvancedFilterWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (showHeader) ...[
-            _FilterHeader(
-              selectedLocationKeys: values.selectedLocationKeys,
-              onLocationTap: onLocationTap ?? () => _pickLocation(context),
-              onAdvancedSearchTap: onAdvancedSearchTap,
-            ),
-            const SizedBox(height: 20),
-          ],
           LayoutBuilder(
             builder: (context, constraints) {
               final itemWidth =
@@ -277,22 +247,13 @@ class AdvancedFilterWidget extends StatelessWidget {
           _FilterFooter(
             onClear: onClear,
             onShowResults: onShowResults,
-            showLabel: l10n.showCarsCount(_formatCount(l10n, resultCount)),
+            showLabel: l10n.showCarsCount('…'),
           ),
         ],
       ),
     );
   }
 
-  Future<void> _pickLocation(BuildContext context) async {
-    final picked = await showLocationPickerSheet(
-      context,
-      initialSelection: values.selectedLocationKeys,
-    );
-    if (picked != null) {
-      onChanged(values.copyWith(selectedLocationKeys: picked));
-    }
-  }
 }
 
 class _FilterHeader extends StatelessWidget {
@@ -308,18 +269,14 @@ class _FilterHeader extends StatelessWidget {
   final VoidCallback? onAdvancedSearchTap;
   final bool heroStyle;
 
-  static const Color _locationFill = Color(0xFFEEEEEE); // Colors.grey[200]
-
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final colorScheme = context.colorScheme;
     final isCompact = MediaQuery.sizeOf(context).width < 400;
-    final primaryColor = heroStyle
-        ? Colors.white
-        : AdvancedFilterWidget._textPrimary;
-    final secondaryColor = heroStyle
-        ? Colors.white70
-        : AdvancedFilterWidget._textSecondary;
+    final primaryColor = heroStyle ? Colors.white : colorScheme.onSurface;
+    final secondaryColor =
+        heroStyle ? Colors.white70 : colorScheme.onSurfaceVariant;
 
     return Container(
       width: double.infinity,
@@ -330,16 +287,16 @@ class _FilterHeader extends StatelessWidget {
       decoration: heroStyle
           ? null
           : BoxDecoration(
-              color: Colors.white,
+              color: colorScheme.surfaceContainerLowest,
               borderRadius: BorderRadius.circular(22),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
+                  color: colorScheme.shadow.withValues(alpha: 0.05),
                   blurRadius: 20,
                   offset: const Offset(0, 4),
                 ),
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.03),
+                  color: colorScheme.shadow.withValues(alpha: 0.03),
                   blurRadius: 6,
                   offset: const Offset(0, 1),
                 ),
@@ -361,7 +318,7 @@ class _FilterHeader extends StatelessWidget {
                 const SizedBox(width: 8),
                 Text(
                   l10n.advancedSearch,
-                  style: TextStyle(
+                  style: context.textTheme.titleSmall?.copyWith(
                     fontSize: isCompact ? 14 : 15,
                     fontWeight: FontWeight.w700,
                     letterSpacing: -0.2,
@@ -383,7 +340,7 @@ class _FilterHeader extends StatelessWidget {
                 onTap: onLocationTap,
                 backgroundColor: heroStyle
                     ? Colors.white.withValues(alpha: 0.15)
-                    : _locationFill,
+                    : colorScheme.surfaceContainerHighest,
                 foregroundColor: primaryColor,
                 secondaryColor: secondaryColor,
               ),
@@ -419,12 +376,11 @@ class _LocationChipState extends State<_LocationChip> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = context.colorScheme;
     final baseColor =
-        widget.backgroundColor ?? AdvancedFilterWidget._fill;
-    final textColor =
-        widget.foregroundColor ?? AdvancedFilterWidget._textPrimary;
-    final mutedColor =
-        widget.secondaryColor ?? AdvancedFilterWidget._textSecondary;
+        widget.backgroundColor ?? colorScheme.surfaceContainerHighest;
+    final textColor = widget.foregroundColor ?? colorScheme.onSurface;
+    final mutedColor = widget.secondaryColor ?? colorScheme.onSurfaceVariant;
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -460,7 +416,7 @@ class _LocationChipState extends State<_LocationChip> {
                       widget.label,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
+                      style: context.textTheme.bodySmall?.copyWith(
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
                         color: textColor,
@@ -509,8 +465,6 @@ class _FilterDropdown extends StatefulWidget {
 }
 
 class _FilterDropdownState extends State<_FilterDropdown> {
-  bool _pressed = false;
-
   Future<void> _openPicker() async {
     if (!widget.enabled) return;
     final picked = await FilterOptionPickerDialog.show(
@@ -525,72 +479,65 @@ class _FilterDropdownState extends State<_FilterDropdown> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = context.colorScheme;
+    final textTheme = context.textTheme;
     final display = widget.valueKey != null
         ? widget.resolveLabel(widget.valueKey!)
         : widget.placeholder;
     final hasValue = widget.valueKey != null;
 
     final textColor = widget.enabled
-        ? (hasValue
-            ? AdvancedFilterWidget._textPrimary
-            : AdvancedFilterWidget._textSecondary)
-        : AdvancedFilterWidget._textSecondary.withValues(alpha: 0.55);
+        ? (hasValue ? colorScheme.onSurface : colorScheme.onSurfaceVariant)
+        : colorScheme.onSurfaceVariant.withValues(alpha: 0.55);
 
     return SizedBox(
       width: widget.width,
-      child: GestureDetector(
-        onTapDown: widget.enabled ? (_) => setState(() => _pressed = true) : null,
-        onTapUp: widget.enabled ? (_) => setState(() => _pressed = false) : null,
-        onTapCancel:
-            widget.enabled ? () => setState(() => _pressed = false) : null,
-        onTap: widget.enabled ? _openPicker : null,
-        child: AnimatedScale(
-          scale: _pressed ? 0.98 : 1,
-          duration: const Duration(milliseconds: 100),
-          child: Container(
-            padding: const EdgeInsetsDirectional.fromSTEB(16, 14, 12, 14),
-            decoration: BoxDecoration(
-              color: AdvancedFilterWidget._fill,
-              borderRadius: BorderRadius.circular(14),
+      child: OutlinedButton(
+        onPressed: widget.enabled ? _openPicker : null,
+        style: OutlinedButton.styleFrom(
+          alignment: AlignmentDirectional.centerStart,
+          backgroundColor: colorScheme.surfaceContainerHighest,
+          side: BorderSide.none,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14),
+          ),
+          padding: const EdgeInsetsDirectional.fromSTEB(16, 14, 12, 14),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              widget.label,
+              style: textTheme.labelSmall?.copyWith(
+                fontSize: 11,
+                fontWeight: FontWeight.w500,
+                color: colorScheme.onSurfaceVariant,
+                letterSpacing: 0.2,
+              ),
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+            const SizedBox(height: 4),
+            Row(
               children: [
-                Text(
-                  widget.label,
-                  style: const TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w500,
-                    color: AdvancedFilterWidget._textSecondary,
-                    letterSpacing: 0.2,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        display,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight:
-                              hasValue ? FontWeight.w600 : FontWeight.w500,
-                          color: textColor,
-                        ),
-                      ),
-                    ),
-                    Icon(
-                      Icons.keyboard_arrow_down_rounded,
-                      size: 22,
+                Expanded(
+                  child: Text(
+                    display,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: textTheme.bodyMedium?.copyWith(
+                      fontSize: 14,
+                      fontWeight: hasValue ? FontWeight.w600 : FontWeight.w500,
                       color: textColor,
                     ),
-                  ],
+                  ),
+                ),
+                Icon(
+                  Icons.keyboard_arrow_down_rounded,
+                  size: 22,
+                  color: textColor,
                 ),
               ],
             ),
-          ),
+          ],
         ),
       ),
     );
@@ -620,20 +567,10 @@ class _FilterFooter extends StatelessWidget {
           child: TextButton(
             onPressed: onClear,
             style: TextButton.styleFrom(
-              padding: EdgeInsets.zero,
-              minimumSize: Size.zero,
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              foregroundColor: AdvancedFilterWidget._textSecondary,
+              minimumSize: const Size(48, 48),
+              foregroundColor: context.colorScheme.onSurfaceVariant,
             ),
-            child: Text(
-              l10n.clearFilters,
-              style: const TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w500,
-                decoration: TextDecoration.underline,
-                decorationThickness: 1,
-              ),
-            ),
+            child: Text(l10n.clearFilters),
           ),
         ),
         const SizedBox(height: 12),
@@ -657,51 +594,17 @@ class _PrimaryShowButton extends StatefulWidget {
 }
 
 class _PrimaryShowButtonState extends State<_PrimaryShowButton> {
-  bool _hovered = false;
-  bool _pressed = false;
-
   @override
   Widget build(BuildContext context) {
-    return MouseRegion(
-      onEnter: (_) => setState(() => _hovered = true),
-      onExit: (_) => setState(() => _hovered = false),
-      child: GestureDetector(
-        onTapDown: (_) => setState(() => _pressed = true),
-        onTapUp: (_) => setState(() => _pressed = false),
-        onTapCancel: () => setState(() => _pressed = false),
-        onTap: widget.onTap,
-        child: AnimatedScale(
-          scale: _pressed ? 0.98 : 1,
-          duration: const Duration(milliseconds: 120),
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            decoration: BoxDecoration(
-              color: _hovered || _pressed
-                  ? Colors.black
-                  : AdvancedFilterWidget._textPrimary,
-              borderRadius: BorderRadius.circular(14),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: _hovered ? 0.2 : 0.12),
-                  blurRadius: _hovered ? 20 : 12,
-                  offset: const Offset(0, 6),
-                ),
-              ],
-            ),
-            child: Text(
-              widget.label,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Colors.white,
-                letterSpacing: -0.2,
-              ),
-            ),
-          ),
+    return SizedBox(
+      width: double.infinity,
+      child: FilledButton(
+        onPressed: widget.onTap,
+        style: FilledButton.styleFrom(
+          minimumSize: const Size.fromHeight(48),
+          padding: const EdgeInsets.symmetric(vertical: 16),
         ),
+        child: Text(widget.label),
       ),
     );
   }

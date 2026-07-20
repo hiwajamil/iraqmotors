@@ -1,0 +1,20 @@
+{
+  "make": "Maserati",
+  "models": [
+    "Quattroporte",
+    "Granturismo",
+    "Coupe",
+    "Spyder",
+    "Ghibli",
+    "Levante",
+    "Merak",
+    "Biturbo",
+    "TC",
+    "430",
+    "228",
+    "MC20",
+    "Grecale",
+    "Grancabrio",
+    "MCPura"
+  ]
+}

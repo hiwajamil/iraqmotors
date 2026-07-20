@@ -7,6 +7,7 @@ import 'package:iq_motors/shared/data/car_trims_by_model.dart';
 import 'package:iq_motors/shared/data/dummy_brands.dart';
 import 'package:iq_motors/shared/models/car_brand.dart';
 import 'package:iq_motors/features/marketplace/presentation/widgets/brand_search_sheet.dart';
+import 'package:iq_motors/core/theme/app_theme.dart';
 import 'package:iq_motors/features/listings/presentation/add_car_theme.dart';
 import 'package:iq_motors/features/listings/presentation/widgets/add_car_form_card.dart';
 import 'package:iq_motors/features/listings/presentation/widgets/add_car_step_header.dart';
@@ -77,7 +78,7 @@ class AddCarStepBasicInfo extends StatelessWidget {
     final languageCode = Localizations.localeOf(context).languageCode;
     final result = await showModalBottomSheet<String>(
       context: context,
-      backgroundColor: AddCarTheme.cardBg,
+      backgroundColor: AddCarTheme.cardBg(context),
       shape: AddCarTheme.bottomSheetShape,
       builder: (ctx) {
         return SafeArea(
@@ -88,15 +89,13 @@ class AddCarStepBasicInfo extends StatelessWidget {
                 padding: const EdgeInsets.all(16),
                 child: Text(
                   context.l10n.addCarColorLabel,
-                  style: const TextStyle(
-                    fontSize: 18,
+                  style: context.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: AddCarTheme.textPrimary,
-                    letterSpacing: -0.3,
+                    color: AddCarTheme.textPrimary(context),
                   ),
                 ),
               ),
-              const Divider(height: 1, color: AddCarTheme.border),
+              Divider(height: 1, color: AddCarTheme.border(context)),
               Flexible(
                 child: ListView.builder(
                   shrinkWrap: true,
@@ -113,17 +112,16 @@ class AddCarStepBasicInfo extends StatelessWidget {
                           color: swatch,
                           shape: BoxShape.circle,
                           border: Border.all(
-                            color: Colors.black.withValues(alpha: 0.12),
+                            color: context.colorScheme.outlineVariant,
                           ),
                         ),
                       ),
                       title: Text(
                         AddCarFormOptions.colorLabel(key, languageCode),
-                        style: TextStyle(
-                          fontSize: 16,
+                        style: context.textTheme.bodyLarge?.copyWith(
                           fontWeight:
                               isSelected ? FontWeight.w600 : FontWeight.w400,
-                          color: AddCarTheme.textPrimary,
+                          color: AddCarTheme.textPrimary(context),
                         ),
                       ),
                       trailing: isSelected
@@ -176,7 +174,7 @@ class AddCarStepBasicInfo extends StatelessWidget {
   }) {
     return showModalBottomSheet<T>(
       context: context,
-      backgroundColor: AddCarTheme.cardBg,
+      backgroundColor: AddCarTheme.cardBg(context),
       shape: AddCarTheme.bottomSheetShape,
       builder: (ctx) {
         return SafeArea(
@@ -187,15 +185,13 @@ class AddCarStepBasicInfo extends StatelessWidget {
                 padding: const EdgeInsets.all(16),
                 child: Text(
                   title,
-                  style: const TextStyle(
-                    fontSize: 18,
+                  style: context.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: AddCarTheme.textPrimary,
-                    letterSpacing: -0.3,
+                    color: AddCarTheme.textPrimary(context),
                   ),
                 ),
               ),
-              const Divider(height: 1, color: AddCarTheme.border),
+              Divider(height: 1, color: AddCarTheme.border(context)),
               Flexible(
                 child: ListView.builder(
                   shrinkWrap: true,
@@ -206,11 +202,10 @@ class AddCarStepBasicInfo extends StatelessWidget {
                     return ListTile(
                       title: Text(
                         labelFor(option),
-                        style: TextStyle(
-                          fontSize: 16,
+                        style: context.textTheme.bodyLarge?.copyWith(
                           fontWeight:
                               isSelected ? FontWeight.w600 : FontWeight.w400,
-                          color: AddCarTheme.textPrimary,
+                          color: AddCarTheme.textPrimary(context),
                         ),
                       ),
                       trailing: isSelected
@@ -236,7 +231,7 @@ class AddCarStepBasicInfo extends StatelessWidget {
   }) {
     return showModalBottomSheet<String>(
       context: context,
-      backgroundColor: AddCarTheme.cardBg,
+      backgroundColor: AddCarTheme.cardBg(context),
       shape: AddCarTheme.bottomSheetShape,
       builder: (ctx) {
         return SafeArea(
@@ -247,15 +242,13 @@ class AddCarStepBasicInfo extends StatelessWidget {
                 padding: const EdgeInsets.all(16),
                 child: Text(
                   title,
-                  style: const TextStyle(
-                    fontSize: 18,
+                  style: context.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: AddCarTheme.textPrimary,
-                    letterSpacing: -0.3,
+                    color: AddCarTheme.textPrimary(context),
                   ),
                 ),
               ),
-              const Divider(height: 1, color: AddCarTheme.border),
+              Divider(height: 1, color: AddCarTheme.border(context)),
               Flexible(
                 child: ListView.builder(
                   shrinkWrap: true,
@@ -266,11 +259,10 @@ class AddCarStepBasicInfo extends StatelessWidget {
                     return ListTile(
                       title: Text(
                         option,
-                        style: TextStyle(
-                          fontSize: 16,
+                        style: context.textTheme.bodyLarge?.copyWith(
                           fontWeight:
                               isSelected ? FontWeight.w600 : FontWeight.w400,
-                          color: AddCarTheme.textPrimary,
+                          color: AddCarTheme.textPrimary(context),
                         ),
                       ),
                       trailing: isSelected
@@ -427,11 +419,11 @@ class _AddCarSelectorFieldState extends State<_AddCarSelectorField> {
     final hasValue = widget.value != null && widget.value!.isNotEmpty;
     final fillColor = widget.showAiBadge && widget.aiFilled
         ? AddCarFormOptions.aiAccentFill
-        : AddCarTheme.inputFill;
+        : AddCarTheme.inputFill(context);
 
     final textColor = widget.enabled
-        ? (hasValue ? AddCarTheme.textPrimary : AddCarTheme.textSecondary)
-        : AddCarTheme.textSecondary.withValues(alpha: 0.45);
+        ? (hasValue ? AddCarTheme.textPrimary(context) : AddCarTheme.textSecondary(context))
+        : AddCarTheme.textSecondary(context).withValues(alpha: 0.45);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -440,7 +432,7 @@ class _AddCarSelectorFieldState extends State<_AddCarSelectorField> {
           children: [
             Text(
               widget.label,
-              style: AddCarTheme.sectionLabel,
+              style: AddCarTheme.sectionLabel(context),
             ),
             if (widget.showAiBadge) ...[
               const SizedBox(width: 8),
@@ -464,14 +456,14 @@ class _AddCarSelectorFieldState extends State<_AddCarSelectorField> {
               decoration: BoxDecoration(
                 color: widget.enabled
                     ? fillColor
-                    : AddCarTheme.inputFill.withValues(alpha: 0.55),
+                    : AddCarTheme.inputFill(context).withValues(alpha: 0.55),
                 borderRadius: BorderRadius.circular(AddCarTheme.inputRadius),
                 border: Border.all(
                   color: _pressed
-                      ? AddCarTheme.focusBlue
+                      ? AddCarTheme.focus(context)
                       : (widget.showAiBadge && widget.aiFilled
                           ? AddCarFormOptions.aiAccentText.withValues(alpha: 0.25)
-                          : AddCarTheme.border),
+                          : AddCarTheme.border(context)),
                   width: _pressed ? 1.5 : 1,
                 ),
               ),
@@ -486,8 +478,7 @@ class _AddCarSelectorFieldState extends State<_AddCarSelectorField> {
                       hasValue ? widget.value! : widget.placeholder,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 16,
+                      style: context.textTheme.bodyLarge?.copyWith(
                         fontWeight:
                             hasValue ? FontWeight.w600 : FontWeight.w500,
                         color: textColor,
@@ -520,22 +511,21 @@ class _AiBadge extends StatelessWidget {
         color: AddCarFormOptions.aiAccentFill,
         borderRadius: BorderRadius.circular(8),
       ),
-      child: const Row(
+      child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
             'AI',
-            style: TextStyle(
-              fontSize: 11,
+            style: context.textTheme.labelSmall?.copyWith(
               fontWeight: FontWeight.w700,
               color: AddCarFormOptions.aiAccentText,
               letterSpacing: 0.2,
             ),
           ),
-          SizedBox(width: 2),
+          const SizedBox(width: 2),
           Text(
             '✨',
-            style: TextStyle(fontSize: 11, height: 1),
+            style: context.textTheme.labelSmall?.copyWith(height: 1),
           ),
         ],
       ),
@@ -588,17 +578,16 @@ class _AddCarTrimTextFieldState extends State<_AddCarTrimTextField> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(widget.label, style: AddCarTheme.sectionLabel),
+        Text(widget.label, style: AddCarTheme.sectionLabel(context)),
         const SizedBox(height: 8),
         TextField(
           controller: _controller,
           onChanged: widget.onChanged,
-          style: const TextStyle(
-            fontSize: 16,
+          style: context.textTheme.bodyLarge?.copyWith(
             fontWeight: FontWeight.w600,
-            color: AddCarTheme.textPrimary,
+            color: AddCarTheme.textPrimary(context),
           ),
-          decoration: AddCarTheme.textFieldDecoration(
+          decoration: AddCarTheme.textFieldDecoration(context,
             hintText: widget.placeholder,
           ),
         ),
@@ -621,7 +610,7 @@ class _ColorDot extends StatelessWidget {
         color: color,
         shape: BoxShape.circle,
         border: Border.all(
-          color: Colors.black.withValues(alpha: 0.15),
+          color: context.colorScheme.outlineVariant,
         ),
       ),
     );

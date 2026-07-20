@@ -9,6 +9,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'package:iq_motors/core/localization/l10n_extensions.dart';
+import 'package:iq_motors/core/theme/app_theme.dart';
 import 'package:iq_motors/features/auth/presentation/navigation/post_auth_navigation.dart';
 import 'package:iq_motors/core/platform/web_debug_log.dart';
 import 'package:iq_motors/l10n/app_localizations.dart';
@@ -146,7 +147,7 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
         SnackBar(
           content: Text(l10n.addCarSaveFailed),
           behavior: SnackBarBehavior.floating,
-          backgroundColor: const Color(0xFFFF3B30),
+          backgroundColor: context.colorScheme.error,
         ),
       );
       return;
@@ -161,7 +162,7 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
         SnackBar(
           content: Text(l10n.addCarDraftSavedSuccess),
           behavior: SnackBarBehavior.floating,
-          backgroundColor: const Color(0xFF34C759),
+          backgroundColor: AddCarTheme.success(context),
         ),
       );
     } on AddCarDraftEmptyException {
@@ -186,7 +187,7 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
       SnackBar(
         content: Text(message),
         behavior: SnackBarBehavior.floating,
-        backgroundColor: const Color(0xFFFF3B30),
+        backgroundColor: context.colorScheme.error,
       ),
     );
   }
@@ -269,7 +270,7 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
           SnackBar(
             content: Text(message),
             behavior: SnackBarBehavior.floating,
-            backgroundColor: const Color(0xFFFF3B30),
+            backgroundColor: context.colorScheme.error,
           ),
         );
         return;
@@ -292,10 +293,10 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
       if (!mounted) return;
       if (suggestion != null && suggestion.hasAny) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(CarVisionMessages.aiAutoFillSuccess),
+          SnackBar(
+            content: const Text(CarVisionMessages.aiAutoFillSuccess),
             behavior: SnackBarBehavior.floating,
-            backgroundColor: Color(0xFF34C759),
+            backgroundColor: AddCarTheme.success(context),
           ),
         );
       } else {
@@ -346,7 +347,7 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
         SnackBar(
           content: Text(l10n.addCarSaveSuccess),
           behavior: SnackBarBehavior.floating,
-          backgroundColor: const Color(0xFF34C759),
+          backgroundColor: AddCarTheme.success(context),
         ),
       );
     } on ImageModerationException catch (e) {
@@ -386,7 +387,7 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
         SnackBar(
           content: Text(l10n.addCarPublishSuccess),
           behavior: SnackBarBehavior.floating,
-          backgroundColor: const Color(0xFF34C759),
+          backgroundColor: AddCarTheme.success(context),
         ),
       );
     } on ImageModerationException catch (e) {
@@ -411,7 +412,7 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
       SnackBar(
         content: Text(message),
         behavior: SnackBarBehavior.floating,
-        backgroundColor: const Color(0xFFFF3B30),
+        backgroundColor: context.colorScheme.error,
       ),
     );
   }
@@ -427,7 +428,7 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
       SnackBar(
         content: Text(message),
         behavior: SnackBarBehavior.floating,
-        backgroundColor: const Color(0xFFFF3B30),
+        backgroundColor: context.colorScheme.error,
         duration: const Duration(seconds: 10),
       ),
     );
@@ -817,26 +818,24 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
       child: Stack(
       children: [
         Scaffold(
-      backgroundColor: AddCarTheme.scaffoldBg,
+      backgroundColor: AddCarTheme.scaffoldBg(context),
       appBar: AppBar(
-        backgroundColor: AddCarTheme.scaffoldBg,
+        backgroundColor: AddCarTheme.scaffoldBg(context),
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
-          color: AddCarTheme.textPrimary,
+          color: AddCarTheme.textPrimary(context),
           onPressed: _goBack,
         ),
         title: Column(
           children: [
             Text(
               _stepTitle(l10n, shell.currentStep),
-              style: const TextStyle(
-                fontSize: 17,
+              style: context.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.w600,
-                color: AddCarTheme.textPrimary,
-                letterSpacing: -0.2,
+                color: AddCarTheme.textPrimary(context),
               ),
             ),
             const SizedBox(height: 8),
@@ -845,8 +844,8 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
               child: LinearProgressIndicator(
                 value: progress,
                 minHeight: 3,
-                backgroundColor: AddCarTheme.border,
-                color: AddCarTheme.textPrimary,
+                backgroundColor: AddCarTheme.border(context),
+                color: AddCarTheme.textPrimary(context),
               ),
             ),
           ],
@@ -862,12 +861,11 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
                     : _saveChanges,
                 child: Text(
                   l10n.addCarSave,
-                  style: TextStyle(
-                    fontSize: 15,
+                  style: context.textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.w600,
                     color: (shell.isPublishing || shell.isAnyPhotoUploading)
-                        ? AddCarTheme.textSecondary
-                        : AddCarTheme.focusBlue,
+                        ? AddCarTheme.textSecondary(context)
+                        : AddCarTheme.focus(context),
                   ),
                 ),
               ),
@@ -880,12 +878,11 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
                   : _exitToDashboard,
               child: Text(
                 l10n.addCarExit,
-                style: TextStyle(
-                  fontSize: 15,
+                style: context.textTheme.titleSmall?.copyWith(
                   fontWeight: FontWeight.w600,
                   color: (shell.isPublishing || shell.isAnyPhotoUploading)
-                      ? AddCarTheme.textSecondary
-                      : AddCarTheme.textPrimary,
+                      ? AddCarTheme.textSecondary(context)
+                      : AddCarTheme.textPrimary(context),
                 ),
               ),
             ),
@@ -900,10 +897,9 @@ class _AddCarFlowScreenState extends ConsumerState<AddCarFlowScreen> {
                 shell.currentStep + 1,
                 AddCarFlowState.stepCount,
               ),
-              style: const TextStyle(
-                fontSize: 13,
+              style: context.textTheme.bodySmall?.copyWith(
                 fontWeight: FontWeight.w500,
-                color: AddCarTheme.textSecondary,
+                color: AddCarTheme.textSecondary(context),
               ),
             ),
           ),
@@ -968,12 +964,12 @@ class _PublishingOverlay extends StatelessWidget {
   Widget build(BuildContext context) {
     return AbsorbPointer(
       child: Container(
-        color: Colors.black.withValues(alpha: 0.45),
+        color: context.colorScheme.shadow.withValues(alpha: 0.45),
         alignment: Alignment.center,
         child: Container(
           margin: const EdgeInsets.symmetric(horizontal: 40),
           padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 32),
-          decoration: AddCarTheme.cardDecoration(),
+          decoration: AddCarTheme.cardDecoration(context),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -985,10 +981,9 @@ class _PublishingOverlay extends StatelessWidget {
               const SizedBox(height: 20),
               Text(
                 isEditMode ? l10n.addCarSaving : l10n.addCarPublishing,
-                style: const TextStyle(
-                  fontSize: 17,
+                style: context.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: AddCarTheme.textPrimary,
+                  color: AddCarTheme.textPrimary(context),
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -1028,12 +1023,12 @@ class _AiAnalyzingOverlay extends StatelessWidget {
 
     return AbsorbPointer(
       child: Container(
-        color: Colors.black.withValues(alpha: 0.45),
+        color: context.colorScheme.shadow.withValues(alpha: 0.45),
         alignment: Alignment.center,
         child: Container(
           margin: const EdgeInsets.symmetric(horizontal: 40),
           padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 32),
-          decoration: AddCarTheme.cardDecoration(),
+          decoration: AddCarTheme.cardDecoration(context),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -1048,20 +1043,18 @@ class _AiAnalyzingOverlay extends StatelessWidget {
               const SizedBox(height: 20),
               Text(
                 message,
-                style: const TextStyle(
-                  fontSize: 17,
+                style: context.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: AddCarTheme.textPrimary,
+                  color: AddCarTheme.textPrimary(context),
                 ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 8),
               Text(
                 subtitle,
-                style: const TextStyle(
-                  fontSize: 14,
+                style: context.textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.w500,
-                  color: AddCarTheme.textSecondary,
+                  color: AddCarTheme.textSecondary(context),
                   height: 1.35,
                 ),
                 textAlign: TextAlign.center,
@@ -1103,11 +1096,11 @@ class _BottomActionBar extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: AddCarTheme.cardBg.withValues(alpha: 0.96),
+        color: AddCarTheme.cardBg(context).withValues(alpha: 0.96),
         border: Border(
-          top: BorderSide(color: Colors.black.withValues(alpha: 0.06)),
+          top: BorderSide(color: context.colorScheme.outlineVariant),
         ),
-        boxShadow: AddCarTheme.cardShadow,
+        boxShadow: const <BoxShadow>[],
       ),
       padding: EdgeInsetsDirectional.fromSTEB(20, 12, 20, 12 + bottomInset),
       child: Column(
@@ -1146,7 +1139,7 @@ class _BottomActionBar extends StatelessWidget {
   }
 }
 
-class _SaveBarButton extends StatefulWidget {
+class _SaveBarButton extends StatelessWidget {
   const _SaveBarButton({
     required this.label,
     required this.enabled,
@@ -1160,67 +1153,40 @@ class _SaveBarButton extends StatefulWidget {
   final bool isLoading;
 
   @override
-  State<_SaveBarButton> createState() => _SaveBarButtonState();
-}
-
-class _SaveBarButtonState extends State<_SaveBarButton> {
-  bool _pressed = false;
-
-  @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTapDown: widget.enabled ? (_) => setState(() => _pressed = true) : null,
-      onTapUp: widget.enabled ? (_) => setState(() => _pressed = false) : null,
-      onTapCancel:
-          widget.enabled ? () => setState(() => _pressed = false) : null,
-      onTap: widget.enabled ? widget.onTap : null,
-      child: AnimatedScale(
-        scale: _pressed ? 0.98 : 1,
-        duration: const Duration(milliseconds: 120),
-        child: AnimatedOpacity(
-          duration: const Duration(milliseconds: 200),
-          opacity: widget.enabled ? 1 : 0.45,
-          child: Container(
-            width: double.infinity,
-            height: 48,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: AddCarTheme.focusBlue,
-              borderRadius: BorderRadius.circular(AddCarTheme.pillRadius),
-              boxShadow: [
-                BoxShadow(
-                  color: AddCarTheme.focusBlue.withValues(alpha: 0.28),
-                  blurRadius: 12,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: widget.isLoading
-                ? const SizedBox(
-                    width: 22,
-                    height: 22,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2.5,
-                      color: Colors.white,
-                    ),
-                  )
-                : Text(
-                    widget.label,
-                    style: const TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                      letterSpacing: -0.2,
-                    ),
-                  ),
+    return SizedBox(
+      width: double.infinity,
+      height: 48,
+      child: FilledButton(
+        onPressed: enabled ? onTap : null,
+        style: FilledButton.styleFrom(
+          backgroundColor: AddCarTheme.focus(context),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AddCarTheme.pillRadius),
           ),
         ),
+        child: isLoading
+            ? SizedBox(
+                width: 22,
+                height: 22,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2.5,
+                  color: context.colorScheme.onPrimary,
+                ),
+              )
+            : Text(
+                label,
+                style: context.textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: context.colorScheme.onPrimary,
+                ),
+              ),
       ),
     );
   }
 }
 
-class _PrimaryBarButton extends StatefulWidget {
+class _PrimaryBarButton extends StatelessWidget {
   const _PrimaryBarButton({
     required this.label,
     required this.enabled,
@@ -1232,40 +1198,22 @@ class _PrimaryBarButton extends StatefulWidget {
   final VoidCallback onTap;
 
   @override
-  State<_PrimaryBarButton> createState() => _PrimaryBarButtonState();
-}
-
-class _PrimaryBarButtonState extends State<_PrimaryBarButton> {
-  bool _pressed = false;
-
-  @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTapDown: widget.enabled ? (_) => setState(() => _pressed = true) : null,
-      onTapUp: widget.enabled ? (_) => setState(() => _pressed = false) : null,
-      onTapCancel: widget.enabled ? () => setState(() => _pressed = false) : null,
-      onTap: widget.enabled ? widget.onTap : null,
-      child: AnimatedScale(
-        scale: _pressed ? 0.97 : 1,
-        duration: const Duration(milliseconds: 120),
-        child: AnimatedOpacity(
-          duration: const Duration(milliseconds: 200),
-          opacity: widget.enabled ? 1 : 0.4,
-          child: Container(
-            height: 52,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: AddCarTheme.primaryBlack,
-              borderRadius: BorderRadius.circular(AddCarTheme.pillRadius),
-            ),
-            child: Text(
-              widget.label,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Colors.white,
-              ),
-            ),
+    return SizedBox(
+      height: 52,
+      child: FilledButton(
+        onPressed: enabled ? onTap : null,
+        style: FilledButton.styleFrom(
+          backgroundColor: AddCarTheme.primary(context),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AddCarTheme.pillRadius),
+          ),
+        ),
+        child: Text(
+          label,
+          style: context.textTheme.bodyLarge?.copyWith(
+            fontWeight: FontWeight.w600,
+            color: context.colorScheme.onPrimary,
           ),
         ),
       ),
@@ -1273,7 +1221,7 @@ class _PrimaryBarButtonState extends State<_PrimaryBarButton> {
   }
 }
 
-class _SecondaryBarButton extends StatefulWidget {
+class _SecondaryBarButton extends StatelessWidget {
   const _SecondaryBarButton({
     required this.label,
     required this.onTap,
@@ -1283,37 +1231,22 @@ class _SecondaryBarButton extends StatefulWidget {
   final VoidCallback onTap;
 
   @override
-  State<_SecondaryBarButton> createState() => _SecondaryBarButtonState();
-}
-
-class _SecondaryBarButtonState extends State<_SecondaryBarButton> {
-  bool _pressed = false;
-
-  @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTapDown: (_) => setState(() => _pressed = true),
-      onTapUp: (_) => setState(() => _pressed = false),
-      onTapCancel: () => setState(() => _pressed = false),
-      onTap: widget.onTap,
-      child: AnimatedScale(
-        scale: _pressed ? 0.97 : 1,
-        duration: const Duration(milliseconds: 120),
-        child: Container(
-          height: 52,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: AddCarTheme.scaffoldBg,
+    return SizedBox(
+      height: 52,
+      child: OutlinedButton(
+        onPressed: onTap,
+        style: OutlinedButton.styleFrom(
+          side: BorderSide(color: AddCarTheme.border(context)),
+          shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AddCarTheme.inputRadius),
-            border: Border.all(color: AddCarTheme.border),
           ),
-          child: Text(
-            widget.label,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: AddCarTheme.textPrimary,
-            ),
+        ),
+        child: Text(
+          label,
+          style: context.textTheme.bodyLarge?.copyWith(
+            fontWeight: FontWeight.w600,
+            color: AddCarTheme.textPrimary(context),
           ),
         ),
       ),

@@ -165,3 +165,89 @@ function formatTodayGaDate() {
   const d = String(now.getUTCDate()).padStart(2, "0");
   return `${y}-${m}-${d}`;
 }
+
+// =============================================================================
+// FCM: Notify interested users whenever a new car listing goes live
+// =============================================================================
+const { onDocumentCreated } = require("firebase-functions/v2/firestore");
+
+/**
+ * Triggered on every new document in /cars.
+ *
+ * Sends FCM push notifications to two topics:
+ *   - cars_{brandId}              (e.g. "cars_toyota")
+ *   - cars_{brandId}_{modelKey}   (e.g. "cars_toyota_camry")
+ *
+ * Only fires when the listing has status === "active".
+ */
+exports.onNewCarListing = onDocumentCreated(
+  {
+    document: "cars/{carId}",
+    region: "us-central1",
+  },
+  async (event) => {
+    const data = event.data?.data();
+    if (!data) return;
+
+    // Only notify for active listings.
+    if (data.status !== "active") return;
+
+    const brandId = (data.brandId ?? "").toLowerCase().replace(/[^a-z0-9_]/g, "_");
+    const modelKey = (data.modelKey ?? "").toLowerCase().replace(/[^a-z0-9_]/g, "_");
+
+    if (!brandId) return;
+
+    // Build a human-readable title.
+    const year = data.year ? `${data.year} ` : "";
+    const brand = data.brandId ?? "New";
+    const model = data.modelKey ?? "listing";
+    const title = `🚗 New ${year}${brand} ${model} just listed!`;
+    const body = data.priceIqd
+      ? `Starting from ${Number(data.priceIqd).toLocaleString()} IQD`
+      : "Tap to view details";
+
+    const baseMessage = {
+      notification: { title, body },
+      data: {
+        carId: event.params.carId,
+        brandId: data.brandId ?? "",
+        modelKey: data.modelKey ?? "",
+        click_action: "FLUTTER_NOTIFICATION_CLICK",
+      },
+      android: {
+        notification: {
+          channelId: "new_listings",
+          priority: "high",
+          sound: "default",
+        },
+      },
+      apns: {
+        payload: {
+          aps: { sound: "default", badge: 1 },
+        },
+      },
+    };
+
+    const sends = [];
+
+    // Topic: cars_toyota
+    const brandTopic = `cars_${brandId}`;
+    sends.push(
+      admin.messaging().send({ ...baseMessage, topic: brandTopic })
+        .then(() => console.log(`FCM sent to topic: ${brandTopic}`))
+        .catch((err) => console.error(`FCM error for ${brandTopic}:`, err))
+    );
+
+    // Topic: cars_toyota_camry (only if model is set)
+    if (modelKey) {
+      const modelTopic = `cars_${brandId}_${modelKey}`;
+      sends.push(
+        admin.messaging().send({ ...baseMessage, topic: modelTopic })
+          .then(() => console.log(`FCM sent to topic: ${modelTopic}`))
+          .catch((err) => console.error(`FCM error for ${modelTopic}:`, err))
+      );
+    }
+
+    await Promise.all(sends);
+  },
+);

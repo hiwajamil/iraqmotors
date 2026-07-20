@@ -41,6 +41,8 @@ dependencies:
   firebase_analytics: ^12.4.1
   firebase_auth: ^6.5.1
   firebase_auth_platform_interface: ^9.0.1
+  firebase_performance: ^0.11.4+5
+  firebase_messaging: ^16.4.3
   cloud_firestore: ^6.4.1
   cloud_functions: ^6.3.1
   flutter_riverpod: ^3.3.1
@@ -49,6 +51,7 @@ dependencies:
   mime: ^2.0.0
   cached_network_image: ^3.4.1
   flutter_cache_manager: ^3.4.1
+  flutter_svg: ^2.0.17
   font_awesome_flutter: ^10.8.0
   shared_preferences: ^2.5.3
   image_picker: ^1.1.2
@@ -87,6 +90,7 @@ flutter:
   assets:
     - .env
     - assets/hero_bg.jpg
+    - assets/images/IQ11.png
     - assets/images/IQ33.png
 
   # The following line ensures that the Material Icons font is

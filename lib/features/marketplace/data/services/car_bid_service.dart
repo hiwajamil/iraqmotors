@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import 'package:iq_motors/core/services/firebase_performance_service.dart';
 import 'package:iq_motors/features/dashboard/data/services/user_message_service.dart';
 import 'package:iq_motors/features/marketplace/domain/models/car_bid_record.dart';
 import 'package:iq_motors/features/marketplace/data/services/car_database_service.dart';
@@ -133,62 +134,82 @@ class CarBidService {
     String? bidderName,
     String? bidderPhone,
   }) async {
-    final docRef = _firestore.collection('cars').doc(carId);
-    final snapshot = await docRef.get();
-    if (!snapshot.exists) {
-      throw CarBidException('Car listing not found.');
-    }
-    _ensureBiddingAllowed(snapshot.data());
+    return FirebasePerformanceService.instance.traceAsync(
+      'submitValidatedBid',
+      () async {
+        final docRef = _firestore.collection('cars').doc(carId);
+        final snapshot = await docRef.get();
+        if (!snapshot.exists) {
+          throw CarBidException('Car listing not found.');
+        }
+        _ensureBiddingAllowed(snapshot.data());
 
-    final currentHighest = resolveHighestBid(snapshot.data());
+        final currentHighest = resolveHighestBid(snapshot.data());
 
-    var resolvedName = bidderName?.trim() ?? '';
-    var resolvedPhone = bidderPhone?.trim() ?? '';
-    if (userId != null &&
-        userId.isNotEmpty &&
-        (resolvedName.isEmpty || resolvedPhone.isEmpty)) {
-      final userDoc = await _firestore.collection('users').doc(userId).get();
-      final userData = userDoc.data();
-      if (resolvedName.isEmpty) {
-        resolvedName = userData?['displayName']?.toString() ?? '';
-      }
-      if (resolvedPhone.isEmpty) {
-        resolvedPhone = userData?['phone']?.toString() ?? '';
-      }
-    }
+        var resolvedName = bidderName?.trim() ?? '';
+        var resolvedPhone = bidderPhone?.trim() ?? '';
+        if (userId != null &&
+            userId.isNotEmpty &&
+            (resolvedName.isEmpty || resolvedPhone.isEmpty)) {
+          final userDoc = await _firestore.collection('users').doc(userId).get();
+          final userData = userDoc.data();
+          if (resolvedName.isEmpty) {
+            resolvedName = userData?['displayName']?.toString() ?? '';
+          }
+          if (resolvedPhone.isEmpty) {
+            resolvedPhone = userData?['phone']?.toString() ?? '';
+          }
+        }
 
-    final batch = _firestore.batch();
+        final batch = _firestore.batch();
 
-    final bidRef = docRef.collection(bidsSubcollection).doc();
-    batch.set(bidRef, {
-      bidAmountField: newBid,
-      bidBidderNameField: resolvedName,
-      bidBidderPhoneField: resolvedPhone,
-      if (userId != null) bidBidderIdField: userId,
-      bidCreatedAtField: FieldValue.serverTimestamp(),
-    });
+        final bidRef = docRef.collection(bidsSubcollection).doc();
+        batch.set(bidRef, {
+          bidAmountField: newBid,
+          bidBidderNameField: resolvedName,
+          bidBidderPhoneField: resolvedPhone,
+          if (userId != null) bidBidderIdField: userId,
+          bidCreatedAtField: FieldValue.serverTimestamp(),
+        });
 
-    if (newBid > currentHighest) {
-      batch.update(docRef, {
-        highestBidField: newBid,
-        lastBidAtField: FieldValue.serverTimestamp(),
-        if (userId != null) lastBidByField: userId,
-      });
-    }
+        if (newBid > currentHighest) {
+          final updates = <String, dynamic>{
+            highestBidField: newBid,
+            lastBidAtField: FieldValue.serverTimestamp(),
+            if (userId != null) lastBidByField: userId,
+          };
 
-    try {
-      await batch.commit();
-    } on FirebaseException catch (e) {
-      throw CarBidException(e.message ?? 'Failed to place bid.');
-    }
+          // Soft-close anti-sniping protection: if auction ends within 60s, extend by 2m
+          final rawEndTime = snapshot.data()?['auctionEndAt'];
+          if (rawEndTime is Timestamp) {
+            final endTime = rawEndTime.toDate();
+            final now = DateTime.now();
+            final diff = endTime.difference(now);
+            if (diff.inSeconds > 0 && diff.inSeconds <= 60) {
+              final extendedEnd = endTime.add(const Duration(minutes: 2));
+              updates['auctionEndAt'] = Timestamp.fromDate(extendedEnd);
+            }
+          }
 
-    await _notifyCarOwnerOfBid(
-      carData: snapshot.data() ?? const {},
-      carId: carId,
-      newBid: newBid,
-      bidderUserId: userId,
-      bidderName: resolvedName,
-      bidderPhone: resolvedPhone,
+          batch.update(docRef, updates);
+        }
+
+        try {
+          await batch.commit();
+        } on FirebaseException catch (e) {
+          throw CarBidException(e.message ?? 'Failed to place bid.');
+        }
+
+        await _notifyCarOwnerOfBid(
+          carData: snapshot.data() ?? const {},
+          carId: carId,
+          newBid: newBid,
+          bidderUserId: userId,
+          bidderName: resolvedName,
+          bidderPhone: resolvedPhone,
+        );
+      },
+      metrics: {'bid_amount': newBid},
     );
   }
 

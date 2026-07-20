@@ -2,6 +2,7 @@ import 'package:iq_motors/shared/widgets/app_cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:iq_motors/core/theme/app_theme.dart';
 import 'package:iq_motors/core/utils/activity_actions.dart';
 import 'package:iq_motors/features/admin/domain/admin_audit_helper.dart';
 import 'package:iq_motors/core/localization/l10n_extensions.dart';
@@ -28,10 +29,6 @@ class AdminFlaggedAdsView extends ConsumerStatefulWidget {
 }
 
 class _AdminFlaggedAdsViewState extends ConsumerState<AdminFlaggedAdsView> {
-  static const Color _textPrimary = Color(0xFF1D1D1F);
-  static const Color _textSecondary = Color(0xFF86868B);
-  static const Color _warning = Color(0xFFFF9500);
-
   late Future<List<FlaggedAdReport>> _reportsFuture;
   final Set<String> _processingIds = {};
 
@@ -152,14 +149,14 @@ class _AdminFlaggedAdsViewState extends ConsumerState<AdminFlaggedAdsView> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
           l10n.adminFlaggedDeleteAd,
-          style: const TextStyle(
+          style: TextStyle(
             fontWeight: FontWeight.w700,
-            color: _textPrimary,
+            color: AddCarTheme.textPrimary(context),
           ),
         ),
         content: Text(
           l10n.adminFlaggedDeleteConfirm,
-          style: const TextStyle(color: _textSecondary),
+          style: TextStyle(color: AddCarTheme.textSecondary(context)),
         ),
         actions: [
           TextButton(
@@ -169,7 +166,7 @@ class _AdminFlaggedAdsViewState extends ConsumerState<AdminFlaggedAdsView> {
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
             style: TextButton.styleFrom(
-              foregroundColor: const Color(0xFFFF3B30),
+              foregroundColor: Theme.of(context).colorScheme.error,
             ),
             child: Text(l10n.deleteAction),
           ),
@@ -213,8 +210,9 @@ class _AdminFlaggedAdsViewState extends ConsumerState<AdminFlaggedAdsView> {
       SnackBar(
         content: Text(message),
         behavior: SnackBarBehavior.floating,
-        backgroundColor:
-            isError ? const Color(0xFFFF3B30) : AddCarTheme.successGreen,
+        backgroundColor: isError
+            ? Theme.of(context).colorScheme.error
+            : AddCarTheme.success(context),
       ),
     );
   }
@@ -228,17 +226,16 @@ class _AdminFlaggedAdsViewState extends ConsumerState<AdminFlaggedAdsView> {
       children: [
         Text(
           l10n.navFlaggedAds,
-          style: TextStyle(
-            fontSize: widget.isMobile ? 24 : 28,
+          style: context.textTheme.headlineMedium?.copyWith(
             fontWeight: FontWeight.w700,
-            color: _textPrimary,
+            color: AddCarTheme.textPrimary(context),
             height: 1.25,
           ),
         ),
         const SizedBox(height: 6),
         Text(
           l10n.adminFlaggedSubtitle,
-          style: const TextStyle(fontSize: 14, color: _textSecondary),
+          style: AddCarTheme.stepSubtitle(context).copyWith(fontSize: 14),
         ),
         const SizedBox(height: 28),
         FutureBuilder<List<FlaggedAdReport>>(
@@ -339,9 +336,8 @@ class _FlaggedAdCard extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(isMobile ? 16 : 20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.colorScheme.surfaceContainerLowest,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: AddCarTheme.cardShadow,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -357,19 +353,18 @@ class _FlaggedAdCard extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.warning_amber_rounded,
                           size: 18,
-                          color: _AdminFlaggedAdsViewState._warning,
+                          color: context.colorScheme.secondary,
                         ),
                         const SizedBox(width: 6),
                         Expanded(
                           child: Text(
                             title,
-                            style: const TextStyle(
-                              fontSize: 17,
+                            style: context.textTheme.titleMedium?.copyWith(
                               fontWeight: FontWeight.w600,
-                              color: _AdminFlaggedAdsViewState._textPrimary,
+                              color: context.colorScheme.onSurface,
                             ),
                           ),
                         ),
@@ -404,14 +399,14 @@ class _FlaggedAdCard extends StatelessWidget {
                 _ActionButton(
                   label: deleteLabel,
                   icon: Icons.delete_outline,
-                  foregroundColor: const Color(0xFFFF3B30),
+                  foregroundColor: context.colorScheme.error,
                   onPressed: isProcessing ? null : onDelete,
                 ),
                 const SizedBox(height: 8),
                 _ActionButton(
                   label: ignoreLabel,
                   icon: Icons.block_outlined,
-                  foregroundColor: _AdminFlaggedAdsViewState._textSecondary,
+                  foregroundColor: context.colorScheme.onSurfaceVariant,
                   onPressed: isProcessing ? null : onIgnore,
                 ),
               ],
@@ -428,14 +423,14 @@ class _FlaggedAdCard extends StatelessWidget {
                 _ActionButton(
                   label: deleteLabel,
                   icon: Icons.delete_outline,
-                  foregroundColor: const Color(0xFFFF3B30),
+                  foregroundColor: context.colorScheme.error,
                   onPressed: isProcessing ? null : onDelete,
                 ),
                 const SizedBox(width: 10),
                 _ActionButton(
                   label: ignoreLabel,
                   icon: Icons.block_outlined,
-                  foregroundColor: _AdminFlaggedAdsViewState._textSecondary,
+                  foregroundColor: context.colorScheme.onSurfaceVariant,
                   onPressed: isProcessing ? null : onIgnore,
                 ),
                 if (isProcessing) ...[
@@ -466,9 +461,12 @@ class _AdThumbnail extends StatelessWidget {
       child: Container(
         width: 88,
         height: 88,
-        color: const Color(0xFFF2F2F7),
+        color: context.colorScheme.surfaceContainerHighest,
         child: imageUrl.isEmpty
-            ? const Icon(Icons.directions_car_outlined, color: Color(0xFF86868B))
+            ? Icon(
+                Icons.directions_car_outlined,
+                color: context.colorScheme.onSurfaceVariant,
+              )
             : AppCachedNetworkImage(
                 imageUrl: imageUrl,
                 fit: BoxFit.cover,
@@ -476,9 +474,9 @@ class _AdThumbnail extends StatelessWidget {
                 height: 88,
                 memCacheLogicalWidth: 88,
                 memCacheLogicalHeight: 88,
-                errorWidget: (_, __, ___) => const Icon(
+                errorWidget: (_, __, ___) => Icon(
                   Icons.broken_image_outlined,
-                  color: Color(0xFF86868B),
+                  color: context.colorScheme.onSurfaceVariant,
                 ),
               ),
       ),
@@ -496,19 +494,19 @@ class _MetaRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return RichText(
       text: TextSpan(
-        style: const TextStyle(fontSize: 13, height: 1.4),
+        style: context.textTheme.bodySmall?.copyWith(height: 1.4),
         children: [
           TextSpan(
             text: '$label: ',
-            style: const TextStyle(
-              color: _AdminFlaggedAdsViewState._textSecondary,
+            style: TextStyle(
+              color: context.colorScheme.onSurfaceVariant,
               fontWeight: FontWeight.w500,
             ),
           ),
           TextSpan(
             text: value,
-            style: const TextStyle(
-              color: _AdminFlaggedAdsViewState._textPrimary,
+            style: TextStyle(
+              color: context.colorScheme.onSurface,
             ),
           ),
         ],
@@ -532,7 +530,7 @@ class _ActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = foregroundColor ?? AddCarTheme.focusBlue;
+    final color = foregroundColor ?? AddCarTheme.focus(context);
 
     return OutlinedButton.icon(
       onPressed: onPressed,
@@ -562,14 +560,13 @@ class _EmptyState extends StatelessWidget {
           Icon(
             Icons.flag_outlined,
             size: 48,
-            color: const Color(0xFF86868B).withValues(alpha: 0.45),
+            color: context.colorScheme.onSurfaceVariant.withValues(alpha: 0.45),
           ),
           const SizedBox(height: 16),
           Text(
             message,
-            style: const TextStyle(
-              fontSize: 14,
-              color: _AdminFlaggedAdsViewState._textSecondary,
+            style: context.textTheme.bodyMedium?.copyWith(
+              color: context.colorScheme.onSurfaceVariant,
             ),
             textAlign: TextAlign.center,
           ),
@@ -595,12 +592,17 @@ class _ErrorBanner extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFFFFEBEA),
+        color: context.colorScheme.errorContainer,
         borderRadius: BorderRadius.circular(14),
       ),
       child: Row(
         children: [
-          Expanded(child: Text(message)),
+          Expanded(
+            child: Text(
+              message,
+              style: TextStyle(color: context.colorScheme.onErrorContainer),
+            ),
+          ),
           TextButton(onPressed: onRetry, child: Text(retryLabel)),
         ],
       ),

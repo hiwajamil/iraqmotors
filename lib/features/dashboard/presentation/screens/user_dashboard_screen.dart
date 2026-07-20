@@ -3,11 +3,15 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
+import 'package:intl/intl.dart' hide TextDirection;
 
 import 'package:iq_motors/core/utils/bid_display.dart';
+import 'package:iq_motors/core/localization/iraq_location_l10n.dart';
 import 'package:iq_motors/core/localization/l10n_extensions.dart';
+import 'package:iq_motors/core/theme/app_theme.dart';
 import 'package:iq_motors/shared/data/add_car_form_options.dart';
+import 'package:iq_motors/shared/data/iraq_locations.dart';
+import 'package:iq_motors/features/auth/domain/models/user_profile.dart';
 import 'package:iq_motors/features/auth/presentation/providers/auth_providers.dart';
 import 'package:iq_motors/features/storage/presentation/providers/storage_providers.dart';
 import 'package:iq_motors/features/marketplace/data/services/car_database_service.dart';
@@ -17,6 +21,7 @@ import 'package:iq_motors/features/dashboard/presentation/widgets/user_inbox_sec
 import 'package:iq_motors/features/dashboard/presentation/widgets/wishlist_car_card.dart';
 import 'package:iq_motors/features/marketplace/presentation/screens/car_details_screen.dart';
 import 'package:iq_motors/features/listings/presentation/add_car_flow_screen.dart';
+import 'package:iq_motors/features/listings/presentation/add_car_theme.dart';
 import 'package:iq_motors/features/marketplace/presentation/screens/home_screen.dart';
 
 /// User dashboard — sidebar (RTL start) + wishlist grid + my ads list.
@@ -38,7 +43,6 @@ enum _DashboardNav {
 }
 
 class _UserDashboardScreenState extends ConsumerState<UserDashboardScreen> {
-  static const Color _bgMain = Color(0xFFF5F5F7);
   static const double _mobileBreakpoint = 900;
 
   static const List<_DashboardNav> _mobileNavOrder = [
@@ -126,7 +130,7 @@ class _UserDashboardScreenState extends ConsumerState<UserDashboardScreen> {
         SnackBar(
           content: Text(e.message),
           behavior: SnackBarBehavior.floating,
-          backgroundColor: const Color(0xFFFF3B30),
+          backgroundColor: context.colorScheme.error,
         ),
       );
     }
@@ -285,53 +289,37 @@ class _UserDashboardScreenState extends ConsumerState<UserDashboardScreen> {
     final l10n = context.l10n;
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (dialogContext) => AlertDialog(
-        backgroundColor: const Color(0xFFFFFFFF),
-        surfaceTintColor: Colors.transparent,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text(
-          l10n.deleteAdTitle,
-          style: const TextStyle(
-            fontSize: 17,
-            fontWeight: FontWeight.w600,
-            color: Color(0xFF1D1D1F),
-            letterSpacing: -0.2,
-          ),
-        ),
-        content: Text(
-          l10n.deleteAdConfirm,
-          style: const TextStyle(
-            fontSize: 15,
-            fontWeight: FontWeight.w400,
-            color: Color(0xFF6E6E73),
-            height: 1.45,
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(false),
-            child: Text(
-              l10n.cancelAction,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w400,
-                color: Color(0xFF1D1D1F),
-              ),
+      builder: (dialogContext) {
+        final colorScheme = dialogContext.colorScheme;
+        final textTheme = dialogContext.textTheme;
+        return AlertDialog(
+          title: Text(
+            l10n.deleteAdTitle,
+            style: textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+              color: colorScheme.onSurface,
             ),
           ),
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(true),
-            child: Text(
-              l10n.deleteAction,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Color(0xFFFF3B30),
-              ),
+          content: Text(
+            l10n.deleteAdConfirm,
+            style: textTheme.bodyMedium?.copyWith(
+              color: colorScheme.onSurfaceVariant,
+              height: 1.45,
             ),
           ),
-        ],
-      ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+              child: Text(l10n.cancelAction),
+            ),
+            TextButton(
+              style: TextButton.styleFrom(foregroundColor: colorScheme.error),
+              onPressed: () => Navigator.of(dialogContext).pop(true),
+              child: Text(l10n.deleteAction),
+            ),
+          ],
+        );
+      },
     );
 
     if (confirmed != true || !mounted) return;
@@ -348,7 +336,7 @@ class _UserDashboardScreenState extends ConsumerState<UserDashboardScreen> {
         SnackBar(
           content: Text(context.l10n.adDeletedSuccess),
           behavior: SnackBarBehavior.floating,
-          backgroundColor: const Color(0xFF34C759),
+          backgroundColor: context.colorScheme.tertiary,
         ),
       );
     } on CarDatabaseException catch (e) {
@@ -357,7 +345,7 @@ class _UserDashboardScreenState extends ConsumerState<UserDashboardScreen> {
         SnackBar(
           content: Text(e.message),
           behavior: SnackBarBehavior.floating,
-          backgroundColor: const Color(0xFFFF3B30),
+          backgroundColor: context.colorScheme.error,
         ),
       );
     }
@@ -370,53 +358,38 @@ class _UserDashboardScreenState extends ConsumerState<UserDashboardScreen> {
     final l10n = context.l10n;
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (dialogContext) => AlertDialog(
-        backgroundColor: const Color(0xFFFFFFFF),
-        surfaceTintColor: Colors.transparent,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text(
-          l10n.markAsSoldTitle,
-          style: const TextStyle(
-            fontSize: 17,
-            fontWeight: FontWeight.w600,
-            color: Color(0xFF1D1D1F),
-            letterSpacing: -0.2,
-          ),
-        ),
-        content: Text(
-          l10n.markAsSoldConfirm,
-          style: const TextStyle(
-            fontSize: 15,
-            fontWeight: FontWeight.w400,
-            color: Color(0xFF6E6E73),
-            height: 1.45,
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(false),
-            child: Text(
-              l10n.cancelAction,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w400,
-                color: Color(0xFF1D1D1F),
-              ),
+      builder: (dialogContext) {
+        final colorScheme = dialogContext.colorScheme;
+        final textTheme = dialogContext.textTheme;
+        return AlertDialog(
+          title: Text(
+            l10n.markAsSoldTitle,
+            style: textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+              color: colorScheme.onSurface,
             ),
           ),
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(true),
-            child: Text(
-              l10n.soldAction,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Color(0xFF1B5E20),
-              ),
+          content: Text(
+            l10n.markAsSoldConfirm,
+            style: textTheme.bodyMedium?.copyWith(
+              color: colorScheme.onSurfaceVariant,
+              height: 1.45,
             ),
           ),
-        ],
-      ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+              child: Text(l10n.cancelAction),
+            ),
+            TextButton(
+              style:
+                  TextButton.styleFrom(foregroundColor: colorScheme.tertiary),
+              onPressed: () => Navigator.of(dialogContext).pop(true),
+              child: Text(l10n.soldAction),
+            ),
+          ],
+        );
+      },
     );
 
     if (confirmed != true || !mounted) return;
@@ -444,7 +417,7 @@ class _UserDashboardScreenState extends ConsumerState<UserDashboardScreen> {
         SnackBar(
           content: Text(l10n.adMarkedSoldSuccess),
           behavior: SnackBarBehavior.floating,
-          backgroundColor: const Color(0xFF1B5E20),
+          backgroundColor: context.colorScheme.tertiary,
         ),
       );
     } on CarDatabaseException catch (e) {
@@ -453,7 +426,7 @@ class _UserDashboardScreenState extends ConsumerState<UserDashboardScreen> {
         SnackBar(
           content: Text(e.message),
           behavior: SnackBarBehavior.floating,
-          backgroundColor: const Color(0xFFFF3B30),
+          backgroundColor: context.colorScheme.error,
         ),
       );
     }
@@ -508,7 +481,7 @@ class _UserDashboardScreenState extends ConsumerState<UserDashboardScreen> {
         SnackBar(
           content: Text(e.message),
           behavior: SnackBarBehavior.floating,
-          backgroundColor: const Color(0xFFFF3B30),
+          backgroundColor: context.colorScheme.error,
         ),
       );
     }
@@ -565,7 +538,7 @@ class _UserDashboardScreenState extends ConsumerState<UserDashboardScreen> {
         SnackBar(
           content: Text(e.message),
           behavior: SnackBarBehavior.floating,
-          backgroundColor: const Color(0xFFFF3B30),
+          backgroundColor: context.colorScheme.error,
         ),
       );
     }
@@ -586,7 +559,7 @@ class _UserDashboardScreenState extends ConsumerState<UserDashboardScreen> {
         MediaQuery.sizeOf(context).width < _mobileBreakpoint;
 
     return Scaffold(
-      backgroundColor: _bgMain,
+      backgroundColor: context.colorScheme.surface,
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
@@ -660,63 +633,36 @@ class _UserDashboardScreenState extends ConsumerState<UserDashboardScreen> {
   Widget _buildBottomNavBar() {
     final l10n = context.l10n;
 
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 12,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
-      child: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: Colors.white,
-        elevation: 0,
-        currentIndex: _currentIndex,
-        onTap: _onBottomNavTap,
-        selectedItemColor: Colors.black,
-        unselectedItemColor: Colors.grey[400],
-        selectedFontSize: 10,
-        unselectedFontSize: 10,
-        selectedLabelStyle: const TextStyle(
-          fontWeight: FontWeight.w600,
-          letterSpacing: -0.1,
+    return NavigationBar(
+      selectedIndex: _currentIndex,
+      onDestinationSelected: _onBottomNavTap,
+      destinations: [
+        NavigationDestination(
+          icon: const Icon(Icons.home_outlined),
+          selectedIcon: const Icon(Icons.home),
+          label: l10n.navHomeScreen,
         ),
-        unselectedLabelStyle: const TextStyle(
-          fontWeight: FontWeight.w400,
-          letterSpacing: -0.1,
+        NavigationDestination(
+          icon: const Icon(CupertinoIcons.person),
+          selectedIcon: const Icon(CupertinoIcons.person_fill),
+          label: l10n.navDashboard,
         ),
-        items: [
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.home_outlined),
-            activeIcon: const Icon(Icons.home),
-            label: l10n.navHomeScreen,
-          ),
-          BottomNavigationBarItem(
-            icon: const Icon(CupertinoIcons.person),
-            activeIcon: const Icon(CupertinoIcons.person_fill),
-            label: l10n.navDashboard,
-          ),
-          BottomNavigationBarItem(
-            icon: const Icon(CupertinoIcons.car),
-            activeIcon: const Icon(CupertinoIcons.car_fill),
-            label: l10n.navMyAds,
-          ),
-          BottomNavigationBarItem(
-            icon: const Icon(CupertinoIcons.heart),
-            activeIcon: const Icon(CupertinoIcons.heart_fill),
-            label: l10n.navMyFavorites,
-          ),
-          BottomNavigationBarItem(
-            icon: const Icon(CupertinoIcons.chat_bubble),
-            activeIcon: const Icon(CupertinoIcons.chat_bubble_fill),
-            label: l10n.navMessages,
-          ),
-        ],
-      ),
+        NavigationDestination(
+          icon: const Icon(CupertinoIcons.car),
+          selectedIcon: const Icon(CupertinoIcons.car_fill),
+          label: l10n.navMyAds,
+        ),
+        NavigationDestination(
+          icon: const Icon(CupertinoIcons.heart),
+          selectedIcon: const Icon(CupertinoIcons.heart_fill),
+          label: l10n.navMyFavorites,
+        ),
+        NavigationDestination(
+          icon: const Icon(CupertinoIcons.chat_bubble),
+          selectedIcon: const Icon(CupertinoIcons.chat_bubble_fill),
+          label: l10n.navMessages,
+        ),
+      ],
     );
   }
 
@@ -760,8 +706,7 @@ class _UserDashboardScreenState extends ConsumerState<UserDashboardScreen> {
       _DashboardNav.messages => UserInboxSection(
           nestedInScrollView: !isMobile,
         ),
-      _DashboardNav.settings =>
-        _EmptyPlaceholder(message: context.l10n.settingsComingSoon),
+      _DashboardNav.settings => const _UserSettingsSection(),
     };
   }
 
@@ -774,17 +719,15 @@ class _UserDashboardScreenState extends ConsumerState<UserDashboardScreen> {
 class _MobileTopBar extends StatelessWidget {
   const _MobileTopBar();
 
-  static const Color _bgCard = Color(0xFFFFFFFF);
-  static const Color _borderLight = Color(0xFFE5E5EA);
-
   @override
   Widget build(BuildContext context) {
+    final colorScheme = context.colorScheme;
     return Container(
       width: double.infinity,
-      decoration: const BoxDecoration(
-        color: _bgCard,
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainerLowest,
         border: Border(
-          bottom: BorderSide(color: _borderLight),
+          bottom: BorderSide(color: colorScheme.outlineVariant),
         ),
       ),
       padding: const EdgeInsetsDirectional.fromSTEB(20, 16, 20, 16),
@@ -804,17 +747,15 @@ class _DashboardSidebar extends StatelessWidget {
   final ValueChanged<_DashboardNav> onNavTap;
   final VoidCallback onLogout;
 
-  static const Color _bgCard = Color(0xFFFFFFFF);
-  static const Color _borderLight = Color(0xFFE5E5EA);
-
   @override
   Widget build(BuildContext context) {
+    final colorScheme = context.colorScheme;
     return Container(
       width: 260,
-      decoration: const BoxDecoration(
-        color: _bgCard,
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainerLowest,
         border: BorderDirectional(
-          end: BorderSide(color: _borderLight),
+          end: BorderSide(color: colorScheme.outlineVariant),
         ),
       ),
       padding: const EdgeInsetsDirectional.fromSTEB(20, 30, 20, 30),
@@ -843,18 +784,21 @@ class _UserProfileSummary extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final colorScheme = context.colorScheme;
+    final textTheme = context.textTheme;
+
     final avatar = Container(
       width: isCompact ? 60 : 80,
       height: isCompact ? 60 : 80,
-      decoration: const BoxDecoration(
-        color: Color(0xFFF5F5F7),
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainerHighest,
         shape: BoxShape.circle,
       ),
       alignment: Alignment.center,
-      child: const Icon(
+      child: Icon(
         Icons.person_outline,
         size: 30,
-        color: Color(0xFF86868B),
+        color: colorScheme.onSurfaceVariant,
       ),
     );
 
@@ -864,19 +808,18 @@ class _UserProfileSummary extends StatelessWidget {
       children: [
         Text(
           l10n.dummyPublisherHiwa,
-          style: TextStyle(
-            fontSize: isCompact ? 17 : 19.2,
+          style: (isCompact ? textTheme.titleSmall : textTheme.titleMedium)
+              ?.copyWith(
             fontWeight: FontWeight.w700,
-            color: const Color(0xFF1D1D1F),
+            color: colorScheme.onSurface,
             height: 1.3,
           ),
         ),
         const SizedBox(height: 4),
         Text(
           l10n.userAccountPersonal,
-          style: const TextStyle(
-            fontSize: 13,
-            color: Color(0xFF86868B),
+          style: textTheme.bodySmall?.copyWith(
+            color: colorScheme.onSurfaceVariant,
             height: 1.3,
           ),
         ),
@@ -887,7 +830,7 @@ class _UserProfileSummary extends StatelessWidget {
       return Row(
         children: [
           avatar,
-          const SizedBox(width: 15),
+          const SizedBox(width: 16),
           Expanded(child: textBlock),
         ],
       );
@@ -895,15 +838,15 @@ class _UserProfileSummary extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.only(bottom: 30),
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         border: Border(
-          bottom: BorderSide(color: Color(0xFFE5E5EA)),
+          bottom: BorderSide(color: colorScheme.outlineVariant),
         ),
       ),
       child: Column(
         children: [
           avatar,
-          const SizedBox(height: 15),
+          const SizedBox(height: 16),
           textBlock,
         ],
       ),
@@ -1006,16 +949,19 @@ class _NavLinkState extends State<_NavLink> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = context.colorScheme;
+    final textTheme = context.textTheme;
+
     final bg = widget.isActive
-        ? const Color(0xFF000000)
+        ? colorScheme.primary
         : _hovered
-            ? const Color(0xFFF5F5F7)
+            ? colorScheme.surfaceContainerHighest
             : Colors.transparent;
     final fg = widget.isActive
-        ? Colors.white
+        ? colorScheme.onPrimary
         : _hovered
-            ? const Color(0xFF1D1D1F)
-            : const Color(0xFF86868B);
+            ? colorScheme.onSurface
+            : colorScheme.onSurfaceVariant;
 
     return MouseRegion(
       onEnter: (_) => setState(() => _hovered = true),
@@ -1025,7 +971,7 @@ class _NavLinkState extends State<_NavLink> {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsetsDirectional.symmetric(
-            horizontal: 15,
+            horizontal: 16,
             vertical: 12,
           ),
           decoration: BoxDecoration(
@@ -1035,12 +981,11 @@ class _NavLinkState extends State<_NavLink> {
           child: Row(
             children: [
               Icon(widget.item.icon, size: 18, color: fg),
-              const SizedBox(width: 15),
+              const SizedBox(width: 16),
               Expanded(
                 child: Text(
                   widget.item.label,
-                  style: TextStyle(
-                    fontSize: 15,
+                  style: textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w500,
                     color: fg,
                   ),
@@ -1052,15 +997,14 @@ class _NavLinkState extends State<_NavLink> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFFF3B30),
+                    color: colorScheme.error,
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Text(
                     '${widget.item.badgeCount}',
-                    style: const TextStyle(
-                      fontSize: 10,
+                    style: textTheme.labelSmall?.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: Colors.white,
+                      color: colorScheme.onError,
                     ),
                   ),
                 ),
@@ -1087,6 +1031,9 @@ class _LogoutButtonState extends State<_LogoutButton> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = context.colorScheme;
+    final textTheme = context.textTheme;
+
     return MouseRegion(
       onEnter: (_) => setState(() => _hovered = true),
       onExit: (_) => setState(() => _hovered = false),
@@ -1095,25 +1042,24 @@ class _LogoutButtonState extends State<_LogoutButton> {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsetsDirectional.symmetric(
-            horizontal: 15,
+            horizontal: 16,
             vertical: 12,
           ),
           decoration: BoxDecoration(
             color: _hovered
-                ? const Color(0xFFFF3B30).withValues(alpha: 0.1)
+                ? colorScheme.error.withValues(alpha: 0.1)
                 : Colors.transparent,
             borderRadius: BorderRadius.circular(12),
           ),
           child: Row(
             children: [
-              const Icon(Icons.logout, size: 18, color: Color(0xFFFF3B30)),
-              const SizedBox(width: 15),
+              Icon(Icons.logout, size: 18, color: colorScheme.error),
+              const SizedBox(width: 16),
               Text(
                 context.l10n.signOut,
-                style: const TextStyle(
-                  fontSize: 15,
+                style: textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.w500,
-                  color: Color(0xFFFF3B30),
+                  color: colorScheme.error,
                 ),
               ),
             ],
@@ -1157,12 +1103,15 @@ class _DashboardHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final colorScheme = context.colorScheme;
+    final textTheme = context.textTheme;
+
     final title = Text(
       l10n.userDashboardTitle,
-      style: TextStyle(
-        fontSize: isMobile ? 26 : 32,
+      style: (isMobile ? textTheme.headlineSmall : textTheme.headlineMedium)
+          ?.copyWith(
         fontWeight: FontWeight.w700,
-        color: const Color(0xFF1D1D1F),
+        color: colorScheme.onSurface,
         letterSpacing: -0.5,
         height: 1.2,
       ),
@@ -1184,7 +1133,7 @@ class _DashboardHeader extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           title,
-          const SizedBox(height: 15),
+          const SizedBox(height: 16),
           cta,
         ],
       );
@@ -1222,36 +1171,13 @@ class _PrimaryCtaButtonState extends State<_PrimaryCtaButton> {
     return MouseRegion(
       onEnter: (_) => setState(() => _hovered = true),
       onExit: (_) => setState(() => _hovered = false),
-      child: GestureDetector(
-        onTap: widget.onTap,
-        child: AnimatedScale(
-          scale: _hovered ? 1.05 : 1,
-          duration: const Duration(milliseconds: 200),
-          child: Container(
-            padding: const EdgeInsetsDirectional.symmetric(
-              horizontal: 24,
-              vertical: 10,
-            ),
-            decoration: BoxDecoration(
-              color: const Color(0xFF007AFF),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(Icons.add, size: 16, color: Colors.white),
-                const SizedBox(width: 8),
-                Text(
-                  widget.label,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
-            ),
-          ),
+      child: AnimatedScale(
+        scale: _hovered ? 1.05 : 1,
+        duration: const Duration(milliseconds: 200),
+        child: FilledButton.icon(
+          onPressed: widget.onTap,
+          icon: const Icon(Icons.add, size: 16),
+          label: Text(widget.label),
         ),
       ),
     );
@@ -1280,13 +1206,12 @@ class _WishlistSection extends StatelessWidget {
         children: [
           Text(
             l10n.favoritesSectionTitle,
-            style: const TextStyle(
-              fontSize: 22.4,
+            style: context.textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.w600,
-              color: Color(0xFF1D1D1F),
+              color: context.colorScheme.onSurface,
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 24),
           if (cars.isEmpty)
             _EmptyPlaceholder(message: l10n.favoritesEmpty)
           else
@@ -1372,97 +1297,76 @@ class _MyAdsSection extends StatelessWidget {
             children: [
               Text(
                 l10n.navMyAds,
-                style: const TextStyle(
-                  fontSize: 22.4,
+                style: context.textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: Color(0xFF1D1D1F),
+                  color: context.colorScheme.onSurface,
                 ),
               ),
-              GestureDetector(
-                onTap: () {},
-                child: Text(
-                  l10n.viewAllListings,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: Color(0xFF007AFF),
-                  ),
-                ),
+              TextButton(
+                onPressed: () {},
+                child: Text(l10n.viewAllListings),
               ),
             ],
           ),
-          const SizedBox(height: 20),
-          Container(
-            padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              color: const Color(0xFFFFFFFF),
-              borderRadius: BorderRadius.circular(24),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.02),
-                  blurRadius: 20,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: ads.isEmpty
-                ? _EmptyPlaceholder(message: l10n.myAdsEmpty)
-                : ListView.separated(
-                    shrinkWrap: true,
-                    primary: false,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: ads.length,
-                    separatorBuilder: (_, __) => const Divider(
-                      height: 1,
-                      thickness: 1,
-                      color: Color(0xFFE5E5EA),
-                    ),
-                    itemBuilder: (context, index) {
-                      final ad = ads[index];
-                      final rawStatus = ad['status']?.toString() ??
-                          CarDatabaseService.statusActive;
-                      final isDraft =
-                          rawStatus == CarDatabaseService.statusDraft;
-                      final isSold =
-                          rawStatus == CarDatabaseService.statusSold;
-                      final isActive =
-                          rawStatus == CarDatabaseService.statusActive;
-                      final canToggleActive =
-                          rawStatus == CarDatabaseService.statusActive ||
-                              rawStatus == CarDatabaseService.statusExpired;
-                      final createdAt = parseCreatedAt(ad['createdAt']);
-                      final remaining = daysRemaining(createdAt);
-                      final latestBid = BidDisplay.highestBidLabel(
-                        car: ad,
-                        firestoreData: ad,
-                      );
+          const SizedBox(height: 24),
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: ads.isEmpty
+                  ? _EmptyPlaceholder(message: l10n.myAdsEmpty)
+                  : ListView.separated(
+                      shrinkWrap: true,
+                      primary: false,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: ads.length,
+                      separatorBuilder: (_, __) => const Divider(),
+                      itemBuilder: (context, index) {
+                        final ad = ads[index];
+                        final rawStatus = ad['status']?.toString() ??
+                            CarDatabaseService.statusActive;
+                        final isDraft =
+                            rawStatus == CarDatabaseService.statusDraft;
+                        final isSold =
+                            rawStatus == CarDatabaseService.statusSold;
+                        final isActive =
+                            rawStatus == CarDatabaseService.statusActive;
+                        final canToggleActive =
+                            rawStatus == CarDatabaseService.statusActive ||
+                                rawStatus == CarDatabaseService.statusExpired;
+                        final createdAt = parseCreatedAt(ad['createdAt']);
+                        final remaining = daysRemaining(createdAt);
+                        final latestBid = BidDisplay.highestBidLabel(
+                          car: ad,
+                          firestoreData: ad,
+                        );
 
-                      return UserCarListItem(
-                        title: _formatCarTitle(
-                          ad['title']?.toString() ?? '',
-                        ),
-                        price: ad['price']?.toString() ?? '—',
-                        imageUrl: ad['imageUrl']?.toString() ?? '',
-                        isMobile: isMobile,
-                        isDraft: isDraft,
-                        isSold: isSold,
-                        isActive: isActive,
-                        canToggleActive: canToggleActive,
-                        latestBidLabel: latestBid,
-                        postedLabel:
-                            l10n.adPostedAt(formatPostedDate(createdAt)),
-                        daysRemainingLabel: remaining != null && !isDraft
-                            ? l10n.adDaysRemaining(remaining)
-                            : null,
-                        draftLabel: l10n.adCompleteDraft,
-                        onEdit: () => onEdit(ad),
-                        onPrices: () => onViewOffers(ad),
-                        onMarkAsSold: () => onMarkAsSold(ad),
-                        onDelete: () => onDelete(ad),
-                        onToggleActive: () => onToggleActive(ad),
-                      );
-                    },
-                  ),
+                        return UserCarListItem(
+                          title: _formatCarTitle(
+                            ad['title']?.toString() ?? '',
+                          ),
+                          price: ad['price']?.toString() ?? '—',
+                          imageUrl: ad['imageUrl']?.toString() ?? '',
+                          isMobile: isMobile,
+                          isDraft: isDraft,
+                          isSold: isSold,
+                          isActive: isActive,
+                          canToggleActive: canToggleActive,
+                          latestBidLabel: latestBid,
+                          postedLabel:
+                              l10n.adPostedAt(formatPostedDate(createdAt)),
+                          daysRemainingLabel: remaining != null && !isDraft
+                              ? l10n.adDaysRemaining(remaining)
+                              : null,
+                          draftLabel: l10n.adCompleteDraft,
+                          onEdit: () => onEdit(ad),
+                          onPrices: () => onViewOffers(ad),
+                          onMarkAsSold: () => onMarkAsSold(ad),
+                          onDelete: () => onDelete(ad),
+                          onToggleActive: () => onToggleActive(ad),
+                        );
+                      },
+                    ),
+            ),
           ),
         ],
       ),
@@ -1495,12 +1399,417 @@ class _EmptyPlaceholder extends StatelessWidget {
       child: Center(
         child: Text(
           message,
-          style: const TextStyle(
-            fontSize: 15,
-            color: Color(0xFF86868B),
+          style: context.textTheme.bodyMedium?.copyWith(
+            color: context.colorScheme.onSurfaceVariant,
           ),
         ),
       ),
+    );
+  }
+}
+
+class _UserSettingsSection extends ConsumerStatefulWidget {
+  const _UserSettingsSection();
+
+  @override
+  ConsumerState<_UserSettingsSection> createState() =>
+      __UserSettingsSectionState();
+}
+
+class __UserSettingsSectionState extends ConsumerState<_UserSettingsSection> {
+  final _displayNameCtrl = TextEditingController();
+  final _showroomNameCtrl = TextEditingController();
+  final _ownerNameCtrl = TextEditingController();
+
+  String? _selectedCity;
+  bool _isSavingProfile = false;
+  bool _initialized = false;
+  bool _priceAlerts = true;
+  bool _newMatchAlerts = true;
+
+  @override
+  void dispose() {
+    _displayNameCtrl.dispose();
+    _showroomNameCtrl.dispose();
+    _ownerNameCtrl.dispose();
+    super.dispose();
+  }
+
+  void _initFromProfile(UserProfile? profile) {
+    if (_initialized || profile == null) return;
+    _initialized = true;
+    _displayNameCtrl.text = profile.displayName;
+    _showroomNameCtrl.text = profile.showroomName ?? '';
+    _ownerNameCtrl.text = profile.ownerName ?? '';
+    _selectedCity = profile.city;
+  }
+
+  Future<void> _saveProfile(String uid) async {
+    final name = _displayNameCtrl.text.trim();
+    if (name.isEmpty) return;
+
+    setState(() => _isSavingProfile = true);
+    try {
+      await ref.read(authServiceProvider).updateProfile(
+            uid: uid,
+            displayName: name,
+            city: _selectedCity,
+            showroomName: _showroomNameCtrl.text.trim(),
+            ownerName: _ownerNameCtrl.text.trim(),
+          );
+      ref.invalidate(userProfileProvider);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Profile saved successfully.'),
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: AddCarTheme.success(context),
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString()),
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: Theme.of(context).colorScheme.error,
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _isSavingProfile = false);
+    }
+  }
+
+  Future<void> _showChangePasswordDialog() async {
+    final currentPasswordCtrl = TextEditingController();
+    final newPasswordCtrl = TextEditingController();
+    final confirmPasswordCtrl = TextEditingController();
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogCtx) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: const Text('Change Password'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: currentPasswordCtrl,
+                  obscureText: true,
+                  decoration: const InputDecoration(
+                    labelText: 'Current Password',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: newPasswordCtrl,
+                  obscureText: true,
+                  decoration: const InputDecoration(
+                    labelText: 'New Password',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: confirmPasswordCtrl,
+                  obscureText: true,
+                  decoration: const InputDecoration(
+                    labelText: 'Confirm New Password',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogCtx, false),
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              onPressed: () {
+                if (newPasswordCtrl.text.trim() != confirmPasswordCtrl.text.trim()) {
+                  ScaffoldMessenger.of(dialogCtx).showSnackBar(
+                    const SnackBar(content: Text('New passwords do not match')),
+                  );
+                  return;
+                }
+                Navigator.pop(dialogCtx, true);
+              },
+              child: const Text('Update Password'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmed != true || !mounted) return;
+
+    try {
+      await ref.read(authServiceProvider).updatePassword(
+            currentPassword: currentPasswordCtrl.text.trim(),
+            newPassword: newPasswordCtrl.text.trim(),
+          );
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Password updated successfully.'),
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: AddCarTheme.success(context),
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString()),
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: Theme.of(context).colorScheme.error,
+        ),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final scheme = context.colorScheme;
+    final profileAsync = ref.watch(userProfileProvider);
+
+    return profileAsync.when(
+      loading: () => const Padding(
+        padding: EdgeInsets.symmetric(vertical: 60),
+        child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+      ),
+      error: (err, _) => Padding(
+        padding: const EdgeInsets.all(24),
+        child: Text(
+          err.toString(),
+          style: TextStyle(color: scheme.error),
+        ),
+      ),
+      data: (profile) {
+        if (profile == null) {
+          return const Center(child: Text('User profile not found.'));
+        }
+
+        _initFromProfile(profile);
+
+        final isShowroom = profile.accountType.firestoreValue == 'showroom';
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Header / Overview Card
+            Container(
+              padding: const EdgeInsets.all(24),
+              decoration: AddCarTheme.cardDecoration(context),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      CircleAvatar(
+                        radius: 28,
+                        backgroundColor: scheme.primaryContainer,
+                        child: Text(
+                          profile.displayName.isNotEmpty
+                              ? profile.displayName[0].toUpperCase()
+                              : '?',
+                          style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: scheme.onPrimaryContainer,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              profile.displayName,
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: scheme.onSurface,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              profile.phone,
+                              textDirection: TextDirection.ltr,
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: scheme.onSurfaceVariant,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: isShowroom
+                              ? scheme.secondaryContainer
+                              : scheme.primaryContainer,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text(
+                          profile.accountType.firestoreValue.toUpperCase(),
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            color: isShowroom
+                                ? scheme.onSecondaryContainer
+                                : scheme.onPrimaryContainer,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            // Edit Profile Form
+            Container(
+              padding: const EdgeInsets.all(24),
+              decoration: AddCarTheme.cardDecoration(context),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Profile Information',
+                    style: AddCarTheme.sectionTitle(context),
+                  ),
+                  const SizedBox(height: 20),
+                  TextField(
+                    controller: _displayNameCtrl,
+                    decoration: AddCarTheme.textFieldDecoration(
+                      context,
+                      hintText: 'Display Name / Full Name',
+                    ),
+                  ),
+                  if (isShowroom) ...[
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: _showroomNameCtrl,
+                      decoration: AddCarTheme.textFieldDecoration(
+                        context,
+                        hintText: 'Showroom Name',
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: _ownerNameCtrl,
+                      decoration: AddCarTheme.textFieldDecoration(
+                        context,
+                        hintText: 'Owner Name',
+                      ),
+                    ),
+                  ],
+                  const SizedBox(height: 16),
+                  DropdownButtonFormField<String>(
+                    initialValue: _selectedCity != null &&
+                            IraqLocations.provinceOrder.contains(_selectedCity)
+                        ? _selectedCity
+                        : null,
+                    decoration: AddCarTheme.textFieldDecoration(
+                      context,
+                      hintText: 'Select Governorate / City',
+                    ),
+                    items: IraqLocations.provinceOrder.map((city) {
+                      return DropdownMenuItem<String>(
+                        value: city,
+                        child: Text(
+                          IraqLocationL10n.provinceLabel(l10n, city),
+                        ),
+                      );
+                    }).toList(),
+                    onChanged: (val) => setState(() => _selectedCity = val),
+                  ),
+                  const SizedBox(height: 24),
+                  Align(
+                    alignment: AlignmentDirectional.centerEnd,
+                    child: FilledButton.icon(
+                      onPressed:
+                          _isSavingProfile ? null : () => _saveProfile(profile.uid),
+                      icon: _isSavingProfile
+                          ? const SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
+                            )
+                          : const Icon(Icons.save, size: 18),
+                      label: const Text('Save Profile'),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            // Security & Preferences Card
+            Container(
+              padding: const EdgeInsets.all(24),
+              decoration: AddCarTheme.cardDecoration(context),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Security & Preferences',
+                    style: AddCarTheme.sectionTitle(context),
+                  ),
+                  const SizedBox(height: 16),
+                  ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: const Icon(Icons.lock_outline),
+                    title: const Text('Password & Security'),
+                    subtitle: const Text('Update your account password'),
+                    trailing: OutlinedButton(
+                      onPressed: _showChangePasswordDialog,
+                      child: const Text('Change'),
+                    ),
+                  ),
+                  const Divider(height: 24),
+                  SwitchListTile(
+                    contentPadding: EdgeInsets.zero,
+                    value: _priceAlerts,
+                    onChanged: (val) => setState(() => _priceAlerts = val),
+                    title: const Text('Price Drop Alerts'),
+                    subtitle: const Text(
+                      'Receive notifications when prices change on your saved cars',
+                    ),
+                    secondary: const Icon(Icons.notifications_active_outlined),
+                  ),
+                  SwitchListTile(
+                    contentPadding: EdgeInsets.zero,
+                    value: _newMatchAlerts,
+                    onChanged: (val) => setState(() => _newMatchAlerts = val),
+                    title: const Text('New Listing Match Alerts'),
+                    subtitle: const Text(
+                      'Get notified when new cars matching your preferences are posted',
+                    ),
+                    secondary: const Icon(Icons.car_rental),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:iq_motors/core/theme/app_theme.dart';
 import 'package:iq_motors/features/marketplace/presentation/widgets/home/home_theme.dart';
 
 /// Numbered page controls for the home listing grid.
@@ -106,35 +107,27 @@ class _PageButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      borderRadius: BorderRadius.circular(10),
-      child: InkWell(
-        onTap: isSelected ? null : onTap,
-        borderRadius: BorderRadius.circular(10),
-        child: Container(
-          width: 44,
-          height: 44,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: isSelected ? HomeScreenColors.textPrimary : Colors.white,
-            border: Border.all(
-              color: isSelected
-                  ? HomeScreenColors.textPrimary
-                  : const Color(0xFFE5E5EA),
-            ),
-          ),
-          child: Text(
-            '$page',
-            style: TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.w600,
-              color: isSelected ? Colors.white : HomeScreenColors.textPrimary,
-            ),
-          ),
+    final scheme = context.colorScheme;
+    if (isSelected) {
+      return FilledButton(
+        onPressed: null,
+        style: FilledButton.styleFrom(
+          minimumSize: const Size(48, 48),
+          padding: EdgeInsets.zero,
+          disabledBackgroundColor: scheme.primary,
+          disabledForegroundColor: scheme.onPrimary,
         ),
+        child: Text('$page'),
+      );
+    }
+    return OutlinedButton(
+      onPressed: onTap,
+      style: OutlinedButton.styleFrom(
+        minimumSize: const Size(48, 48),
+        padding: EdgeInsets.zero,
+        foregroundColor: scheme.onSurface,
       ),
+      child: Text('$page'),
     );
   }
 }
@@ -152,29 +145,12 @@ class _NavButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(10),
-      child: InkWell(
-        onTap: enabled ? onTap : null,
-        borderRadius: BorderRadius.circular(10),
-        child: Container(
-          width: 44,
-          height: 44,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: const Color(0xFFE5E5EA)),
-          ),
-          child: Icon(
-            icon,
-            size: 22,
-            color: enabled
-                ? HomeScreenColors.textPrimary
-                : HomeScreenColors.textSecondary.withValues(alpha: 0.4),
-          ),
-        ),
+    return IconButton.outlined(
+      onPressed: enabled ? onTap : null,
+      style: IconButton.styleFrom(
+        minimumSize: const Size(48, 48),
       ),
+      icon: Icon(icon),
     );
   }
 }
@@ -184,16 +160,15 @@ class _Ellipsis extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const SizedBox(
+    return SizedBox(
       width: 44,
       height: 44,
       child: Center(
         child: Text(
           '…',
-          style: TextStyle(
-            fontSize: 16,
+          style: context.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w600,
-            color: HomeScreenColors.textSecondary,
+            color: HomeScreenColors.textSecondary(context),
           ),
         ),
       ),

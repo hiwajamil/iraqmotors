@@ -1,293 +1,811 @@
 import 'package:iq_motors/shared/models/localized_car_model.dart';
+import 'package:iq_motors/shared/data/car_models/9ff_models.dart';
+import 'package:iq_motors/shared/data/car_models/abadal_models.dart';
+import 'package:iq_motors/shared/data/car_models/abarth_models.dart';
+import 'package:iq_motors/shared/data/car_models/abbott_detroit_models.dart';
+import 'package:iq_motors/shared/data/car_models/abt_models.dart';
+import 'package:iq_motors/shared/data/car_models/ac_models.dart';
 import 'package:iq_motors/shared/data/car_models/acura_models.dart';
+import 'package:iq_motors/shared/data/car_models/aiways_models.dart';
+import 'package:iq_motors/shared/data/car_models/aixam_models.dart';
 import 'package:iq_motors/shared/data/car_models/alfa_romeo_models.dart';
+import 'package:iq_motors/shared/data/car_models/alpina_models.dart';
+import 'package:iq_motors/shared/data/car_models/alpine_models.dart';
+import 'package:iq_motors/shared/data/car_models/alta_models.dart';
+import 'package:iq_motors/shared/data/car_models/alvis_models.dart';
+import 'package:iq_motors/shared/data/car_models/amc_models.dart';
+import 'package:iq_motors/shared/data/car_models/apollo_models.dart';
+import 'package:iq_motors/shared/data/car_models/arash_models.dart';
+import 'package:iq_motors/shared/data/car_models/arcfox_models.dart';
+import 'package:iq_motors/shared/data/car_models/ariel_models.dart';
+import 'package:iq_motors/shared/data/car_models/aro_models.dart';
+import 'package:iq_motors/shared/data/car_models/arrinera_models.dart';
+import 'package:iq_motors/shared/data/car_models/arrival_models.dart';
+import 'package:iq_motors/shared/data/car_models/artega_models.dart';
+import 'package:iq_motors/shared/data/car_models/ascari_models.dart';
+import 'package:iq_motors/shared/data/car_models/askam_models.dart';
 import 'package:iq_motors/shared/data/car_models/aston_martin_models.dart';
+import 'package:iq_motors/shared/data/car_models/atalanta_models.dart';
+import 'package:iq_motors/shared/data/car_models/auburn_models.dart';
 import 'package:iq_motors/shared/data/car_models/audi_models.dart';
 import 'package:iq_motors/shared/data/car_models/austin_models.dart';
+import 'package:iq_motors/shared/data/car_models/autobacs_models.dart';
+import 'package:iq_motors/shared/data/car_models/autobianchi_models.dart';
 import 'package:iq_motors/shared/data/car_models/avatr_models.dart';
+import 'package:iq_motors/shared/data/car_models/axon_models.dart';
+import 'package:iq_motors/shared/data/car_models/bac_models.dart';
 import 'package:iq_motors/shared/data/car_models/baic_models.dart';
+import 'package:iq_motors/shared/data/car_models/baojun_models.dart';
 import 'package:iq_motors/shared/data/car_models/baw_models.dart';
+import 'package:iq_motors/shared/data/car_models/beiben_models.dart';
 import 'package:iq_motors/shared/data/car_models/bentley_models.dart';
+import 'package:iq_motors/shared/data/car_models/berkeley_models.dart';
+import 'package:iq_motors/shared/data/car_models/berliet_models.dart';
+import 'package:iq_motors/shared/data/car_models/bertone_models.dart';
 import 'package:iq_motors/shared/data/car_models/bestune_models.dart';
+import 'package:iq_motors/shared/data/car_models/bharatbenz_models.dart';
+import 'package:iq_motors/shared/data/car_models/bitter_models.dart';
+import 'package:iq_motors/shared/data/car_models/bizzarrini_models.dart';
 import 'package:iq_motors/shared/data/car_models/bmw_models.dart';
 import 'package:iq_motors/shared/data/car_models/borgward_models.dart';
+import 'package:iq_motors/shared/data/car_models/bowler_models.dart';
+import 'package:iq_motors/shared/data/car_models/brabus_models.dart';
+import 'package:iq_motors/shared/data/car_models/brammo_models.dart';
 import 'package:iq_motors/shared/data/car_models/brilliance_models.dart';
+import 'package:iq_motors/shared/data/car_models/bristol_models.dart';
+import 'package:iq_motors/shared/data/car_models/brooke_models.dart';
+import 'package:iq_motors/shared/data/car_models/bufori_models.dart';
 import 'package:iq_motors/shared/data/car_models/bugatti_models.dart';
 import 'package:iq_motors/shared/data/car_models/buick_models.dart';
 import 'package:iq_motors/shared/data/car_models/byd_models.dart';
 import 'package:iq_motors/shared/data/car_models/cadillac_models.dart';
+import 'package:iq_motors/shared/data/car_models/camc_models.dart';
+import 'package:iq_motors/shared/data/car_models/canoo_models.dart';
+import 'package:iq_motors/shared/data/car_models/caparo_models.dart';
+import 'package:iq_motors/shared/data/car_models/carlsson_models.dart';
+import 'package:iq_motors/shared/data/car_models/caterham_models.dart';
 import 'package:iq_motors/shared/data/car_models/cevo_mobility_models.dart';
 import 'package:iq_motors/shared/data/car_models/changan_models.dart';
-import 'package:iq_motors/shared/data/car_models/chevrolet_models.dart';
+import 'package:iq_motors/shared/data/car_models/changfeng_models.dart';
 import 'package:iq_motors/shared/data/car_models/chery_models.dart';
+import 'package:iq_motors/shared/data/car_models/chevrolet_models.dart';
 import 'package:iq_motors/shared/data/car_models/chrysler_models.dart';
+import 'package:iq_motors/shared/data/car_models/cisitalia_models.dart';
 import 'package:iq_motors/shared/data/car_models/citro_n_models.dart';
+import 'package:iq_motors/shared/data/car_models/cizeta_models.dart';
 import 'package:iq_motors/shared/data/car_models/cmc_models.dart';
+import 'package:iq_motors/shared/data/car_models/cole_models.dart';
+import 'package:iq_motors/shared/data/car_models/corre_la_licorne_models.dart';
+import 'package:iq_motors/shared/data/car_models/dacia_models.dart';
 import 'package:iq_motors/shared/data/car_models/dadi_auto_models.dart';
 import 'package:iq_motors/shared/data/car_models/daewoo_models.dart';
-import 'package:iq_motors/shared/data/car_models/deepal_models.dart';
-import 'package:iq_motors/shared/data/car_models/denza_models.dart';
+import 'package:iq_motors/shared/data/car_models/daf_models.dart';
 import 'package:iq_motors/shared/data/car_models/daihatsu_models.dart';
+import 'package:iq_motors/shared/data/car_models/daimler_models.dart';
+import 'package:iq_motors/shared/data/car_models/dartz_models.dart';
+import 'package:iq_motors/shared/data/car_models/datsun_models.dart';
+import 'package:iq_motors/shared/data/car_models/david_brown_models.dart';
+import 'package:iq_motors/shared/data/car_models/dayun_models.dart';
+import 'package:iq_motors/shared/data/car_models/de_tomaso_models.dart';
+import 'package:iq_motors/shared/data/car_models/deepal_models.dart';
+import 'package:iq_motors/shared/data/car_models/delage_models.dart';
+import 'package:iq_motors/shared/data/car_models/delorean_models.dart';
+import 'package:iq_motors/shared/data/car_models/denza_models.dart';
+import 'package:iq_motors/shared/data/car_models/desoto_models.dart';
+import 'package:iq_motors/shared/data/car_models/detroit_electric_models.dart';
+import 'package:iq_motors/shared/data/car_models/devel_sixteen_models.dart';
 import 'package:iq_motors/shared/data/car_models/dfsk_models.dart';
-import 'package:iq_motors/shared/data/car_models/dongfeng_models.dart';
+import 'package:iq_motors/shared/data/car_models/diatto_models.dart';
+import 'package:iq_motors/shared/data/car_models/dina_models.dart';
+import 'package:iq_motors/shared/data/car_models/dkw_models.dart';
 import 'package:iq_motors/shared/data/car_models/dodge_models.dart';
-import 'package:iq_motors/shared/data/car_models/faw_models.dart';
+import 'package:iq_motors/shared/data/car_models/dongfeng_models.dart';
+import 'package:iq_motors/shared/data/car_models/donkervoort_models.dart';
+import 'package:iq_motors/shared/data/car_models/ds_models.dart';
+import 'package:iq_motors/shared/data/car_models/duesenberg_models.dart';
+import 'package:iq_motors/shared/data/car_models/eagle_models.dart';
+import 'package:iq_motors/shared/data/car_models/edag_models.dart';
+import 'package:iq_motors/shared/data/car_models/edsel_models.dart';
+import 'package:iq_motors/shared/data/car_models/eicher_models.dart';
+import 'package:iq_motors/shared/data/car_models/elemental_models.dart';
+import 'package:iq_motors/shared/data/car_models/elfin_models.dart';
+import 'package:iq_motors/shared/data/car_models/elva_models.dart';
+import 'package:iq_motors/shared/data/car_models/englon_models.dart';
+import 'package:iq_motors/shared/data/car_models/erf_models.dart';
+import 'package:iq_motors/shared/data/car_models/eterniti_models.dart';
 import 'package:iq_motors/shared/data/car_models/exeed_models.dart';
+import 'package:iq_motors/shared/data/car_models/facel_vega_models.dart';
+import 'package:iq_motors/shared/data/car_models/faraday_future_models.dart';
+import 'package:iq_motors/shared/data/car_models/faw_models.dart';
 import 'package:iq_motors/shared/data/car_models/ferrari_models.dart';
 import 'package:iq_motors/shared/data/car_models/fiat_models.dart';
+import 'package:iq_motors/shared/data/car_models/fioravanti_models.dart';
+import 'package:iq_motors/shared/data/car_models/fisker_models.dart';
+import 'package:iq_motors/shared/data/car_models/foden_models.dart';
+import 'package:iq_motors/shared/data/car_models/force_models.dart';
 import 'package:iq_motors/shared/data/car_models/ford_models.dart';
 import 'package:iq_motors/shared/data/car_models/foton_models.dart';
+import 'package:iq_motors/shared/data/car_models/fpv_models.dart';
+import 'package:iq_motors/shared/data/car_models/franklin_models.dart';
+import 'package:iq_motors/shared/data/car_models/freightliner_models.dart';
 import 'package:iq_motors/shared/data/car_models/gac_motor_models.dart';
+import 'package:iq_motors/shared/data/car_models/gardner_douglas_models.dart';
 import 'package:iq_motors/shared/data/car_models/gaz_models.dart';
 import 'package:iq_motors/shared/data/car_models/geely_models.dart';
+import 'package:iq_motors/shared/data/car_models/general_motors_models.dart';
 import 'package:iq_motors/shared/data/car_models/genesis_models.dart';
+import 'package:iq_motors/shared/data/car_models/geo_models.dart';
+import 'package:iq_motors/shared/data/car_models/geometry_models.dart';
+import 'package:iq_motors/shared/data/car_models/gilbern_models.dart';
+import 'package:iq_motors/shared/data/car_models/gillet_models.dart';
+import 'package:iq_motors/shared/data/car_models/ginetta_models.dart';
 import 'package:iq_motors/shared/data/car_models/gmc_models.dart';
+import 'package:iq_motors/shared/data/car_models/golden_dragon_models.dart';
+import 'package:iq_motors/shared/data/car_models/gonow_models.dart';
 import 'package:iq_motors/shared/data/car_models/great_wall_models.dart';
+import 'package:iq_motors/shared/data/car_models/grinnall_models.dart';
+import 'package:iq_motors/shared/data/car_models/gumpert_models.dart';
 import 'package:iq_motors/shared/data/car_models/gwm_tank_models.dart';
 import 'package:iq_motors/shared/data/car_models/hafei_models.dart';
-import 'package:iq_motors/shared/data/car_models/higer_models.dart';
-import 'package:iq_motors/shared/data/car_models/hino_models.dart';
 import 'package:iq_motors/shared/data/car_models/haima_models.dart';
 import 'package:iq_motors/shared/data/car_models/haval_models.dart';
 import 'package:iq_motors/shared/data/car_models/hawtai_models.dart';
+import 'package:iq_motors/shared/data/car_models/hennessey_models.dart';
+import 'package:iq_motors/shared/data/car_models/higer_models.dart';
+import 'package:iq_motors/shared/data/car_models/hillman_models.dart';
+import 'package:iq_motors/shared/data/car_models/hindustan_motors_models.dart';
+import 'package:iq_motors/shared/data/car_models/hino_models.dart';
+import 'package:iq_motors/shared/data/car_models/hiphi_models.dart';
+import 'package:iq_motors/shared/data/car_models/hispano_suiza_models.dart';
+import 'package:iq_motors/shared/data/car_models/holden_models.dart';
+import 'package:iq_motors/shared/data/car_models/hommell_models.dart';
 import 'package:iq_motors/shared/data/car_models/honda_models.dart';
 import 'package:iq_motors/shared/data/car_models/hongqi_models.dart';
+import 'package:iq_motors/shared/data/car_models/hongyan_models.dart';
+import 'package:iq_motors/shared/data/car_models/horch_models.dart';
+import 'package:iq_motors/shared/data/car_models/hsv_models.dart';
 import 'package:iq_motors/shared/data/car_models/huanghai_models.dart';
+import 'package:iq_motors/shared/data/car_models/hudson_models.dart';
 import 'package:iq_motors/shared/data/car_models/hummer_models.dart';
+import 'package:iq_motors/shared/data/car_models/hupmobile_models.dart';
 import 'package:iq_motors/shared/data/car_models/hyptec_models.dart';
 import 'package:iq_motors/shared/data/car_models/hyundai_models.dart';
+import 'package:iq_motors/shared/data/car_models/ic_bus_models.dart';
+import 'package:iq_motors/shared/data/car_models/ih_international_harvester_models.dart';
 import 'package:iq_motors/shared/data/car_models/ikco_models.dart';
 import 'package:iq_motors/shared/data/car_models/ineos_models.dart';
 import 'package:iq_motors/shared/data/car_models/infiniti_models.dart';
+import 'package:iq_motors/shared/data/car_models/innocenti_models.dart';
+import 'package:iq_motors/shared/data/car_models/intermeccanica_models.dart';
+import 'package:iq_motors/shared/data/car_models/international_models.dart';
+import 'package:iq_motors/shared/data/car_models/irizar_models.dart';
+import 'package:iq_motors/shared/data/car_models/isdera_models.dart';
+import 'package:iq_motors/shared/data/car_models/iso_models.dart';
 import 'package:iq_motors/shared/data/car_models/isuzu_models.dart';
 import 'package:iq_motors/shared/data/car_models/iveco_models.dart';
 import 'package:iq_motors/shared/data/car_models/jac_models.dart';
-import 'package:iq_motors/shared/data/car_models/jaguar_models.dart';
-import 'package:iq_motors/shared/data/car_models/jeep_models.dart';
 import 'package:iq_motors/shared/data/car_models/jaecoo_models.dart';
+import 'package:iq_motors/shared/data/car_models/jaguar_models.dart';
+import 'package:iq_motors/shared/data/car_models/jawa_models.dart';
+import 'package:iq_motors/shared/data/car_models/jba_motors_models.dart';
+import 'package:iq_motors/shared/data/car_models/jeep_models.dart';
+import 'package:iq_motors/shared/data/car_models/jensen_models.dart';
 import 'package:iq_motors/shared/data/car_models/jetour_models.dart';
+import 'package:iq_motors/shared/data/car_models/jetta_models.dart';
 import 'package:iq_motors/shared/data/car_models/jinbei_models.dart';
 import 'package:iq_motors/shared/data/car_models/jmc_models.dart';
 import 'package:iq_motors/shared/data/car_models/jonway_models.dart';
-import 'package:iq_motors/shared/data/car_models/kawei_models.dart';
+import 'package:iq_motors/shared/data/car_models/kaiser_models.dart';
 import 'package:iq_motors/shared/data/car_models/kaiyi_models.dart';
+import 'package:iq_motors/shared/data/car_models/kamaz_models.dart';
+import 'package:iq_motors/shared/data/car_models/karma_models.dart';
 import 'package:iq_motors/shared/data/car_models/karry_models.dart';
 import 'package:iq_motors/shared/data/car_models/kawasaki_models.dart';
-import 'package:iq_motors/shared/data/car_models/king_long_models.dart';
+import 'package:iq_motors/shared/data/car_models/kawei_models.dart';
+import 'package:iq_motors/shared/data/car_models/keating_models.dart';
+import 'package:iq_motors/shared/data/car_models/kenworth_models.dart';
 import 'package:iq_motors/shared/data/car_models/kia_models.dart';
+import 'package:iq_motors/shared/data/car_models/king_long_models.dart';
+import 'package:iq_motors/shared/data/car_models/koenigsegg_models.dart';
+import 'package:iq_motors/shared/data/car_models/ktm_models.dart';
 import 'package:iq_motors/shared/data/car_models/lada_models.dart';
+import 'package:iq_motors/shared/data/car_models/lagonda_models.dart';
 import 'package:iq_motors/shared/data/car_models/lamborghini_models.dart';
+import 'package:iq_motors/shared/data/car_models/lancia_models.dart';
 import 'package:iq_motors/shared/data/car_models/land_rover_models.dart';
+import 'package:iq_motors/shared/data/car_models/landwind_models.dart';
+import 'package:iq_motors/shared/data/car_models/laraki_models.dart';
+import 'package:iq_motors/shared/data/car_models/leapmotor_models.dart';
+import 'package:iq_motors/shared/data/car_models/levc_models.dart';
 import 'package:iq_motors/shared/data/car_models/lexus_models.dart';
+import 'package:iq_motors/shared/data/car_models/leyland_models.dart';
+import 'package:iq_motors/shared/data/car_models/li_auto_models.dart';
 import 'package:iq_motors/shared/data/car_models/lifan_models.dart';
-import 'package:iq_motors/shared/data/car_models/lynk_and_co_models.dart';
+import 'package:iq_motors/shared/data/car_models/ligier_models.dart';
 import 'package:iq_motors/shared/data/car_models/lincoln_models.dart';
-import 'package:iq_motors/shared/data/car_models/mercedes_benz_models.dart';
-import 'package:iq_motors/shared/data/car_models/mazda_models.dart';
-import 'package:iq_motors/shared/data/car_models/maserati_models.dart';
-import 'package:iq_motors/shared/data/car_models/maxus_models.dart';
-import 'package:iq_motors/shared/data/car_models/mclaren_models.dart';
-import 'package:iq_motors/shared/data/car_models/mercury_models.dart';
-import 'package:iq_motors/shared/data/car_models/mg_models.dart';
+import 'package:iq_motors/shared/data/car_models/lister_models.dart';
+import 'package:iq_motors/shared/data/car_models/lloyd_models.dart';
+import 'package:iq_motors/shared/data/car_models/lobini_models.dart';
+import 'package:iq_motors/shared/data/car_models/lordstown_models.dart';
+import 'package:iq_motors/shared/data/car_models/lotus_models.dart';
+import 'package:iq_motors/shared/data/car_models/lucid_models.dart';
+import 'package:iq_motors/shared/data/car_models/luxgen_models.dart';
+import 'package:iq_motors/shared/data/car_models/lynk_and_co_models.dart';
 import 'package:iq_motors/shared/data/car_models/m_hero_models.dart';
+import 'package:iq_motors/shared/data/car_models/mack_models.dart';
+import 'package:iq_motors/shared/data/car_models/mahindra_models.dart';
+import 'package:iq_motors/shared/data/car_models/man_models.dart';
+import 'package:iq_motors/shared/data/car_models/mansory_models.dart';
+import 'package:iq_motors/shared/data/car_models/marcos_models.dart';
+import 'package:iq_motors/shared/data/car_models/marlin_models.dart';
+import 'package:iq_motors/shared/data/car_models/maserati_models.dart';
+import 'package:iq_motors/shared/data/car_models/mastretta_models.dart';
+import 'package:iq_motors/shared/data/car_models/maxus_models.dart';
+import 'package:iq_motors/shared/data/car_models/maybach_models.dart';
+import 'package:iq_motors/shared/data/car_models/maz_models.dart';
+import 'package:iq_motors/shared/data/car_models/mazda_models.dart';
+import 'package:iq_motors/shared/data/car_models/mazzanti_models.dart';
+import 'package:iq_motors/shared/data/car_models/mclaren_models.dart';
+import 'package:iq_motors/shared/data/car_models/melkus_models.dart';
+import 'package:iq_motors/shared/data/car_models/mercedes_benz_models.dart';
+import 'package:iq_motors/shared/data/car_models/mercury_models.dart';
+import 'package:iq_motors/shared/data/car_models/merkur_models.dart';
+import 'package:iq_motors/shared/data/car_models/mev_models.dart';
+import 'package:iq_motors/shared/data/car_models/mg_models.dart';
+import 'package:iq_motors/shared/data/car_models/microcar_models.dart';
 import 'package:iq_motors/shared/data/car_models/mini_models.dart';
 import 'package:iq_motors/shared/data/car_models/mitsubishi_models.dart';
 import 'package:iq_motors/shared/data/car_models/mitsuoka_models.dart';
+import 'package:iq_motors/shared/data/car_models/mk_models.dart';
+import 'package:iq_motors/shared/data/car_models/morgan_models.dart';
 import 'package:iq_motors/shared/data/car_models/morris_models.dart';
-import 'package:iq_motors/shared/data/car_models/nissan_models.dart';
+import 'package:iq_motors/shared/data/car_models/mosler_models.dart';
+import 'package:iq_motors/shared/data/car_models/navistar_models.dart';
 import 'package:iq_motors/shared/data/car_models/neta_models.dart';
-import 'package:iq_motors/shared/data/car_models/omoda_models.dart';
+import 'package:iq_motors/shared/data/car_models/nevs_models.dart';
+import 'package:iq_motors/shared/data/car_models/nikola_models.dart';
+import 'package:iq_motors/shared/data/car_models/nio_models.dart';
+import 'package:iq_motors/shared/data/car_models/nissan_models.dart';
+import 'package:iq_motors/shared/data/car_models/noble_models.dart';
 import 'package:iq_motors/shared/data/car_models/oldsmobile_models.dart';
+import 'package:iq_motors/shared/data/car_models/oltcit_models.dart';
+import 'package:iq_motors/shared/data/car_models/omoda_models.dart';
 import 'package:iq_motors/shared/data/car_models/opel_models.dart';
 import 'package:iq_motors/shared/data/car_models/ora_models.dart';
+import 'package:iq_motors/shared/data/car_models/osca_models.dart';
+import 'package:iq_motors/shared/data/car_models/paccar_models.dart';
+import 'package:iq_motors/shared/data/car_models/packard_models.dart';
+import 'package:iq_motors/shared/data/car_models/pagani_models.dart';
+import 'package:iq_motors/shared/data/car_models/panhard_models.dart';
+import 'package:iq_motors/shared/data/car_models/panoz_models.dart';
+import 'package:iq_motors/shared/data/car_models/pegaso_models.dart';
+import 'package:iq_motors/shared/data/car_models/perodua_models.dart';
+import 'package:iq_motors/shared/data/car_models/peterbilt_models.dart';
 import 'package:iq_motors/shared/data/car_models/peugeot_models.dart';
+import 'package:iq_motors/shared/data/car_models/pgo_models.dart';
+import 'package:iq_motors/shared/data/car_models/pierce_arrow_models.dart';
+import 'package:iq_motors/shared/data/car_models/pininfarina_models.dart';
+import 'package:iq_motors/shared/data/car_models/plymouth_models.dart';
+import 'package:iq_motors/shared/data/car_models/poer_models.dart';
 import 'package:iq_motors/shared/data/car_models/polaris_models.dart';
 import 'package:iq_motors/shared/data/car_models/polarsun_models.dart';
-import 'package:iq_motors/shared/data/car_models/pontiac_models.dart';
-import 'package:iq_motors/shared/data/car_models/poer_models.dart';
 import 'package:iq_motors/shared/data/car_models/polestar_models.dart';
+import 'package:iq_motors/shared/data/car_models/pontiac_models.dart';
 import 'package:iq_motors/shared/data/car_models/porsche_models.dart';
+import 'package:iq_motors/shared/data/car_models/praga_models.dart';
+import 'package:iq_motors/shared/data/car_models/premier_models.dart';
+import 'package:iq_motors/shared/data/car_models/prodrive_models.dart';
 import 'package:iq_motors/shared/data/car_models/proton_models.dart';
+import 'package:iq_motors/shared/data/car_models/qoros_models.dart';
+import 'package:iq_motors/shared/data/car_models/radical_models.dart';
 import 'package:iq_motors/shared/data/car_models/ram_models.dart';
+import 'package:iq_motors/shared/data/car_models/rambler_models.dart';
+import 'package:iq_motors/shared/data/car_models/ranz_models.dart';
 import 'package:iq_motors/shared/data/car_models/renault_models.dart';
 import 'package:iq_motors/shared/data/car_models/renault_samsung_motors_models.dart';
-import 'package:iq_motors/shared/data/car_models/rolls_royce_models.dart';
-import 'package:iq_motors/shared/data/car_models/rox_models.dart';
+import 'package:iq_motors/shared/data/car_models/rezvani_models.dart';
+import 'package:iq_motors/shared/data/car_models/riley_models.dart';
+import 'package:iq_motors/shared/data/car_models/rimac_models.dart';
+import 'package:iq_motors/shared/data/car_models/rinspeed_models.dart';
+import 'package:iq_motors/shared/data/car_models/rivian_models.dart';
 import 'package:iq_motors/shared/data/car_models/roewe_models.dart';
+import 'package:iq_motors/shared/data/car_models/rolls_royce_models.dart';
+import 'package:iq_motors/shared/data/car_models/ronart_models.dart';
+import 'package:iq_motors/shared/data/car_models/rossion_models.dart';
+import 'package:iq_motors/shared/data/car_models/rover_models.dart';
+import 'package:iq_motors/shared/data/car_models/rox_models.dart';
+import 'package:iq_motors/shared/data/car_models/ruf_models.dart';
 import 'package:iq_motors/shared/data/car_models/saab_models.dart';
+import 'package:iq_motors/shared/data/car_models/saic_motor_models.dart';
 import 'package:iq_motors/shared/data/car_models/saipa_models.dart';
+import 'package:iq_motors/shared/data/car_models/saleen_models.dart';
 import 'package:iq_motors/shared/data/car_models/saturn_models.dart';
-import 'package:iq_motors/shared/data/car_models/seat_models.dart';
+import 'package:iq_motors/shared/data/car_models/scania_models.dart';
 import 'package:iq_motors/shared/data/car_models/scion_models.dart';
+import 'package:iq_motors/shared/data/car_models/seat_models.dart';
+import 'package:iq_motors/shared/data/car_models/setra_models.dart';
+import 'package:iq_motors/shared/data/car_models/shacman_models.dart';
+import 'package:iq_motors/shared/data/car_models/simca_models.dart';
+import 'package:iq_motors/shared/data/car_models/singer_models.dart';
+import 'package:iq_motors/shared/data/car_models/singulato_models.dart';
+import 'package:iq_motors/shared/data/car_models/sinotruk_cnhtc_models.dart';
+import 'package:iq_motors/shared/data/car_models/sisu_models.dart';
 import 'package:iq_motors/shared/data/car_models/skoda_models.dart';
 import 'package:iq_motors/shared/data/car_models/smart_models.dart';
 import 'package:iq_motors/shared/data/car_models/soueast_models.dart';
+import 'package:iq_motors/shared/data/car_models/spania_gta_models.dart';
+import 'package:iq_motors/shared/data/car_models/spirra_models.dart';
+import 'package:iq_motors/shared/data/car_models/spyker_models.dart';
 import 'package:iq_motors/shared/data/car_models/ssangyong_models.dart';
+import 'package:iq_motors/shared/data/car_models/ssc_models.dart';
+import 'package:iq_motors/shared/data/car_models/sterling_models.dart';
+import 'package:iq_motors/shared/data/car_models/studebaker_models.dart';
+import 'package:iq_motors/shared/data/car_models/stutz_models.dart';
 import 'package:iq_motors/shared/data/car_models/subaru_models.dart';
+import 'package:iq_motors/shared/data/car_models/suffolk_models.dart';
 import 'package:iq_motors/shared/data/car_models/suzuki_models.dart';
 import 'package:iq_motors/shared/data/car_models/swm_motors_models.dart';
+import 'package:iq_motors/shared/data/car_models/talbot_models.dart';
 import 'package:iq_motors/shared/data/car_models/tata_models.dart';
+import 'package:iq_motors/shared/data/car_models/tatra_models.dart';
+import 'package:iq_motors/shared/data/car_models/tauro_sport_auto_models.dart';
+import 'package:iq_motors/shared/data/car_models/techart_models.dart';
 import 'package:iq_motors/shared/data/car_models/tesla_models.dart';
 import 'package:iq_motors/shared/data/car_models/toyota_models.dart';
+import 'package:iq_motors/shared/data/car_models/tramontana_models.dart';
+import 'package:iq_motors/shared/data/car_models/trion_models.dart';
+import 'package:iq_motors/shared/data/car_models/triumph_models.dart';
+import 'package:iq_motors/shared/data/car_models/troller_models.dart';
+import 'package:iq_motors/shared/data/car_models/tucker_models.dart';
+import 'package:iq_motors/shared/data/car_models/tvr_models.dart';
 import 'package:iq_motors/shared/data/car_models/uaz_models.dart';
+import 'package:iq_motors/shared/data/car_models/ud_models.dart';
+import 'package:iq_motors/shared/data/car_models/ultima_models.dart';
+import 'package:iq_motors/shared/data/car_models/vandenbrink_models.dart';
 import 'package:iq_motors/shared/data/car_models/vanderhall_models.dart';
+import 'package:iq_motors/shared/data/car_models/vauxhall_models.dart';
+import 'package:iq_motors/shared/data/car_models/vector_models.dart';
+import 'package:iq_motors/shared/data/car_models/vencer_models.dart';
+import 'package:iq_motors/shared/data/car_models/venturi_models.dart';
+import 'package:iq_motors/shared/data/car_models/venucia_models.dart';
+import 'package:iq_motors/shared/data/car_models/vinfast_models.dart';
+import 'package:iq_motors/shared/data/car_models/vlf_models.dart';
 import 'package:iq_motors/shared/data/car_models/volkswagen_models.dart';
 import 'package:iq_motors/shared/data/car_models/volvo_models.dart';
 import 'package:iq_motors/shared/data/car_models/voyah_models.dart';
+import 'package:iq_motors/shared/data/car_models/w_motors_models.dart';
+import 'package:iq_motors/shared/data/car_models/wanderer_models.dart';
+import 'package:iq_motors/shared/data/car_models/wartburg_models.dart';
+import 'package:iq_motors/shared/data/car_models/weltmeister_models.dart';
+import 'package:iq_motors/shared/data/car_models/western_star_models.dart';
+import 'package:iq_motors/shared/data/car_models/westfield_models.dart';
+import 'package:iq_motors/shared/data/car_models/wey_models.dart';
+import 'package:iq_motors/shared/data/car_models/wiesmann_models.dart';
+import 'package:iq_motors/shared/data/car_models/willys_overland_models.dart';
+import 'package:iq_motors/shared/data/car_models/workhorse_models.dart';
 import 'package:iq_motors/shared/data/car_models/wuling_models.dart';
 import 'package:iq_motors/shared/data/car_models/xev_models.dart';
 import 'package:iq_motors/shared/data/car_models/xiaomi_models.dart';
 import 'package:iq_motors/shared/data/car_models/xpeng_models.dart';
 import 'package:iq_motors/shared/data/car_models/yangwang_models.dart';
+import 'package:iq_motors/shared/data/car_models/yulon_models.dart';
+import 'package:iq_motors/shared/data/car_models/yutong_models.dart';
+import 'package:iq_motors/shared/data/car_models/zarooq_motors_models.dart';
+import 'package:iq_motors/shared/data/car_models/zastava_models.dart';
+import 'package:iq_motors/shared/data/car_models/zaz_models.dart';
+import 'package:iq_motors/shared/data/car_models/zeekr_models.dart';
+import 'package:iq_motors/shared/data/car_models/zenos_models.dart';
+import 'package:iq_motors/shared/data/car_models/zenvo_models.dart';
+import 'package:iq_motors/shared/data/car_models/zhongtong_models.dart';
 import 'package:iq_motors/shared/data/car_models/zimmer_models.dart';
+import 'package:iq_motors/shared/data/car_models/zinoro_models.dart';
 import 'package:iq_motors/shared/data/car_models/zotye_models.dart';
 import 'package:iq_motors/shared/data/car_models/zx_auto_models.dart';
 import 'package:iq_motors/shared/data/car_models/zyle_daewoo_commercial_vehicles_models.dart';
 
 /// Brand id ([CarBrand.id]) → localized model catalog.
 const Map<String, List<LocalizedCarModel>> carModelsCatalog = {
-  'toyota': toyotaModels,
-  'mercedes_benz': mercedesBenzModels,
-  'kia': kiaModels,
-  'kawei': kaweiModels,
-  'kaiyi': kaiyiModels,
-  'karry': karryModels,
-  'kawasaki': kawasakiModels,
-  'byd': bydModels,
-  'hafei': hafeiModels,
-  'higer': higerModels,
-  'hino': hinoModels,
-  'haima': haimaModels,
-  'haval': havalModels,
-  'hawtai': hawtaiModels,
-  'soueast': soueastModels,
-  'omoda': omodaModels,
-  'oldsmobile': oldsmobileModels,
-  'jaecoo': jaecooModels,
-  'jetour': jetourModels,
-  'jonway': jonwayModels,
-  'jinbei': jinbeiModels,
-  'volkswagen': volkswagenModels,
-  'chevrolet': chevroletModels,
-  'gac_motor': gacMotorModels,
-  'gaz': gazModels,
-  'mitsubishi': mitsubishiModels,
-  'mitsuoka': mitsuokaModels,
-  'morris': morrisModels,
-  'geely': geelyModels,
-  'genesis': genesisModels,
-  'gmc': gmcModels,
-  'great_wall': greatWallModels,
-  'gwm_tank': gwmTankModels,
-  'jaguar': jaguarModels,
-  'hyundai': hyundaiModels,
-  'hyptec': hyptecModels,
-  'land_rover': landRoverModels,
-  'dodge': dodgeModels,
-  'cadillac': cadillacModels,
-  'cevo_mobility': cevoMobilityModels,
-  'lexus': lexusModels,
-  'lifan': lifanModels,
-  'lynk_and_co': lynkAndCoModels,
-  'jeep': jeepModels,
-  'skoda': skodaModels,
-  'smart': smartModels,
-  'nissan': nissanModels,
-  'neta': netaModels,
-  'mg': mgModels,
-  'm_hero': mHeroModels,
-  'mini': miniModels,
-  'mercury': mercuryModels,
-  'mclaren': mclarenModels,
-  'mazda': mazdaModels,
-  'maxus': maxusModels,
-  'maserati': maseratiModels,
-  'lincoln': lincolnModels,
-  'lada': ladaModels,
-  'lamborghini': lamborghiniModels,
-  'opel': opelModels,
-  'ora': oraModels,
-  'volvo': volvoModels,
-  'voyah': voyahModels,
-  'wuling': wulingModels,
-  'tesla': teslaModels,
-  'tata': tataModels,
-  'suzuki': suzukiModels,
-  'swm_motors': swmMotorsModels,
-  'subaru': subaruModels,
-  'ssangyong': ssangyongModels,
-  'seat': seatModels,
-  'scion': scionModels,
-  'saab': saabModels,
-  'saipa': saipaModels,
-  'saturn': saturnModels,
-  'rolls_royce': rollsRoyceModels,
-  'rox': roxModels,
-  'roewe': roeweModels,
-  'renault': renaultModels,
-  'renault_samsung_motors': renaultSamsungMotorsModels,
-  'ram': ramModels,
-  'proton': protonModels,
-  'porsche': porscheModels,
-  'peugeot': peugeotModels,
-  'polaris': polarisModels,
-  'polarsun': polarsunModels,
-  'pontiac': pontiacModels,
-  'poer': poerModels,
-  'polestar': polestarModels,
-  'king_long': kingLongModels,
-  'cmc': cmcModels,
-  'citro_n': citroNModels,
-  'chrysler': chryslerModels,
-  'chery': cheryModels,
-  'changan': changanModels,
-  'brilliance': brillianceModels,
-  'borgward': borgwardModels,
-  'bmw': bmwModels,
-  'bugatti': bugattiModels,
-  'buick': buickModels,
-  'bentley': bentleyModels,
-  'bestune': bestuneModels,
-  'baic': baicModels,
-  'baw': bawModels,
-  'audi': audiModels,
-  'austin': austinModels,
-  'avatr': avatrModels,
-  'aston_martin': astonMartinModels,
-  'alfa_romeo': alfaRomeoModels,
-  'acura': acuraModels,
-  'dadi_auto': dadiAutoModels,
-  'daewoo': daewooModels,
-  'deepal': deepalModels,
-  'denza': denzaModels,
-  'daihatsu': daihatsuModels,
-  'dfsk': dfskModels,
-  'dongfeng': dongfengModels,
-  'faw': fawModels,
-  'exeed': exeedModels,
-  'ferrari': ferrariModels,
-  'fiat': fiatModels,
-  'ford': fordModels,
-  'foton': fotonModels,
-  'jac': jacModels,
-  'jmc': jmcModels,
-  'isuzu': isuzuModels,
-  'iveco': ivecoModels,
-  'infiniti': infinitiModels,
-  'ikco': ikcoModels,
-  'ineos': ineosModels,
-  'hummer': hummerModels,
-  'honda': hondaModels,
-  'hongqi': hongqiModels,
-  'huanghai': huanghaiModels,
-  'zotye': zotyeModels,
-  'uaz': uazModels,
-  'vanderhall': vanderhallModels,
-  'zx_auto': zxAutoModels,
-  'zimmer': zimmerModels,
-  'xev': xevModels,
-  'xiaomi': xiaomiModels,
-  'xpeng': xpengModels,
-  'yangwang': yangwangModels,
-  'zyle_daewoo_commercial_vehicles': zyleDaewooCommercialVehiclesModels,
+  '9ff': Brand9ffModels,
+  'abadal': AbadalModels,
+  'abarth': AbarthModels,
+  'abbott_detroit': AbbottDetroitModels,
+  'abt': AbtModels,
+  'ac': AcModels,
+  'acura': AcuraModels,
+  'aiways': AiwaysModels,
+  'aixam': AixamModels,
+  'alfa_romeo': AlfaRomeoModels,
+  'alpina': AlpinaModels,
+  'alpine': AlpineModels,
+  'alta': AltaModels,
+  'alvis': AlvisModels,
+  'amc': AmcModels,
+  'apollo': ApolloModels,
+  'arash': ArashModels,
+  'arcfox': ArcfoxModels,
+  'ariel': ArielModels,
+  'aro': AroModels,
+  'arrinera': ArrineraModels,
+  'arrival': ArrivalModels,
+  'artega': ArtegaModels,
+  'ascari': AscariModels,
+  'askam': AskamModels,
+  'aston_martin': AstonMartinModels,
+  'atalanta': AtalantaModels,
+  'auburn': AuburnModels,
+  'audi': AudiModels,
+  'austin': AustinModels,
+  'autobacs': AutobacsModels,
+  'autobianchi': AutobianchiModels,
+  'avatr': AvatrModels,
+  'axon': AxonModels,
+  'bac': BacModels,
+  'baic': BaicModels,
+  'baojun': BaojunModels,
+  'baw': BawModels,
+  'beiben': BeibenModels,
+  'bentley': BentleyModels,
+  'berkeley': BerkeleyModels,
+  'berliet': BerlietModels,
+  'bertone': BertoneModels,
+  'bestune': BestuneModels,
+  'bharatbenz': BharatbenzModels,
+  'bitter': BitterModels,
+  'bizzarrini': BizzarriniModels,
+  'bmw': BmwModels,
+  'borgward': BorgwardModels,
+  'bowler': BowlerModels,
+  'brabus': BrabusModels,
+  'brammo': BrammoModels,
+  'brilliance': BrillianceModels,
+  'bristol': BristolModels,
+  'brooke': BrookeModels,
+  'bufori': BuforiModels,
+  'bugatti': BugattiModels,
+  'buick': BuickModels,
+  'byd': BydModels,
+  'cadillac': CadillacModels,
+  'camc': CamcModels,
+  'canoo': CanooModels,
+  'caparo': CaparoModels,
+  'carlsson': CarlssonModels,
+  'caterham': CaterhamModels,
+  'cevo_mobility': CevoMobilityModels,
+  'changan': ChanganModels,
+  'changfeng': ChangfengModels,
+  'chery': CheryModels,
+  'chevrolet': ChevroletModels,
+  'chrysler': ChryslerModels,
+  'cisitalia': CisitaliaModels,
+  'citro_n': CitroNModels,
+  'cizeta': CizetaModels,
+  'cmc': CmcModels,
+  'cole': ColeModels,
+  'corre_la_licorne': CorreLaLicorneModels,
+  'dacia': DaciaModels,
+  'dadi_auto': DadiAutoModels,
+  'daewoo': DaewooModels,
+  'daf': DafModels,
+  'daihatsu': DaihatsuModels,
+  'daimler': DaimlerModels,
+  'dartz': DartzModels,
+  'datsun': DatsunModels,
+  'david_brown': DavidBrownModels,
+  'dayun': DayunModels,
+  'de_tomaso': DeTomasoModels,
+  'deepal': DeepalModels,
+  'delage': DelageModels,
+  'delorean': DeloreanModels,
+  'denza': DenzaModels,
+  'desoto': DesotoModels,
+  'detroit_electric': DetroitElectricModels,
+  'devel_sixteen': DevelSixteenModels,
+  'dfsk': DfskModels,
+  'diatto': DiattoModels,
+  'dina': DinaModels,
+  'dkw': DkwModels,
+  'dodge': DodgeModels,
+  'dongfeng': DongfengModels,
+  'donkervoort': DonkervoortModels,
+  'ds': DsModels,
+  'duesenberg': DuesenbergModels,
+  'eagle': EagleModels,
+  'edag': EdagModels,
+  'edsel': EdselModels,
+  'eicher': EicherModels,
+  'elemental': ElementalModels,
+  'elfin': ElfinModels,
+  'elva': ElvaModels,
+  'englon': EnglonModels,
+  'erf': ErfModels,
+  'eterniti': EternitiModels,
+  'exeed': ExeedModels,
+  'facel_vega': FacelVegaModels,
+  'faraday_future': FaradayFutureModels,
+  'faw': FawModels,
+  'ferrari': FerrariModels,
+  'fiat': FiatModels,
+  'fioravanti': FioravantiModels,
+  'fisker': FiskerModels,
+  'foden': FodenModels,
+  'force': ForceModels,
+  'ford': FordModels,
+  'foton': FotonModels,
+  'fpv': FpvModels,
+  'franklin': FranklinModels,
+  'freightliner': FreightlinerModels,
+  'gac_motor': GacMotorModels,
+  'gardner_douglas': GardnerDouglasModels,
+  'gaz': GazModels,
+  'geely': GeelyModels,
+  'general_motors': GeneralMotorsModels,
+  'genesis': GenesisModels,
+  'geo': GeoModels,
+  'geometry': GeometryModels,
+  'gilbern': GilbernModels,
+  'gillet': GilletModels,
+  'ginetta': GinettaModels,
+  'gmc': GmcModels,
+  'golden_dragon': GoldenDragonModels,
+  'gonow': GonowModels,
+  'great_wall': GreatWallModels,
+  'grinnall': GrinnallModels,
+  'gumpert': GumpertModels,
+  'gwm_tank': GwmTankModels,
+  'hafei': HafeiModels,
+  'haima': HaimaModels,
+  'haval': HavalModels,
+  'hawtai': HawtaiModels,
+  'hennessey': HennesseyModels,
+  'higer': HigerModels,
+  'hillman': HillmanModels,
+  'hindustan_motors': HindustanMotorsModels,
+  'hino': HinoModels,
+  'hiphi': HiphiModels,
+  'hispano_suiza': HispanoSuizaModels,
+  'holden': HoldenModels,
+  'hommell': HommellModels,
+  'honda': HondaModels,
+  'hongqi': HongqiModels,
+  'hongyan': HongyanModels,
+  'horch': HorchModels,
+  'hsv': HsvModels,
+  'huanghai': HuanghaiModels,
+  'hudson': HudsonModels,
+  'hummer': HummerModels,
+  'hupmobile': HupmobileModels,
+  'hyptec': HyptecModels,
+  'hyundai': HyundaiModels,
+  'ic_bus': IcBusModels,
+  'ih_international_harvester': IhInternationalHarvesterModels,
+  'ikco': IkcoModels,
+  'ineos': IneosModels,
+  'infiniti': InfinitiModels,
+  'innocenti': InnocentiModels,
+  'intermeccanica': IntermeccanicaModels,
+  'international': InternationalModels,
+  'irizar': IrizarModels,
+  'isdera': IsderaModels,
+  'iso': IsoModels,
+  'isuzu': IsuzuModels,
+  'iveco': IvecoModels,
+  'jac': JacModels,
+  'jaecoo': JaecooModels,
+  'jaguar': JaguarModels,
+  'jawa': JawaModels,
+  'jba_motors': JbaMotorsModels,
+  'jeep': JeepModels,
+  'jensen': JensenModels,
+  'jetour': JetourModels,
+  'jetta': JettaModels,
+  'jinbei': JinbeiModels,
+  'jmc': JmcModels,
+  'jonway': JonwayModels,
+  'kaiser': KaiserModels,
+  'kaiyi': KaiyiModels,
+  'kamaz': KamazModels,
+  'karma': KarmaModels,
+  'karry': KarryModels,
+  'kawasaki': KawasakiModels,
+  'kawei': KaweiModels,
+  'keating': KeatingModels,
+  'kenworth': KenworthModels,
+  'kia': KiaModels,
+  'king_long': KingLongModels,
+  'koenigsegg': KoenigseggModels,
+  'ktm': KtmModels,
+  'lada': LadaModels,
+  'lagonda': LagondaModels,
+  'lamborghini': LamborghiniModels,
+  'lancia': LanciaModels,
+  'land_rover': LandRoverModels,
+  'landwind': LandwindModels,
+  'laraki': LarakiModels,
+  'leapmotor': LeapmotorModels,
+  'levc': LevcModels,
+  'lexus': LexusModels,
+  'leyland': LeylandModels,
+  'li_auto': LiAutoModels,
+  'lifan': LifanModels,
+  'ligier': LigierModels,
+  'lincoln': LincolnModels,
+  'lister': ListerModels,
+  'lloyd': LloydModels,
+  'lobini': LobiniModels,
+  'lordstown': LordstownModels,
+  'lotus': LotusModels,
+  'lucid': LucidModels,
+  'luxgen': LuxgenModels,
+  'lynk_and_co': LynkAndCoModels,
+  'm_hero': MHeroModels,
+  'mack': MackModels,
+  'mahindra': MahindraModels,
+  'man': ManModels,
+  'mansory': MansoryModels,
+  'marcos': MarcosModels,
+  'marlin': MarlinModels,
+  'maserati': MaseratiModels,
+  'mastretta': MastrettaModels,
+  'maxus': MaxusModels,
+  'maybach': MaybachModels,
+  'maz': MazModels,
+  'mazda': MazdaModels,
+  'mazzanti': MazzantiModels,
+  'mclaren': MclarenModels,
+  'melkus': MelkusModels,
+  'mercedes_benz': MercedesBenzModels,
+  'mercury': MercuryModels,
+  'merkur': MerkurModels,
+  'mev': MevModels,
+  'mg': MgModels,
+  'microcar': MicrocarModels,
+  'mini': MiniModels,
+  'mitsubishi': MitsubishiModels,
+  'mitsuoka': MitsuokaModels,
+  'mk': MkModels,
+  'morgan': MorganModels,
+  'morris': MorrisModels,
+  'mosler': MoslerModels,
+  'navistar': NavistarModels,
+  'neta': NetaModels,
+  'nevs': NevsModels,
+  'nikola': NikolaModels,
+  'nio': NioModels,
+  'nissan': NissanModels,
+  'noble': NobleModels,
+  'oldsmobile': OldsmobileModels,
+  'oltcit': OltcitModels,
+  'omoda': OmodaModels,
+  'opel': OpelModels,
+  'ora': OraModels,
+  'osca': OscaModels,
+  'paccar': PaccarModels,
+  'packard': PackardModels,
+  'pagani': PaganiModels,
+  'panhard': PanhardModels,
+  'panoz': PanozModels,
+  'pegaso': PegasoModels,
+  'perodua': PeroduaModels,
+  'peterbilt': PeterbiltModels,
+  'peugeot': PeugeotModels,
+  'pgo': PgoModels,
+  'pierce_arrow': PierceArrowModels,
+  'pininfarina': PininfarinaModels,
+  'plymouth': PlymouthModels,
+  'poer': PoerModels,
+  'polaris': PolarisModels,
+  'polarsun': PolarsunModels,
+  'polestar': PolestarModels,
+  'pontiac': PontiacModels,
+  'porsche': PorscheModels,
+  'praga': PragaModels,
+  'premier': PremierModels,
+  'prodrive': ProdriveModels,
+  'proton': ProtonModels,
+  'qoros': QorosModels,
+  'radical': RadicalModels,
+  'ram': RamModels,
+  'rambler': RamblerModels,
+  'ranz': RanzModels,
+  'renault': RenaultModels,
+  'renault_samsung_motors': RenaultSamsungMotorsModels,
+  'rezvani': RezvaniModels,
+  'riley': RileyModels,
+  'rimac': RimacModels,
+  'rinspeed': RinspeedModels,
+  'rivian': RivianModels,
+  'roewe': RoeweModels,
+  'rolls_royce': RollsRoyceModels,
+  'ronart': RonartModels,
+  'rossion': RossionModels,
+  'rover': RoverModels,
+  'rox': RoxModels,
+  'ruf': RufModels,
+  'saab': SaabModels,
+  'saic_motor': SaicMotorModels,
+  'saipa': SaipaModels,
+  'saleen': SaleenModels,
+  'saturn': SaturnModels,
+  'scania': ScaniaModels,
+  'scion': ScionModels,
+  'seat': SeatModels,
+  'setra': SetraModels,
+  'shacman': ShacmanModels,
+  'simca': SimcaModels,
+  'singer': SingerModels,
+  'singulato': SingulatoModels,
+  'sinotruk_cnhtc': SinotrukCnhtcModels,
+  'sisu': SisuModels,
+  'skoda': SkodaModels,
+  'smart': SmartModels,
+  'soueast': SoueastModels,
+  'spania_gta': SpaniaGtaModels,
+  'spirra': SpirraModels,
+  'spyker': SpykerModels,
+  'ssangyong': SsangyongModels,
+  'ssc': SscModels,
+  'sterling': SterlingModels,
+  'studebaker': StudebakerModels,
+  'stutz': StutzModels,
+  'subaru': SubaruModels,
+  'suffolk': SuffolkModels,
+  'suzuki': SuzukiModels,
+  'swm_motors': SwmMotorsModels,
+  'talbot': TalbotModels,
+  'tata': TataModels,
+  'tatra': TatraModels,
+  'tauro_sport_auto': TauroSportAutoModels,
+  'techart': TechartModels,
+  'tesla': TeslaModels,
+  'toyota': ToyotaModels,
+  'tramontana': TramontanaModels,
+  'trion': TrionModels,
+  'triumph': TriumphModels,
+  'troller': TrollerModels,
+  'tucker': TuckerModels,
+  'tvr': TvrModels,
+  'uaz': UazModels,
+  'ud': UdModels,
+  'ultima': UltimaModels,
+  'vandenbrink': VandenbrinkModels,
+  'vanderhall': VanderhallModels,
+  'vauxhall': VauxhallModels,
+  'vector': VectorModels,
+  'vencer': VencerModels,
+  'venturi': VenturiModels,
+  'venucia': VenuciaModels,
+  'vinfast': VinfastModels,
+  'vlf': VlfModels,
+  'volkswagen': VolkswagenModels,
+  'volvo': VolvoModels,
+  'voyah': VoyahModels,
+  'w_motors': WMotorsModels,
+  'wanderer': WandererModels,
+  'wartburg': WartburgModels,
+  'weltmeister': WeltmeisterModels,
+  'western_star': WesternStarModels,
+  'westfield': WestfieldModels,
+  'wey': WeyModels,
+  'wiesmann': WiesmannModels,
+  'willys_overland': WillysOverlandModels,
+  'workhorse': WorkhorseModels,
+  'wuling': WulingModels,
+  'xev': XevModels,
+  'xiaomi': XiaomiModels,
+  'xpeng': XpengModels,
+  'yangwang': YangwangModels,
+  'yulon': YulonModels,
+  'yutong': YutongModels,
+  'zarooq_motors': ZarooqMotorsModels,
+  'zastava': ZastavaModels,
+  'zaz': ZazModels,
+  'zeekr': ZeekrModels,
+  'zenos': ZenosModels,
+  'zenvo': ZenvoModels,
+  'zhongtong': ZhongtongModels,
+  'zimmer': ZimmerModels,
+  'zinoro': ZinoroModels,
+  'zotye': ZotyeModels,
+  'zx_auto': ZxAutoModels,
+  'zyle_daewoo_commercial_vehicles': ZyleDaewooCommercialVehiclesModels,
 };

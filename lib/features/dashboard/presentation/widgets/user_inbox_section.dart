@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:iq_motors/core/localization/l10n_extensions.dart';
+import 'package:iq_motors/core/theme/app_theme.dart';
 import 'package:iq_motors/core/utils/relative_time.dart';
 import 'package:iq_motors/features/dashboard/domain/models/user_message.dart';
 import 'package:iq_motors/features/storage/presentation/providers/storage_providers.dart';
@@ -17,10 +18,6 @@ class UserInboxSection extends ConsumerWidget {
   /// When `true`, sizes the list to its children for embedding in a parent
   /// [SingleChildScrollView]. When `false`, the list fills the available height.
   final bool nestedInScrollView;
-
-  static const Color _textPrimary = Color(0xFF1D1D1F);
-  static const Color _textSecondary = Color(0xFF86868B);
-  static const Color _unreadBg = Color(0xFFF0F4FF);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -67,7 +64,7 @@ class UserInboxSection extends ConsumerWidget {
               ? const NeverScrollableScrollPhysics()
               : null,
           itemCount: messages.length,
-          separatorBuilder: (_, __) => const SizedBox(height: 10),
+          separatorBuilder: (_, __) => const SizedBox(height: 8),
           itemBuilder: (context, index) {
             final message = messages[index];
             return _MessageTile(
@@ -98,16 +95,13 @@ class UserInboxSection extends ConsumerWidget {
     await showDialog<void>(
       context: context,
       builder: (dialogContext) {
+        final colorScheme = dialogContext.colorScheme;
+        final textTheme = dialogContext.textTheme;
         return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
           title: Text(
             message.carName,
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w700,
-              color: _textPrimary,
+            style: textTheme.titleLarge?.copyWith(
+              color: colorScheme.onSurface,
             ),
           ),
           content: Column(
@@ -116,20 +110,18 @@ class UserInboxSection extends ConsumerWidget {
             children: [
               Text(
                 message.messageBody,
-                style: const TextStyle(
-                  fontSize: 15,
+                style: textTheme.bodyLarge?.copyWith(
+                  color: colorScheme.onSurface,
                   height: 1.5,
-                  color: _textPrimary,
                 ),
               ),
               if (message.senderPhone.isNotEmpty) ...[
                 const SizedBox(height: 16),
                 Text(
                   message.senderPhone,
-                  style: const TextStyle(
-                    fontSize: 14,
+                  style: textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: _textSecondary,
+                    color: colorScheme.onSurfaceVariant,
                   ),
                 ),
               ],
@@ -159,25 +151,29 @@ class _MessageTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final colorScheme = context.colorScheme;
+    final textTheme = context.textTheme;
     final isUnread = !message.isRead;
     final timeLabel = message.timestamp != null
         ? formatRelativeTime(message.timestamp!, l10n)
         : '';
 
     return Material(
-      color: isUnread ? UserInboxSection._unreadBg : Colors.white,
+      color: isUnread
+          ? colorScheme.primaryContainer.withValues(alpha: 0.35)
+          : colorScheme.surfaceContainerLowest,
       borderRadius: BorderRadius.circular(14),
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(14),
         child: Container(
-          padding: const EdgeInsetsDirectional.fromSTEB(16, 14, 16, 14),
+          padding: const EdgeInsetsDirectional.fromSTEB(16, 16, 16, 16),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(14),
             border: Border.all(
               color: isUnread
-                  ? const Color(0xFF007AFF).withValues(alpha: 0.2)
-                  : const Color(0xFFE5E5EA),
+                  ? colorScheme.primary.withValues(alpha: 0.2)
+                  : colorScheme.outlineVariant,
             ),
           ),
           child: Row(
@@ -188,8 +184,8 @@ class _MessageTile extends StatelessWidget {
                 height: 40,
                 decoration: BoxDecoration(
                   color: isUnread
-                      ? const Color(0xFF007AFF).withValues(alpha: 0.12)
-                      : const Color(0xFFF5F5F7),
+                      ? colorScheme.primary.withValues(alpha: 0.12)
+                      : colorScheme.surfaceContainerHighest,
                   shape: BoxShape.circle,
                 ),
                 alignment: Alignment.center,
@@ -197,8 +193,8 @@ class _MessageTile extends StatelessWidget {
                   Icons.gavel_rounded,
                   size: 20,
                   color: isUnread
-                      ? const Color(0xFF007AFF)
-                      : UserInboxSection._textSecondary,
+                      ? colorScheme.primary
+                      : colorScheme.onSurfaceVariant,
                 ),
               ),
               const SizedBox(width: 12),
@@ -211,20 +207,18 @@ class _MessageTile extends StatelessWidget {
                         Expanded(
                           child: Text(
                             message.carName,
-                            style: TextStyle(
-                              fontSize: 15,
+                            style: textTheme.titleSmall?.copyWith(
                               fontWeight:
                                   isUnread ? FontWeight.w700 : FontWeight.w600,
-                              color: UserInboxSection._textPrimary,
+                              color: colorScheme.onSurface,
                             ),
                           ),
                         ),
                         if (timeLabel.isNotEmpty)
                           Text(
                             timeLabel,
-                            style: const TextStyle(
-                              fontSize: 12,
-                              color: UserInboxSection._textSecondary,
+                            style: textTheme.labelSmall?.copyWith(
+                              color: colorScheme.onSurfaceVariant,
                             ),
                           ),
                       ],
@@ -234,23 +228,21 @@ class _MessageTile extends StatelessWidget {
                       message.messageBody,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 13,
+                      style: textTheme.bodySmall?.copyWith(
                         height: 1.4,
                         fontWeight:
                             isUnread ? FontWeight.w500 : FontWeight.w400,
-                        color: UserInboxSection._textSecondary,
+                        color: colorScheme.onSurfaceVariant,
                       ),
                     ),
                     if (message.senderName.isNotEmpty) ...[
-                      const SizedBox(height: 6),
+                      const SizedBox(height: 8),
                       Text(
                         message.senderName,
-                        style: TextStyle(
-                          fontSize: 12,
+                        style: textTheme.labelSmall?.copyWith(
                           fontWeight:
                               isUnread ? FontWeight.w600 : FontWeight.w500,
-                          color: UserInboxSection._textPrimary,
+                          color: colorScheme.onSurface,
                         ),
                       ),
                     ],
@@ -262,8 +254,8 @@ class _MessageTile extends StatelessWidget {
                 Container(
                   width: 8,
                   height: 8,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFF007AFF),
+                  decoration: BoxDecoration(
+                    color: colorScheme.primary,
                     shape: BoxShape.circle,
                   ),
                 ),
@@ -288,9 +280,8 @@ class _EmptyPlaceholder extends StatelessWidget {
       child: Center(
         child: Text(
           message,
-          style: const TextStyle(
-            fontSize: 15,
-            color: Color(0xFF86868B),
+          style: context.textTheme.bodyMedium?.copyWith(
+            color: context.colorScheme.onSurfaceVariant,
           ),
         ),
       ),

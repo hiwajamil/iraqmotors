@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import 'package:iq_motors/core/services/firebase_performance_service.dart';
 import 'package:iq_motors/core/utils/activity_actions.dart';
 import 'package:iq_motors/shared/data/add_car_option_keys.dart';
 import 'package:iq_motors/shared/data/iraq_locations.dart';
@@ -47,67 +48,94 @@ class AdminDatabaseService {
   };
 
   /// Returns per-city ad counts keyed by governorate name.
+  /// Returns per-city ad counts keyed by governorate name.
   ///
   /// Each city map contains `active`, `pending`, and `expired` totals.
   Future<Map<String, Map<String, int>>> fetchAdStatsByCity() async {
-    try {
-      final cities = IraqLocations.provinceOrder;
-      // Single collection read; group by province and status locally.
-      final snapshot = await _firestore.collection('cars').get();
+    return FirebasePerformanceService.instance.traceAsync(
+      'admin_fetchAdStatsByCity',
+      () async {
+        try {
+          final cities = IraqLocations.provinceOrder;
+          final result = {
+            for (final city in cities)
+              city: Map<String, int>.from(_emptyCityStats),
+          };
 
-      final result = {
-        for (final city in cities)
-          city: Map<String, int>.from(_emptyCityStats),
-      };
+          final futures = cities.map((city) async {
+            final cityRef = _firestore
+                .collection('cars')
+                .where(provinceField, isEqualTo: city);
 
-      for (final doc in snapshot.docs) {
-        final data = doc.data();
-        final province = data[provinceField]?.toString();
-        if (province == null || !result.containsKey(province)) continue;
+            final counts = await Future.wait([
+              cityRef
+                  .where(CarDatabaseService.statusField,
+                      isEqualTo: CarDatabaseService.statusActive)
+                  .count()
+                  .get(),
+              cityRef
+                  .where(CarDatabaseService.statusField,
+                      isEqualTo: CarDatabaseService.statusPending)
+                  .count()
+                  .get(),
+              cityRef
+                  .where(CarDatabaseService.statusField,
+                      isEqualTo: CarDatabaseService.statusExpired)
+                  .count()
+                  .get(),
+            ]);
 
-        final stats = result[province]!;
-        switch (data[CarDatabaseService.statusField]?.toString()) {
-          case CarDatabaseService.statusActive:
-            stats['active'] = stats['active']! + 1;
-          case CarDatabaseService.statusPending:
-            stats['pending'] = stats['pending']! + 1;
-          case CarDatabaseService.statusExpired:
-            stats['expired'] = stats['expired']! + 1;
+            return MapEntry(city, {
+              'active': counts[0].count ?? 0,
+              'pending': counts[1].count ?? 0,
+              'expired': counts[2].count ?? 0,
+            });
+          });
+
+          final entries = await Future.wait(futures);
+          for (final entry in entries) {
+            result[entry.key] = entry.value;
+          }
+
+          return result;
+        } on FirebaseException catch (e) {
+          throw AdminDatabaseException(
+            e.message ?? 'Failed to fetch ad stats by city.',
+          );
+        } catch (e) {
+          throw AdminDatabaseException('Failed to fetch ad stats by city: $e');
         }
-      }
-
-      return result;
-    } on FirebaseException catch (e) {
-      throw AdminDatabaseException(
-        e.message ?? 'Failed to fetch ad stats by city.',
-      );
-    } catch (e) {
-      throw AdminDatabaseException('Failed to fetch ad stats by city: $e');
-    }
+      },
+    );
   }
 
   /// Returns user counts grouped by governorate (`city` field on user docs).
   Future<Map<String, int>> fetchUserCountByCity() async {
-    try {
-      final cities = (await fetchSystemConfig()).activeCities;
-      final snapshot = await _firestore.collection('users').get();
+    return FirebasePerformanceService.instance.traceAsync(
+      'admin_fetchUserCountByCity',
+      () async {
+        try {
+          final cities = (await fetchSystemConfig()).activeCities;
+          final futures = cities.map((city) async {
+            final countSnap = await _firestore
+                .collection('users')
+                .where(cityField, isEqualTo: city)
+                .count()
+                .get();
+            return MapEntry(city, countSnap.count ?? 0);
+          });
 
-      final result = {for (final city in cities) city: 0};
-
-      for (final doc in snapshot.docs) {
-        final city = doc.data()[cityField]?.toString();
-        if (city == null || !result.containsKey(city)) continue;
-        result[city] = result[city]! + 1;
-      }
-
-      return result;
-    } on FirebaseException catch (e) {
-      throw AdminDatabaseException(
-        e.message ?? 'Failed to fetch user counts by city.',
-      );
-    } catch (e) {
-      throw AdminDatabaseException('Failed to fetch user counts by city: $e');
-    }
+          final entries = await Future.wait(futures);
+          return Map.fromEntries(entries);
+        } on FirebaseException catch (e) {
+          throw AdminDatabaseException(
+            e.message ?? 'Failed to fetch user counts by city.',
+          );
+        } catch (e) {
+          throw AdminDatabaseException('Failed to fetch user counts by city: $e');
+        }
+      },
+    );
   }
 
   /// Lists users registered in [city] with their active ad counts.
@@ -146,20 +174,38 @@ class AdminDatabaseService {
   ) async {
     if (sellerIds.isEmpty) return const {};
 
-    final sellerSet = sellerIds.toSet();
-    final snapshot = await _firestore
-        .collection('cars')
-        .where(CarDatabaseService.statusField,
-            isEqualTo: CarDatabaseService.statusActive)
-        .get();
-
     final counts = <String, int>{};
-    for (final doc in snapshot.docs) {
-      final sellerId =
-          doc.data()[CarDatabaseService.sellerIdField]?.toString();
-      if (sellerId == null || !sellerSet.contains(sellerId)) continue;
-      counts[sellerId] = (counts[sellerId] ?? 0) + 1;
+    final chunks = <List<String>>[];
+    for (var i = 0; i < sellerIds.length; i += 30) {
+      chunks.add(
+        sellerIds.sublist(
+          i,
+          i + 30 > sellerIds.length ? sellerIds.length : i + 30,
+        ),
+      );
     }
+
+    await Future.wait(
+      chunks.map((chunk) async {
+        final snapshot = await _firestore
+            .collection('cars')
+            .where(
+              CarDatabaseService.statusField,
+              isEqualTo: CarDatabaseService.statusActive,
+            )
+            .where(CarDatabaseService.sellerIdField, whereIn: chunk)
+            .get();
+
+        for (final doc in snapshot.docs) {
+          final sellerId =
+              doc.data()[CarDatabaseService.sellerIdField]?.toString();
+          if (sellerId != null) {
+            counts[sellerId] = (counts[sellerId] ?? 0) + 1;
+          }
+        }
+      }),
+    );
+
     return counts;
   }
 
@@ -196,31 +242,34 @@ class AdminDatabaseService {
 
   /// Returns showroom counts grouped by governorate (`city` field).
   Future<Map<String, int>> fetchShowroomCountByCity() async {
-    try {
-      final cities = (await fetchSystemConfig()).activeCities;
-      final snapshot = await _firestore.collection('users').get();
+    return FirebasePerformanceService.instance.traceAsync(
+      'admin_fetchShowroomCountByCity',
+      () async {
+        try {
+          final cities = (await fetchSystemConfig()).activeCities;
+          final futures = cities.map((city) async {
+            final countSnap = await _firestore
+                .collection('users')
+                .where(accountTypeField, isEqualTo: showroomUserType)
+                .where(cityField, isEqualTo: city)
+                .count()
+                .get();
+            return MapEntry(city, countSnap.count ?? 0);
+          });
 
-      final result = {for (final city in cities) city: 0};
-
-      for (final doc in snapshot.docs) {
-        final data = doc.data();
-        if (!_isShowroom(data)) continue;
-
-        final city = data[cityField]?.toString();
-        if (city == null || !result.containsKey(city)) continue;
-        result[city] = result[city]! + 1;
-      }
-
-      return result;
-    } on FirebaseException catch (e) {
-      throw AdminDatabaseException(
-        e.message ?? 'Failed to fetch showroom counts by city.',
-      );
-    } catch (e) {
-      throw AdminDatabaseException(
-        'Failed to fetch showroom counts by city: $e',
-      );
-    }
+          final entries = await Future.wait(futures);
+          return Map.fromEntries(entries);
+        } on FirebaseException catch (e) {
+          throw AdminDatabaseException(
+            e.message ?? 'Failed to fetch showroom counts by city.',
+          );
+        } catch (e) {
+          throw AdminDatabaseException(
+            'Failed to fetch showroom counts by city: $e',
+          );
+        }
+      },
+    );
   }
 
   /// Lists showrooms in [city] with their total ad counts.
@@ -284,16 +333,34 @@ class AdminDatabaseService {
   ) async {
     if (sellerIds.isEmpty) return const {};
 
-    final sellerSet = sellerIds.toSet();
-    final snapshot = await _firestore.collection('cars').get();
-
     final counts = <String, int>{};
-    for (final doc in snapshot.docs) {
-      final sellerId =
-          doc.data()[CarDatabaseService.sellerIdField]?.toString();
-      if (sellerId == null || !sellerSet.contains(sellerId)) continue;
-      counts[sellerId] = (counts[sellerId] ?? 0) + 1;
+    final chunks = <List<String>>[];
+    for (var i = 0; i < sellerIds.length; i += 30) {
+      chunks.add(
+        sellerIds.sublist(
+          i,
+          i + 30 > sellerIds.length ? sellerIds.length : i + 30,
+        ),
+      );
     }
+
+    await Future.wait(
+      chunks.map((chunk) async {
+        final snapshot = await _firestore
+            .collection('cars')
+            .where(CarDatabaseService.sellerIdField, whereIn: chunk)
+            .get();
+
+        for (final doc in snapshot.docs) {
+          final sellerId =
+              doc.data()[CarDatabaseService.sellerIdField]?.toString();
+          if (sellerId != null) {
+            counts[sellerId] = (counts[sellerId] ?? 0) + 1;
+          }
+        }
+      }),
+    );
+
     return counts;
   }
 
@@ -527,6 +594,122 @@ class AdminDatabaseService {
     } catch (e) {
       if (e is AdminDatabaseException) rethrow;
       throw AdminDatabaseException('Failed to update package price: $e');
+    }
+  }
+
+  /// Updates account type for user (e.g. 'individual' vs 'showroom').
+  Future<void> updateUserAccountType({
+    required String userId,
+    required String newType,
+    ActivityAuditContext? audit,
+  }) async {
+    try {
+      await _firestore.collection('users').doc(userId).set(
+        {
+          accountTypeField: newType,
+          userTypeField: newType,
+          'updatedAt': FieldValue.serverTimestamp(),
+        },
+        SetOptions(merge: true),
+      );
+      if (audit != null) {
+        await _activityLog.logFromAudit(audit);
+      }
+    } on FirebaseException catch (e) {
+      throw AdminDatabaseException(
+        e.message ?? 'Failed to update user account type.',
+      );
+    } catch (e) {
+      throw AdminDatabaseException('Failed to update user account type: $e');
+    }
+  }
+
+  /// Bans or unbans a user account in Firestore with optional ban reason.
+  Future<void> toggleUserBanStatus({
+    required String userId,
+    required bool isBanned,
+    String? reason,
+    ActivityAuditContext? audit,
+  }) async {
+    try {
+      await _firestore.collection('users').doc(userId).set(
+        {
+          'isBanned': isBanned,
+          'banReason': reason ?? '',
+          'bannedAt': isBanned ? FieldValue.serverTimestamp() : null,
+          'updatedAt': FieldValue.serverTimestamp(),
+        },
+        SetOptions(merge: true),
+      );
+      if (audit != null) {
+        await _activityLog.logFromAudit(audit);
+      }
+    } on FirebaseException catch (e) {
+      throw AdminDatabaseException(
+        e.message ?? 'Failed to update user ban status.',
+      );
+    } catch (e) {
+      throw AdminDatabaseException('Failed to update user ban status: $e');
+    }
+  }
+
+  /// Bulk approves multiple pending ads at once.
+  Future<void> bulkApproveAds(
+    List<String> adIds, {
+    ActivityAuditContext? audit,
+  }) async {
+    if (adIds.isEmpty) return;
+    try {
+      final batch = _firestore.batch();
+      for (final id in adIds) {
+        final ref = _firestore.collection('cars').doc(id);
+        batch.update(ref, {
+          CarDatabaseService.statusField: CarDatabaseService.statusActive,
+          'approvedAt': FieldValue.serverTimestamp(),
+          'updatedAt': FieldValue.serverTimestamp(),
+        });
+      }
+      await batch.commit();
+      if (audit != null) {
+        await _activityLog.logFromAudit(audit);
+      }
+    } on FirebaseException catch (e) {
+      throw AdminDatabaseException(
+        e.message ?? 'Failed to bulk approve ads.',
+      );
+    } catch (e) {
+      throw AdminDatabaseException('Failed to bulk approve ads: $e');
+    }
+  }
+
+  /// Bulk rejects multiple pending ads at once.
+  Future<void> bulkRejectAds(
+    List<String> adIds, {
+    String? reason,
+    ActivityAuditContext? audit,
+  }) async {
+    if (adIds.isEmpty) return;
+    try {
+      final batch = _firestore.batch();
+      for (final id in adIds) {
+        final ref = _firestore.collection('cars').doc(id);
+        batch.update(ref, {
+          CarDatabaseService.statusField: CarDatabaseService.statusRejected,
+          'rejectionReason': reason ?? '',
+          'rejectedAt': FieldValue.serverTimestamp(),
+          'updatedAt': FieldValue.serverTimestamp(),
+        });
+      }
+      await batch.commit();
+      if (audit != null) {
+        await _activityLog.logFromAudit(audit);
+      }
+    } on FirebaseException catch (e) {
+      throw AdminDatabaseException(
+        e.message ?? 'Failed to bulk reject ads.',
+      );
+    } catch (e) {
+      throw AdminDatabaseException('Failed to bulk reject ads: $e');
     }
   }
 }

@@ -41,9 +41,9 @@ class PickedImagePreview extends StatelessWidget {
         gaplessPlayback: true,
         loadingBuilder: (context, child, loadingProgress) {
           if (loadingProgress == null) return child;
-          return _loadingPlaceholder(loadingProgress);
+          return _loadingPlaceholder(context, loadingProgress);
         },
-        errorBuilder: (_, __, ___) => _errorPlaceholder(),
+        errorBuilder: (context, __, ___) => _errorPlaceholder(context),
       );
     }
 
@@ -53,17 +53,17 @@ class PickedImagePreview extends StatelessWidget {
       width: double.infinity,
       height: double.infinity,
       gaplessPlayback: true,
-      errorBuilder: (_, __, ___) => _errorPlaceholder(),
+      errorBuilder: (context, __, ___) => _errorPlaceholder(context),
     );
   }
 
-  Widget _loadingPlaceholder(ImageChunkEvent progress) {
+  Widget _loadingPlaceholder(BuildContext context, ImageChunkEvent progress) {
     final total = progress.expectedTotalBytes;
     final loaded = progress.cumulativeBytesLoaded;
     final value = total != null ? loaded / total : null;
 
     return ColoredBox(
-      color: AddCarTheme.inputFill,
+      color: AddCarTheme.inputFill(context),
       child: Center(
         child: SizedBox(
           width: 24,
@@ -71,20 +71,20 @@ class PickedImagePreview extends StatelessWidget {
           child: CircularProgressIndicator(
             strokeWidth: 2,
             value: value,
-            color: AddCarTheme.focusBlue,
+            color: AddCarTheme.focus(context),
           ),
         ),
       ),
     );
   }
 
-  Widget _errorPlaceholder() {
+  Widget _errorPlaceholder(BuildContext context) {
     return ColoredBox(
-      color: AddCarTheme.textPrimary.withValues(alpha: 0.06),
-      child: const Icon(
+      color: AddCarTheme.textPrimary(context).withValues(alpha: 0.06),
+      child: Icon(
         Icons.directions_car_rounded,
         size: 36,
-        color: AddCarTheme.textSecondary,
+        color: AddCarTheme.textSecondary(context),
       ),
     );
   }

@@ -1,6 +1,31 @@
 import 'package:iq_motors/shared/models/localized_car_model.dart';
 
-const List<LocalizedCarModel> saturnModels = [
+const List<LocalizedCarModel> SaturnModels = [
+  LocalizedCarModel(id: 'saturn_astra', ku: 'Astra', en: 'Astra', ar: 'Astra'),
+  LocalizedCarModel(id: 'saturn_aura', ku: 'Aura', en: 'Aura', ar: 'Aura'),
   LocalizedCarModel(id: 'ion', ku: 'ئایۆن', en: 'Ion', ar: 'أيون'),
+  LocalizedCarModel(id: 'saturn_l200', ku: 'L200', en: 'L200', ar: 'L200'),
+  LocalizedCarModel(id: 'saturn_l300', ku: 'L300', en: 'L300', ar: 'L300'),
+  LocalizedCarModel(id: 'saturn_ls', ku: 'LS', en: 'LS', ar: 'LS'),
+  LocalizedCarModel(id: 'saturn_ls1', ku: 'LS1', en: 'LS1', ar: 'LS1'),
+  LocalizedCarModel(id: 'saturn_ls2', ku: 'LS2', en: 'LS2', ar: 'LS2'),
+  LocalizedCarModel(id: 'saturn_lw1', ku: 'LW1', en: 'LW1', ar: 'LW1'),
+  LocalizedCarModel(id: 'saturn_lw2', ku: 'LW2', en: 'LW2', ar: 'LW2'),
+  LocalizedCarModel(id: 'saturn_lw200', ku: 'LW200', en: 'LW200', ar: 'LW200'),
+  LocalizedCarModel(id: 'saturn_lw300', ku: 'LW300', en: 'LW300', ar: 'LW300'),
+  LocalizedCarModel(id: 'saturn_outlook', ku: 'Outlook', en: 'Outlook', ar: 'Outlook'),
+  LocalizedCarModel(id: 'saturn_relay', ku: 'Relay', en: 'Relay', ar: 'Relay'),
+  LocalizedCarModel(id: 'saturn_saturn_industries', ku: 'Saturn Industries', en: 'Saturn Industries', ar: 'Saturn Industries'),
+  LocalizedCarModel(id: 'saturn_saturn2016', ku: 'SATURN2016', en: 'SATURN2016', ar: 'SATURN2016'),
+  LocalizedCarModel(id: 'saturn_saturn2019', ku: 'SATURN2019', en: 'SATURN2019', ar: 'SATURN2019'),
+  LocalizedCarModel(id: 'saturn_sc1', ku: 'SC1', en: 'SC1', ar: 'SC1'),
+  LocalizedCarModel(id: 'saturn_sc2', ku: 'SC2', en: 'SC2', ar: 'SC2'),
+  LocalizedCarModel(id: 'saturn_sky', ku: 'Sky', en: 'Sky', ar: 'Sky'),
+  LocalizedCarModel(id: 'saturn_sl', ku: 'SL', en: 'SL', ar: 'SL'),
+  LocalizedCarModel(id: 'saturn_sl1', ku: 'SL1', en: 'SL1', ar: 'SL1'),
+  LocalizedCarModel(id: 'saturn_sl2', ku: 'SL2', en: 'SL2', ar: 'SL2'),
+  LocalizedCarModel(id: 'saturn_sl3', ku: 'SL3', en: 'SL3', ar: 'SL3'),
+  LocalizedCarModel(id: 'saturn_sw1', ku: 'SW1', en: 'SW1', ar: 'SW1'),
+  LocalizedCarModel(id: 'saturn_sw2', ku: 'SW2', en: 'SW2', ar: 'SW2'),
   LocalizedCarModel(id: 'vue', ku: 'فیو', en: 'Vue', ar: 'فيو'),
 ];

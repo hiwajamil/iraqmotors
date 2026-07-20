@@ -1,0 +1,26 @@
+import 'package:iq_motors/shared/models/localized_car_model.dart';
+
+const List<LocalizedCarModel> PackardModels = [
+  LocalizedCarModel(id: 'packard_110', ku: '110', en: '110', ar: '110'),
+  LocalizedCarModel(id: 'packard_120', ku: '120', en: '120', ar: '120'),
+  LocalizedCarModel(id: 'packard_250', ku: '250', en: '250', ar: '250'),
+  LocalizedCarModel(id: 'packard_526', ku: '526', en: '526', ar: '526'),
+  LocalizedCarModel(id: 'packard_626', ku: '626', en: '626', ar: '626'),
+  LocalizedCarModel(id: 'packard_640', ku: '640', en: '640', ar: '640'),
+  LocalizedCarModel(id: 'packard_733', ku: '733', en: '733', ar: '733'),
+  LocalizedCarModel(id: 'packard_caribbean', ku: 'Caribbean', en: 'Caribbean', ar: 'Caribbean'),
+  LocalizedCarModel(id: 'packard_clipper', ku: 'Clipper', en: 'Clipper', ar: 'Clipper'),
+  LocalizedCarModel(id: 'packard_clipper_super', ku: 'Clipper Super', en: 'Clipper Super', ar: 'Clipper Super'),
+  LocalizedCarModel(id: 'packard_coupe', ku: 'Coupe', en: 'Coupe', ar: 'Coupe'),
+  LocalizedCarModel(id: 'packard_custom_eight', ku: 'Custom Eight', en: 'Custom Eight', ar: 'Custom Eight'),
+  LocalizedCarModel(id: 'packard_mayfair', ku: 'Mayfair', en: 'Mayfair', ar: 'Mayfair'),
+  LocalizedCarModel(id: 'packard_one_twenty', ku: 'One Twenty', en: 'One Twenty', ar: 'One Twenty'),
+  LocalizedCarModel(id: 'packard_patrician', ku: 'Patrician', en: 'Patrician', ar: 'Patrician'),
+  LocalizedCarModel(id: 'packard_sedan', ku: 'Sedan', en: 'Sedan', ar: 'Sedan'),
+  LocalizedCarModel(id: 'packard_super_8', ku: 'Super 8', en: 'Super 8', ar: 'Super 8'),
+  LocalizedCarModel(id: 'packard_super_clipper', ku: 'Super Clipper', en: 'Super Clipper', ar: 'Super Clipper'),
+  LocalizedCarModel(id: 'packard_super_eight', ku: 'Super Eight', en: 'Super Eight', ar: 'Super Eight'),
+  LocalizedCarModel(id: 'packard_touring', ku: 'Touring', en: 'Touring', ar: 'Touring'),
+  LocalizedCarModel(id: 'packard_twelve', ku: 'Twelve', en: 'Twelve', ar: 'Twelve'),
+  LocalizedCarModel(id: 'packard_twin_six', ku: 'Twin Six', en: 'Twin Six', ar: 'Twin Six'),
+];

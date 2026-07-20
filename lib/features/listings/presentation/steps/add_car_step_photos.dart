@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
@@ -8,6 +7,7 @@ import 'package:iq_motors/core/config/app_image_cache.dart';
 import 'package:iq_motors/core/localization/l10n_extensions.dart';
 import 'package:iq_motors/core/platform/picked_image_preview.dart';
 import 'package:iq_motors/features/listings/domain/models/add_car_draft.dart';
+import 'package:iq_motors/core/theme/app_theme.dart';
 import 'package:iq_motors/features/listings/presentation/add_car_theme.dart';
 import 'package:iq_motors/features/listings/presentation/widgets/add_car_form_card.dart';
 import 'package:iq_motors/features/listings/presentation/widgets/add_car_step_header.dart';
@@ -78,12 +78,11 @@ class AddCarStepPhotos extends StatelessWidget {
             subtitle: l10n.addCarPhotosSubtitle,
             trailing: Text(
               '$filledCount / ${AddCarDraft.minPhotoCount}',
-              style: TextStyle(
-                fontSize: 14,
+              style: context.textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w500,
                 color: filledCount >= AddCarDraft.minPhotoCount
-                    ? AddCarTheme.successGreen
-                    : AddCarTheme.textSecondary,
+                    ? AddCarTheme.success(context)
+                    : AddCarTheme.textSecondary(context),
               ),
             ),
           ),
@@ -207,19 +206,19 @@ class _PhotoSlotState extends State<_PhotoSlot> {
 
   Widget _buildSlotBackground() {
     if (widget.isUploading || widget.hasFailed) {
-      return const ColoredBox(color: AddCarTheme.inputFill);
+      return ColoredBox(color: AddCarTheme.inputFill(context));
     }
 
     if (!widget.hasPhoto) {
       return ColoredBox(
-        color: AddCarTheme.inputFill,
+        color: AddCarTheme.inputFill(context),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
               Icons.photo_camera_outlined,
               size: 24,
-              color: AddCarTheme.textSecondary.withValues(
+              color: AddCarTheme.textSecondary(context).withValues(
                 alpha: _pressed ? 1 : 0.85,
               ),
             ),
@@ -227,10 +226,9 @@ class _PhotoSlotState extends State<_PhotoSlot> {
               const SizedBox(height: 4),
               Text(
                 context.l10n.addCarPhotoPrimary,
-                style: TextStyle(
-                  fontSize: 10,
+                style: context.textTheme.labelSmall?.copyWith(
                   fontWeight: FontWeight.w500,
-                  color: AddCarTheme.textSecondary.withValues(alpha: 0.9),
+                  color: AddCarTheme.textSecondary(context).withValues(alpha: 0.9),
                 ),
               ),
             ],
@@ -288,7 +286,7 @@ class _PhotoSlotState extends State<_PhotoSlot> {
     final value = total != null ? loaded / total : null;
 
     return ColoredBox(
-      color: AddCarTheme.inputFill,
+      color: AddCarTheme.inputFill(context),
       child: Center(
         child: SizedBox(
           width: 24,
@@ -296,7 +294,7 @@ class _PhotoSlotState extends State<_PhotoSlot> {
           child: CircularProgressIndicator(
             strokeWidth: 2,
             value: value,
-            color: AddCarTheme.focusBlue,
+            color: AddCarTheme.focus(context),
           ),
         ),
       ),
@@ -305,25 +303,25 @@ class _PhotoSlotState extends State<_PhotoSlot> {
 
   Widget _buildImageErrorState() {
     return ColoredBox(
-      color: AddCarTheme.textPrimary.withValues(alpha: 0.06),
-      child: const Icon(
+      color: AddCarTheme.textPrimary(context).withValues(alpha: 0.06),
+      child: Icon(
         Icons.directions_car_rounded,
         size: 36,
-        color: AddCarTheme.textSecondary,
+        color: AddCarTheme.textSecondary(context),
       ),
     );
   }
 
   Widget _buildUploadingOverlay() {
     return ColoredBox(
-      color: AddCarTheme.cardBg.withValues(alpha: 0.72),
-      child: const Center(
+      color: AddCarTheme.cardBg(context).withValues(alpha: 0.72),
+      child: Center(
         child: SizedBox(
           width: 28,
           height: 28,
           child: CircularProgressIndicator(
             strokeWidth: 2.5,
-            color: AddCarTheme.focusBlue,
+            color: AddCarTheme.focus(context),
           ),
         ),
       ),
@@ -332,22 +330,21 @@ class _PhotoSlotState extends State<_PhotoSlot> {
 
   Widget _buildFailedOverlay() {
     return ColoredBox(
-      color: AddCarTheme.cardBg.withValues(alpha: 0.82),
-      child: const Column(
+      color: AddCarTheme.cardBg(context).withValues(alpha: 0.82),
+      child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
             Icons.refresh_rounded,
             size: 26,
-            color: Color(0xFFFF3B30),
+            color: context.colorScheme.error,
           ),
-          SizedBox(height: 4),
+          const SizedBox(height: 4),
           Text(
             'Retry',
-            style: TextStyle(
-              fontSize: 10,
+            style: context.textTheme.labelSmall?.copyWith(
               fontWeight: FontWeight.w600,
-              color: Color(0xFFFF3B30),
+              color: context.colorScheme.error,
             ),
           ),
         ],
@@ -358,54 +355,32 @@ class _PhotoSlotState extends State<_PhotoSlot> {
   Widget _buildDeleteButton() {
     final onRemove = widget.onRemove;
     if (onRemove == null) return const SizedBox.shrink();
+    final scheme = context.colorScheme;
 
     return PositionedDirectional(
-      top: 8,
-      end: 8,
-      child: GestureDetector(
-        onTap: onRemove,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(20),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-            child: Container(
-              width: 30,
-              height: 30,
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.28),
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.45),
-                  width: 0.8,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.18),
-                    blurRadius: 6,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: const Icon(
-                Icons.close_rounded,
-                size: 16,
-                color: Color(0xFFFF3B30),
-              ),
-            ),
-          ),
+      top: 4,
+      end: 4,
+      child: IconButton.filledTonal(
+        onPressed: onRemove,
+        tooltip: 'Remove photo',
+        style: IconButton.styleFrom(
+          minimumSize: const Size(48, 48),
+          backgroundColor: scheme.surface.withValues(alpha: 0.92),
+          foregroundColor: scheme.error,
         ),
+        icon: const Icon(Icons.close_rounded, size: 20),
       ),
     );
   }
 
   Widget _buildBorderOverlay() {
     final borderColor = widget.hasFailed && !widget.isUploading
-        ? const Color(0xFFFF3B30).withValues(alpha: 0.7)
+        ? context.colorScheme.error.withValues(alpha: 0.7)
         : _pressed
-            ? AddCarTheme.focusBlue
+            ? AddCarTheme.focus(context)
             : (widget.hasPhoto
-                ? AddCarTheme.textPrimary.withValues(alpha: 0.15)
-                : AddCarTheme.border);
+                ? AddCarTheme.textPrimary(context).withValues(alpha: 0.15)
+                : AddCarTheme.border(context));
 
     return Positioned.fill(
       child: IgnorePointer(

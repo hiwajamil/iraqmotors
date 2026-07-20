@@ -1,0 +1,10 @@
+{
+  "make": "Renault",
+  "models": [
+    "LeCar",
+    "18i",
+    "Fuego",
+    "Alliance",
+    "Encore"
+  ]
+}

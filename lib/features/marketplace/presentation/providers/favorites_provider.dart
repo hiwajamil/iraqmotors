@@ -33,13 +33,9 @@ class FavoritesNotifier extends Notifier<Set<String>> {
     }
 
     try {
-      final docs = await ref
+      state = await ref
           .read(carDatabaseServiceProvider)
-          .fetchFavoriteAds(userId);
-      state = docs
-          .map((doc) => doc['id']?.toString())
-          .whereType<String>()
-          .toSet();
+          .fetchFavoriteAdIds(userId);
     } on CarDatabaseException {
       state = {};
     }

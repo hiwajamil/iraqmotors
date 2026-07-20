@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:iq_motors/core/config/app_image_cache.dart';
+import 'package:iq_motors/core/theme/app_theme.dart';
 
 import 'package:iq_motors/core/localization/l10n_extensions.dart';
 import 'package:iq_motors/features/marketplace/domain/models/advanced_filter_state.dart';
@@ -12,7 +13,6 @@ import 'package:iq_motors/features/marketplace/presentation/widgets/advanced_fil
 import 'package:iq_motors/shared/widgets/location_picker_sheet.dart';
 import 'package:iq_motors/features/marketplace/presentation/widgets/home/home_brand_strip.dart';
 import 'package:iq_motors/features/marketplace/presentation/widgets/home/home_glass_nav_bar.dart';
-import 'package:iq_motors/features/marketplace/presentation/widgets/home/home_results_counter.dart';
 import 'package:iq_motors/features/marketplace/presentation/widgets/home/home_theme.dart';
 
 /// Cinematic hero with background image, headline, and filter header.
@@ -27,7 +27,6 @@ class HomeHeroSection extends StatelessWidget {
     required this.onFilterChanged,
     required this.onClearFilters,
     required this.onShowResults,
-    required this.resultCount,
     required this.onViewAllBrands,
     required this.onAdvancedSearchToggle,
   });
@@ -55,7 +54,6 @@ class HomeHeroSection extends StatelessWidget {
   final ValueChanged<AdvancedFilterState> onFilterChanged;
   final VoidCallback onClearFilters;
   final VoidCallback onShowResults;
-  final int resultCount;
   final VoidCallback onViewAllBrands;
   final VoidCallback onAdvancedSearchToggle;
 
@@ -125,16 +123,16 @@ class HomeHeroSection extends StatelessWidget {
                 ),
               ),
               Container(
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      Color(0x33000000),
-                      Color(0x00000000),
-                      Color(0xCCFFFFFF),
+                      context.colorScheme.shadow.withValues(alpha: 0.2),
+                      context.colorScheme.shadow.withValues(alpha: 0),
+                      context.colorScheme.surface.withValues(alpha: 0.8),
                     ],
-                    stops: [0.0, 0.45, 1.0],
+                    stops: const [0.0, 0.45, 1.0],
                   ),
                 ),
               ),
@@ -145,7 +143,7 @@ class HomeHeroSection extends StatelessWidget {
                   child: Text(
                     l10n.heroTitle,
                     textAlign: TextAlign.start,
-                    style: const TextStyle(
+                    style: context.textTheme.headlineMedium?.copyWith(
                       fontSize: 28,
                       fontWeight: FontWeight.w700,
                       letterSpacing: -0.8,
@@ -166,22 +164,15 @@ class HomeHeroSection extends StatelessWidget {
             child: _filterHeader(context, heroStyle: false),
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.only(top: 2, bottom: 8),
-          child: HomeResultsCounter(count: resultCount),
-        ),
         if (showAdvancedFilter)
           Padding(
             padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
             child: AdvancedFilterWidget(
-              showHeader: false,
               selectedBrand: selectedBrand,
               values: filterValues,
               onChanged: onFilterChanged,
               onClear: onClearFilters,
               onShowResults: onShowResults,
-              resultCount: resultCount,
-              onLocationTap: () => _pickLocation(context),
             ),
           ),
         HomeSectionTitle(title: l10n.homeBrowseBrands),
@@ -219,16 +210,16 @@ class HomeHeroSection extends StatelessWidget {
                 ),
               ),
               Container(
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
                       Colors.transparent,
-                      Color(0x00FFFFFF),
-                      Colors.white,
+                      context.colorScheme.surface.withValues(alpha: 0),
+                      context.colorScheme.surface,
                     ],
-                    stops: [0.0, 0.55, 1.0],
+                    stops: const [0.0, 0.55, 1.0],
                   ),
                 ),
               ),
@@ -240,7 +231,7 @@ class HomeHeroSection extends StatelessWidget {
                     Text(
                       l10n.heroTitle,
                       textAlign: TextAlign.center,
-                      style: const TextStyle(
+                      style: context.textTheme.displayLarge?.copyWith(
                         fontSize: 64,
                         fontWeight: FontWeight.w700,
                         letterSpacing: -1.5,
@@ -255,7 +246,7 @@ class HomeHeroSection extends StatelessWidget {
                       child: Text(
                         l10n.heroSubtitle,
                         textAlign: TextAlign.center,
-                        style: TextStyle(
+                        style: context.textTheme.titleLarge?.copyWith(
                           fontSize: 22,
                           fontWeight: FontWeight.w400,
                           color: Colors.white.withValues(alpha: 0.7),
@@ -273,11 +264,6 @@ class HomeHeroSection extends StatelessWidget {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 16),
-                    HomeResultsCounter(
-                      count: resultCount,
-                      heroStyle: true,
-                    ),
                   ],
                 ),
               ),
@@ -291,14 +277,11 @@ class HomeHeroSection extends StatelessWidget {
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 850),
                 child: AdvancedFilterWidget(
-                  showHeader: false,
                   selectedBrand: selectedBrand,
                   values: filterValues,
                   onChanged: onFilterChanged,
                   onClear: onClearFilters,
                   onShowResults: onShowResults,
-                  resultCount: resultCount,
-                  onLocationTap: () => _pickLocation(context),
                 ),
               ),
             ),
@@ -318,27 +301,29 @@ class HomeHeroSection extends StatelessWidget {
   Widget _heroFilterShell({required Widget child}) {
     final shell = Container(
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: kIsWeb ? 0.1 : 0.18),
-        borderRadius: BorderRadius.circular(22),
+        color: Colors.white.withValues(alpha: kIsWeb ? 0.12 : 0.18),
+        borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: Colors.white.withValues(alpha: 0.2),
+          color: Colors.white.withValues(alpha: 0.25),
         ),
       ),
       child: child,
     );
 
     if (kIsWeb) {
-      return ClipRRect(
-        borderRadius: BorderRadius.circular(22),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
-          child: shell,
+      return RepaintBoundary(
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(24),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+            child: shell,
+          ),
         ),
       );
     }
 
     return ClipRRect(
-      borderRadius: BorderRadius.circular(22),
+      borderRadius: BorderRadius.circular(24),
       child: shell,
     );
   }

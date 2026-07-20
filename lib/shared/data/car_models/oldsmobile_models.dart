@@ -1,22 +1,25 @@
 import 'package:iq_motors/shared/models/localized_car_model.dart';
 
-const List<LocalizedCarModel> oldsmobileModels = [
-  LocalizedCarModel(
-    id: 'delta_88',
-    ku: 'دێڵتا 88',
-    en: 'Delta 88',
-    ar: 'دلتا 88',
-  ),
-  LocalizedCarModel(
-    id: 'silhouette',
-    ku: 'سیلهۆیت',
-    en: 'Silhouette',
-    ar: 'سيلويت',
-  ),
-  LocalizedCarModel(
-    id: 'cutlass_ciera',
-    ku: 'کاتلس سیێرا',
-    en: 'Cutlass Ciera',
-    ar: 'كاتلاس سييرا',
-  ),
+const List<LocalizedCarModel> OldsmobileModels = [
+  LocalizedCarModel(id: 'oldsmobile_achieva', ku: 'Achieva', en: 'Achieva', ar: 'Achieva'),
+  LocalizedCarModel(id: 'oldsmobile_alero', ku: 'Alero', en: 'Alero', ar: 'Alero'),
+  LocalizedCarModel(id: 'oldsmobile_aurora', ku: 'Aurora', en: 'Aurora', ar: 'Aurora'),
+  LocalizedCarModel(id: 'oldsmobile_bravada', ku: 'Bravada', en: 'Bravada', ar: 'Bravada'),
+  LocalizedCarModel(id: 'oldsmobile_custom_cruiser', ku: 'Custom Cruiser', en: 'Custom Cruiser', ar: 'Custom Cruiser'),
+  LocalizedCarModel(id: 'oldsmobile_cutlass', ku: 'Cutlass', en: 'Cutlass', ar: 'Cutlass'),
+  LocalizedCarModel(id: 'oldsmobile_cutlass_calais', ku: 'Cutlass Calais', en: 'Cutlass Calais', ar: 'Cutlass Calais'),
+  LocalizedCarModel(id: 'oldsmobile_cutlass_ciera', ku: 'کاتلس سیێرا', en: 'Cutlass Ciera', ar: 'کاتلس سیرا'),
+  LocalizedCarModel(id: 'oldsmobile_cutlass_cruiser', ku: 'Cutlass Cruiser', en: 'Cutlass Cruiser', ar: 'Cutlass Cruiser'),
+  LocalizedCarModel(id: 'oldsmobile_cutlass_salon', ku: 'Cutlass Salon', en: 'Cutlass Salon', ar: 'Cutlass Salon'),
+  LocalizedCarModel(id: 'oldsmobile_cutlass_supreme', ku: 'Cutlass Supreme', en: 'Cutlass Supreme', ar: 'Cutlass Supreme'),
+  LocalizedCarModel(id: 'oldsmobile_delta_88', ku: 'دێلتا 88', en: 'Delta 88', ar: 'دیلتا 88'),
+  LocalizedCarModel(id: 'oldsmobile_eighty_eight_88', ku: 'Eighty Eight (88)', en: 'Eighty Eight (88)', ar: 'Eighty Eight (88)'),
+  LocalizedCarModel(id: 'oldsmobile_firenza', ku: 'Firenza', en: 'Firenza', ar: 'Firenza'),
+  LocalizedCarModel(id: 'oldsmobile_intrigue', ku: 'Intrigue', en: 'Intrigue', ar: 'Intrigue'),
+  LocalizedCarModel(id: 'oldsmobile_lss', ku: 'LSS', en: 'LSS', ar: 'LSS'),
+  LocalizedCarModel(id: 'oldsmobile_ninety_eight_98', ku: 'Ninety Eight (98)', en: 'Ninety Eight (98)', ar: 'Ninety Eight (98)'),
+  LocalizedCarModel(id: 'oldsmobile_omega', ku: 'Omega', en: 'Omega', ar: 'Omega'),
+  LocalizedCarModel(id: 'oldsmobile_regency', ku: 'Regency', en: 'Regency', ar: 'Regency'),
+  LocalizedCarModel(id: 'oldsmobile_silhouette', ku: 'سێلهۆیت', en: 'Silhouette', ar: 'سيلهويت'),
+  LocalizedCarModel(id: 'oldsmobile_toronado', ku: 'Toronado', en: 'Toronado', ar: 'Toronado'),
 ];

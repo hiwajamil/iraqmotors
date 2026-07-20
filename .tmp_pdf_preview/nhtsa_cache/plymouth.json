@@ -1,0 +1,25 @@
+{
+  "make": "Plymouth",
+  "models": [
+    "Neon",
+    "Breeze",
+    "Prowler",
+    "Acclaim",
+    "Colt",
+    "Sundance",
+    "Laser",
+    "HORIZON",
+    "TURISMO",
+    "Reliant",
+    "CARAVELLE",
+    "GRAN FURY",
+    "Conquest",
+    "Sapporo",
+    "Champ",
+    "Voyager",
+    "Grand Voyager",
+    "Scamp",
+    "Arrow",
+    "Trailduster"
+  ]
+}
